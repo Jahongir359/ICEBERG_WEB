@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ICEBERG - Registration</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="text-gray-800">
+
+    <!-- Main Container: wraps entire page content -->
+    <div class="container mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+
+        <!-- Header: logo and navigation -->
+        <header class="relative flex justify-center items-center py-6">
+            <!-- Logo -->
+            <div class="absolute left-4 text-2xl font-bold tracking-wider">
+                <a href="index.html">ICEBERG</a>
+            </div>
+            <!-- Navigation Bar -->
+            <nav class="hidden md:flex items-center justify-center space-x-2">
+                <a href="index.html" class="nav-btn px-6 py-2 border border-gray-200 rounded-full text-gray-600 hover:bg-gray-100 font-medium">Home</a>
+                <a href="about.html" class="nav-btn px-6 py-2 border border-gray-200 rounded-full text-gray-600 hover:bg-gray-100 font-medium">About us</a>
+                <a href="register.html" class="nav-btn nav-btn-active px-6 py-2 border border-gray-200 rounded-full font-medium">Registration</a>
+                <a href="contact.html" class="nav-btn px-6 py-2 border border-gray-200 rounded-full text-gray-600 hover:bg-gray-100 font-medium">Contact</a>
+            </nav>
+            <!-- Mobile Menu can be added here if needed -->
+        </header>
+
+        <!-- Main Content: registration section -->
+        <main>
+             <section class="py-16 md:py-24">
+                 <!-- Section Title: heading and subtitle -->
+                 <div class="text-center">
+                     <h1 class="text-4xl md:text-6xl font-bold tracking-tighter">REGISTER</h1>
+                     <p class="text-xl text-gray-500 mt-4">HAPPINESS IS IN SCIENCE !!!</p>
+                 </div>
+                 <!-- Form Container: white card wrapper -->
+                 <div class="max-w-xl mx-auto mt-12 bg-white p-8 sm:p-12 rounded-2xl shadow-lg border border-gray-100">
+                     <!-- Registration Form -->
+                     <form action="#" method="POST">
+                         <div class="space-y-8">
+                            <!-- Full Name input -->
+                            <div>
+                                <input type="text" name="reg-full-name" id="reg-full-name" placeholder="Full Name" class="mt-1 block w-full py-3 form-input text-lg">
+                            </div>
+                            <!-- Email input -->
+                             <div>
+                                <input type="email" name="reg-email" id="reg-email" placeholder="Email" class="mt-1 block w-full py-3 form-input text-lg">
+                            </div>
+                            <!-- Phone input -->
+                             <div>
+                                <input type="tel" name="reg-phone" id="reg-phone" placeholder="Phone number" class="mt-1 block w-full py-3 form-input text-lg">
+                            </div>
+                            <!-- Study Goal textarea -->
+                             <div>
+                                <textarea name="reg-study-goal" id="reg-study-goal" rows="4" placeholder="What do you want to study?" class="mt-1 block w-full py-3 form-input text-lg"></textarea>
+                            </div>
+                            <!-- Submit button -->
+                            <div class="text-center pt-4">
+                                <button type="submit" class="bg-white text-black px-10 py-3 rounded-full hover:bg-gray-100 font-semibold text-lg transition-colors border-2 border-gray-300">Register</button>
+                            </div>
+                         </div>
+                     </form>
+                 </div>
+            </section>
+        </main>
+
+        <!-- Footer: social links -->
+        <footer class="text-center py-16 mt-16 border-t border-gray-200">
+             <div class="flex flex-col items-center">
+                 <h2 class="text-2xl font-bold">Let's Stay Connected</h2>
+                 <div class="w-20 h-1 bg-gray-800 my-4 rounded"></div>
+                 <div class="flex justify-center space-x-6 mt-2 text-gray-500">
+                     <a href="#" class="hover:text-gray-900">Telegram</a>
+                     <a href="#" class="hover:text-gray-900">Instagram</a>
+                     <a href="#" class="hover:text-gray-900">YouTube</a>
+                 </div>
+             </div>
+        </footer>
+
+    </div>
+</body>
+</html>

@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ICEBERG - About Us</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="text-gray-800">
+
+    <!-- Main Container: Wraps the entire page content -->
+    <div class="container mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+
+        <!-- ================= HEADER ================= -->
+        <header class="relative flex justify-center items-center py-6">
+            <!-- Logo: Top-left corner -->
+            <div class="absolute left-4 text-2xl font-bold tracking-wider">
+                <a href="index.html">ICEBERG</a>
+            </div>
+            <!-- Navigation Bar: Main site navigation -->
+            <nav class="hidden md:flex items-center justify-center space-x-2">
+                <a href="index.html" class="nav-btn px-6 py-2 border border-gray-200 rounded-full text-gray-600 hover:bg-gray-100 font-medium">Home</a>
+                <a href="about.html" class="nav-btn nav-btn-active px-6 py-2 border border-gray-200 rounded-full font-medium">About us</a>
+                <a href="register.html" class="nav-btn px-6 py-2 border border-gray-200 rounded-full text-gray-600 hover:bg-gray-100 font-medium">Registration</a>
+                <a href="contact.html" class="nav-btn px-6 py-2 border border-gray-200 rounded-full text-gray-600 hover:bg-gray-100 font-medium">Contact</a>
+            </nav>
+            <!-- Mobile Menu can be added here if needed -->
+        </header>
+
+        <!-- ================= MAIN CONTENT ================= -->
+        <main>
+             <!-- About Us Section: Main title and introductory content -->
+             <section class="py-16 md:py-24">
+                 <!-- Section Title -->
+                 <div class="text-center mb-16">
+                     <h1 class="text-4xl md:text-6xl font-bold tracking-tighter">About us</h1>
+                 </div>
+                 <!-- Content Layout: Text on the left, image on the right -->
+                 <div class="flex flex-col md:flex-row items-center gap-12">
+                    <!-- Philosophy Text -->
+                    <div class="md:w-1/2">
+                         <p class="text-gray-600 leading-relaxed text-lg">
+                            The ICEBERG Philosophy: Happiness is in science. Our name is at the heart of everything we do. We know that the pressure of academic deadlines and exam results are just the tip—the small part that everyone sees. But the real prize—a solid academic foundation that determines future success, lies just beneath the surface. That foundation is built with confidence, resilience, effective study habits, and a true passion for learning. These are the qualities we instill in our students. The mission at ICEBERG is to build the strong, solid base that will support our students in all their future academic journeys and beyond.
+                         </p>
+                    </div>
+                    <!-- Team Image with decorative background -->
+                    <div class="md:w-1/2 relative flex justify-center items-center">
+                        <!-- Decorative SVG Shapes -->
+                        <div class="absolute inset-0 z-0">
+                            <svg class="w-full h-full" viewBox="0 0 400 300" preserveAspectRatio="none">
+                              <path d="M 350,5 C 450,150 250,200 350,295" stroke="#10B981" stroke-width="2" fill="none" stroke-dasharray="4 4" />
+                               <path d="M 330,15 C 430,160 230,210 330,285" stroke="#A78BFA" stroke-width="1" fill="none" stroke-dasharray="5 10" />
+                            </svg>
+                        </div>
+                        <!-- Placeholder Image -->
+                        <img src="https://placehold.co/300x350/E0E7FF/4F46E5?text=Team+Photo" alt="Team at work" class="rounded-2xl shadow-lg z-10">
+                    </div>
+                 </div>
+             </section>
+             
+             <!-- Articles Section: Content from teachers -->
+             <section class="py-16">
+                  <!-- Section Title -->
+                  <h2 class="text-3xl font-bold mb-12 text-center">Articles by Teachers</h2>
+                  <!-- List of Articles -->
+                  <div class="space-y-12">
+                      <!-- Article 1 -->
+                      <div class="flex flex-col md:flex-row items-center gap-8 max-w-4xl mx-auto">
+                           <!-- Author Image -->
+                           <div class="w-40 h-40 bg-gray-200 rounded-full flex-shrink-0"></div>
+                           <!-- Article Content -->
+                           <div class="text-center md:text-left">
+                               <h3 class="font-bold text-xl">Teacher</h3>
+                               <p class="text-gray-600 mt-2 max-w-md">Interested in discussing design, sharing ideas, or exploring innovations in product design? Feel free to reach out—let's keep the conversation going.</p>
+                           </div>
+                      </div>
+                       <!-- Article 2 (Reversed Layout) -->
+                       <div class="flex flex-col md:flex-row-reverse items-center gap-8 max-w-4xl mx-auto">
+                           <!-- Author Image -->
+                           <div class="w-40 h-40 bg-gray-200 rounded-full flex-shrink-0"></div>
+                           <!-- Article Content -->
+                           <div class="text-center md:text-right">
+                               <h3 class="font-bold text-xl">Teacher</h3>
+                               <p class="text-gray-600 mt-2 max-w-md">Interested in discussing design, sharing ideas, or exploring innovations in product design? Feel free to reach out—let's keep the conversation going.</p>
+                           </div>
+                      </div>
+                       <!-- Article 3 -->
+                       <div class="flex flex-col md:flex-row items-center gap-8 max-w-4xl mx-auto">
+                           <!-- Author Image -->
+                           <div class="w-40 h-40 bg-gray-200 rounded-full flex-shrink-0"></div>
+                           <!-- Article Content -->
+                           <div class="text-center md:text-left">
+                               <h3 class="font-bold text-xl">Teacher</h3>
+                               <p class="text-gray-600 mt-2 max-w-md">Interested in discussing design, sharing ideas, or exploring innovations in product design? Feel free to reach out—let's keep the conversation going.</p>
+                           </div>
+                      </div>
+                  </div>
+                  <!-- Pagination/Navigation Button -->
+                  <div class="text-center mt-12">
+                      <button class="p-4 border-2 border-gray-300 rounded-full hover:bg-gray-100">
+                         <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" /></svg>
+                      </button>
+                  </div>
+             </section>
+        </main>
+
+        <!-- ================= FOOTER ================= -->
+        <footer class="text-center py-16 mt-16 border-t border-gray-200">
+             <!-- Footer Content -->
+             <div class="flex flex-col items-center">
+                 <h2 class="text-2xl font-bold">Let's Stay Connected</h2>
+                 <!-- Decorative Line -->
+                 <div class="w-20 h-1 bg-gray-800 my-4 rounded"></div>
+                 <!-- Social Media Links -->
+                 <div class="flex justify-center space-x-6 mt-2 text-gray-500">
+                     <a href="#" class="hover:text-gray-900">Telegram</a>
+                     <a href="#" class="hover:text-gray-900">Instagram</a>
+                     <a href="#" class="hover:text-gray-900">YouTube</a>
+                 </div>
+             </div>
+        </footer>
+
+    </div>
+</body>
+</html>
