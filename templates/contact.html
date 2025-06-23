@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ICEBERG - Contact</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="text-gray-800">
+
+    <!-- Main Container: wraps entire page content -->
+    <div class="container mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+
+        <!-- Header: logo and navigation -->
+        <header class="relative flex justify-center items-center py-6">
+            <!-- Logo -->
+            <div class="absolute left-4 text-2xl font-bold tracking-wider">
+                <a href="index.html">ICEBERG</a>
+            </div>
+            <!-- Navigation Bar: main site navigation links -->
+            <nav class="hidden md:flex items-center justify-center space-x-2">
+                <a href="index.html" class="nav-btn px-6 py-2 border border-gray-200 rounded-full text-gray-600 hover:bg-gray-100 font-medium">Home</a>
+                <a href="about.html" class="nav-btn px-6 py-2 border border-gray-200 rounded-full text-gray-600 hover:bg-gray-100 font-medium">About us</a>
+                <a href="register.html" class="nav-btn px-6 py-2 border border-gray-200 rounded-full text-gray-600 hover:bg-gray-100 font-medium">Registration</a>
+                <a href="contact.html" class="nav-btn nav-btn-active px-6 py-2 border border-gray-200 rounded-full font-medium">Contact</a>
+            </nav>
+            <!-- Mobile Menu can be added here if needed -->
+        </header>
+
+        <!-- Main Content: Contact section -->
+        <main>
+             <section class="py-16 md:py-24">
+                 <!-- Title and Tagline -->
+                 <div class="text-center flex flex-col items-center">
+                    <div class="flex items-center gap-4">
+                       <h1 class="text-4xl md:text-6xl font-bold tracking-tighter">Get in Touch</h1>
+                       <span class="bg-gray-800 text-white text-xs font-bold px-3 py-1 rounded-full">ICEBERG</span>
+                    </div>
+                     <p class="text-lg text-gray-600 mt-6 max-w-2xl mx-auto">Whether you have a specific question about our programs, need personalized advice for your academic journey, or are simply curious to learn more, we welcome the conversation. There's no commitment and no pressure - just clear answers and helpful guidance from our team here in Shinjuku. Contact us today to take the next step.</p>
+                 </div>
+
+                 <!-- Chat Call-to-Action button -->
+                 <div class="text-center my-8">
+                     <button class="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 font-semibold inline-flex items-center space-x-2 shadow-md">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.828 8.828 0 01-4.32-1.142L2.247 17.65a.5.5 0 01-.635-.727l1.96-3.82a6.972 6.972 0 01-1.572-4.103C2 6.134 5.582 3 10 3s8 3.134 8 7zM7 9a1 1 0 11-2 0 1 1 0 012 0zm4 0a1 1 0 11-2 0 1 1 0 012 0zm4 0a1 1 0 11-2 0 1 1 0 012 0z" clip-rule="evenodd" /></svg>
+                        <span>Chat with us</span>
+                     </button>
+                 </div>
+                 <p class="text-center text-gray-500 mb-8">or ask questions here</p>
+
+                 <!-- Contact Form container -->
+                 <div class="max-w-xl mx-auto bg-white p-8 sm:p-12 rounded-2xl shadow-lg border border-gray-100">
+                     <form action="#" method="POST">
+                         <div class="space-y-8">
+                            <div>
+                                <input type="text" name="contact-full-name" id="contact-full-name" placeholder="Full Name" class="mt-1 block w-full py-3 form-input text-lg">
+                            </div>
+                             <div>
+                                <input type="tel" name="contact-phone" id="contact-phone" placeholder="Phone number" class="mt-1 block w-full py-3 form-input text-lg">
+                            </div>
+                             <div>
+                                <textarea name="contact-question" id="contact-question" rows="4" placeholder="What would you like to ask about?" class="mt-1 block w-full py-3 form-input text-lg"></textarea>
+                            </div>
+                            <div class="text-center pt-4">
+                                <button type="submit" class="bg-white text-black px-10 py-3 rounded-full hover:bg-gray-100 font-semibold text-lg transition-colors border-2 border-gray-300">Submit</button>
+                            </div>
+                         </div>
+                     </form>
+                 </div>
+            </section>
+        </main>
+
+        <!-- Footer: social links and branding -->
+        <footer class="text-center py-16 mt-16 border-t border-gray-200">
+             <div class="flex flex-col items-center">
+                 <h2 class="text-2xl font-bold">Let's Stay Connected</h2>
+                 <div class="w-20 h-1 bg-gray-800 my-4 rounded"></div>
+                 <div class="flex justify-center space-x-6 mt-2 text-gray-500">
+                     <a href="#" class="hover:text-gray-900">Telegram</a>
+                     <a href="#" class="hover:text-gray-900">Instagram</a>
+                     <a href="#" class="hover:text-gray-900">YouTube</a>
+                 </div>
+             </div>
+        </footer>
+
+    </div>
+</body>
+</html>
