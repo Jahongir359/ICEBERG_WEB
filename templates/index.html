@@ -7,100 +7,115 @@
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 <body class="text-gray-800">
 
     <!-- Main Container: wraps the whole page content -->
-    <div class="container mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 mt-20">
+    <div class="mx-auto max-w-full sm:max-w-6xl px-4 sm:px-6 lg:px-8 mt-10 md:mt-20">
 
         <!-- ================= HEADER ================= -->
-        <header class="relative flex justify-center items-center py-6">
+        <header class="flex flex-col md:flex-row justify-between items-center py-6">
             <!-- Logo: top left corner -->
-            <div class="absolute left-4 text-2xl font-bold tracking-wider">
+            <div class="text-2xl font-bold tracking-wider mb-4 md:mb-0">
                 <a href="index.html">ICEBERG</a>
             </div>
             <!-- Navigation Bar: main site navigation, floating at top -->
-            <nav class="hidden md:flex items-center justify-center space-x-2 fixed top-0 left-0 w-full z-50 bg-white shadow">
-                <a href="about.html" class="nav-btn px-6 py-2 border border-gray-200 rounded-full text-gray-600 hover:bg-gray-100 font-medium">About us</a>
-                <a href="register.html" class="nav-btn px-6 py-2 border border-gray-200 rounded-full text-gray-600 hover:bg-gray-100 font-medium">Registration</a>
-                <a href="contact.html" class="nav-btn px-6 py-2 border border-gray-200 rounded-full text-gray-600 hover:bg-gray-100 font-medium">Contact</a>
+            <nav class="inline-flex items-center bg-white shadow-lg rounded-full p-1">
+                <a href="about.html" class="px-4 md:px-14 py-3 text-gray-800 font-medium hover:bg-gray-100 rounded-full">About us</a>
+                <a href="register.html" class="px-4 md:px-14 py-3 text-gray-800 font-medium hover:bg-gray-100 rounded-full">Registration</a>
+                <a href="contact.html" class="px-4 md:px-14 py-3 text-gray-800 font-medium hover:bg-gray-100 rounded-full">Contact</a>
             </nav>
-            <!-- Mobile Menu can be added here if needed -->
         </header>
-        
         <!-- ================= MAIN CONTENT ================= -->
         <main>
-            <!-- Hero Section: site title, subtitle, and social buttons -->
-            <section class="text-center py-16 md:py-24">
-                <div class="flex justify-center items-center gap-4">
-                    <!-- Heart Icon and Title -->
-                    <svg class="w-8 h-8 text-red-500" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
-                    <h1 class="text-5xl md:text-7xl font-bold tracking-tighter">ICE BERG</h1>
+            <!-- Hero Section -->
+            <section class="text-center py-12 md:py-20">
+                <div class="flex justify-center items-center">
+                    <img src="/img/ice.png" alt="Iceberg logo" class="h-20">
                 </div>
-                <!-- Subtitle -->
-                <p class="text-xl md:text-2xl text-gray-500 mt-4">Happiness is in science</p>
-                <!-- Social Buttons: Telegram and Instagram -->
-                <div class="mt-8 flex justify-center gap-4">
-                    <button class="bg-white border border-gray-300 px-5 py-2 rounded-lg hover:bg-gray-50 font-semibold flex items-center gap-2">
-                       <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M9.78 18.65l.28-4.23l-3.08-2.99l4.26-.62l1.9-3.86l1.9 3.86l4.26.62l-3.08 2.99l.73 4.22L12 16.32z"/></svg>
+                
+                <h1 class="text-4xl md:text-5xl font-bold tracking-tight text-gray-900 mt-12">Happiness is in science</h1>
+                <p class="mt-6 max-w-3xl mx-auto text-lg text-gray-600">
+                    Whether you're aiming to unlock your true academic potential, seeking expert guidance for your studies, or building a stronger foundation, we're ready to help you explore what lies beneath.
+                </p>
+                <div class="mt-8 flex flex-col md:flex-row justify-center items-center gap-4">
+                    <a href="#" class="bg-white border border-gray-200 px-6 py-3 rounded-full hover:bg-gray-50 font-semibold flex justify-center items-center gap-3 text-gray-700 shadow-sm w-full md:w-auto">
+                       <svg class="w-5 h-5 text-blue-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M9.78 18.65l.28-4.23l-3.08-2.99l4.26-.62l1.9-3.86l1.9 3.86l4.26.62l-3.08 2.99l.73 4.22L12 16.32z"/></svg>
                        Follow on Telegram
-                    </button>
-                     <button class="bg-white border border-gray-300 px-5 py-2 rounded-lg hover:bg-gray-50 font-semibold flex items-center gap-2">
-                        <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M7.8 2h8.4C19.4 2 22 4.6 22 7.8v8.4a5.8 5.8 0 0 1-5.8 5.8H7.8C4.6 22 2 19.4 2 16.2V7.8A5.8 5.8 0 0 1 7.8 2m-.2 2A3.6 3.6 0 0 0 4 7.6v8.8C4 18.39 5.61 20 7.6 20h8.8a3.6 3.6 0 0 0 3.6-3.6V7.6C20 5.61 18.39 4 16.4 4H7.6m9.65 1.5a1.25 1.25 0 0 1 1.25 1.25A1.25 1.25 0 0 1 17.25 8A1.25 1.25 0 0 1 16 6.75a1.25 1.25 0 0 1 1.25-1.25M12 7a5 5 0 0 1 5 5a5 5 0 0 1-5 5a5 5 0 0 1-5-5a5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3a3 3 0 0 0 3 3a3 3 0 0 0 3-3a3 3 0 0 0-3-3z"/></svg>
+                    </a>
+                     <a href="#" class="bg-white border border-gray-200 px-6 py-3 rounded-full hover:bg-gray-50 font-semibold flex justify-center items-center gap-3 text-gray-700 shadow-sm w-full md:w-auto">
+                        <svg class="w-5 h-5 text-red-600" fill="currentColor" viewBox="0 0 24 24"><path d="M21.582,6.186c-0.23-0.86-0.908-1.538-1.768-1.768C18.254,4,12,4,12,4S5.746,4,4.186,4.418 c-0.86,0.23-1.538,0.908-1.768,1.768C2,7.746,2,12,2,12s0,4.254,0.418,5.814c0.23,0.86,0.908,1.538,1.768,1.768 C5.746,20,12,20,12,20s6.254,0,7.814-0.418c0.861-0.23,1.538-0.908,1.768-1.768C22,16.254,22,12,22,12S22,7.746,21.582,6.186z M10,15.464V8.536L16,12L10,15.464z"></path></svg>
+                        Follow us on YouTube
+                    </a>
+                     <a href="#" class="bg-white border border-gray-200 px-6 py-3 rounded-full hover:bg-gray-50 font-semibold flex justify-center items-center gap-3 text-gray-700 shadow-sm w-full md:w-auto">
+                        <svg class="w-5 h-5 text-pink-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M7.8 2h8.4C19.4 2 22 4.6 22 7.8v8.4a5.8 5.8 0 0 1-5.8 5.8H7.8C4.6 22 2 19.4 2 16.2V7.8A5.8 5.8 0 0 1 7.8 2m-.2 2A3.6 3.6 0 0 0 4 7.6v8.8C4 18.39 5.61 20 7.6 20h8.8a3.6 3.6 0 0 0 3.6-3.6V7.6C20 5.61 18.39 4 16.4 4H7.6m9.65 1.5a1.25 1.25 0 0 1 1.25 1.25A1.25 1.25 0 0 1 17.25 8A1.25 1.25 0 0 1 16 6.75a1.25 1.25 0 0 1 1.25-1.25M12 7a5 5 0 0 1 5 5a5 5 0 0 1-5 5a5 5 0 0 1-5-5a5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3a3 3 0 0 0 3 3a3 3 0 0 0 3-3a3 3 0 0 0-3-3z"/></svg>
                         Follow on Instagram
-                    </button>
+                    </a>
                 </div>
             </section>
 
-            <!-- From Azizbek Section: instructor's message -->
-            <section id="from-azizbek" class="py-16">
-                 <div class="max-w-4xl mx-auto">
-                    <h2 class="text-3xl font-bold mb-8">From Azizbek</h2>
-                    <p class="text-gray-600 leading-relaxed">
-                        With over 8 years of dedicated experience in education, I've had the privilege of shaping the learning paths for students of every level. My career began with a deep love for Computer Science and an unwavering commitment to a student-centered approach to learning. As I've grown into a lead instructor, my focus has been on cultivating an environment that nurtures curiosity, critical thinking, and a zeal for discovery. I have supported students across diverse subjects like exam preparation, mastering complex scientific theories, and coding. I believe in the power to tailor my methods to different learning styles while ensuring educational goals are met. With comprehensive subject knowledge and a genuine desire to see every student thrive, I've honed a student-first approach to every lesson. I've guided groups, developed personalized study plans, and celebrated countless academic victories, from improved grades to significant success. Over the years, I've been proud to see my students overcome learning milestones, from understanding learning hurdles to gaining admission to top universities. My teaching philosophy is simple: create an encouraging and impactful educational experience that unlocks every student's potential.
-                    </p>
-                </div>
-            </section>
-
-            <!-- Short History Section: testimonials from Azizbek and Shohjahon -->
-            <section id="short-history" class="py-16 bg-gray-50 rounded-2xl p-8 md:p-12">
-                 <h2 class="text-3xl font-bold mb-12 text-center">Short History</h2>
-                 <div class="space-y-8 max-w-3xl mx-auto">
-                    <div class="bg-white p-6 rounded-xl shadow-sm flex items-start space-x-5">
-                        <img class="w-12 h-12 rounded-lg" src="https://placehold.co/48x48/1F2937/FFFFFF?text=A" alt="Azizbek">
-                        <div>
-                            <h3 class="font-bold text-lg">Azizbek</h3>
-                            <p class="text-gray-600 mt-1">"I spent about six months studying at ICEBERG. I ultimately chose a science course. I was a student -- my admission was determined by an interview coached with its principles and maxims to study true body of an educational institution. Now I'm preparing for the university exam."</p>
-                        </div>
+            <!-- From Azizbek Section -->
+            <section id="from-azizbek" class="py-16 md:py-24">
+                 <div class="max-w-5xl mx-auto flex flex-col md:flex-row items-start gap-8 md:gap-16">
+                    <div class="md:w-1/4">
+                        <h2 class="text-4xl font-bold">From Azizbek</h2>
                     </div>
-                     <div class="bg-white p-6 rounded-xl shadow-sm flex items-start space-x-5">
-                         <img class="w-12 h-12 rounded-lg" src="https://placehold.co/48x48/3B82F6/FFFFFF?text=S" alt="Shohjahon">
-                        <div>
-                            <h3 class="font-bold text-lg">Shohjahon</h3>
-                            <p class="text-gray-600 mt-1">"During the first year of math, we searched for another map to learn, and that led to the math teacher Azizbek from ICEBERG. The deep commitment to what we're doing -- the only teacher who sleeps at work -- and the many students who choose to do so makes us a family."</p>
+                    <div class="md:w-3/4">
+                        <p class="text-gray-600 leading-relaxed">
+                           With over 8 years of dedicated experience in education, I've had the privilege of shaping the learning paths for students at every level. My career began with a deep focus on curriculum design, where I developed a keen eye for detail and a student-centered approach to teaching. As I've grown into a lead tutoring role, my focus has been on creating seamless learning journeys that build genuine confidence and drive academic growth. I have supported students across diverse subjects like exam preparation, language arts, and mathematics, gaining a deep understanding of how to tailor my methods to different learning styles while ensuring educational goals are met. From foundational concepts to advanced placement preparation, I take a patient, data-informed, and student-first approach to every session. I have led study groups, developed new educational strategies, and collaborated closely with parents to turn a student's potential into tangible success. In recent years, I've been proud to see my students achieve incredible milestones, from overcoming learning hurdles to gaining admission to top universities and securing outstanding results. I am passionate about creating an impactful educational experience that unlocks every student's potential.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Short History Section -->
+            <section id="short-history" class="py-16 md:py-24 bg-gray-50">
+                 <div class="max-w-5xl mx-auto flex flex-col md:flex-row items-start gap-8 md:gap-16">
+                    <div class="md:w-1/4">
+                        <h2 class="text-4xl font-bold">Short history</h2>
+                    </div>
+                    <div class="md:w-3/4 space-y-8">
+                        <div class="bg-white p-6 rounded-xl border border-gray-200 flex items-start space-x-5">
+                            <img class="w-12 h-12 rounded-lg object-cover" src="https://placehold.co/48x48/111827/FFFFFF?text=S" alt="Start21">
+                            <div>
+                                <h3 class="font-bold text-lg">Start21</h3>
+                                <p class="text-sm text-gray-500">2021 - Jahongir</p>
+                                <p class="text-gray-600 mt-2">"I spent close to six months studying at Start21, but I ultimately chose to leave after a critical realization. The experience exposed systemic issues that clashed with my principles, and I decided to step away to find an educational journey based on transparency and genuine growth."</p>
+                            </div>
                         </div>
+                         <div class="bg-white p-6 rounded-xl border border-gray-200 flex items-start space-x-5">
+                             <img class="w-12 h-12 rounded-lg object-cover" src="https://placehold.co/48x48/3B82F6/FFFFFF?text=B" alt="Brooklyn L.C">
+                            <div>
+                                <h3 class="font-bold text-lg">Brooklyn L.C</h3>
+                                <p class="text-sm text-gray-500">2023 - Azizbek</p>
+                                <p class="text-gray-600 mt-2">"My journey began with a search for a better way to teach, which led me to the well-known Brooklyn L.C. I tried to join their team, but soon faced a conflict of principles: I could not follow methods that prioritized profit over student potential. The decision to walk away wasn't for myself, but for every student who deserves an education built on integrity."</p>
+                            </div>
+                        </div>
+                        <p class="text-gray-600 leading-relaxed pt-4">
+                            That is precisely why ICEBERG was created. From my experience, I took the effective strategies that worked and meticulously fixed the parts that failed students. This deep commitment to what truly matters—the solid foundation of integrity and care that lies just beneath the surface—is our promise. It's not just our philosophy; it's how we became ICEBERG.
+                        </p>
                     </div>
                  </div>
             </section>
 
-            <!-- Reviews Section: student reviews -->
+            <!-- Reviews Section -->
             <section id="reviews" class="py-16">
                 <h2 class="text-3xl font-bold mb-12 text-center">Reviews from students</h2>
-                 <div class="grid md:grid-cols-2 gap-8 lg:gap-12">
+                 <div class="max-w-5xl mx-auto grid md:grid-cols-2 gap-8 lg:gap-12">
                     <div class="bg-gray-50 p-6 rounded-2xl">
                          <div class="bg-white p-8 rounded-xl flex justify-center items-center shadow-inner">
                              <img src="https://placehold.co/200x400/FFFFFF/111827?text=App+UI" alt="App screenshot" class="rounded-lg h-80 object-cover border">
                          </div>
-                         <h3 class="font-bold text-xl mt-6">Shohjahon - students review</h3>
-                         <p class="text-gray-600 mt-2">"It was my first experience to learn here and there is no problem in any subjects. Clear explanation about curriculum and understandable methods."</p>
+                         <h3 class="font-bold text-xl mt-6">Shoxjahon - students review</h3>
+                         <p class="text-gray-600 mt-2">"Kaso YC (formerly Elkaso) is an online B2B platform that facilitates order processing and communication between"</p>
                     </div>
                     <div class="bg-gray-50 p-6 rounded-2xl">
                           <div class="bg-white p-8 rounded-xl flex justify-center items-center shadow-inner">
                               <img src="https://placehold.co/200x400/FFFFFF/111827?text=App+UI" alt="App screenshot" class="rounded-lg h-80 object-cover border">
                          </div>
-                         <h3 class="font-bold text-xl mt-6">Qosim - students review</h3>
-                         <p class="text-gray-600 mt-2">"Qosim, a student from ICEBERG, says it's an online platform that will prepare students for both university exams and the SAT. It will provide the necessary knowledge and test exams."</p>
+                         <h3 class="font-bold text-xl mt-6">qosim - students review</h3>
+                         <p class="text-gray-600 mt-2">"Kaso YC (formerly Elkaso) is an online B2B platform that facilitates order processing and communication between"</p>
                     </div>
                 </div>
             </section>
