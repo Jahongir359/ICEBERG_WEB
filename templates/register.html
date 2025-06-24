@@ -7,7 +7,7 @@
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="../css/style.css">
     <style>
         .form-input-underline {
             border: none;
@@ -36,12 +36,11 @@
                 <a href="index.html">ICEBERG</a>
             </div>
             <!-- Navigation Bar -->
-            <nav class="mt-4 md:mt-0">
-                <div class="flex flex-col md:flex-row items-center bg-white shadow-lg rounded-lg md:rounded-full p-2 md:p-1 space-y-2 md:space-y-0">
-                    <a href="index.html" class="px-4 md:px-8 py-2 text-gray-600 hover:bg-gray-100 rounded-full w-full md:w-auto text-center">Home</a>
-                    <a href="about.html" class="px-4 md:px-8 py-2 text-gray-600 hover:bg-gray-100 rounded-full w-full md:w-auto text-center">About us</a>
-                    <a href="contact.html" class="px-4 md:px-8 py-2 text-gray-600 hover:bg-gray-100 rounded-full w-full md:w-auto text-center">Contact</a>
-                </div>
+            <nav class="inline-flex overflow-x-auto items-center bg-white shadow-lg rounded-full p-1 space-x-2">
+                <!-- Mobile/desktop nav -->
+                <a href="index.html" class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-full">Home</a>
+                <a href="about.html" class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-full">About us</a>
+                <a href="contact.html" class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-full">Contact</a>
             </nav>
         </header>
 
