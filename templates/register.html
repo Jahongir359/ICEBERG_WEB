@@ -7,61 +7,80 @@
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        .form-input-underline {
+            border: none;
+            border-bottom: 1px solid #e2e8f0; /* gray-300 */
+            padding-left: 2px;
+            padding-right: 2px;
+            border-radius: 0;
+        }
+        .form-input-underline:focus {
+            outline: none;
+            box-shadow: none;
+            border-bottom-color: #4a5568; /* gray-700 */
+            --tw-ring-shadow: 0 0 #0000; /* Remove focus ring */
+        }
+    </style>
 </head>
-<body class="text-gray-800">
+<body class="text-gray-800 bg-gray-50">
 
     <!-- Main Container: wraps entire page content -->
     <div class="container mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
 
         <!-- Header: logo and navigation -->
-        <header class="relative flex justify-center items-center py-6">
+        <header class="flex flex-col md:flex-row justify-between items-center py-6">
             <!-- Logo -->
-            <div class="absolute left-4 text-2xl font-bold tracking-wider">
+            <div class="text-2xl font-bold tracking-wider">
                 <a href="index.html">ICEBERG</a>
             </div>
             <!-- Navigation Bar -->
-            <nav class="hidden md:flex items-center justify-center space-x-2">
-                <a href="index.html" class="nav-btn px-6 py-2 border border-gray-200 rounded-full text-gray-600 hover:bg-gray-100 font-medium">Home</a>
-                <a href="about.html" class="nav-btn px-6 py-2 border border-gray-200 rounded-full text-gray-600 hover:bg-gray-100 font-medium">About us</a>
-                <a href="register.html" class="nav-btn nav-btn-active px-6 py-2 border border-gray-200 rounded-full font-medium">Registration</a>
-                <a href="contact.html" class="nav-btn px-6 py-2 border border-gray-200 rounded-full text-gray-600 hover:bg-gray-100 font-medium">Contact</a>
+            <nav class="mt-4 md:mt-0">
+                <div class="flex flex-col md:flex-row items-center bg-white shadow-lg rounded-lg md:rounded-full p-2 md:p-1 space-y-2 md:space-y-0">
+                    <a href="index.html" class="px-4 md:px-8 py-2 text-gray-600 hover:bg-gray-100 rounded-full w-full md:w-auto text-center">Home</a>
+                    <a href="about.html" class="px-4 md:px-8 py-2 text-gray-600 hover:bg-gray-100 rounded-full w-full md:w-auto text-center">About us</a>
+                    <a href="contact.html" class="px-4 md:px-8 py-2 text-gray-600 hover:bg-gray-100 rounded-full w-full md:w-auto text-center">Contact</a>
+                </div>
             </nav>
-            <!-- Mobile Menu can be added here if needed -->
         </header>
 
         <!-- Main Content: registration section -->
         <main>
-             <section class="py-16 md:py-24">
+             <section class="py-12 md:py-20">
                  <!-- Section Title: heading and subtitle -->
                  <div class="text-center">
-                     <h1 class="text-4xl md:text-6xl font-bold tracking-tighter">REGISTER</h1>
-                     <p class="text-xl text-gray-500 mt-4">HAPPINESS IS IN SCIENCE !!!</p>
+                     <h1 class="text-5xl md:text-6xl font-bold tracking-wider text-gray-800">REGISTER</h1>
+                     <p class="text-xl text-gray-500 mt-4 tracking-widest">HAPPINESS IS IN SCIENCE !!!</p>
                  </div>
                  <!-- Form Container: white card wrapper -->
-                 <div class="max-w-xl mx-auto mt-12 bg-white p-8 sm:p-12 rounded-2xl shadow-lg border border-gray-100">
+                 <div class="max-w-2xl mx-auto mt-12 bg-white p-8 sm:p-12 rounded-2xl shadow-lg">
                      <!-- Registration Form -->
                      <form action="#" method="POST">
-                         <div class="space-y-8">
+                         <div class="space-y-10">
                             <!-- Full Name input -->
                             <div>
-                                <input type="text" name="reg-full-name" id="reg-full-name" placeholder="Full Name" class="mt-1 block w-full py-3 form-input text-lg">
+                                <label for="reg-full-name" class="block text-sm font-medium text-gray-500">Full Name</label>
+                                <input type="text" name="reg-full-name" id="reg-full-name" value="Ribal Shamseddine" class="mt-1 block w-full py-2 bg-transparent form-input-underline focus:outline-none">
                             </div>
                             <!-- Email input -->
                              <div>
-                                <input type="email" name="reg-email" id="reg-email" placeholder="Email" class="mt-1 block w-full py-3 form-input text-lg">
+                                <label for="reg-email" class="block text-sm font-medium text-gray-500">Email</label>
+                                <input type="email" name="reg-email" id="reg-email" value="ribal.uxil0@gmail.com" class="mt-1 block w-full py-2 bg-transparent form-input-underline focus:outline-none">
                             </div>
                             <!-- Phone input -->
                              <div>
-                                <input type="tel" name="reg-phone" id="reg-phone" placeholder="Phone number" class="mt-1 block w-full py-3 form-input text-lg">
+                                <label for="reg-phone" class="block text-sm font-medium text-gray-500">Phone number</label>
+                                <input type="tel" name="reg-phone" id="reg-phone" value="...................." class="mt-1 block w-full py-2 bg-transparent form-input-underline focus:outline-none">
                             </div>
                             <!-- Study Goal textarea -->
                              <div>
-                                <textarea name="reg-study-goal" id="reg-study-goal" rows="4" placeholder="What do you want to study?" class="mt-1 block w-full py-3 form-input text-lg"></textarea>
+                                <label for="reg-study-goal" class="block text-sm font-medium text-gray-500">What do you want to study?</label>
+                                <textarea name="reg-study-goal" id="reg-study-goal" rows="4" class="mt-1 block w-full py-2 bg-transparent form-input-underline focus:outline-none">....................</textarea>
                             </div>
                             <!-- Submit button -->
-                            <div class="text-center pt-4">
-                                <button type="submit" class="bg-white text-black px-10 py-3 rounded-full hover:bg-gray-100 font-semibold text-lg transition-colors border-2 border-gray-300">Register</button>
+                            <div class="text-center pt-6">
+                                <button type="submit" class="bg-white text-gray-700 px-10 py-3 rounded-full hover:bg-gray-100 font-semibold transition-colors border border-gray-200 shadow-md">Register</button>
                             </div>
                          </div>
                      </form>
