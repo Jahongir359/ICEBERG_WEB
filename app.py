@@ -44,9 +44,10 @@ def questions():
 
 @app.route('/contacts')
 def contacts_list():
-    conn = get_db_connection()
-    contacts = conn.execute('SELECT * FROM contacts').fetchall()
-    conn.close()
+    with sqlite3.connect('database.db') as conn:
+        cursor = conn.cursor()
+        cursor.execute('SELECT * FROM contacts')
+        contacts = cursor.fetchall()
     return render_template('contacts_list.html', contacts=contacts)
 
 @app.route('/contact', methods=['GET', 'POST'])
