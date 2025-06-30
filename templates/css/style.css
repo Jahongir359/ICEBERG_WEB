@@ -1,0 +1,241 @@
+@charset "UTF-8";
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap');
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #ebe4e4;
+    color: #214caa;
+}
+
+.nav-btn-active {
+    background-color: #F3F4F6;
+    font-weight: 700;
+    color: #111827;
+}
+
+.form-input {
+    border: none;
+    border-bottom: 1px solid #D1D5DB;
+    border-radius: 0;
+    padding-left: 0;
+    padding-right: 0;
+    background-color: transparent;
+}
+
+.form-input:focus {
+    outline: none;
+    box-shadow: none;
+    border-bottom: 2px solid #111827;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.top-banner {
+    background-color: #ffffff;
+    color: #0a0a0a;
+    width: 100%;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.banner-content {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.banner-icon {
+    width: 16px;
+    height: 16px;
+    fill: currentColor;
+}
+
+.banner-text {
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.banner-text a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.banner-text a:hover {
+    text-decoration: underline;
+}
+
+.main-content {
+    padding: 40px;
+    text-align: center;
+}
+        /* Import a font to match the design */
+
+
+        /* A container to center and set the context for the component */
+        .component-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 60px 20px;
+            font-family: 'Inter', sans-serif;
+            background-color: #4a3aff;  /* Main purple background */
+            background-color: cover;
+            width: cover;
+            overflow-x: clip;
+            box-sizing: border-box;
+            -webkit-font-smoothing: antialiased;
+            font-variant-ligatures: none;
+        }
+
+        /* The main section wrapper */
+        .why-choose-us-section {
+            width: 100%;
+            max-width: 1100px;
+            text-align: center;
+            color: #ffffff;
+            position: relative; /* Needed for positioning decorative shapes */
+            overflow: hidden;   /* Keeps decorative shapes from spilling out */
+            padding: 40px 0;    /* Padding inside the purple area */
+        }
+        
+        /* Main Heading */
+        .section-title {
+            font-size: clamp(2.5rem, 5vw, 3.5rem); /* Responsive font size */
+            font-weight: 800;
+            margin-bottom: 50px;
+            line-height: 1.2;
+            z-index: 1; /* Ensure title is above decorative shapes */
+            position: relative;
+        }
+
+        /* Container for the three feature cards */
+        .features-container {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap; /* Allows cards to wrap on smaller screens */
+            margin-bottom: 50px;
+            z-index: 1; /* Ensure cards are above decorative shapes */
+            position: relative;
+        }
+
+        /* Styling for each individual card */
+        .feature-card {
+            background-color: #ffffff;
+            color: #212529; /* Dark text color for readability */
+            padding: 30px;
+            border-radius: 24px;
+            width: 100%;
+            max-width: 320px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            text-align: left;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        /* Container for the icon */
+        .icon-container {
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .icon-container svg {
+            width: 32px;
+            height: 32px;
+            fill: #ffffff;
+        }
+
+        /* Specific background colors for each icon container */
+        .icon-blue { background-color: #0d6efd; }
+        .icon-pink { background-color: #d63384; }
+        .icon-orange { background-color: #fd7e14; }
+        
+        /* Card headline styling */
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        /* Card description styling */
+        .card-description {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: #495057; /* Slightly lighter text for description */
+        }
+        
+        /* 'Get Started' button styling */
+        .cta-button {
+            display: inline-block;
+            background-color: #4018d4; /* Darker purple for button */
+            color: #ffffff;
+            padding: 15px 40px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-decoration: none;
+            border: none;
+            border-radius: 100px; /* Fully rounded for a pill shape */
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+            z-index: 1;
+            position: relative;
+        }
+
+        .cta-button:hover {
+            background-color: #552bee;
+            transform: translateY(-2px);
+        }
+
+        /* --- Decorative Shapes --- */
+        .deco-shape {
+            position: absolute;
+            z-index: 0;
+            opacity: 0.8;
+            background-blend-mode: screen;
+        }
+
+        /* Left decorative shape */
+        .shape-1 {
+            width: 180px;
+            height: 280px;
+            background: 
+                linear-gradient(45deg, rgba(45, 156, 219, 0.7), rgba(47, 128, 237, 0.7)),
+                radial-gradient(circle, rgba(45, 156, 219, 0.5) 0%, rgba(0,0,0,0) 70%);
+            border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+            left: -60px;
+            top: 50%;
+            transform: translateY(-50%) rotate(-15deg);
+            animation: morph 8s ease-in-out infinite;
+        }
+
+        /* Right decorative shape */
+        .shape-2 {
+            width: 180px;
+            height: 280px;
+            background: 
+                linear-gradient(-45deg, rgba(242, 153, 74, 0.7), rgba(235, 87, 87, 0.7)),
+                radial-gradient(circle, rgba(242, 153, 74, 0.5) 0%, rgba(0,0,0,0) 70%);
+            border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+            right: -60px;
+            bottom: -50px;
+            transform: rotate(20deg);
+            animation: morph 10s ease-in-out infinite alternate;
+        }
+        
+        /* Animation for the decorative shapes */
+        @keyframes morph {
+            0% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; transform: translateY(-50%) rotate(-15deg); }
+            50% { border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%; transform: translateY(-45%) rotate(5deg); }
+            100% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; transform: translateY(-50%) rotate(-15deg); }
+        }

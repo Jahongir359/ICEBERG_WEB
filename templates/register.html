@@ -27,26 +27,39 @@
 <body class="text-gray-800 bg-gray-50">
 
     <!-- Main Container: wraps entire page content -->
-    <div class="container mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+    <div class="mx-auto max-w-full">
 
         <!-- Header: logo and navigation -->
-        <header class="flex flex-col md:flex-row justify-between items-center py-6">
+        <header class="flex flex-col md:flex-row justify-between items-center py-6 px-4 sm:px-6 lg:px-8">
             <!-- Logo -->
             <div class="text-2xl font-bold tracking-wider">
                 <a href="index.html">ICEBERG</a>
             </div>
-            <!-- Navigation Bar -->
-            <nav class="inline-flex overflow-x-auto items-center bg-white shadow-lg rounded-full p-1 space-x-2">
-                <!-- Mobile/desktop nav -->
-                <a href="index.html" class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-full">Home</a>
-                <a href="about.html" class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-full">About us</a>
-                <a href="contact.html" class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-full">Contact</a>
+            <!-- Navigation Bar: main site navigation, floating at top -->
+            <nav class="flex flex-wrap items-center justify-center md:justify-end space-x-6 mt-4 md:mt-0">
+                <a href="index.html" class="text-[#4E3A52] hover:text-blue-600 font-semibold transition-colors duration-200">
+                    Home
+                </a>
+                <a href="about.html" class="text-[#4E3A52] hover:text-blue-600 font-semibold transition-colors duration-200">
+                    About Us
+                </a>
+                <a href="courses.html" class="text-[#4E3A52] hover:text-blue-600 font-semibold transition-colors duration-200">
+                    Courses
+                </a>
+                <a href="register.html"
+                     class="bg-[#4E3A52] text-white px-5 py-2 rounded-full hover:bg-opacity-90 transition-colors duration-200">
+                    Register
+                </a>
+                <a href="contact.html"
+                     class="border border-[#4E3A52] text-[#4E3A52] px-5 py-2 rounded-full hover:bg-[#4E3A52] hover:text-white transition-colors duration-200">
+                    Contact
+                </a>
             </nav>
         </header>
 
         <!-- Main Content: registration section -->
         <main>
-             <section class="py-12 md:py-20">
+             <section class="py-12 md:py-20 px-4 sm:px-6 lg:px-8">
                  <!-- Section Title: heading and subtitle -->
                  <div class="text-center">
                      <h1 class="text-5xl md:text-6xl font-bold tracking-wider text-gray-800">REGISTER</h1>
@@ -88,7 +101,7 @@
         </main>
 
         <!-- Footer: social links -->
-        <footer class="text-center py-16 mt-16 border-t border-gray-200">
+        <footer class="text-center py-16 mt-16 border-t border-gray-200 px-4 sm:px-6 lg:px-8">
              <div class="flex flex-col items-center">
                  <h2 class="text-2xl font-bold">Let's Stay Connected</h2>
                  <div class="w-20 h-1 bg-gray-800 my-4 rounded"></div>
