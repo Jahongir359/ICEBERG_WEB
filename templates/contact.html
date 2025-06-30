@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ICEBERG - Contact</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../css/style.css">
+    <style>
+        .form-input-underline {
+            border: none;
+            border-bottom: 1px solid #e2e8f0; /* gray-300 */
+            padding-left: 2px;
+            padding-right: 2px;
+            border-radius: 0;
+        }
+        .form-input-underline:focus {
+            outline: none;
+            box-shadow: none;
+            border-bottom-color: #4a5568; /* gray-700 */
+            --tw-ring-shadow: 0 0 #0000; /* Remove focus ring */
+        }
+    </style>
+</head>
+<body class="text-gray-800 bg-gray-50">
+
+    <!-- Main Container: wraps entire page content -->
+    <div class="mx-auto max-w-full">
+
+        <!-- Header: logo and navigation -->
+        <header class="flex flex-col md:flex-row justify-between items-center py-6 px-4 sm:px-6 lg:px-8">
+            <!-- Logo -->
+            <div class="text-2xl font-bold tracking-wider">
+                <a href="index.html">ICEBERG</a>
+            </div>
+            <!-- Navigation Bar: main site navigation, floating at top -->
+            <nav class="flex flex-wrap items-center justify-center md:justify-end space-x-6 mt-4 md:mt-0">
+                <a href="index.html" class="text-[#4E3A52] hover:text-blue-600 font-semibold transition-colors duration-200">
+                    Home
+                </a>
+                <a href="about.html" class="text-[#4E3A52] hover:text-blue-600 font-semibold transition-colors duration-200">
+                    About Us
+                </a>
+                <a href="courses.html" class="text-[#4E3A52] hover:text-blue-600 font-semibold transition-colors duration-200">
+                    Courses
+                </a>
+                <a href="register.html"
+                     class="bg-[#4E3A52] text-white px-5 py-2 rounded-full hover:bg-opacity-90 transition-colors duration-200">
+                    Register
+                </a>
+                <a href="contact.html"
+                     class="border border-[#4E3A52] text-[#4E3A52] px-5 py-2 rounded-full hover:bg-[#4E3A52] hover:text-white transition-colors duration-200">
+                    Contact
+                </a>
+            </nav>
+        </header>
+
+        <!-- Main Content: contact section -->
+        <main>
+             <section class="py-12 md:py-20 px-4 sm:px-6 lg:px-8">
+                 <!-- Section Title: heading and subtitle -->
+                 <div class="text-center">
+                     <h1 class="text-5xl md:text-6xl font-bold tracking-wider text-gray-800">CONTACT US</h1>
+                     <p class="text-xl text-gray-500 mt-4 tracking-widest">WE'D LOVE TO HEAR FROM YOU</p>
+                 </div>
+                 <!-- Form Container: white card wrapper -->
+                 <div class="max-w-2xl mx-auto mt-12 bg-white p-8 sm:p-12 rounded-2xl shadow-lg">
+                     <!-- Contact Form -->
+                     <form action="#" method="POST">
+                         <div class="space-y-10">
+                            <!-- Full Name input -->
+                            <div>
+                                <label for="contact-full-name" class="block text-sm font-medium text-gray-500">Full Name</label>
+                                <input type="text" name="contact-full-name" id="contact-full-name" class="mt-1 block w-full py-2 bg-transparent form-input-underline focus:outline-none">
+                            </div>
+                            <!-- Email input -->
+                             <div>
+                                <label for="contact-email" class="block text-sm font-medium text-gray-500">Email</label>
+                                <input type="email" name="contact-email" id="contact-email" class="mt-1 block w-full py-2 bg-transparent form-input-underline focus:outline-none">
+                            </div>
+                            <!-- Message textarea -->
+                             <div>
+                                <label for="contact-message" class="block text-sm font-medium text-gray-500">Message</label>
+                                <textarea name="contact-message" id="contact-message" rows="4" class="mt-1 block w-full py-2 bg-transparent form-input-underline focus:outline-none"></textarea>
+                            </div>
+                            <!-- Submit button -->
+                            <div class="text-center pt-6">
+                                <button type="submit" class="bg-white text-gray-700 px-10 py-3 rounded-full hover:bg-gray-100 font-semibold transition-colors border border-gray-200 shadow-md">Send Message</button>
+                            </div>
+                         </div>
+                     </form>
+                 </div>
+            </section>
+        </main>
+
+        <!-- Footer: social links -->
+        <footer class="text-center py-16 mt-16 border-t border-gray-200 px-4 sm:px-6 lg:px-8">
+             <div class="flex flex-col items-center">
+                 <h2 class="text-2xl font-bold">Let's Stay Connected</h2>
+                 <div class="w-20 h-1 bg-gray-800 my-4 rounded"></div>
+                 <div class="flex justify-center space-x-6 mt-2 text-gray-500">
+                     <a href="#" class="hover:text-gray-900">Telegram</a>
+                     <a href="#" class="hover:text-gray-900">Instagram</a>
+                     <a href="#" class="hover:text-gray-900">YouTube</a>
+                 </div>
+             </div>
+        </footer>
+
+    </div>
+</body>
+</html>

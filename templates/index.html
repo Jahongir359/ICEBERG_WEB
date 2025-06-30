@@ -7,30 +7,85 @@
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 <body class="text-gray-800">
-
     <!-- Main Container: wraps the whole page content -->
-    <div class="mx-auto max-w-full sm:max-w-6xl px-4 sm:px-6 lg:px-8 mt-10 md:mt-20">
+    <div class="mx-auto max-w-full">
 
         <!-- ================= HEADER ================= -->
-        <header class="flex flex-col md:flex-row justify-between items-center py-6">
-            <!-- Logo: top left corner -->
-            <div class="text-2xl font-bold tracking-wider mb-4 md:mb-0">
-                <a href="index.html">ICEBERG</a>
+        <nav class="bg-white shadow-lg">
+            <div class="max-w-6xl mx-auto px-4">
+                <div class="flex justify-between">
+                    <div class="flex space-x-7">
+                        <div>
+                            <!-- Website Logo -->
+                            <a href="index.html" class="flex items-center py-4 px-2">
+                                <span class="font-semibold text-gray-500 text-lg">ICEBERG</span>
+                            </a>
+                        </div>
+                    </div>
+                    <!-- Primary Navbar items -->
+                    <div class="flex items-center space-x-0"></div>
+                        <a href="index.html" class="py-4 px-2 text-gray-500 font-semibold hover:text-green-500 transition duration-300">Home</a>
+                        <a href="about.html" class="py-4 px-2 text-gray-500 font-semibold hover:text-green-500 transition duration-300">About Us</a>
+                        <a href="register.html" class="py-4 px-2 text-gray-500 font-semibold hover:text-green-500 transition duration-300">Registration</a>
+                        <a href="contact.html" class="py-4 px-2 text-gray-500 font-semibold hover:text-green-500 transition duration-300">Contact</a>
+                        <a href="questions.html" class="py-4 px-2 text-gray-500 font-semibold hover:text-green-500 transition duration-300">FAQ</a>
+                    </div>
+                    <!-- Mobile menu button -->
+                    <div class="md:hidden flex items-center">
+                        <button class="outline-none mobile-menu-button">
+                        <svg class=" w-6 h-6 text-gray-500 hover:text-green-500 "
+                            x-show="!showMenu"
+                            fill="none"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                        >
+                            <path d="M4 6h16M4 12h16m-7 6h7"></path>
+                        </svg>
+                    </button>
+                    </div>
+                </div>
             </div>
-            <!-- Navigation Bar: main site navigation, floating at top -->
-            <nav class="inline-flex overflow-x-auto items-center bg-white shadow-lg rounded-full p-1 space-x-1">
-                <a href="about.html" class="px-4 md:px-14 py-3 text-gray-800 font-medium hover:bg-gray-100 rounded-full">About us</a>
-                <a href="register.html" class="px-4 md:px-14 py-3 text-gray-800 font-medium hover:bg-gray-100 rounded-full">Registration</a>
-                <a href="contact.html" class="px-4 md:px-14 py-3 text-gray-800 font-medium hover:bg-gray-100 rounded-full">Contact</a>
-            </nav>
-        </header>
+            <!-- mobile menu -->
+            <div class="hidden mobile-menu">
+                <ul class="">
+                    <li><a href="index.html" class="block text-sm px-2 py-4 text-white bg-green-500 font-semibold">Home</a></li>
+                    <li><a href="about.html" class="block text-sm px-2 py-4 hover:bg-green-500 transition duration-300">About Us</a></li>
+                    <li><a href="register.html" class="block text-sm px-2 py-4 hover:bg-green-500 transition duration-300">Registration</a></li>
+                    <li><a href="contact.html" class="block text-sm px-2 py-4 hover:bg-green-500 transition duration-300">Contact</a></li>
+                    <li><a href="questions.html" class="block text-sm px-2 py-4 hover:bg-green-500 transition duration-300">FAQ</a></li>
+                </ul>
+            </div>
+            <script>
+                const btn = document.querySelector("button.mobile-menu-button");
+                const menu = document.querySelector(".mobile-menu");
+        
+                btn.addEventListener("click", () => {
+                    menu.classList.toggle("hidden");
+                });
+            </script>
+        </nav>
+           <div class="top-banner">
+        <div class="banner-content">
+            <!-- Inline SVG for the phone icon -->
+            <svg class="banner-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+                <path d="M164.9 24.6c-7.7-18.6-28-28.5-47.4-23.2l-88 24C12.1 30.2 0 46 0 64C0 311.4 200.6 512 448 512c18 0 33.8-12.1 38.6-29.5l24-88c5.3-19.4-4.6-39.7-23.2-47.4l-96-40c-16.3-6.8-35.2-2.1-46.3 11.6L304.7 368C234.3 334.7 177.3 277.7 144 207.3L193.3 167c13.7-11.2 18.4-30 11.6-46.3l-40-96z"/>
+            </svg>
+            <!-- The text content, with a clickable telephone link -->
+            <span class="banner-text">
+                We're open! Call now: <a href="tel:+998-93-946-1699">(93) 998-93-946-1699</a>
+            </span>
+        </div>
+    </div>
         <!-- ================= MAIN CONTENT ================= -->
         <main>
             <!-- Hero Section -->
-            <section class="text-center py-12 md:py-20">
+            <section class="text-center py-12 md:py-20 px-4 sm:px-6 lg:px-8">
                 <div class="flex justify-center items-center">
                     <img src="/img/ice.png" alt="Iceberg logo" class="h-20">
                 </div>
@@ -40,15 +95,15 @@
                     Whether you're aiming to unlock your true academic potential, seeking expert guidance for your studies, or building a stronger foundation, we're ready to help you explore what lies beneath.
                 </p>
                 <div class="mt-8 flex flex-col md:flex-row justify-center items-center gap-4">
-                    <a href="#" class="bg-white border border-gray-200 px-6 py-3 rounded-full hover:bg-gray-50 font-semibold flex justify-center items-center gap-3 text-gray-700 shadow-sm w-full md:w-auto">
-                       <svg class="w-5 h-5 text-blue-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M9.78 18.65l.28-4.23l-3.08-2.99l4.26-.62l1.9-3.86l1.9 3.86l4.26.62l-3.08 2.99l.73 4.22L12 16.32z"/></svg>
-                       Follow on Telegram
+                    <a href="https://t.me/Iceberg_study_center" target="_blank" rel="noopener noreferrer" class="bg-white border border-gray-200 px-6 py-3 rounded-full hover:bg-blue-50 hover:border-blue-400 hover:text-blue-700 font-semibold flex justify-center items-center gap-3 text-gray-700 shadow-sm w-full md:w-auto transition-colors duration-200">
+                        <svg class="w-5 h-5 text-blue-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M9.78 18.65l.28-4.23l-3.08-2.99l4.26-.62l1.9-3.86l1.9 3.86l4.26.62l-3.08 2.99l.73 4.22L12 16.32z"/></svg>
+                        Follow on Telegram
                     </a>
-                     <a href="#" class="bg-white border border-gray-200 px-6 py-3 rounded-full hover:bg-gray-50 font-semibold flex justify-center items-center gap-3 text-gray-700 shadow-sm w-full md:w-auto">
+                    <a href="https://www.youtube.com/@ice_podcast" class="bg-white border border-gray-200 px-6 py-3 rounded-full hover:bg-red-50 hover:border-red-400 hover:text-red-700 font-semibold flex justify-center items-center gap-3 text-gray-700 shadow-sm w-full md:w-auto transition-colors duration-200">
                         <svg class="w-5 h-5 text-red-600" fill="currentColor" viewBox="0 0 24 24"><path d="M21.582,6.186c-0.23-0.86-0.908-1.538-1.768-1.768C18.254,4,12,4,12,4S5.746,4,4.186,4.418 c-0.86,0.23-1.538,0.908-1.768,1.768C2,7.746,2,12,2,12s0,4.254,0.418,5.814c0.23,0.86,0.908,1.538,1.768,1.768 C5.746,20,12,20,12,20s6.254,0,7.814-0.418c0.861-0.23,1.538-0.908,1.768-1.768C22,16.254,22,12,22,12S22,7.746,21.582,6.186z M10,15.464V8.536L16,12L10,15.464z"></path></svg>
                         Follow us on YouTube
                     </a>
-                     <a href="#" class="bg-white border border-gray-200 px-6 py-3 rounded-full hover:bg-gray-50 font-semibold flex justify-center items-center gap-3 text-gray-700 shadow-sm w-full md:w-auto">
+                    <a href="https://www.instagram.com/Iceberg_Study_Center" class="bg-white border border-gray-200 px-6 py-3 rounded-full hover:bg-pink-50 hover:border-pink-400 hover:text-pink-700 font-semibold flex justify-center items-center gap-3 text-gray-700 shadow-sm w-full md:w-auto transition-colors duration-200">
                         <svg class="w-5 h-5 text-pink-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M7.8 2h8.4C19.4 2 22 4.6 22 7.8v8.4a5.8 5.8 0 0 1-5.8 5.8H7.8C4.6 22 2 19.4 2 16.2V7.8A5.8 5.8 0 0 1 7.8 2m-.2 2A3.6 3.6 0 0 0 4 7.6v8.8C4 18.39 5.61 20 7.6 20h8.8a3.6 3.6 0 0 0 3.6-3.6V7.6C20 5.61 18.39 4 16.4 4H7.6m9.65 1.5a1.25 1.25 0 0 1 1.25 1.25A1.25 1.25 0 0 1 17.25 8A1.25 1.25 0 0 1 16 6.75a1.25 1.25 0 0 1 1.25-1.25M12 7a5 5 0 0 1 5 5a5 5 0 0 1-5 5a5 5 0 0 1-5-5a5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3a3 3 0 0 0 3 3a3 3 0 0 0 3-3a3 3 0 0 0-3-3z"/></svg>
                         Follow on Instagram
                     </a>
@@ -56,22 +111,52 @@
             </section>
 
             <!-- From Azizbek Section -->
-            <section id="from-azizbek" class="py-16 md:py-24">
-                 <div class="max-w-5xl mx-auto flex flex-col md:flex-row items-start gap-8 md:gap-16">
-                    <div class="md:w-1/4">
-                        <h2 class="text-4xl font-bold">From Azizbek</h2>
+            <section id="from-azizbek" class="py-16 md:py-24 bg-blue-600 text-white">
+     <div class="component-container px-4 sm:px-6 lg:px-8">
+        <section class="why-choose-us-section">
+            <!-- Decorative shapes in the background -->
+            <div class="deco-shape shape-1"></div>
+            <div class="deco-shape shape-2"></div>
+
+            <h2 class="section-title">Why choose ICEBERG?</h2>
+            
+            <div class="features-container">
+                <!-- Card 1: Updated Hexagon Icon -->
+                <div class="feature-card">
+                    <div class="icon-container icon-blue">
+                        <svg viewBox="0 0 24 24"><path d="M17.2 3H6.8l-3.2 9 3.2 9h10.4l3.2-9-3.2-9z"/></svg>
                     </div>
-                    <div class="md:w-3/4">
-                        <p class="text-gray-600 leading-relaxed">
-                           With over 8 years of dedicated experience in education, I've had the privilege of shaping the learning paths for students at every level. My career began with a deep focus on curriculum design, where I developed a keen eye for detail and a student-centered approach to teaching. As I've grown into a lead tutoring role, my focus has been on creating seamless learning journeys that build genuine confidence and drive academic growth. I have supported students across diverse subjects like exam preparation, language arts, and mathematics, gaining a deep understanding of how to tailor my methods to different learning styles while ensuring educational goals are met. From foundational concepts to advanced placement preparation, I take a patient, data-informed, and student-first approach to every session. I have led study groups, developed new educational strategies, and collaborated closely with parents to turn a student's potential into tangible success. In recent years, I've been proud to see my students achieve incredible milestones, from overcoming learning hurdles to gaining admission to top universities and securing outstanding results. I am passionate about creating an impactful educational experience that unlocks every student's potential.
-                        </p>
-                    </div>
+                    <h3 class="card-title">Built for your kid's unique needs</h3>
+                    <p class="card-description">Choose from 1000s of classes, from core academics to enrichment, supported by our concierge service.</p>
                 </div>
-            </section>
+                
+                <!-- Card 2: Updated Calendar Icon -->
+                <div class="feature-card">
+                    <div class="icon-container icon-pink">
+                         <svg viewBox="0 0 24 24"><path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-2 .9-2 2v12c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H5V9h14v9zM7 11h2v2H7v-2zm4 0h2v2h-2v-2zm4 0h2v2h-2v-2z"/></svg>
+                    </div>
+                    <h3 class="card-title">Live classes on your schedule</h3>
+                    <p class="card-description">Get personalized recommendations that fit your daily life by adding your kid's specific learning needs.</p>
+                </div>
+
+                <!-- Card 3: Updated Star in Circle Icon -->
+                <div class="feature-card">
+                    <div class="icon-container icon-orange">
+                         <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.15 13.84l-3.34-1.75-3.34 1.75 0.64-3.72-2.7-2.63 3.73-0.54L12 6.16l1.66 3.45 3.73 0.54-2.7 2.63 0.64 3.72z"/></svg>
+                    </div>
+                    <h3 class="card-title">Flexible plans for every family</h3>
+                    <p class="card-description">Plans designed to grow with you. Change anytime, and unused credits roll over each month.</p>
+                </div>
+            </div>
+
+            <a href="#" class="cta-button">Get Started</a>
+        </section>
+    </div>
+    </section>
 
             <!-- Short History Section -->
             <section id="short-history" class="py-16 md:py-24 bg-gray-50">
-                 <div class="max-w-5xl mx-auto flex flex-col md:flex-row items-start gap-8 md:gap-16">
+                 <div class="max-w-5xl mx-auto flex flex-col md:flex-row items-start gap-8 md:gap-16 px-4 sm:px-6 lg:px-8">
                     <div class="md:w-1/4">
                         <h2 class="text-4xl font-bold">Short history</h2>
                     </div>
@@ -100,38 +185,79 @@
             </section>
 
             <!-- Reviews Section -->
-            <section id="reviews" class="py-16">
+            <section id="reviews" class="py-16 bg-yellow-400">
                 <h2 class="text-3xl font-bold mb-12 text-center">Reviews from students</h2>
-                 <div class="max-w-5xl mx-auto grid md:grid-cols-2 gap-8 lg:gap-12">
+                 <div class="max-w-5xl mx-auto grid md:grid-cols-2 gap-8 lg:gap-12 px-4 sm:px-6 lg:px-8">
                     <div class="bg-gray-50 p-6 rounded-2xl">
-                         <div class="bg-white p-8 rounded-xl flex justify-center items-center shadow-inner">
-                             <img src="https://placehold.co/200x400/FFFFFF/111827?text=App+UI" alt="App screenshot" class="rounded-lg h-80 object-cover border">
-                         </div>
-                         <h3 class="font-bold text-xl mt-6">Shoxjahon - students review</h3>
-                         <p class="text-gray-600 mt-2">"Kaso YC (formerly Elkaso) is an online B2B platform that facilitates order processing and communication between"</p>
+                        <div class="bg-white p-8 rounded-xl flex justify-center items-center shadow-inner">
+                            <img src="/img/student1.png" alt="App screenshot" class="rounded-lg h-80 w-full object-contain border">
+                        </div>
+                        <h3 class="font-bold text-2xl mt-6 text-blue-800">
+                            <strong>From Confused to Confident in English Lit <br></strong>
+                        </h3>
+                        <p class="text-gray-600 mt-4">
+                            My AP English Lit essays were falling flat until I started working with Mr. 
+                            Harrison at Iceberg. He didn't just give me answers; he taught me how to truly read critically and analyze texts. 
+                            The one-on-one sessions were perfect for digging into complex material. My writing and grades improved dramatically, 
+                            but more importantly, I gained the confidence to actually share my ideas in class. I highly recommend Iceberg for any 
+                            student who wants to deepen their understanding of literature.
+                        </p>
                     </div>
                     <div class="bg-gray-50 p-6 rounded-2xl">
-                          <div class="bg-white p-8 rounded-xl flex justify-center items-center shadow-inner">
-                              <img src="https://placehold.co/200x400/FFFFFF/111827?text=App+UI" alt="App screenshot" class="rounded-lg h-80 object-cover border">
-                         </div>
-                         <h3 class="font-bold text-xl mt-6">qosim - students review</h3>
-                         <p class="text-gray-600 mt-2">"Kaso YC (formerly Elkaso) is an online B2B platform that facilitates order processing and communication between"</p>
+                        <div class="bg-white p-8 rounded-xl flex justify-center items-center shadow-inner">
+                            <img src="/img/student2.png" alt="App screenshot" class="rounded-lg h-80 w-full object-contain border">
+                        </div>
+                        <h3 class="font-bold text-2xl mt-6 text-blue-800">
+                            <strong>Finally Mastered Grammar and Aced My SATs!<br></strong>
+                        </h3>
+                        <p class="text-gray-600 mt-4">
+                        Grammar has always been my weak point. Comma splices, misplaced modifiers, you name it, I did it. With 
+                        the SATs coming up, I knew I had to get serious about improving my writing mechanics. A 
+                        friend who used Iceberg for chemistry suggested I try them for English.
+                        I was paired with a tutor named Chloe, and she was a lifesaver. She was incredibly organized and 
+                        created a personalized plan for me that targeted my specific weaknesses. We did focused grammar drills, 
+                        vocabulary-building exercises, and reviewed practice sections from the SAT writing test. She had all these
+                        little tricks and memory aids that made the rules stick in my head.
+                        The focused environment at the center was a huge help. It was impossible to get distracted.
+                        After a few months of weekly sessions, I took the SAT and my score on the Evidence-Based Reading
+                        and Writing section was 120 points higher than my first practice test! My writing in school assignments
+                         is much cleaner now, too. Iceberg gave me the specific tools and confidence I needed to succeed.
+                        </p>
                     </div>
                 </div>
             </section>
         </main>
         
         <!-- ================= FOOTER ================= -->
-        <footer class="text-center py-16 mt-16 border-t border-gray-200">
-             <div class="flex flex-col items-center">
-                 <h2 class="text-2xl font-bold">Let's Stay Connected</h2>
-                 <div class="w-20 h-1 bg-gray-800 my-4 rounded"></div>
-                 <div class="flex justify-center space-x-6 mt-2 text-gray-500">
-                     <a href="#" class="hover:text-gray-900">Telegram</a>
-                     <a href="#" class="hover:text-gray-900">Instagram</a>
-                     <a href="#" class="hover:text-gray-900">YouTube</a>
-                 </div>
-             </div>
+        <footer class="bg-[#4E3A52] text-white text-center py-16">
+            <div class="flex flex-col items-center px-4 sm:px-6 lg:px-8">
+                <h2 class="text-2xl font-bold">Stay Informed & Inspired</h2>
+                <div class="w-20 h-1 bg-white my-4 rounded"></div>
+                <p class="max-w-2xl">
+                    <strong>ICEBERG OFFICIAL SITE</strong>
+                </p>
+                <div class="flex justify-center space-x-6 mt-6">
+                    <a href="https://t.me/Iceberg_study_center" class="hover:text-gray-300 flex items-center gap-2">
+                        <svg class="w-6 h-6 text-blue-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M9.78 18.65l.28-4.23l-3.08-2.99l4.26-.62l1.9-3.86l1.9 3.86l4.26.62l-3.08 2.99l.73 4.22L12 16.32z"/>
+                        </svg>
+                        <span>Telegram</span>
+                    </a>
+                    <a href="https://www.instagram.com/Iceberg_Study_Center" class="hover:text-gray-300 flex items-center gap-2">
+                        <svg class="w-6 h-6 text-pink-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"></svg>
+                            <path d="M7.8 2h8.4C19.4 2 22 4.6 22 7.8v8.4a5.8 5.8 0 0 1-5.8 5.8H7.8C4.6 22 2 19.4 2 16.2V7.8A5.8 5.8 0 0 1 7.8 2m-.2 2A3.6 3.6 0 0 0 4 7.6v8.8C4 18.39 5.61 20 7.6 20h8.8a3.6 3.6 0 0 0 3.6-3.6V7.6C20 5.61 18.39 4 16.4 4H7.6m9.65 1.5a1.25 1.25 0 0 1 1.25 1.25A1.25 1.25 0 0 1 17.25 8A1.25 1.25 0 0 1 16 6.75a1.25 1.25 0 0 1 1.25-1.25M12 7a5 5 0 0 1 5 5a5 5 0 0 1-5 5a5 5 0 0 1-5-5a5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3a3 3 0 0 0 3 3a3 3 0 0 0 3-3a3 3 0 0 0-3-3z"/>
+                        </svg>
+                        <span>Instagram</span>
+                    </a>
+                    <a href="https://www.youtube.com/@ice_podcast" class="hover:text-gray-300 flex items-center gap-2">
+                        <svg class="w-6 h-6 text-red-600" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M21.582,6.186c-0.23-0.86-0.908-1.538-1.768-1.768C18.254,4,12,4,12,4S5.746,4,4.186,4.418c-0.86,0.23-1.538,0.908-1.768,1.768C2,7.746,2,12,2,12s0,4.254,0.418,5.814c0.23,0.86,0.908,1.538,1.768,1.768C5.746,20,12,20,12,20s6.254,0,7.814-0.418c0.861-0.23,1.538-0.908,1.768-1.768C22,16.254,22,12,22,12S22,7.746,21.582,6.186z M10,15.464V8.536L16,12L10,15.464z"/>
+                        </svg>
+                        <span>YouTube</span>
+                    </a>
+                    </a>
+                </div>
+            </div>
         </footer>
 
     </div>
