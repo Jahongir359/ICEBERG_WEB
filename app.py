@@ -42,6 +42,13 @@ def about():
 def questions():
     return render_template('questions.html')
 
+@app.route('/contacts')
+def contacts_list():
+    conn = get_db_connection()
+    contacts = conn.execute('SELECT * FROM contacts').fetchall()
+    conn.close()
+    return render_template('contacts_list.html', contacts=contacts)
+
 @app.route('/contact', methods=['GET', 'POST'])
 def contact():
     if request.method == 'POST':
