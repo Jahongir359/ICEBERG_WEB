@@ -4,19 +4,19 @@
 
 body {
     font-family: 'Inter', sans-serif;
-    background-color: #ebe4e4;
+    background-color: lch(97.73% 0.7 18.53);
     color: #214caa;
 }
 
 .nav-btn-active {
-    background-color: #F3F4F6;
+    background-color: #ffffff;
     font-weight: 700;
     color: #111827;
 }
 
 .form-input {
     border: none;
-    border-bottom: 1px solid #D1D5DB;
+    border-bottom: 1px solid #e4e6ea;
     border-radius: 0;
     padding-left: 0;
     padding-right: 0;
@@ -26,7 +26,7 @@ body {
 .form-input:focus {
     outline: none;
     box-shadow: none;
-    border-bottom: 2px solid #111827;
+    border-bottom: 2px solid #ffffff;
 }
 
 * {
@@ -36,8 +36,8 @@ body {
 }
 
 .top-banner {
-    background-color: #ffffff;
-    color: #0a0a0a;
+    background-color: #4a3aff;
+    color: #ffffff;
     width: 100%;
     padding: 10px 20px;
     display: flex;
@@ -86,9 +86,8 @@ body {
             padding: 60px 20px;
             font-family: 'Inter', sans-serif;
             background-color: #4a3aff;  /* Main purple background */
-            background-color: cover;
-            width: cover;
-            overflow-x: clip;
+            width: 100%;
+            overflow-x: hidden;
             box-sizing: border-box;
             -webkit-font-smoothing: antialiased;
             font-variant-ligatures: none;
@@ -101,7 +100,6 @@ body {
             text-align: center;
             color: #ffffff;
             position: relative; /* Needed for positioning decorative shapes */
-            overflow: hidden;   /* Keeps decorative shapes from spilling out */
             padding: 40px 0;    /* Padding inside the purple area */
         }
         
@@ -238,4 +236,10 @@ body {
             0% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; transform: translateY(-50%) rotate(-15deg); }
             50% { border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%; transform: translateY(-45%) rotate(5deg); }
             100% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; transform: translateY(-50%) rotate(-15deg); }
+        }
+
+        @media (max-width: 768px) {
+            .deco-shape {
+                display: none;
+            }
         }
