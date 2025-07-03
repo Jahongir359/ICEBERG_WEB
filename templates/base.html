@@ -94,9 +94,19 @@
             // --- Mobile Menu Script ---
             const mobileMenuButton = document.getElementById('mobile-menu-button');
             const mobileMenu = document.getElementById('mobile-menu');
-            if (mobileMenuButton && mobileMenu) {
-                mobileMenuButton.addEventListener('click', () => {
+            const header = document.getElementById('header');
+
+            if (mobileMenuButton && mobileMenu && header) {
+                mobileMenuButton.addEventListener('click', (e) => {
+                    e.stopPropagation(); // Prevent click from bubbling to document
                     mobileMenu.classList.toggle('hidden');
+                });
+
+                // Close menu if clicking outside of it
+                document.addEventListener('click', (e) => {
+                    if (!mobileMenu.classList.contains('hidden') && !header.contains(e.target)) {
+                        mobileMenu.classList.add('hidden');
+                    }
                 });
 
                 const mobileMenuLinks = mobileMenu.querySelectorAll('a');
@@ -110,15 +120,31 @@
             // --- Long-press script for admin login ---
             const logoLink = document.getElementById('logo-link');
             if (logoLink) {
-                let pressTimer;
+                let pressTimer = null;
+                let isLongPress = false;
 
                 const startPress = (e) => {
+                    // Prevent default link navigation and context menu
+                    if (e.type !== 'contextmenu') { // Allow context menu to be prevented separately
+                        e.preventDefault();
+                    }
+
                     // Don't start the timer if it's not a primary button click or touch
                     if (e.type === 'mousedown' && e.button !== 0) return;
                     
+                    isLongPress = false;
                     pressTimer = window.setTimeout(() => {
+                        isLongPress = true;
                         window.location.href = "{{ url_for('admin_login') }}";
                     }, 6000); // 6 seconds
+                };
+
+                const releasePress = (e) => {
+                    clearTimeout(pressTimer);
+                    if (!isLongPress) {
+                        // This was a short click, navigate to the original href
+                        window.location.href = logoLink.href;
+                    }
                 };
 
                 const cancelPress = () => {
@@ -127,7 +153,7 @@
 
                 // Mouse events
                 logoLink.addEventListener('mousedown', startPress);
-                logoLink.addEventListener('mouseup', cancelPress);
+                logoLink.addEventListener('mouseup', releasePress);
                 logoLink.addEventListener('mouseleave', cancelPress);
                 
                 // Prevent context menu on long press to allow the timer to run
@@ -136,8 +162,8 @@
                 });
 
                 // Touch events
-                logoLink.addEventListener('touchstart', startPress, { passive: true });
-                logoLink.addEventListener('touchend', cancelPress);
+                logoLink.addEventListener('touchstart', startPress, { passive: false }); // passive:false to allow preventDefault
+                logoLink.addEventListener('touchend', releasePress);
                 logoLink.addEventListener('touchcancel', cancelPress);
             }
 
