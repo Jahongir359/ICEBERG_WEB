@@ -1,11 +1,7 @@
-<!DOCTYPE html>
-<html lang="uz">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ICEBERG O'quv Markazi - Muvaffaqiyat uchun chuqur bilim</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    {% block styles %}
+{% extends "base.html" %}
+
+{% block styles %}
+    {{ super() }}
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Lora:wght@600&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
@@ -37,60 +33,31 @@
         .typewriter-cursor { animation: blink 1s step-end infinite; }
         @keyframes blink { from, to { border-color: transparent } 50% { border-color: #FFC107; } }
     </style>
-    {% endblock %}
-</head>
-<body class="text-gray-700">
+{% endblock %}
 
-    <!-- Header -->
-    <header id="header" class="bg-white/80 backdrop-blur-md shadow-sm fixed top-0 left-0 right-0 z-50 transition-all duration-300">
-        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
-            <a href="{{ url_for('index') }}" id="logo-link" class="flex items-center">
-                <img src="{{ url_for('static', filename='img/logo.png') }}" alt="ICEBERG Logo" class="h-12 logo-interactive">
-            </a>
-            <nav class="hidden md:flex items-center space-x-6">
-                <a href="{{ url_for('about') }}" class="text-gray-600 hover:text-[#00A8B5] transition-colors">Biz haqimizda</a>
-                <a href="{{ url_for('our_programs') }}" class="text-gray-600 hover:text-[#00A8B5] transition-colors">Dasturlar</a>
-                <a href="#testimonials" class="text-gray-600 hover:text-[#00A8B5] transition-colors">Muvaffaqiyat Hikoyalari</a>
-            </nav>
-            <a href="{{ url_for('contact') }}" class="hidden md:block bg-[#00A8B5] text-white font-bold py-2 px-6 rounded-full hover:bg-[#007A85] transition-colors">Biz bilan bog'lanish</a>
-            <button id="mobile-menu-btn" class="md:hidden text-[#0D2444]">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
-            </button>
-        </div>
-        <!-- Mobile Menu -->
-        <div id="mobile-menu" class="hidden md:hidden">
-            <a href="{{ url_for('about') }}" class="block py-2 px-6 text-gray-600 hover:bg-gray-100">Biz haqimizda</a>
-            <a href="{{ url_for('our_programs') }}" class="block py-2 px-6 text-gray-600 hover:bg-gray-100">Dasturlar</a>
-            <a href="#testimonials" class="block py-2 px-6 text-gray-600 hover:bg-gray-100">Muvaffaqiyat Hikoyalari</a>
-            <a href="{{ url_for('contact') }}" class="block py-2 px-6 text-gray-600 hover:bg-gray-100">Biz bilan bog'lanish</a>
-        </div>
-    </header>
-
-    <main>
-        {% block content %}
+{% block content %}
         <!-- Hero Section -->
         <section class="hero-bg text-white pt-32 pb-20 md:pt-48 md:pb-32">
             <div class="container mx-auto px-6 text-center">
                 <h1 id="typewriter" class="text-4xl md:text-6xl font-serif font-bold mb-4 tracking-tight min-h-[100px] md:min-h-[150px]"></h1>
                 <p class="text-lg md:text-xl text-blue-200 max-w-3xl mx-auto mb-8 fade-in" style="transition-delay: 2s;">
-                    Tokiodagi elita repetitorlik xizmati, uzoq muddatli akademik muvaffaqiyat uchun chuqur, fundamental bilimlarni shakllantiradi.
+                    Fundamental bilimlar — har qanday akademik cho'qqini zabt etishning kalitidir.
                 </p>
-                <a href="{{ url_for('contact') }}" class="bg-[#FFC107] text-[#0D2444] font-bold py-3 px-8 rounded-full text-lg hover:bg-amber-400 transition-transform transform hover:scale-105 shadow-lg fade-in" style="transition-delay: 2.2s;">Bepul Konsultatsiyaga Yozilish</a>
+                <a href="{{ url_for('contact') }}" class="bg-[#FFC107] text-[#0D2444] font-bold py-3 px-8 rounded-full text-lg hover:bg-amber-400 transition-transform transform hover:scale-105 shadow-lg fade-in" style="transition-delay: 2.2s;">Maslaxatlar uchun aloqa bo`limi.</a>
             </div>
         </section>
 
         <!-- Social Proof -->
         <div class="bg-gray-50 py-8">
             <div class="container mx-auto px-6">
-                <p class="text-center text-gray-500 uppercase tracking-widest">Bizning o'quvchilarimiz quyidagi universitetlarga qabul qilingan</p>
+                <p class="text-center text-gray-500 uppercase tracking-widest">Bizning o'quvchilarimiz quyidagi muvofaqiyatlarga erish</p>
                 <div class="flex justify-center items-center flex-wrap gap-x-8 gap-y-4 mt-4 text-gray-400">
-                    <span class="font-semibold">Tokio Universiteti</span>
-                    <span class="font-semibold">Kyoto University</span>
-                    <span class="font-semibold">Waseda</span>
-                    <span class="font-semibold">Keio</span>
-                    <span class="font-semibold">Harvard</span>
-                    <span class="font-semibold">Stanford</span>
-                    <span class="font-semibold">MIT</span>
+                    <span class="font-semibold">Milliy Toshkent Universiteti</span>
+                    <span class="font-semibold">Milliy Namangan Universiteti</span>
+                    <span class="font-semibold">Yaponiya</span>
+                    <span class="font-semibold">Polsha</span>
+                    <span class="font-semibold">AQSH</span>
+
                 </div>
             </div>
         </div>
@@ -130,8 +97,8 @@
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                     <div class="bg-white p-8 rounded-xl shadow-lg text-center transform hover:-translate-y-2 transition-transform duration-300 fade-in">
-                        <h3 class="text-2xl font-serif font-bold text-[#0D2444] mb-4">SAT/ACT Mahorati</h3>
-                        <p class="mb-6">Imtihonni yengish va maksimal ball to'plash uchun keng qamrovli strategiyalar.</p>
+                        <h3 class="text-2xl font-serif font-bold text-[#0D2444] mb-4">ENGLISH IELTS, SAT</h3>
+                        <p class="mb-6">Muvaffaqiyatingiz poydevori: SAT va IELTS imtihonlariga fundamental tayyorgarlik.</p>
                         <a href="{{ url_for('our_programs') }}" class="font-bold text-[#00A8B5] hover:text-[#007A85]">Batafsil &rarr;</a>
                     </div>
                     <div class="bg-white p-8 rounded-xl shadow-lg text-center transform hover:-translate-y-2 transition-transform duration-300 fade-in" style="transition-delay: 0.2s;">
@@ -140,8 +107,8 @@
                         <a href="{{ url_for('our_programs') }}" class="font-bold text-[#00A8B5] hover:text-[#007A85]">Batafsil &rarr;</a>
                     </div>
                     <div class="bg-white p-8 rounded-xl shadow-lg text-center transform hover:-translate-y-2 transition-transform duration-300 fade-in" style="transition-delay: 0.4s;">
-                        <h3 class="text-2xl font-serif font-bold text-[#0D2444] mb-4">Qabul Konsaltingi</h3>
-                        <p class="mb-6">Dunyoning eng yaxshi universitetlariga ajoyib arizalar yaratish uchun ekspert yordami.</p>
+                        <h3 class="text-2xl font-serif font-bold text-[#0D2444] mb-4">Akademik Mentorlik</h3>
+                        <p class="mb-6">Maqsadingiz sari shunchaki yoʻl koʻrsatmaymiz — bu yoʻlda sizga ustozlik qilamiz.</p>
                         <a href="{{ url_for('our_programs') }}" class="font-bold text-[#00A8B5] hover:text-[#007A85]">Batafsil &rarr;</a>
                     </div>
                 </div>
@@ -151,129 +118,119 @@
         <!-- Success Metrics -->
         <section class="py-16 bg-white">
              <div class="container mx-auto px-6">
-                 <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
-                     <div class="fade-in">
-                         <p class="text-5xl font-bold text-[#00A8B5] counter" data-target="150">0</p>
-                         <p class="text-gray-600 mt-2">O'rtacha SAT ballining oshishi</p>
-                     </div>
-                     <div class="fade-in">
-                         <p class="text-5xl font-bold text-[#00A8B5] counter" data-target="95">0</p>
-                         <p class="text-gray-600 mt-2">% Eng Yaxshi Universitetlarga Qabul</p>
-                     </div>
-                     <div class="fade-in">
-                         <p class="text-5xl font-bold text-[#00A8B5] counter" data-target="500">0</p>
-                         <p class="text-gray-600 mt-2">+ O'qitilgan Talabalar</p>
-                     </div>
-                 </div>
+         <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+             <div class="fade-in">
+                 <p class="text-5xl font-bold text-[#00A8B5] counter" data-target="90">0</p>
+                 <p class="text-gray-600 mt-2">O'rtacha IELTS ballining oshishi</p>
              </div>
-        </section>
+             <div class="fade-in">
+                 <p class="text-5xl font-bold text-[#00A8B5] counter" data-target="30">0</p>
+                 <p class="text-gray-600 mt-2">% Eng Yaxshi Universitetlarga Qabul</p>
+             </div>
+             <div class="fade-in">
+                 <p class="text-5xl font-bold text-[#00A8B5] counter" data-target="500">0</p>
+                 <p class="text-gray-600 mt-2">+ O'qitilgan Talabalar</p>
+             </div>
+         </div>
+     </div>
+</section>
 
-        <!-- Testimonials -->
-        <section id="testimonials" class="py-16 md:py-24 bg-[#0D2444] text-white">
-            <div class="container mx-auto px-6 text-center">
-                <div class="max-w-3xl mx-auto fade-in">
-                    <p class="text-2xl font-serif italic text-blue-200 mb-6">"ICEBERG metodi o'yinni o'zgartirdi. Men shunchaki formulalarni o'rganmadim; men fikrlashni o'rgandim. Mening ishonchim va ballarim hech qachon bunchalik yuqori bo'lmagan."</p>
-                    <div class="font-bold text-[#00A8B5]">- Y. Sato, Talaba (Tokio Universitetiga qabul qilingan)</div>
-                </div>
-            </div>
-        </section>
+<!-- Testimonials -->
+<section id="testimonials" class="py-16 md:py-24 bg-[#0D2444] text-white">
+    <div class="container mx-auto px-6 text-center">
+        <div class="max-w-3xl mx-auto fade-in">
+            <p class="text-2xl font-serif italic text-blue-200 mb-6">"IELTS 8 — bu shunchaki ball emas. Bu ICEBERG metodi bilan erishilgan yangicha fikrlash tarzi. Ular formula emas, fikrlashni o'rgatishdi va natijalar shunga yarasha bo'ldi."</p>
+            <div class="font-bold text-[#00A8B5]">  (IELTS - 8 score holder)</div>
+        </div>
+    </div>
+</section>
 
-        <!-- Final CTA -->
-        <section id="contact" class="bg-gray-50">
-            <div class="container mx-auto px-6 py-20 text-center">
-                <div class="fade-in">
-                    <h2 class="text-3xl font-serif font-bold text-[#0D2444] mb-4">O'z Poydevoringizni Qurishga Tayyormisiz?</h2>
-                    <p class="text-gray-600 max-w-2xl mx-auto mb-8">
-                        Akademik mukammallikka sayohatingiz shu yerdan boshlanadi. ICEBERG farqini bilish uchun bugun bizning akademik maslahatchilarimiz bilan bepul, majburiyatsiz konsultatsiyani rejalashtiring.
-                    </p>
-                    <a href="{{ url_for('contact') }}" class="inline-block bg-[#FFC107] text-[#0D2444] font-bold py-4 px-10 rounded-full shadow-lg hover:bg-amber-400 transition-transform transform hover:scale-105">
-                        Bepul Konsultatsiyangizni Bron Qiling
-                    </a>
-                </div>
-            </div>
-        </section>
-        {% endblock %}
+<!-- Final CTA -->
+<section id="contact" class="bg-gray-50">
+    <div class="container mx-auto px-6 py-20 text-center">
+        <div class="fade-in">
+            <h2 class="text-3xl font-serif font-bold text-[#0D2444] mb-4">O'z Poydevoringizni Qurishga Tayyormisiz?</h2>
+            <p class="text-gray-600 max-w-2xl mx-auto mb-8">
+                Akademik mukammallikka sayohatingiz shu yerdan boshlanadi. ICEBERG farqini bilish uchun bugun bizning akademik maslahatchilarimiz bilan bepul maslaxatlar oling.
+            </p>
+            <a href="{{ url_for('contact') }}" class="inline-block bg-[#FFC107] text-[#0D2444] font-bold py-4 px-10 rounded-full shadow-lg hover:bg-amber-400 transition-transform transform hover:scale-105">
+                Maslaxatlar uchun aloqa bo`limi.
+            </a>
+        </div>
+    </div>
+</section>
+{% endblock %}
 
-        {% block scripts %}
-        <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // --- Typewriter Effect ---
-            const typewriterElement = document.getElementById('typewriter');
-            if (typewriterElement) {
-                const text = "Muvaffaqiyat uchun chuqur bilim.";
-                let i = 0;
-                typewriterElement.innerHTML = '<span class="typewriter-text"></span><span class="typewriter-cursor">|</span>';
-                const textSpan = typewriterElement.querySelector('.typewriter-text');
+{% block scripts %}
+{{ super() }}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Typewriter effect
+    const typewriterElement = document.getElementById('typewriter');
+    const text = "HAPPINESS IS IN SCIENCE.";
+    let index = 0;
 
-                function typeWriter() {
-                    if (i < text.length) {
-                        if(textSpan) textSpan.innerHTML += text.charAt(i);
-                        i++;
-                        setTimeout(typeWriter, 100);
-                    } else {
-                        const cursor = typewriterElement.querySelector('.typewriter-cursor');
-                        if(cursor) cursor.style.display = 'none';
-                    }
-                }
-                setTimeout(typeWriter, 500);
+    function type() {
+        if (index < text.length) {
+            typewriterElement.innerHTML += text.charAt(index) + (index === text.length - 1 ? '<span class="typewriter-cursor">|</span>' : '');
+            index++;
+            setTimeout(type, 100);
+        } else {
+            // Blinking cursor remains
+            typewriterElement.querySelector('.typewriter-cursor').style.animation = 'blink 1s step-end infinite';
+        }
+    }
+    if(typewriterElement) type();
+
+    // --- Intersection Observer for fade-in animations ---
+    const faders = document.querySelectorAll('.fade-in');
+    const appearOptions = {
+        threshold: 0.1,
+        rootMargin: "0px 0px -50px 0px"
+    };
+    const appearOnScroll = new IntersectionObserver(function(entries, appearOnScroll) {
+        entries.forEach(entry => {
+            if (!entry.isIntersecting) {
+                return;
             }
+            entry.target.classList.add('visible');
+            appearOnScroll.unobserve(entry.target);
+        });
+    }, appearOptions);
 
-            // --- Fade-in on Scroll ---
-            const faders = document.querySelectorAll('.fade-in');
-            const appearOptions = {
-                threshold: 0.2,
-                rootMargin: "0px 0px -50px 0px"
-            };
-            const appearOnScroll = new IntersectionObserver(function(entries, appearOnScroll) {
-                entries.forEach(entry => {
-                    if (!entry.isIntersecting) {
-                        return;
-                    } else {
-                        entry.target.classList.add('visible');
-                        appearOnScroll.unobserve(entry.target);
-                    }
-                });
-            }, appearOptions);
+    faders.forEach(fader => {
+        appearOnScroll.observe(fader);
+    });
 
-            faders.forEach(fader => {
-                appearOnScroll.observe(fader);
-            });
+    // Counter animation
+    const counters = document.querySelectorAll('.counter');
+    const speed = 200; // The lower the slower
 
-            // --- Counter Animation ---
-            const counters = document.querySelectorAll('.counter');
-            const speed = 200; 
-
-            const countUp = (counter) => {
-                const target = +counter.getAttribute('data-target');
-                
+    const countObserver = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const counter = entry.target;
                 const updateCount = () => {
+                    const target = +counter.getAttribute('data-target');
                     const count = +counter.innerText;
                     const inc = target / speed;
 
                     if (count < target) {
                         counter.innerText = Math.ceil(count + inc);
-                        setTimeout(updateCount, 10);
+                        setTimeout(updateCount, 1);
                     } else {
                         counter.innerText = target;
                     }
                 };
                 updateCount();
-            };
-            
-            const counterObserver = new IntersectionObserver((entries, observer) => {
-                entries.forEach(entry => {
-                    if(entry.isIntersecting){
-                        countUp(entry.target);
-                        observer.unobserve(entry.target);
-                    }
-                });
-            }, { threshold: 0.8 });
-
-            counters.forEach(counter => {
-                counterObserver.observe(counter);
-            });
+                countObserver.unobserve(counter); // Stop observing once animated
+            }
         });
-        </script>
-        {% endblock %}
-</body>
-</html>
+    }, { threshold: 0.5 });
+
+    counters.forEach(counter => {
+        countObserver.observe(counter);
+    });
+});
+</script>
+{% endblock %}

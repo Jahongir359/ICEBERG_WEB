@@ -1,0 +1,18 @@
+{% extends "admin_base.html" %}
+
+{% block title %}Boshqaruv paneli - ICEBERG Admin{% endblock %}
+
+{% block page_title %}Boshqaruv paneli{% endblock %}
+
+{% block content %}
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div class="bg-white shadow-lg rounded-xl p-6">
+        <h3 class="text-lg font-semibold text-gray-700">Jami Ro'yxatdan o'tganlar</h3>
+        <p class="text-3xl font-bold text-[#0D2444] mt-2">{{ stats.total_students }}</p>
+    </div>
+    <div class="bg-white shadow-lg rounded-xl p-6">
+        <h3 class="text-lg font-semibold text-gray-700">Jami Aloqa Xabarlari</h3>
+        <p class="text-3xl font-bold text-[#0D2444] mt-2">{{ stats.total_contacts }}</p>
+    </div>
+</div>
+{% endblock %}

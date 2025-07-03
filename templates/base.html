@@ -24,160 +24,160 @@
 </head>
 <body class="bg-gray-100 font-sans">
 
-    <header id="header" class="bg-white/80 backdrop-blur-md shadow-sm fixed top-0 left-0 right-0 z-50">
-        {% block header %}
-        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
-            <!-- Logo -->
-            <a href="{{ url_for('index') }}" id="logo-link" class="flex items-center">
-                <img src="{{ url_for('static', filename='img/logo.png') }}" alt="ICEBERG Logo" class="h-12 logo-interactive">
-            </a>
-            
-            <!-- Desktop Menu Links -->
-            <div class="hidden md:flex items-center space-x-8">
-                <a href="{{ url_for('index') }}" class="text-gray-700 hover:text-blue-600 transition-colors duration-300">Bosh Sahifa</a>
-                <a href="{{ url_for('about') }}" class="text-gray-700 hover:text-blue-600 transition-colors duration-300">Biz Haqimizda</a>
-                <a href="{{ url_for('our_programs') }}" class="text-gray-700 hover:text-blue-600 transition-colors duration-300">Dasturlarimiz</a>
-                <a href="{{ url_for('contact') }}" class="text-gray-700 hover:text-blue-600 transition-colors duration-300">Bog'lanish</a>
-                {% if 'logged_in' in session %}
-                <a href="{{ url_for('admin_dashboard') }}" class="text-gray-700 hover:text-blue-600 transition-colors duration-300">Admin Panel</a>
-                <a href="{{ url_for('logout') }}" class="text-gray-700 hover:text-blue-600 transition-colors duration-300">Chiqish</a>
-                {% endif %}
-            </div>
+    {% block header %}
+    <header id="header" class="bg-white/90 backdrop-blur-md shadow-md fixed top-0 left-0 right-0 z-50 transition-all duration-300">
+        <nav class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <!-- Logo -->
+                <a href="{{ url_for('index') }}" id="logo-link" class="flex-shrink-0">
+                    <img src="{{ url_for('static', filename='img/logo.png') }}" alt="ICEBERG Logo" class="h-14 logo-interactive">
+                </a>
+                
+                <!-- Desktop Menu Links (Centered) -->
+                <div class="hidden md:flex md:items-center md:justify-center flex-grow">
+                    <div class="flex items-baseline space-x-6">
+                        <a href="{{ url_for('index') }}" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-200 transition-all duration-300 {% if request.endpoint == 'index' %}text-blue-600 font-bold{% endif %}">Bosh Sahifa</a>
+                        <a href="{{ url_for('about') }}" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-200 transition-all duration-300 {% if request.endpoint == 'about' %}text-blue-600 font-bold{% endif %}">Biz Haqimizda</a>
+                        <a href="{{ url_for('our_programs') }}" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-200 transition-all duration-300 {% if request.endpoint == 'our_programs' %}text-blue-600 font-bold{% endif %}">Dasturlarimiz</a>
+                        <a href="{{ url_for('contact') }}" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-200 transition-all duration-300 {% if request.endpoint == 'contact' %}text-blue-600 font-bold{% endif %}">Bog'lanish</a>
+                        {% if 'logged_in' in session %}
+                        <a href="{{ url_for('admin_dashboard') }}" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-200 transition-all duration-300">Admin Panel</a>
+                        {% endif %}
+                    </div>
+                </div>
 
-            <!-- Mobile Menu Button -->
-            <div class="md:hidden">
-                <button id="mobile-menu-button" class="text-gray-700 focus:outline-none">
-                    <i class="fas fa-bars text-2xl"></i>
-                </button>
+                <!-- Desktop Right Side & Mobile Menu Button -->
+                <div class="flex items-center">
+                    <div class="hidden md:block flex-shrink-0">
+                        <a href="{{ url_for('register') }}" class="bg-blue-600 text-white font-bold py-2 px-5 rounded-full hover:bg-blue-700 transition-all duration-300 transform hover:scale-105">
+                            Ro'yxatdan O'tish
+                        </a>
+                    </div>
+                    <div class="md:hidden ml-4">
+                        <button id="mobile-menu-button" class="inline-flex items-center justify-center p-2 rounded-md text-gray-600 hover:text-gray-800 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500">
+                            <span class="sr-only">Open main menu</span>
+                            <i class="fas fa-bars text-2xl"></i>
+                        </button>
+                    </div>
+                </div>
             </div>
         </nav>
-        {% endblock %}
-    </header>
 
-    <!-- Mobile Menu -->
-    <div id="mobile-menu" class="hidden md:hidden fixed inset-0 bg-white z-40 pt-20">
-        <div class="flex flex-col items-center space-y-6 text-xl">
-            <a href="{{ url_for('index') }}" class="text-gray-700 hover:text-blue-600 transition-colors duration-300">Bosh Sahifa</a>
-            <a href="{{ url_for('about') }}" class="text-gray-700 hover:text-blue-600 transition-colors duration-300">Biz Haqimizda</a>
-            <a href="{{ url_for('our_programs') }}" class="text-gray-700 hover:text-blue-600 transition-colors duration-300">Dasturlarimiz</a>
-            <a href="{{ url_for('contact') }}" class="text-gray-700 hover:text-blue-600 transition-colors duration-300">Bog'lanish</a>
-            {% if 'logged_in' in session %}
-            <a href="{{ url_for('admin_dashboard') }}" class="text-gray-700 hover:text-blue-600 transition-colors duration-300">Admin Panel</a>
-            <a href="{{ url_for('logout') }}" class="text-gray-700 hover:text-blue-600 transition-colors duration-300">Chiqish</a>
-            {% endif %}
-            <a href="{{ url_for('register') }}" class="mt-4 bg-blue-600 text-white py-2 px-6 rounded-full hover:bg-blue-700 transition-all duration-300">Ro'yxatdan O'tish</a>
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3 border-t border-gray-200">
+                <a href="{{ url_for('index') }}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-200 transition-all duration-300 {% if request.endpoint == 'index' %}bg-blue-100 text-blue-700{% endif %}">Bosh Sahifa</a>
+                <a href="{{ url_for('about') }}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-200 transition-all duration-300 {% if request.endpoint == 'about' %}bg-blue-100 text-blue-700{% endif %}">Biz Haqimizda</a>
+                <a href="{{ url_for('our_programs') }}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-200 transition-all duration-300 {% if request.endpoint == 'our_programs' %}bg-blue-100 text-blue-700{% endif %}">Dasturlarimiz</a>
+                <a href="{{ url_for('contact') }}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-200 transition-all duration-300 {% if request.endpoint == 'contact' %}bg-blue-100 text-blue-700{% endif %}">Bog'lanish</a>
+                {% if 'logged_in' in session %}
+                <a href="{{ url_for('admin_dashboard') }}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-200 transition-all duration-300">Admin Panel</a>
+                <a href="{{ url_for('logout') }}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-200 transition-all duration-300">Chiqish</a>
+                {% endif %}
+                <div class="pt-4 pb-2">
+                    <a href="{{ url_for('register') }}" class="block w-full text-center bg-blue-600 text-white font-bold py-2 px-4 rounded-full hover:bg-blue-700 transition-all duration-300">Ro'yxatdan O'tish</a>
+                </div>
+            </div>
         </div>
-    </div>
+    </header>
+    {% endblock %}
 
     <main class="pt-20">
         {% block content %}{% endblock %}
     </main>
 
     {% block footer %}
-    <footer class="bg-blue-900 text-white py-10">
-        <div class="container mx-auto px-6 text-center">
-            <p class="text-lg font-semibold mb-4">ICEBERG O'QUV MARKAZI</p>
-            <div class="flex justify-center space-x-6 mb-4">
-                <a href="#" class="hover:text-blue-300"><i class="fab fa-telegram fa-2x"></i></a>
-                <a href="#" class="hover:text-blue-300"><i class="fab fa-instagram fa-2x"></i></a>
-                <a href="#" class="hover:text-blue-300"><i class="fab fa-youtube fa-2x"></i></a>
+    <footer class="bg-[#0D2444] text-gray-300">
+        <div class="container mx-auto py-12 px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <!-- About Section -->
+                <div class="mb-8 md:mb-0">
+                    <img src="{{ url_for('static', filename='img/logo.png') }}" alt="ICEBERG Logo" class="h-12 mb-4">
+                    <p class="text-sm">
+                        Zamonaviy kasblarni biz bilan o'rganing va kelajuingizni quring.
+                    </p>
+                </div>
+
+                <!-- Quick Links -->
+                <div>
+                    <h3 class="text-lg font-semibold text-white mb-4">Tezkor Havolalar</h3>
+                    <ul class="space-y-2">
+                        <li><a href="{{ url_for('index') }}" class="hover:text-white transition-colors">Bosh Sahifa</a></li>
+                        <li><a href="{{ url_for('about') }}" class="hover:text-white transition-colors">Biz Haqimizda</a></li>
+                        <li><a href="{{ url_for('our_programs') }}" class="hover:text-white transition-colors">Dasturlarimiz</a></li>
+                        <li><a href="{{ url_for('contact') }}" class="hover:text-white transition-colors">Bog'lanish</a></li>
+                    </ul>
+                </div>
+
+                <!-- Contact Info -->
+                <div>
+                    <h3 class="text-lg font-semibold text-white mb-4">Biz bilan aloqa</h3>
+                    <ul class="space-y-2 text-sm">
+                        <li class="flex items-start">
+                            <i class="fas fa-map-marker-alt mt-1 mr-3 flex-shrink-0"></i>
+                            <span>Uyci, Namangan Viloyati, Uzbekistan</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-phone-alt mr-3"></i>
+                            <a href="tel:+998939461699" class="hover:text-white transition-colors">+998 (93) 946-16-99</a>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-envelope mr-3"></i>
+                            <a href="mailto:info@iceberg.uz" class="hover:text-white transition-colors">iceberg.edu.center@gmail.com</a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Social Media -->
+                <div>
+                    <h3 class="text-lg font-semibold text-white mb-4">Ijtimoiy Tarmoqlar</h3>
+                    <div class="flex space-x-4">
+                        <a href="https://t.me/Iceberg_study_center/1703" class="text-gray-400 hover:text-white transition-colors"><i class="fab fa-telegram fa-2x"></i></a>
+                        <a href="https://www.instagram.com/Iceberg_Study_Center" class="text-gray-400 hover:text-white transition-colors"><i class="fab fa-instagram fa-2x"></i></a>
+                        <a href="https://www.youtube.com/@ice_podcast"class="text-gray-400 hover:text-white transition-colors"><i class="fab fa-youtube fa-2x"></i></a>
+                    </div>
+                </div>
             </div>
-            <div class="border-t border-blue-800 mt-8 pt-6 text-center text-blue-300">
-                <p>&copy; <span id="year"></span> ICEBERG O'QUV MARKAZI. Barcha huquqlar himoyalangan.</p>
+
+            <div class="mt-12 border-t border-gray-700 pt-8 text-center text-sm">
+                <p>&copy; <span id="year"></span> ICEBERG O'QUV MARKAZI.</p>
             </div>
         </div>
     </footer>
     {% endblock %}
 
+    {% block scripts %}
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // --- Mobile Menu Script ---
             const mobileMenuButton = document.getElementById('mobile-menu-button');
             const mobileMenu = document.getElementById('mobile-menu');
-            
+            const header = document.getElementById('header');
+
             if (mobileMenuButton && mobileMenu) {
-                // 1. Toggle menu when button is clicked
-                mobileMenuButton.addEventListener('click', (e) => {
-                    e.stopPropagation(); // Prevent this click from being caught by the document listener
+                mobileMenuButton.addEventListener('click', function() {
                     mobileMenu.classList.toggle('hidden');
                 });
+            }
 
-                // 2. Close menu when a link inside it is clicked
-                const mobileMenuLinks = mobileMenu.querySelectorAll('a');
-                mobileMenuLinks.forEach(link => {
-                    link.addEventListener('click', () => {
-                        mobileMenu.classList.add('hidden');
-                    });
-                });
-
-                // 3. Close menu when clicking outside of it
-                document.addEventListener('click', (e) => {
-                    // If menu is visible, and the click is not on the menu itself or the button, hide the menu.
-                    const isClickInsideMenu = mobileMenu.contains(e.target);
-                    const isClickOnButton = mobileMenuButton.contains(e.target);
-                    
-                    if (!mobileMenu.classList.contains('hidden') && !isClickInsideMenu && !isClickOnButton) {
-                        mobileMenu.classList.add('hidden');
+            // Optional: Add a shadow to the header on scroll
+            if(header) {
+                window.addEventListener('scroll', function() {
+                    if (window.scrollY > 10) {
+                        header.classList.add('shadow-lg');
+                    } else {
+                        header.classList.remove('shadow-lg');
                     }
                 });
             }
 
-            // --- Long-press script for admin login ---
-            const logoLink = document.getElementById('logo-link');
-            if (logoLink) {
-                let pressTimer = null;
-                let isLongPress = false;
-
-                const startPress = (e) => {
-                    // Don't start the timer if it's not a primary button click or touch
-                    if (e.type === 'mousedown' && e.button !== 0) return;
-                    
-                    isLongPress = false;
-                    pressTimer = window.setTimeout(() => {
-                        isLongPress = true;
-                        // On long press, navigate to admin login
-                        window.location.href = "{{ url_for('admin_login') }}";
-                    }, 6000); // 6 seconds
-                };
-
-                const releasePress = (e) => {
-                    clearTimeout(pressTimer);
-                };
-
-                const handleClick = (e) => {
-                    // If it was a long press, the navigation is already handled.
-                    // We prevent the default click action.
-                    if (isLongPress) {
-                        e.preventDefault();
-                    }
-                    // For a short click, we do nothing here and let the browser's
-                    // default behavior for the link proceed as usual.
-                };
-
-                // Mouse events
-                logoLink.addEventListener('mousedown', startPress);
-                logoLink.addEventListener('mouseup', releasePress);
-                logoLink.addEventListener('mouseleave', releasePress);
-                logoLink.addEventListener('click', handleClick);
-                
-                // Prevent context menu on long press to allow the timer to run
-                logoLink.addEventListener('contextmenu', (e) => {
-                    e.preventDefault();
-                });
-
-                // Touch events
-                logoLink.addEventListener('touchstart', startPress, { passive: true });
-                logoLink.addEventListener('touchend', releasePress);
-                logoLink.addEventListener('touchcancel', releasePress);
-            }
-
-            // --- Year Script ---
+            // Copyright year
             const yearSpan = document.getElementById('year');
             if (yearSpan) {
                 yearSpan.textContent = new Date().getFullYear();
             }
         });
     </script>
-    {% block scripts %}{% endblock %}
+    {% endblock %}
+
 </body>
 </html>

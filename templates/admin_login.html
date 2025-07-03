@@ -1,57 +1,51 @@
-<!DOCTYPE html>
-<html lang="uz">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Kirish - ICEBERG</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Lora:wght@600&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
-    <style>
-        body {
-            background-color: #F3F4F6; /* Light gray background */
-        }
-    </style>
-</head>
-<body>
-    {% block header %}{% endblock %}
+{% extends "base.html" %}
 
-    {% block content %}
-    <div class="flex items-center justify-center min-h-screen">
-        <div class="w-full max-w-md p-8 space-y-6 bg-white rounded-xl shadow-lg">
-            <div class="text-center">
-                <a href="{{ url_for('index') }}">
-                    <img src="{{ url_for('static', filename='img/logo.png') }}" alt="ICEBERG Logo" class="h-20 mx-auto mb-4 logo-interactive">
-                </a>
-                <h1 class="text-2xl font-serif font-bold text-[#0D2444]">Admin Kirish</h1>
-                <p class="text-gray-600">Iltimos, davom etish uchun parolni kiriting.</p>
+{% block title %}Admin Kirish - ICEBERG{% endblock %}
+
+{% block styles %}
+{{ super() }}
+<style>
+    body {
+        background-color: #F3F4F6; /* Light gray background */
+    }
+</style>
+{% endblock %}
+
+{% block header %}{% endblock %}
+
+{% block content %}
+<div class="flex items-center justify-center min-h-screen">
+    <div class="w-full max-w-md p-8 space-y-6 bg-white rounded-xl shadow-lg">
+        <div class="text-center">
+            <a href="{{ url_for('index') }}">
+                <img src="{{ url_for('static', filename='img/logo.png') }}" alt="ICEBERG Logo" class="h-20 mx-auto mb-4 logo-interactive">
+            </a>
+            <h1 class="text-2xl font-serif font-bold text-[#0D2444]">Admin Kirish</h1>
+            <p class="text-gray-600">Iltimos, davom etish uchun parolni kiriting.</p>
+        </div>
+
+        {% if error %}
+            <div class="p-4 text-sm text-red-700 bg-red-100 rounded-lg" role="alert">
+                <span class="font-medium">Xato!</span> {{ error }}
             </div>
+        {% endif %}
 
-            {% if error %}
-                <div class="p-4 text-sm text-red-700 bg-red-100 rounded-lg" role="alert">
-                    <span class="font-medium">Xato!</span> {{ error }}
-                </div>
-            {% endif %}
-
-            <form action="{{ url_for('admin_login') }}" method="post" class="space-y-6">
-                <div>
-                    <label for="password" class="block text-sm font-semibold text-gray-700">Parol</label>
-                    <input type="password" id="password" name="password" class="w-full px-4 py-2 mt-1 text-gray-700 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
-                </div>
-                <div>
-                    <button type="submit" class="w-full px-4 py-3 font-bold text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                        Kirish
-                    </button>
-                </div>
-            </form>
-            <div class="text-center">
-                <a href="{{ url_for('index') }}" class="text-sm text-blue-600 hover:underline">&larr; Bosh Sahifaga Qaytish</a>
+        <form action="{{ url_for('admin_login') }}" method="post" class="space-y-6">
+            <div>
+                <label for="password" class="block text-sm font-semibold text-gray-700">Parol</label>
+                <input type="password" id="password" name="password" class="w-full px-4 py-2 mt-1 text-gray-700 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
             </div>
+            <div>
+                <button type="submit" class="w-full px-4 py-3 font-bold text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                    Kirish
+                </button>
+            </div>
+        </form>
+        <div class="text-center">
+            <a href="{{ url_for('index') }}" class="text-sm text-blue-600 hover:underline">&larr; Bosh Sahifaga Qaytish</a>
         </div>
     </div>
-    {% endblock %}
+</div>
+{% endblock %}
 
-    {% block footer %}{% endblock %}
-</body>
-</html>
+{% block footer %}{% endblock %}
