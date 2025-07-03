@@ -67,7 +67,19 @@ def logout():
 def admin_dashboard():
     if not session.get('logged_in'):
         return redirect(url_for('admin_login'))
-    return redirect(url_for('students'))
+    
+    with sqlite3.connect('database.db') as conn:
+        cursor = conn.cursor()
+        cursor.execute('SELECT COUNT(*) FROM students')
+        total_students = cursor.fetchone()[0]
+        cursor.execute('SELECT COUNT(*) FROM contacts')
+        total_contacts = cursor.fetchone()[0]
+        
+    stats = {
+        'total_students': total_students,
+        'total_contacts': total_contacts
+    }
+    return render_template('admin_dashboard.html', stats=stats)
 
 @app.route('/contacts_list')
 def contacts_list():
@@ -122,6 +134,28 @@ def students():
         cursor.execute('SELECT * FROM students')
         students = cursor.fetchall()
     return render_template('students.html', students=students)
+
+@app.route('/admin/delete_student/<int:student_id>', methods=['POST'])
+def delete_student(student_id):
+    if not session.get('logged_in'):
+        return redirect(url_for('admin_login'))
+    with sqlite3.connect('database.db') as conn:
+        cursor = conn.cursor()
+        cursor.execute('DELETE FROM students WHERE id = ?', (student_id,))
+        conn.commit()
+    flash('O\'quvchi muvaffaqiyatli o\'chirildi.', 'success')
+    return redirect(url_for('students'))
+
+@app.route('/admin/delete_contact/<int:contact_id>', methods=['POST'])
+def delete_contact(contact_id):
+    if not session.get('logged_in'):
+        return redirect(url_for('admin_login'))
+    with sqlite3.connect('database.db') as conn:
+        cursor = conn.cursor()
+        cursor.execute('DELETE FROM contacts WHERE id = ?', (contact_id,))
+        conn.commit()
+    flash('Xabar muvaffaqiyatli o\'chirildi.', 'success')
+    return redirect(url_for('contacts_list'))
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
