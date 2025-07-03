@@ -5,7 +5,7 @@ import os
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
 
-ADMIN_PASSWORD = "iceberg_admin_2025"
+ADMIN_PASSWORD = "iceberg12345"
 
 def init_db():
     with sqlite3.connect('database.db') as conn:
