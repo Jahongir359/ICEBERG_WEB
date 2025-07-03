@@ -1,267 +1,279 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="uz">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ICEBERG - Home</title>
-    <!-- Tailwind CSS -->
+    <title>ICEBERG O'quv Markazi - Muvaffaqiyat uchun chuqur bilim</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    {% block styles %}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:wght@600&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Inter', sans-serif; background-color: #FDFDFF; }
+        .font-serif { font-family: 'Lora', serif; }
+        .hero-bg {
+            background-color: #0D2444;
+            background-image: linear-gradient(rgba(13, 36, 68, 0.8), rgba(13, 36, 68, 0.8)), url('https://images.unsplash.com/photo-1523050854058-8df90110c9f1?q=80&w=2070&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+        .angled-divider {
+            position: relative;
+            background: #F3F4F6;
+            clip-path: polygon(0 0, 100% 5vw, 100% 100%, 0 100%);
+            margin-top: -5vw;
+        }
+        .angled-divider-top {
+             position: relative;
+             background: #FDFDFF;
+             clip-path: polygon(0 0, 100% 0, 100% calc(100% - 5vw), 0 100%);
+             padding-bottom: 5vw;
+        }
+        .fade-in { opacity: 0; transform: translateY(30px); transition: opacity 0.8s ease-out, transform 0.8s ease-out; }
+        .fade-in.visible { opacity: 1; transform: translateY(0); }
+        .typewriter-cursor { animation: blink 1s step-end infinite; }
+        @keyframes blink { from, to { border-color: transparent } 50% { border-color: #FFC107; } }
+    </style>
+    {% endblock %}
 </head>
-<body class="text-gray-800">
-    <!-- Main Container: wraps the whole page content -->
-    <div class="mx-auto max-w-full">
+<body class="text-gray-700">
 
-        <!-- ================= HEADER ================= -->
-        <nav class="bg-white shadow-lg">
-            <div class="max-w-6xl mx-auto px-4">
-                <div class="flex justify-between">
-                    <div class="flex space-x-7">
-                        <div>
-                            <!-- Website Lcan ogo -->
-                            <a href="{{ url_for('index') }}" class="flex items-center py-4 px-2">
-                                <span class="font-semibold text-gray-500 text-lg">ICEBERG</span>
-                            </a>
-                        </div>
-                        <!-- Primary Navbar items -->
-                        <div class="hidden md:flex items-center space-x-1">
-                            <a href="{{ url_for('about') }}" class="py-4 px-2 text-gray-500 font-semibold hover:text-green-500 transition duration-300">About Us</a>
-                            <a href="{{ url_for('questions') }}" class="py-4 px-2 text-gray-500 font-semibold hover:text-green-500 transition duration-300">FAQ</a>
-                            <a href="{{ url_for('contact') }}" class="py-4 px-2 text-gray-500 font-semibold hover:text-green-500 transition duration-300">Contact</a>
-                            <a href="{{ url_for('contacts_list') }}" class="py-4 px-2 text-gray-500 font-semibold hover:text-green-500 transition duration-300">Contacts</a>
-                        </div>
-                    </div>
-                    <!-- Secondary Navbar items -->
-                    <div class="hidden md:flex items-center space-x-3 ">
-                        <a href="{{ url_for('register') }}" class="py-2 px-2 font-medium text-white bg-green-500 rounded hover:bg-green-400 transition duration-300">Register</a>
-                    </div>
-                    <!-- Mobile menu button -->
-                    <div class="md:hidden flex items-center">
-                        <button class="outline-none mobile-menu-button">
-                        <svg class=" w-6 h-6 text-gray-500 hover:text-green-500 "
-                            fill="none"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                        >
-                            <path d="M4 6h16M4 12h16m-7 6h7"></path>
-                        </svg>
-                    </button>
-                    </div>
-                </div>
-            </div>
-            <!-- mobile menu -->
-            <div class="hidden mobile-menu">
-                <ul class="">
-                    <li class="active"><a href="{{ url_for('index') }}" class="block text-sm px-2 py-4 text-white bg-green-500 font-semibold">Home</a></li>
-                    <li><a href="{{ url_for('about') }}" class="block text-sm px-2 py-4 hover:bg-green-500 transition duration-300">About Us</a></li>
-                    <li><a href="{{ url_for('questions') }}" class="block text-sm px-2 py-4 hover:bg-green-500 transition duration-300">FAQ</a></li>
-                    <li><a href="{{ url_for('contact') }}" class="block text-sm px-2 py-4 hover:bg-green-500 transition duration-300">Contact</a></li>
-                    <li><a href="{{ url_for('register') }}" class="block text-sm px-2 py-4 hover:bg-green-500 transition duration-300">Register</a></li>
-                </ul>
-            </div>
-            <script>
-                const btn = document.querySelector("button.mobile-menu-button");
-                const menu = document.querySelector(".mobile-menu");
-        
-                btn.addEventListener("click", () => {
-                    menu.classList.toggle("hidden");
-                });
-            </script>
-        </nav>
-           <div class="top-banner">
-        <div class="banner-content">
-            <!-- Inline SVG for the phone icon -->
-            <svg class="banner-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-                <path d="M164.9 24.6c-7.7-18.6-28-28.5-47.4-23.2l-88 24C12.1 30.2 0 46 0 64C0 311.4 200.6 512 448 512c18 0 33.8-12.1 38.6-29.5l24-88c5.3-19.4-4.6-39.7-23.2-47.4l-96-40c-16.3-6.8-35.2-2.1-46.3 11.6L304.7 368C234.3 334.7 177.3 277.7 144 207.3L193.3 167c13.7-11.2 18.4-30 11.6-46.3l-40-96z"/>
-            </svg>
-            <!-- The text content, with a clickable telephone link -->
-            <span class="banner-text">
-                We're open! Call now: <a href="tel:+998-93-946-1699">(93) 998-93-946-1699</a>
-            </span>
+    <!-- Header -->
+    <header id="header" class="bg-white/80 backdrop-blur-md shadow-sm fixed top-0 left-0 right-0 z-50 transition-all duration-300">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="{{ url_for('index') }}" id="logo-link" class="flex items-center">
+                <img src="{{ url_for('static', filename='img/logo.png') }}" alt="ICEBERG Logo" class="h-12 logo-interactive">
+            </a>
+            <nav class="hidden md:flex items-center space-x-6">
+                <a href="{{ url_for('about') }}" class="text-gray-600 hover:text-[#00A8B5] transition-colors">Biz haqimizda</a>
+                <a href="{{ url_for('our_programs') }}" class="text-gray-600 hover:text-[#00A8B5] transition-colors">Dasturlar</a>
+                <a href="#testimonials" class="text-gray-600 hover:text-[#00A8B5] transition-colors">Muvaffaqiyat Hikoyalari</a>
+            </nav>
+            <a href="{{ url_for('contact') }}" class="hidden md:block bg-[#00A8B5] text-white font-bold py-2 px-6 rounded-full hover:bg-[#007A85] transition-colors">Biz bilan bog'lanish</a>
+            <button id="mobile-menu-btn" class="md:hidden text-[#0D2444]">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+            </button>
         </div>
-    </div>
-        <!-- ================= MAIN CONTENT ================= -->
-        <main>
-            <!-- Hero Section -->
-            <section class="text-center py-12 md:py-20 px-4 sm:px-6 lg:px-8">
-                <div class="flex justify-center items-center">
-                    <img src="{{ url_for('static', filename='img/ice.png') }}" alt="Iceberg logo" class="h-20">
-                </div>
-                
-                <h1 class="text-4xl md:text-5xl font-bold tracking-tight text-gray-900 mt-12">Happiness is in science</h1>
-                <p class="mt-6 max-w-3xl mx-auto text-lg text-gray-600">
-                    Whether you're aiming to unlock your true academic potential, seeking expert guidance for your studies, or building a stronger foundation, we're ready to help you explore what lies beneath.
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden">
+            <a href="{{ url_for('about') }}" class="block py-2 px-6 text-gray-600 hover:bg-gray-100">Biz haqimizda</a>
+            <a href="{{ url_for('our_programs') }}" class="block py-2 px-6 text-gray-600 hover:bg-gray-100">Dasturlar</a>
+            <a href="#testimonials" class="block py-2 px-6 text-gray-600 hover:bg-gray-100">Muvaffaqiyat Hikoyalari</a>
+            <a href="{{ url_for('contact') }}" class="block py-2 px-6 text-gray-600 hover:bg-gray-100">Biz bilan bog'lanish</a>
+        </div>
+    </header>
+
+    <main>
+        {% block content %}
+        <!-- Hero Section -->
+        <section class="hero-bg text-white pt-32 pb-20 md:pt-48 md:pb-32">
+            <div class="container mx-auto px-6 text-center">
+                <h1 id="typewriter" class="text-4xl md:text-6xl font-serif font-bold mb-4 tracking-tight min-h-[100px] md:min-h-[150px]"></h1>
+                <p class="text-lg md:text-xl text-blue-200 max-w-3xl mx-auto mb-8 fade-in" style="transition-delay: 2s;">
+                    Tokiodagi elita repetitorlik xizmati, uzoq muddatli akademik muvaffaqiyat uchun chuqur, fundamental bilimlarni shakllantiradi.
                 </p>
-                <div class="mt-8 flex flex-col md:flex-row justify-center items-center gap-4">
-                    <a href="https://t.me/Iceberg_study_center" target="_blank" rel="noopener noreferrer" class="bg-white border border-gray-200 px-6 py-3 rounded-full hover:bg-blue-50 hover:border-blue-400 hover:text-blue-700 font-semibold flex justify-center items-center gap-3 text-gray-700 shadow-sm w-full md:w-auto transition-colors duration-200">
-                        <svg class="w-5 h-5 text-blue-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M9.78 18.65l.28-4.23l-3.08-2.99l4.26-.62l1.9-3.86l1.9 3.86l4.26.62l-3.08 2.99l.73 4.22L12 16.32z"/></svg>
-                        Follow on Telegram
-                    </a>
-                    <a href="https://www.youtube.com/@ice_podcast" class="bg-white border border-gray-200 px-6 py-3 rounded-full hover:bg-red-50 hover:border-red-400 hover:text-red-700 font-semibold flex justify-center items-center gap-3 text-gray-700 shadow-sm w-full md:w-auto transition-colors duration-200">
-                        <svg class="w-5 h-5 text-red-600" fill="currentColor" viewBox="0 0 24 24"><path d="M21.582,6.186c-0.23-0.86-0.908-1.538-1.768-1.768C18.254,4,12,4,12,4S5.746,4,4.186,4.418 c-0.86,0.23-1.538,0.908-1.768,1.768C2,7.746,2,12,2,12s0,4.254,0.418,5.814c0.23,0.86,0.908,1.538,1.768,1.768 C5.746,20,12,20,12,20s6.254,0,7.814-0.418c0.861-0.23,1.538-0.908,1.768-1.768C22,16.254,22,12,22,12S22,7.746,21.582,6.186z M10,15.464V8.536L16,12L10,15.464z"></path></svg>
-                        Follow us on YouTube
-                    </a>
-                    <a href="https://www.instagram.com/Iceberg_Study_Center" class="bg-white border border-gray-200 px-6 py-3 rounded-full hover:bg-pink-50 hover:border-pink-400 hover:text-pink-700 font-semibold flex justify-center items-center gap-3 text-gray-700 shadow-sm w-full md:w-auto transition-colors duration-200">
-                        <svg class="w-5 h-5 text-pink-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M7.8 2h8.4C19.4 2 22 4.6 22 7.8v8.4a5.8 5.8 0 0 1-5.8 5.8H7.8C4.6 22 2 19.4 2 16.2V7.8A5.8 5.8 0 0 1 7.8 2m-.2 2A3.6 3.6 0 0 0 4 7.6v8.8C4 18.39 5.61 20 7.6 20h8.8a3.6 3.6 0 0 0 3.6-3.6V7.6C20 5.61 18.39 4 16.4 4H7.6m9.65 1.5a1.25 1.25 0 0 1 1.25 1.25A1.25 1.25 0 0 1 17.25 8A1.25 1.25 0 0 1 16 6.75a1.25 1.25 0 0 1 1.25-1.25M12 7a5 5 0 0 1 5 5a5 5 0 0 1-5 5a5 5 0 0 1-5-5a5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3a3 3 0 0 0 3 3a3 3 0 0 0 3-3a3 3 0 0 0-3-3z"/></svg>
-                        Follow on Instagram
-                    </a>
-                </div>
-            </section>
-
-            <!-- From Azizbek Section -->
-            <section id="from-azizbek" class="py-16 md:py-24 bg-blue-600 text-white">
-     <div class="component-container px-4 sm:px-6 lg:px-8">
-        <section class="why-choose-us-section">
-            <!-- Decorative shapes in the background -->
-            <div class="deco-shape shape-1"></div>
-            <div class="deco-shape shape-2"></div>
-
-            <h2 class="section-title">Why choose ICEBERG?</h2>
-            
-            <div class="features-container">
-                <!-- Card 1: Updated Hexagon Icon -->
-                <div class="feature-card">
-                    <div class="icon-container icon-blue">
-                        <svg viewBox="0 0 24 24"><path d="M17.2 3H6.8l-3.2 9 3.2 9h10.4l3.2-9-3.2-9z"/></svg>
-                    </div>
-                    <h3 class="card-title">Built for your kid's unique needs</h3>
-                    <p class="card-description">Choose from 1000s of classes, from core academics to enrichment, supported by our concierge service.</p>
-                </div>
-                
-                <!-- Card 2: Updated Calendar Icon -->
-                <div class="feature-card">
-                    <div class="icon-container icon-pink">
-                         <svg viewBox="0 0 24 24"><path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-2 .9-2 2v12c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H5V9h14v9zM7 11h2v2H7v-2zm4 0h2v2h-2v-2zm4 0h2v2h-2v-2z"/></svg>
-                    </div>
-                    <h3 class="card-title">Live classes on your schedule</h3>
-                    <p class="card-description">Get personalized recommendations that fit your daily life by adding your kid's specific learning needs.</p>
-                </div>
-
-                <!-- Card 3: Updated Star in Circle Icon -->
-                <div class="feature-card">
-                    <div class="icon-container icon-orange">
-                         <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.15 13.84l-3.34-1.75-3.34 1.75 0.64-3.72-2.7-2.63 3.73-0.54L12 6.16l1.66 3.45 3.73 0.54-2.7 2.63 0.64 3.72z"/></svg>
-                    </div>
-                    <h3 class="card-title">Flexible plans for every family</h3>
-                    <p class="card-description">Plans designed to grow with you. Change anytime, and unused credits roll over each month.</p>
-                </div>
+                <a href="{{ url_for('contact') }}" class="bg-[#FFC107] text-[#0D2444] font-bold py-3 px-8 rounded-full text-lg hover:bg-amber-400 transition-transform transform hover:scale-105 shadow-lg fade-in" style="transition-delay: 2.2s;">Bepul Konsultatsiyaga Yozilish</a>
             </div>
-
-            <a href="https://iceberglink.netlify.app" class="cta-button">Get Started</a>
         </section>
-    </div>
-    </section>
 
-            <!-- Short History Section -->
-            <section id="short-history" class="py-16 md:py-24 bg-gray-50">
-                 <div class="max-w-5xl mx-auto flex flex-col md:flex-row items-start gap-8 md:gap-16 px-4 sm:px-6 lg:px-8">
-                    <div class="md:w-1/4">
-                        <h2 class="text-4xl font-bold">Short history</h2>
+        <!-- Social Proof -->
+        <div class="bg-gray-50 py-8">
+            <div class="container mx-auto px-6">
+                <p class="text-center text-gray-500 uppercase tracking-widest">Bizning o'quvchilarimiz quyidagi universitetlarga qabul qilingan</p>
+                <div class="flex justify-center items-center flex-wrap gap-x-8 gap-y-4 mt-4 text-gray-400">
+                    <span class="font-semibold">Tokio Universiteti</span>
+                    <span class="font-semibold">Kyoto University</span>
+                    <span class="font-semibold">Waseda</span>
+                    <span class="font-semibold">Keio</span>
+                    <span class="font-semibold">Harvard</span>
+                    <span class="font-semibold">Stanford</span>
+                    <span class="font-semibold">MIT</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- The ICEBERG Method -->
+        <section id="philosophy" class="py-16 md:py-24 bg-white angled-divider-top">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-12 fade-in">
+                    <h2 class="text-3xl md:text-4xl font-serif font-bold text-[#0D2444]">ICEBERG Metodi</h2>
+                    <p class="text-gray-600 mt-2 max-w-2xl mx-auto">Muvaffaqiyat - bu siz ko'rgan narsa. Strategiya - bu sizning u yerga qanday borishingiz.</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
+                    <div class="fade-in">
+                        <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=2070&auto=format&fit=crop" alt="A mentor explaining a strategy on a glass board" class="rounded-xl shadow-xl">
                     </div>
-                    <div class="md:w-3/4 space-y-8">
-                        <div class="bg-white p-6 rounded-xl border border-gray-200 flex items-start space-x-5">
-                            <img class="w-12 h-12 rounded-lg object-cover" src="https://placehold.co/48x48/111827/FFFFFF?text=S" alt="Start21">
-                            <div>
-                                <h3 class="font-bold text-lg">Start21</h3>
-                                <p class="text-sm text-gray-500">2021 - Jahongir</p>
-                                <p class="text-gray-600 mt-2">"I spent close to six months studying at Start21, but I ultimately chose to leave after a critical realization. The experience exposed systemic issues that clashed with my principles, and I decided to step away to find an educational journey based on transparency and genuine growth."</p>
+                    <div class="fade-in">
+                        <div class="space-y-6">
+                            <div class="p-6 bg-gray-50 rounded-lg border border-gray-200">
+                                <h3 class="font-bold text-xl text-[#00A8B5] mb-2">Ko'rinadigan Natijalar</h3>
+                                <p>Yuqori test ballari, elita universitetlarga kirish va akademik mukofotlar. Bular bizning metodimiz natijalaridir.</p>
+                            </div>
+                            <div class="p-6 bg-[#0D2444] text-white rounded-lg">
+                                <h3 class="font-bold text-xl text-white mb-2">Bizning E'tiborimiz: Asos</h3>
+                                <p class="text-blue-200">Biz shu yerda ishlaymiz. Biz fundamental mahorat, tanqidiy fikrlash qobiliyatlari va shaxsiylashtirilgan o'qish odatlarini shakllantiramiz. Muvaffaqiyatni muqarrar qiladigan narsa shu.</p>
                             </div>
                         </div>
-                         <div class="bg-white p-6 rounded-xl border border-gray-200 flex items-start space-x-5">
-                             <img class="w-12 h-12 rounded-lg object-cover" src="https://placehold.co/48x48/3B82F6/FFFFFF?text=B" alt="Brooklyn L.C">
-                            <div>
-                                <h3 class="font-bold text-lg">Brooklyn L.C</h3>
-                                <p class="text-sm text-gray-500">2023 - Azizbek</p>
-                                <p class="text-gray-600 mt-2">"My journey began with a search for a better way to teach, which led me to the well-known Brooklyn L.C. I tried to join their team, but soon faced a conflict of principles: I could not follow methods that prioritized profit over student potential. The decision to walk away wasn't for myself, but for every student who deserves an education built on integrity."</p>
-                            </div>
-                        </div>
-                        <p class="text-gray-600 leading-relaxed pt-4">
-                            That is precisely why ICEBERG was created. From my experience, I took the effective strategies that worked and meticulously fixed the parts that failed students. This deep commitment to what truly matters—the solid foundation of integrity and care that lies just beneath the surface—is our promise. It's not just our philosophy; it's how we became ICEBERG.
-                        </p>
-                    </div>
-                 </div>
-            </section>
-
-            <!-- Reviews Section -->
-            <section id="reviews" class="py-16 bg-yellow-400">
-                <h2 class="text-3xl font-bold mb-12 text-center">Reviews from students</h2>
-                 <div class="max-w-5xl mx-auto grid md:grid-cols-2 gap-8 lg:gap-12 px-4 sm:px-6 lg:px-8">
-                    <div class="bg-gray-50 p-6 rounded-2xl">
-                        <div class="bg-white p-8 rounded-xl flex justify-center items-center shadow-inner">
-                            <img src="{{ url_for('static', filename='img/student1.png') }}" alt="App screenshot" class="rounded-lg h-80 w-full object-contain border">
-                        </div>
-                        <h3 class="font-bold text-2xl mt-6 text-blue-800">
-                            <strong>From Confused to Confident in English Lit <br></strong>
-                        </h3>
-                        <p class="text-gray-600 mt-4">
-                            My AP English Lit essays were falling flat until I started working with Mr. 
-                            Harrison at Iceberg. He didn't just give me answers; he taught me how to truly read critically and analyze texts. 
-                            The one-on-one sessions were perfect for digging into complex material. My writing and grades improved dramatically, 
-                            but more importantly, I gained the confidence to actually share my ideas in class. I highly recommend Iceberg for any 
-                            student who wants to deepen their understanding of literature.
-                        </p>
-                    </div>
-                    <div class="bg-gray-50 p-6 rounded-2xl">
-                        <div class="bg-white p-8 rounded-xl flex justify-center items-center shadow-inner">
-                            <img src="{{ url_for('static', filename='img/student2.png') }}" alt="App screenshot" class="rounded-lg h-80 w-full object-contain border">
-                        </div>
-                        <h3 class="font-bold text-2xl mt-6 text-blue-800">
-                            <strong>Finally Mastered Grammar and Aced My SATs!<br></strong>
-                        </h3>
-                        <p class="text-gray-600 mt-4">
-                        Grammar has always been my weak point. Comma splices, misplaced modifiers, you name it, I did it. With 
-                        the SATs coming up, I knew I had to get serious about improving my writing mechanics. A 
-                        friend who used Iceberg for chemistry suggested I try them for English.
-                        I was paired with a tutor named Chloe, and she was a lifesaver. She was incredibly organized and 
-                        created a personalized plan for me that targeted my specific weaknesses. We did focused grammar drills, 
-                        vocabulary-building exercises, and reviewed practice sections from the SAT writing test. She had all these
-                        little tricks and memory aids that made the rules stick in my head.
-                        The focused environment at the center was a huge help. It was impossible to get distracted.
-                        After a few months of weekly sessions, I took the SAT and my score on the Evidence-Based Reading
-                        and Writing section was 120 points higher than my first practice test! My writing in school assignments
-                         is much cleaner now, too. Iceberg gave me the specific tools and confidence I needed to succeed.
-                        </p>
                     </div>
                 </div>
-            </section>
-        </main>
+            </div>
+        </section>
+
+        <!-- Core Programs -->
+        <section id="programs" class="py-16 md:py-24 angled-divider">
+             <div class="container mx-auto px-6 pt-12">
+                <div class="text-center mb-12 fade-in">
+                    <h2 class="text-3xl md:text-4xl font-serif font-bold text-[#0D2444]">Bizning Asosiy Dasturlarimiz</h2>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="bg-white p-8 rounded-xl shadow-lg text-center transform hover:-translate-y-2 transition-transform duration-300 fade-in">
+                        <h3 class="text-2xl font-serif font-bold text-[#0D2444] mb-4">SAT/ACT Mahorati</h3>
+                        <p class="mb-6">Imtihonni yengish va maksimal ball to'plash uchun keng qamrovli strategiyalar.</p>
+                        <a href="{{ url_for('our_programs') }}" class="font-bold text-[#00A8B5] hover:text-[#007A85]">Batafsil &rarr;</a>
+                    </div>
+                    <div class="bg-white p-8 rounded-xl shadow-lg text-center transform hover:-translate-y-2 transition-transform duration-300 fade-in" style="transition-delay: 0.2s;">
+                        <h3 class="text-2xl font-serif font-bold text-[#0D2444] mb-4">Akademik Repetitorlik</h3>
+                        <p class="mb-6">Matematika, fan va ingliz tilidan asosiy ko'nikmalarni shakllantirish uchun shaxsiy 1-ga-1 yordam.</p>
+                        <a href="{{ url_for('our_programs') }}" class="font-bold text-[#00A8B5] hover:text-[#007A85]">Batafsil &rarr;</a>
+                    </div>
+                    <div class="bg-white p-8 rounded-xl shadow-lg text-center transform hover:-translate-y-2 transition-transform duration-300 fade-in" style="transition-delay: 0.4s;">
+                        <h3 class="text-2xl font-serif font-bold text-[#0D2444] mb-4">Qabul Konsaltingi</h3>
+                        <p class="mb-6">Dunyoning eng yaxshi universitetlariga ajoyib arizalar yaratish uchun ekspert yordami.</p>
+                        <a href="{{ url_for('our_programs') }}" class="font-bold text-[#00A8B5] hover:text-[#007A85]">Batafsil &rarr;</a>
+                    </div>
+                </div>
+            </div>
+        </section>
         
-        <!-- ================= FOOTER ================= -->
-        <footer class="bg-[#4E3A52] text-white text-center py-16">
-            <div class="flex flex-col items-center px-4 sm:px-6 lg:px-8">
-                <h2 class="text-2xl font-bold">Stay Informed & Inspired</h2>
-                <div class="w-20 h-1 bg-white my-4 rounded"></div>
-                <p class="max-w-2xl">
-                    <strong>ICEBERG OFFICIAL SITE</strong>
-                </p>
-                <div class="flex justify-center space-x-6 mt-6">
-                    <a href="https://t.me/Iceberg_study_center" class="hover:text-gray-300 flex items-center gap-2">
-                        <svg class="w-6 h-6 text-blue-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M9.78 18.65l.28-4.23l-3.08-2.99l4.26-.62l1.9-3.86l1.9 3.86l4.26.62l-3.08 2.99l.73 4.22L12 16.32z"/>
-                        </svg>
-                        <span>Telegram</span>
-                    </a>
-                    <a href="https://www.instagram.com/Iceberg_Study_Center" class="hover:text-gray-300 flex items-center gap-2">
-                        <svg class="w-6 h-6 text-pink-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"></svg>
-                            <path d="M7.8 2h8.4C19.4 2 22 4.6 22 7.8v8.4a5.8 5.8 0 0 1-5.8 5.8H7.8C4.6 22 2 19.4 2 16.2V7.8A5.8 5.8 0 0 1 7.8 2m-.2 2A3.6 3.6 0 0 0 4 7.6v8.8C4 18.39 5.61 20 7.6 20h8.8a3.6 3.6 0 0 0 3.6-3.6V7.6C20 5.61 18.39 4 16.4 4H7.6m9.65 1.5a1.25 1.25 0 0 1 1.25 1.25A1.25 1.25 0 0 1 17.25 8A1.25 1.25 0 0 1 16 6.75a1.25 1.25 0 0 1 1.25-1.25M12 7a5 5 0 0 1 5 5a5 5 0 0 1-5 5a5 5 0 0 1-5-5a5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3a3 3 0 0 0 3 3a3 3 0 0 0 3-3a3 3 0 0 0-3-3z"/>
-                        </svg>
-                        <span>Instagram</span>
-                    </a>
-                    <a href="https://www.youtube.com/@ice_podcast" class="hover:text-gray-300 flex items-center gap-2">
-                        <svg class="w-6 h-6 text-red-600" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M21.582,6.186c-0.23-0.86-0.908-1.538-1.768-1.768C18.254,4,12,4,12,4S5.746,4,4.186,4.418c-0.86,0.23-1.538,0.908-1.768,1.768C2,7.746,2,12,2,12s0,4.254,0.418,5.814c0.23,0.86,0.908,1.538,1.768,1.768C5.746,20,12,20,12,20s6.254,0,7.814-0.418c0.861-0.23,1.538-0.908,1.768-1.768C22,16.254,22,12,22,12S22,7.746,21.582,6.186z M10,15.464V8.536L16,12L10,15.464z"/>
-                        </svg>
-                        <span>YouTube</span>
-                    </a>
+        <!-- Success Metrics -->
+        <section class="py-16 bg-white">
+             <div class="container mx-auto px-6">
+                 <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+                     <div class="fade-in">
+                         <p class="text-5xl font-bold text-[#00A8B5] counter" data-target="150">0</p>
+                         <p class="text-gray-600 mt-2">O'rtacha SAT ballining oshishi</p>
+                     </div>
+                     <div class="fade-in">
+                         <p class="text-5xl font-bold text-[#00A8B5] counter" data-target="95">0</p>
+                         <p class="text-gray-600 mt-2">% Eng Yaxshi Universitetlarga Qabul</p>
+                     </div>
+                     <div class="fade-in">
+                         <p class="text-5xl font-bold text-[#00A8B5] counter" data-target="500">0</p>
+                         <p class="text-gray-600 mt-2">+ O'qitilgan Talabalar</p>
+                     </div>
+                 </div>
+             </div>
+        </section>
+
+        <!-- Testimonials -->
+        <section id="testimonials" class="py-16 md:py-24 bg-[#0D2444] text-white">
+            <div class="container mx-auto px-6 text-center">
+                <div class="max-w-3xl mx-auto fade-in">
+                    <p class="text-2xl font-serif italic text-blue-200 mb-6">"ICEBERG metodi o'yinni o'zgartirdi. Men shunchaki formulalarni o'rganmadim; men fikrlashni o'rgandim. Mening ishonchim va ballarim hech qachon bunchalik yuqori bo'lmagan."</p>
+                    <div class="font-bold text-[#00A8B5]">- Y. Sato, Talaba (Tokio Universitetiga qabul qilingan)</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Final CTA -->
+        <section id="contact" class="bg-gray-50">
+            <div class="container mx-auto px-6 py-20 text-center">
+                <div class="fade-in">
+                    <h2 class="text-3xl font-serif font-bold text-[#0D2444] mb-4">O'z Poydevoringizni Qurishga Tayyormisiz?</h2>
+                    <p class="text-gray-600 max-w-2xl mx-auto mb-8">
+                        Akademik mukammallikka sayohatingiz shu yerdan boshlanadi. ICEBERG farqini bilish uchun bugun bizning akademik maslahatchilarimiz bilan bepul, majburiyatsiz konsultatsiyani rejalashtiring.
+                    </p>
+                    <a href="{{ url_for('contact') }}" class="inline-block bg-[#FFC107] text-[#0D2444] font-bold py-4 px-10 rounded-full shadow-lg hover:bg-amber-400 transition-transform transform hover:scale-105">
+                        Bepul Konsultatsiyangizni Bron Qiling
                     </a>
                 </div>
             </div>
-        </footer>
+        </section>
+        {% endblock %}
 
-    </div>
+        {% block scripts %}
+        <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // --- Typewriter Effect ---
+            const typewriterElement = document.getElementById('typewriter');
+            if (typewriterElement) {
+                const text = "Muvaffaqiyat uchun chuqur bilim.";
+                let i = 0;
+                typewriterElement.innerHTML = '<span class="typewriter-text"></span><span class="typewriter-cursor">|</span>';
+                const textSpan = typewriterElement.querySelector('.typewriter-text');
+
+                function typeWriter() {
+                    if (i < text.length) {
+                        if(textSpan) textSpan.innerHTML += text.charAt(i);
+                        i++;
+                        setTimeout(typeWriter, 100);
+                    } else {
+                        const cursor = typewriterElement.querySelector('.typewriter-cursor');
+                        if(cursor) cursor.style.display = 'none';
+                    }
+                }
+                setTimeout(typeWriter, 500);
+            }
+
+            // --- Fade-in on Scroll ---
+            const faders = document.querySelectorAll('.fade-in');
+            const appearOptions = {
+                threshold: 0.2,
+                rootMargin: "0px 0px -50px 0px"
+            };
+            const appearOnScroll = new IntersectionObserver(function(entries, appearOnScroll) {
+                entries.forEach(entry => {
+                    if (!entry.isIntersecting) {
+                        return;
+                    } else {
+                        entry.target.classList.add('visible');
+                        appearOnScroll.unobserve(entry.target);
+                    }
+                });
+            }, appearOptions);
+
+            faders.forEach(fader => {
+                appearOnScroll.observe(fader);
+            });
+
+            // --- Counter Animation ---
+            const counters = document.querySelectorAll('.counter');
+            const speed = 200; 
+
+            const countUp = (counter) => {
+                const target = +counter.getAttribute('data-target');
+                
+                const updateCount = () => {
+                    const count = +counter.innerText;
+                    const inc = target / speed;
+
+                    if (count < target) {
+                        counter.innerText = Math.ceil(count + inc);
+                        setTimeout(updateCount, 10);
+                    } else {
+                        counter.innerText = target;
+                    }
+                };
+                updateCount();
+            };
+            
+            const counterObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if(entry.isIntersecting){
+                        countUp(entry.target);
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.8 });
+
+            counters.forEach(counter => {
+                counterObserver.observe(counter);
+            });
+        });
+        </script>
+        {% endblock %}
 </body>
 </html>

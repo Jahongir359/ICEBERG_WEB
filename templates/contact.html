@@ -1,161 +1,210 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="uz">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ICEBERG - Contact</title>
-    <!-- Tailwind CSS -->
+    <title>Biz bilan bog'lanish - ICEBERG O'QUV MARKAZI</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:wght@600&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
-        .form-input-underline {
-            border: none;
-            border-bottom: 1px solid #e2e8f0; /* gray-300 */
-            padding-left: 2px;
-            padding-right: 2px;
-            border-radius: 0;
-        }
-        .form-input-underline:focus {
-            outline: none;
-            box-shadow: none;
-            border-bottom-color: #4a5568; /* gray-700 */
-            --tw-ring-shadow: 0 0 #0000; /* Remove focus ring */
-        }
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Inter', sans-serif; background-color: #FDFDFF; }
+        .font-serif { font-family: 'Lora', serif; }
     </style>
 </head>
-<body class="text-gray-800 bg-gray-50">
+<body class="text-gray-700">
 
-    <!-- Main Container: wraps entire page content -->
-    <div class="mx-auto max-w-full">
-
-        <!-- Header: logo and navigation -->
-        <nav class="bg-white shadow-lg">
-            <div class="max-w-6xl mx-auto px-4">
-                <div class="flex justify-between">
-                    <div class="flex space-x-7">
-                        <div>
-                            <!-- Website Logo -->
-                            <a href="{{ url_for('index') }}" class="flex items-center py-4 px-2">
-                                <span class="font-semibold text-gray-500 text-lg">ICEBERG</span>
-                            </a>
-                        </div>
-                        <!-- Primary Navbar items -->
-                        <div class="hidden md:flex items-center space-x-1">
-                            <a href="{{ url_for('index') }}" class="py-4 px-2 text-gray-500 font-semibold hover:text-green-500 transition duration-300">Home</a>
-                            <a href="{{ url_for('about') }}" class="py-4 px-2 text-gray-500 font-semibold hover:text-green-500 transition duration-300">About Us</a>
-                            <a href="{{ url_for('questions') }}" class="py-4 px-2 text-gray-500 font-semibold hover:text-green-500 transition duration-300">FAQ</a>
-                            <a href="{{ url_for('contact') }}" class="py-4 px-2 text-green-500 font-semibold">Contact</a>
-                        </div>
-                    </div>
-                    <!-- Secondary Navbar items -->
-                    <div class="hidden md:flex items-center space-x-3 ">
-                        <a href="{{ url_for('register') }}" class="py-2 px-2 font-medium text-white bg-green-500 rounded hover:bg-green-400 transition duration-300">Register</a>
-                    </div>
-                    <!-- Mobile menu button -->
-                    <div class="md:hidden flex items-center">
-                        <button class="outline-none mobile-menu-button">
-                        <svg class=" w-6 h-6 text-gray-500 hover:text-green-500 "
-                            fill="none"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                        >
-                            <path d="M4 6h16M4 12h16m-7 6h7"></path>
-                        </svg>
-                    </button>
-                    </div>
-                </div>
+    <!-- Header -->
+    <header id="header" class="bg-white/80 backdrop-blur-md shadow-sm fixed top-0 left-0 right-0 z-50">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <!-- Logo -->
+            <a href="{{ url_for('index') }}" id="logo-link" class="flex items-center">
+                <img src="{{ url_for('static', filename='img/logo.png') }}" alt="ICEBERG Logo" class="h-12 logo-interactive">
+            </a>
+            
+            <!-- Desktop Menu Links -->
+            <div class="hidden md:flex items-center space-x-8">
+                <a href="{{ url_for('index') }}" class="text-gray-600 hover:text-blue-700 transition-colors">Bosh Sahifa</a>
+                <a href="{{ url_for('about') }}" class="text-gray-600 hover:text-blue-700 transition-colors">Biz Haqimizda</a>
+                <a href="{{ url_for('our_programs') }}" class="text-gray-600 hover:text-blue-700 transition-colors">Dasturlar</a>
+                <a href="{{ url_for('index', _anchor='testimonials') }}" class="text-gray-600 hover:text-blue-700 transition-colors">Muvaffaqiyat Hikoyalari</a>
             </div>
-            <!-- mobile menu -->
-            <div class="hidden mobile-menu">
-                <ul class="">
-                    <li><a href="{{ url_for('index') }}" class="block text-sm px-2 py-4 hover:bg-green-500 transition duration-300">Home</a></li>
-                    <li><a href="{{ url_for('about') }}" class="block text-sm px-2 py-4 hover:bg-green-500 transition duration-300">About Us</a></li>
-                    <li><a href="{{ url_for('questions') }}" class="block text-sm px-2 py-4 hover:bg-green-500 transition duration-300">FAQ</a></li>
-                    <li class="active"><a href="{{ url_for('contact') }}" class="block text-sm px-2 py-4 text-white bg-green-500 font-semibold">Contact</a></li>
-                    <li><a href="{{ url_for('register') }}" class="block text-sm px-2 py-4 hover:bg-green-500 transition duration-300">Register</a></li>
-                </ul>
-            </div>
-            <script>
-                const btn = document.querySelector("button.mobile-menu-button");
-                const menu = document.querySelector(".mobile-menu");
-        
-                btn.addEventListener("click", () => {
-                    menu.classList.toggle("hidden");
-                });
-            </script>
+            
+            <!-- Desktop CTA Button -->
+            <a href="{{ url_for('contact') }}" class="hidden md:block bg-blue-600 text-white font-bold py-2 px-6 rounded-full hover:bg-blue-700 transition-colors">Bog'lanish</a>
+            
+            <!-- Mobile Menu Button (Hamburger Icon) -->
+            <button id="mobile-menu-btn" class="md:hidden text-blue-900">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+            </button>
         </nav>
-
-        <!-- Main Content: contact section -->
-        <main>
-             <section class="py-12 md:py-20 px-4 sm:px-6 lg:px-8">
-                 <!-- Section Title: heading and subtitle -->
-                 <div class="text-center">
-                     <h1 class="text-5xl md:text-6xl font-bold tracking-wider text-gray-800">CONTACT US</h1>
-                     <p class="text-xl text-gray-500 mt-4 tracking-widest">WE'D LOVE TO HEAR FROM YOU</p>
-                 </div>
-                 <!-- Form Container: white card wrapper -->
-                 <div class="max-w-lg mx-auto mt-12 bg-white p-8 rounded-xl shadow-lg border border-gray-200">
-                    <form action="/contact" method="POST">
-                        <!-- Full Name -->
-                        <div class="mb-6">
-                            <label for="name" class="block text-gray-700 font-semibold mb-2">Full Name</label>
-                            <input type="text" id="name" name="name" class="w-full px-4 py-2 form-input-underline focus:border-blue-500" placeholder="Azizbek" required>
-                        </div>
-
-                        <!-- Email Address -->
-                        <div class="mb-6">
-                            <label for="email" class="block text-gray-700 font-semibold mb-2">Email Address</label>
-                            <input type="email" id="email" name="email" class="w-full px-4 py-2 form-input-underline focus:border-blue-500" placeholder="example@gmail.com" required>
-                        </div>
-
-                        <!-- Message -->
-                        <div class="mb-6">
-                            <label for="message" class="block text-gray-700 font-semibold mb-2">Message</label>
-                            <textarea id="message" name="message" rows="4" class="w-full px-4 py-2 form-input-underline focus:border-blue-500" placeholder="Your message..." required></textarea>
-                        </div>
-
-                        <!-- Submit Button -->
-                        <button type="submit" class="w-full bg-blue-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-blue-700 transition duration-300 text-lg shadow-md">Send Message</button>
-                    </form>
-                 </div>
-             </section>
-        </main>
         
-        <!-- ================= FOOTER ================= -->
-        <footer class="bg-[#4E3A52] text-white text-center py-16">
-            <div class="flex flex-col items-center px-4 sm:px-6 lg:px-8">
-                <h2 class="text-2xl font-bold">Stay Informed & Inspired</h2>
-                <div class="w-20 h-1 bg-white my-4 rounded"></div>
-                <p class="max-w-2xl">
-                    <strong>ICEBERG OFFICIAL SITE</strong>
+        <!-- Mobile Menu (Initially hidden) -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-gray-200">
+            <div class="p-4 space-y-2">
+                <a href="{{ url_for('index') }}" class="block py-2 px-4 text-gray-700 hover:bg-gray-100 rounded-md">Bosh Sahifa</a>
+                <a href="{{ url_for('about') }}" class="block py-2 px-4 text-gray-700 hover:bg-gray-100 rounded-md">Biz Haqimizda</a>
+                <a href="{{ url_for('our_programs') }}" class="block py-2 px-4 text-gray-700 hover:bg-gray-100 rounded-md">Dasturlar</a>
+                <a href="{{ url_for('index', _anchor='testimonials') }}" class="block py-2 px-4 text-gray-700 hover:bg-gray-100 rounded-md">Muvaffaqiyat Hikoyalari</a>
+                <a href="{{ url_for('contact') }}" class="block mt-2 bg-blue-600 text-white text-center font-bold py-2 px-4 rounded-full">Bog'lanish</a>
+            </div>
+        </div>
+    </header>
+
+    {% block content %}
+    <main>
+        <!-- Page Header Section -->
+        <section class="page-header-bg text-white pt-32 pb-16 md:pt-40 md:pb-24">
+            <div class="container mx-auto px-6 text-center">
+                <h1 class="text-4xl md:text-6xl font-serif font-bold mb-4 tracking-tight">Aloqaga Chiqing</h1>
+                <p class="text-lg md:text-xl text-blue-200 max-w-3xl mx-auto">
+                    Savollaringizga javob berish va muvaffaqiyat sari yo'lingizni boshlashga yordam berish uchun shu yerdamiz.
                 </p>
-                <div class="flex justify-center space-x-6 mt-6">
-                    <a href="https://t.me/Iceberg_study_center" class="hover:text-gray-300 flex items-center gap-2">
-                        <svg class="w-6 h-6 text-blue-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M9.78 18.65l.28-4.23l-3.08-2.99l4.26-.62l1.9-3.86l1.9 3.86l4.26.62l-3.08 2.99l.73 4.22L12 16.32z"/>
-                        </svg>
-                        <span>Telegram</span>
-                    </a>
-                    <a href="https://www.instagram.com/Iceberg_Study_Center" class="hover:text-gray-300 flex items-center gap-2">
-                        <svg class="w-6 h-6 text-pink-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M7.8 2h8.4C19.4 2 22 4.6 22 7.8v8.4a5.8 5.8 0 0 1-5.8 5.8H7.8C4.6 22 2 19.4 2 16.2V7.8A5.8 5.8 0 0 1 7.8 2m-.2 2A3.6 3.6 0 0 0 4 7.6v8.8C4 18.39 5.61 20 7.6 20h8.8a3.6 3.6 0 0 0 3.6-3.6V7.6C20 5.61 18.39 4 16.4 4H7.6m9.65 1.5a1.25 1.25 0 0 1 1.25 1.25A1.25 1.25 0 0 1 17.25 8A1.25 1.25 0 0 1 16 6.75a1.25 1.25 0 0 1 1.25-1.25M12 7a5 5 0 0 1 5 5a5 5 0 0 1-5 5a5 5 0 0 1-5-5a5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3a3 3 0 0 0 3 3a3 3 0 0 0 3-3a3 3 0 0 0-3-3z"/>
-                        </svg>
-                        <span>Instagram</span>
-                    </a>
-                    <a href="https://www.youtube.com/@ice_podcast" class="hover:text-gray-300 flex items-center gap-2">
-                        <svg class="w-6 h-6 text-red-600" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M21.582,6.186c-0.23-0.86-0.908-1.538-1.768-1.768C18.254,4,12,4,12,4S5.746,4,4.186,4.418c-0.86,0.23-1.538,0.908-1.768,1.768C2,7.746,2,12,2,12s0,4.254,0.418,5.814c0.23,0.86,0.908,1.538,1.768,1.768C5.746,20,12,20,12,20s6.254,0,7.814-0.418c0.861-0.23,1.538-0.908,1.768-1.768C22,16.254,22,12,22,12S22,7.746,21.582,6.186z M10,15.464V8.536L16,12L10,15.464z"/>
-                        </svg>
-                        <span>YouTube</span>
-                    </a>
+            </div>
+        </section>
+
+        <!-- Contact Form and Info Section -->
+        <section class="py-16 md:py-24 bg-gray-50">
+            <div class="container mx-auto px-6">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                    <!-- Contact Form -->
+                    <div class="bg-white p-8 rounded-lg shadow-lg">
+                        <h2 class="text-2xl font-bold text-[#0D2444] mb-6">Bizga Xabar Yuboring</h2>
+                        <form action="{{ url_for('contact') }}" method="post">
+                            <div class="mb-4">
+                                <label for="name" class="block text-gray-700 font-semibold mb-2">To'liq Ism</label>
+                                <input type="text" id="name" name="name" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                            </div>
+                            <div class="mb-4">
+                                <label for="email" class="block text-gray-700 font-semibold mb-2">Elektron Pochta Manzili</label>
+                                <input type="email" id="email" name="email" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                            </div>
+                            <div class="mb-6">
+                                <label for="message" class="block text-gray-700 font-semibold mb-2">Xabar</label>
+                                <textarea id="message" name="message" rows="5" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required></textarea>
+                            </div>
+                            <button type="submit" class="w-full bg-blue-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-blue-700 transition-colors">
+                                So'rovni Yuborish
+                            </button>
+                        </form>
+                    </div>
+                    <!-- Contact Info -->
+                    <div class="space-y-8">
+                        <div class="bg-white p-8 rounded-lg shadow-lg">
+                            <h3 class="text-xl font-bold text-[#0D2444] mb-4">Aloqa Ma'lumotlari</h3>
+                            <p class="text-gray-600 mb-2"><strong>Elektron pochta:</strong> contact@iceberg.edu</p>
+                            <p class="text-gray-600 mb-2"><strong>Telefon:</strong> 03-XXXX-XXXX</p>
+                            <p class="text-gray-600"><strong>Manzil:</strong> Shinjuku shahri, Tokio, Yaponiya</p>
+                        </div>
+                        <div class="bg-white p-8 rounded-lg shadow-lg">
+                             <h3 class="text-xl font-bold text-[#0D2444] mb-4">Bizning Manzilimiz</h3>
+                            <div class="aspect-w-16 aspect-h-9 rounded-lg overflow-hidden">
+                                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d25921.89680899353!2d139.68228552167968!3d35.6938253!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x60188cd0d6b1ba1f%3A0x1c32a1f2ec3d24d!2sShinjuku%20City%2C%20Tokyo!5e0!3m2!1sen!2sjp!4v1678886789123!5m2!1sen!2sjp" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </footer>
+        </section>
+    </main>
+    {% endblock %}
 
-    </div>
+    <!-- Footer -->
+    <footer class="bg-[#0D2444] text-white">
+        <div class="container mx-auto px-6 py-12 text-center md:text-left">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-xl font-bold mb-4">ICEBERG O'QUV MARKAZI</h3>
+                    <p class="text-blue-200">Shinjuku shahri, Tokio, Yaponiya</p>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4">Navigatsiya</h4>
+                    <ul class="space-y-2">
+                        <li><a href="{{ url_for('index') }}" class="text-blue-200 hover:text-white">Bosh Sahifa</a></li>
+                        <li><a href="{{ url_for('about') }}" class="text-blue-200 hover:text-white">Biz Haqimizda</a></li>
+                        <li><a href="{{ url_for('our_programs') }}" class="text-blue-200 hover:text-white">Dasturlar</a></li>
+                        <li><a href="{{ url_for('contact') }}" class="text-blue-200 hover:text-white">Bog'lanish</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4">Ijtimoiy Tarmoqlar</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-blue-200 hover:text-white">Facebook</a></li>
+                        <li><a href="#" class="text-blue-200 hover:text-white">Instagram</a></li>
+                        <li><a href="#" class="text-blue-200 hover:text-white">Telegram</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4">Qonuniy</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-blue-200 hover:text-white">Maxfiylik Siyosati</a></li>
+                        <li><a href="#" class="text-blue-200 hover:text-white">Foydalanish Shartlari</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-blue-800 mt-8 pt-6 text-center text-blue-300">
+                <p>&copy; <span id="year"></span> ICEBERG O'QUV MARKAZI. Barcha huquqlar himoyalangan.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // --- Mobile Menu Script ---
+            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenuBtn.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+
+            // --- Close mobile menu when a link is clicked ---
+            const mobileMenuLinks = document.querySelectorAll('#mobile-menu a');
+            mobileMenuLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    mobileMenu.classList.add('hidden');
+                });
+            });
+
+            // --- Long-press script for admin login ---
+            const logoLink = document.getElementById('logo-link');
+            if (logoLink) {
+                let pressTimer;
+
+                const startPress = (e) => {
+                    // Don't start the timer if it's not a primary button click
+                    if (e.type === 'mousedown' && e.button !== 0) return;
+                    
+                    pressTimer = window.setTimeout(() => {
+                        window.location.href = "{{ url_for('admin_login') }}";
+                    }, 6000); // 6 seconds
+                };
+
+                const cancelPress = () => {
+                    clearTimeout(pressTimer);
+                };
+
+                // Mouse events
+                logoLink.addEventListener('mousedown', startPress);
+                logoLink.addEventListener('mouseup', cancelPress);
+                logoLink.addEventListener('mouseleave', cancelPress);
+                
+                // Prevent context menu on long press
+                logoLink.addEventListener('contextmenu', (e) => {
+                    e.preventDefault();
+                });
+
+                // Touch events
+                logoLink.addEventListener('touchstart', startPress, { passive: true });
+                logoLink.addEventListener('touchend', cancelPress);
+                logoLink.addEventListener('touchcancel', cancelPress);
+            }
+
+            // --- Year Script ---
+            document.getElementById('year').textContent = new Date().getFullYear();
+        });
+    </script>
+
 </body>
 </html>

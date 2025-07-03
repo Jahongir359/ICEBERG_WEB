@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bizning Dasturlarimiz - ICEBERG O'QUV MARKAZI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:wght@600&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Inter', sans-serif; background-color: #FDFDFF; }
+        .font-serif { font-family: 'Lora', serif; }
+        .page-header-bg {
+            background-color: #0D2444;
+            background-image: linear-gradient(rgba(13, 36, 68, 0.7), rgba(13, 36, 68, 0.7)), url('https://images.unsplash.com/photo-1542744095-291d1f67b221?q=80&w=2070&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+        .tab-button.active {
+            border-bottom-color: #00A8B5;
+            color: #0D2444;
+            font-weight: 700;
+        }
+        .tab-button {
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+        }
+        .course-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeIn 0.6s forwards;
+        }
+        .course-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .dropdown:hover .dropdown-menu {
+            display: block;
+        }
+        .logo-interactive {
+            transition: transform 0.3s ease-in-out;
+        }
+        .logo-interactive:hover {
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+<body class="text-gray-700">
+
+    <!-- Header -->
+    <header id="header" class="bg-white/80 backdrop-blur-md shadow-sm fixed top-0 left-0 right-0 z-50">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <!-- Logo -->
+            <a href="{{ url_for('index') }}" id="logo-link" class="flex items-center">
+                <img src="{{ url_for('static', filename='img/logo.png') }}" alt="ICEBERG Logo" class="h-12 logo-interactive">
+            </a>
+            
+            <!-- Desktop Menu Links -->
+            <div class="hidden md:flex items-center space-x-8">
+                <a href="{{ url_for('index') }}" class="text-gray-600 hover:text-blue-700 transition-colors">Bosh Sahifa</a>
+                <a href="{{ url_for('about') }}" class="text-gray-600 hover:text-blue-700 transition-colors">Biz Haqimizda</a>
+                <a href="{{ url_for('our_programs') }}" class="text-blue-700 font-bold transition-colors">Dasturlar</a>
+                <a href="{{ url_for('index', _anchor='testimonials') }}" class="text-gray-600 hover:text-blue-700 transition-colors">Muvaffaqiyat Hikoyalari</a>
+            </div>
+            
+            <!-- Desktop CTA Button -->
+            <a href="{{ url_for('contact') }}" class="hidden md:block bg-blue-600 text-white font-bold py-2 px-6 rounded-full hover:bg-blue-700 transition-colors">Bog'lanish</a>
+            
+            <!-- Mobile Menu Button (Hamburger Icon) -->
+            <button id="mobile-menu-btn" class="md:hidden text-blue-900">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+            </button>
+        </nav>
+        
+        <!-- Mobile Menu (Initially hidden) -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-gray-200">
+            <div class="p-4 space-y-2">
+                <a href="{{ url_for('index') }}" class="block py-2 px-4 text-gray-700 hover:bg-gray-100 rounded-md">Bosh Sahifa</a>
+                <a href="{{ url_for('about') }}" class="block py-2 px-4 text-gray-700 hover:bg-gray-100 rounded-md">Biz Haqimizda</a>
+                <a href="{{ url_for('our_programs') }}" class="block py-2 px-4 text-gray-700 hover:bg-gray-100 rounded-md">Dasturlar</a>
+                <a href="{{ url_for('index', _anchor='testimonials') }}" class="block py-2 px-4 text-gray-700 hover:bg-gray-100 rounded-md">Muvaffaqiyat Hikoyalari</a>
+                <a href="{{ url_for('contact') }}" class="block mt-2 bg-blue-600 text-white text-center font-bold py-2 px-4 rounded-full">Bog'lanish</a>
+            </div>
+        </div>
+    </header>
+
+    {% block content %}
+    <main>
+        <!-- Page Header Section -->
+        <section class="page-header-bg text-white pt-32 pb-16 md:pt-40 md:pb-24">
+            <div class="container mx-auto px-6 text-center">
+                <h1 class="text-4xl md:text-6xl font-serif font-bold mb-4 tracking-tight">Bizning Akademik Dasturlarimiz</h1>
+                <p class="text-lg md:text-xl text-blue-200 max-w-3xl mx-auto">
+                    Eng yuqori akademik salohiyatingizga erishishingizga yordam berish uchun mahorat bilan ishlab chiqilgan yo'llar.
+                </p>
+            </div>
+        </section>
+
+        <!-- Programs Section with Tabs -->
+        <section id="programs-list" class="py-16 md:py-24 bg-gray-50">
+            <div class="container mx-auto px-6">
+                <!-- Tab Navigation -->
+                <div id="tab-buttons" class="flex justify-center mb-12 border-b border-gray-200">
+                    <button class="tab-button active text-lg font-semibold py-3 px-6" data-filter="all">Barcha Dasturlar</button>
+                    <button class="tab-button text-lg font-semibold py-3 px-6 text-gray-500 hover:text-[#0D2444]" data-filter="test-prep">Testga Tayyorgarlik</button>
+                    <button class="tab-button text-lg font-semibold py-3 px-6 text-gray-500 hover:text-[#0D2444]" data-filter="tutoring">Akademik Repetitorlik</button>
+                    <button class="tab-button text-lg font-semibold py-3 px-6 text-gray-500 hover:text-[#0D2444]" data-filter="consulting">Qabul Konsaltingi</button>
+                </div>
+
+                <!-- Course Grid -->
+                <div id="course-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- SAT Mastery -->
+                    <div class="course-card bg-white rounded-xl shadow-lg overflow-hidden flex flex-col" data-category="test-prep">
+                        <img src="https://images.unsplash.com/photo-1588196749597-9ff075ee6b5b?q=80&w=1974&auto=format&fit=crop" alt="SAT Preparation" class="w-full h-56 object-cover">
+                        <div class="p-6 flex flex-col flex-grow">
+                            <h3 class="text-xl font-bold text-[#0D2444] mb-2">SAT Mahorat Kursi</h3>
+                            <p class="text-gray-600 mb-4 flex-grow">SAT balingizni maksimal darajada oshirish uchun keng qamrovli strategiyalar va chuqur mazmunni ko'rib chiqish.</p>
+                            <a href="{{ url_for('register') }}" class="font-bold text-[#00A8B5] hover:text-[#007A85]">Batafsil &rarr;</a>
+                        </div>
+                    </div>
+                    <!-- Math Excellence -->
+                    <div class="course-card bg-white rounded-xl shadow-lg overflow-hidden flex flex-col" data-category="tutoring">
+                        <img src="https://images.unsplash.com/photo-1596495578065-64086b3016d5?q=80&w=1974&auto=format&fit=crop" alt="Mathematics Tutoring" class="w-full h-56 object-cover">
+                        <div class="p-6 flex flex-col flex-grow">
+                            <h3 class="text-xl font-bold text-[#0D2444] mb-2">Matematika bo'yicha Mukammallik Dasturi</h3>
+                            <p class="text-gray-600 mb-4 flex-grow">Algebradan tortib AP hisob-kitoblarigacha bo'lgan shaxsiylashtirilgan repetitorlik chuqur konseptual tushunchalarni shakllantirish uchun.</p>
+                            <a href="{{ url_for('register') }}" class="font-bold text-[#00A8B5] hover:text-[#007A85]">Batafsil &rarr;</a>
+                        </div>
+                    </div>
+                    <!-- Admissions Consulting -->
+                    <div class="course-card bg-white rounded-xl shadow-lg overflow-hidden flex flex-col" data-category="consulting">
+                        <img src="https://images.unsplash.com/photo-1556742502-ec7c0e9f34b1?q=80&w=1974&auto=format&fit=crop" alt="Admissions Consulting" class="w-full h-56 object-cover">
+                        <div class="p-6 flex flex-col flex-grow">
+                            <h3 class="text-xl font-bold text-[#0D2444] mb-2">Universitetga Qabul Konsaltingi</h3>
+                            <p class="text-gray-600 mb-4 flex-grow">Dunyoning eng yaxshi universitetlariga ajoyib ariza topshirish bo'yicha ekspert yordami.</p>
+                            <a href="{{ url_for('register') }}" class="font-bold text-[#00A8B5] hover:text-[#007A85]">Batafsil &rarr;</a>
+                        </div>
+                    </div>
+                    <!-- ACT Mastery -->
+                    <div class="course-card bg-white rounded-xl shadow-lg overflow-hidden flex flex-col" data-category="test-prep">
+                        <img src="https://images.unsplash.com/photo-1607962837359-5e7e84786e21?q=80&w=2070&auto=format&fit=crop" alt="ACT Preparation" class="w-full h-56 object-cover">
+                        <div class="p-6 flex flex-col flex-grow">
+                            <h3 class="text-xl font-bold text-[#0D2444] mb-2">ACT Mahorat Kursi</h3>
+                            <p class="text-gray-600 mb-4 flex-grow">ACTning barcha to'rt qismini, shuningdek ixtiyoriy inshoni o'z ichiga olgan to'liq dastur.</p>
+                            <a href="{{ url_for('register') }}" class="font-bold text-[#00A8B5] hover:text-[#007A85]">Batafsil &rarr;</a>
+                        </div>
+                    </div>
+                     <!-- English Tutoring -->
+                    <div class="course-card bg-white rounded-xl shadow-lg overflow-hidden flex flex-col" data-category="tutoring">
+                        <img src="https://images.unsplash.com/photo-1455390582262-044cdead277a?q=80&w=1973&auto=format&fit=crop" alt="English Tutoring" class="w-full h-56 object-cover">
+                        <div class="p-6 flex flex-col flex-grow">
+                            <h3 class="text-xl font-bold text-[#0D2444] mb-2">Ingliz Tili va Yozish</h3>
+                            <p class="text-gray-600 mb-4 flex-grow">Tahliliy yozish, adabiy talqin va tanqidiy o'qish ko'nikmalarini oshiring.</p>
+                            <a href="{{ url_for('register') }}" class="font-bold text-[#00A8B5] hover:text-[#007A85]">Batafsil &rarr;</a>
+                        </div>
+                    </div>
+                    <!-- Science Olympiad Prep -->
+                    <div class="course-card bg-white rounded-xl shadow-lg overflow-hidden flex flex-col" data-category="tutoring">
+                        <img src="https://images.unsplash.com/photo-1576086213369-97a306d36557?q=80&w=2080&auto=format&fit=crop" alt="Science Tutoring" class="w-full h-56 object-cover">
+                        <div class="p-6 flex flex-col flex-grow">
+                            <h3 class="text-xl font-bold text-[#0D2444] mb-2">Fan Olimpiadasiga Tayyorgarlik</h3>
+                            <p class="text-gray-600 mb-4 flex-grow">Raqobatbardosh imtihonlar uchun fizika, kimyo va biologiya bo'yicha ilg'or repetitorlik.</p>
+                            <a href="{{ url_for('register') }}" class="font-bold text-[#00A8B5] hover:text-[#007A85]">Batafsil &rarr;</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA Section -->
+        <section class="bg-white">
+            <div class="container mx-auto px-6 py-20 text-center">
+                <div>
+                    <h2 class="text-3xl font-serif font-bold text-[#0D2444] mb-4">Qidirayotganingizni Topa Olmayapsizmi?</h2>
+                    <p class="text-gray-600 max-w-2xl mx-auto mb-8">
+                        Biz to'liq moslashtirilgan repetitorlik rejalarini taklif qilamiz. Muayyan akademik ehtiyojlaringizni muhokama qilish uchun bepul maslahat olish uchun biz bilan bog'laning.
+                    </p>
+                    <a href="{{ url_for('contact') }}" class="inline-block bg-[#FFC107] text-[#0D2444] font-bold py-3 px-8 rounded-full shadow-lg hover:bg-amber-400 transition-transform transform hover:scale-105">
+                        Bepul Konsultatsiyaga Yozilish
+                    </a>
+                </div>
+            </div>
+        </section>
+    </main>
+    {% endblock %}
+
+    <!-- Footer -->
+    <footer class="bg-[#0D2444] text-white">
+        <div class="container mx-auto px-6 py-12 text-center md:text-left">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-xl font-bold mb-4">ICEBERG O'QUV MARKAZI</h3>
+                    <p class="text-blue-200">Shinjuku shahri, Tokio, Yaponiya</p>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4">Navigatsiya</h4>
+                    <ul class="space-y-2">
+                        <li><a href="{{ url_for('index') }}" class="text-blue-200 hover:text-white">Bosh Sahifa</a></li>
+                        <li><a href="{{ url_for('about') }}" class="text-blue-200 hover:text-white">Biz Haqimizda</a></li>
+                        <li><a href="{{ url_for('our_programs') }}" class="text-blue-200 hover:text-white">Dasturlar</a></li>
+                        <li><a href="{{ url_for('contact') }}" class="text-blue-200 hover:text-white">Bog'lanish</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4">Ijtimoiy Tarmoqlar</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-blue-200 hover:text-white">Facebook</a></li>
+                        <li><a href="#" class="text-blue-200 hover:text-white">Instagram</a></li>
+                        <li><a href="#" class="text-blue-200 hover:text-white">Telegram</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4">Qonuniy</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-blue-200 hover:text-white">Maxfiylik Siyosati</a></li>
+                        <li><a href="#" class="text-blue-200 hover:text-white">Foydalanish Shartlari</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-blue-800 mt-8 pt-6 text-center text-blue-300">
+                <p>&copy; <span id="year"></span> ICEBERG O'QUV MARKAZI. Barcha huquqlar himoyalangan.</p>
+            </div>
+        </div>
+    </footer>
+
+    {% block scripts %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // --- Mobile Menu Script ---
+            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenuBtn.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+
+            // --- Close mobile menu when a link is clicked ---
+            const mobileMenuLinks = document.querySelectorAll('#mobile-menu a');
+            mobileMenuLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    mobileMenu.classList.add('hidden');
+                });
+            });
+
+            // --- Long-press script for admin login ---
+            const logoLink = document.getElementById('logo-link');
+            if (logoLink) {
+                let pressTimer;
+
+                const startPress = (e) => {
+                    // Don't start the timer if it's not a primary button click
+                    if (e.type === 'mousedown' && e.button !== 0) return;
+                    
+                    pressTimer = window.setTimeout(() => {
+                        window.location.href = "{{ url_for('admin_login') }}";
+                    }, 6000); // 6 seconds
+                };
+
+                const cancelPress = () => {
+                    clearTimeout(pressTimer);
+                };
+
+                // Mouse events
+                logoLink.addEventListener('mousedown', startPress);
+                logoLink.addEventListener('mouseup', cancelPress);
+                logoLink.addEventListener('mouseleave', cancelPress);
+                
+                // Prevent context menu on long press
+                logoLink.addEventListener('contextmenu', (e) => {
+                    e.preventDefault();
+                });
+
+                // Touch events
+                logoLink.addEventListener('touchstart', startPress, { passive: true });
+                logoLink.addEventListener('touchend', cancelPress);
+                logoLink.addEventListener('touchcancel', cancelPress);
+            }
+            
+            const tabs = document.querySelectorAll('.tab-button');
+            const courses = document.querySelectorAll('.course-card');
+            const courseGrid = document.getElementById('course-grid');
+
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const filter = tab.getAttribute('data-filter');
+
+                    // Update active tab style
+                    tabs.forEach(t => {
+                        t.classList.remove('active', 'text-[#0D2444]', 'font-bold');
+                        t.classList.add('text-gray-500');
+                    });
+                    tab.classList.add('active', 'text-[#0D2444]', 'font-bold');
+                    tab.classList.remove('text-gray-500');
+
+                    // Filter courses
+                    const fragment = document.createDocumentFragment();
+                    let visibleCourses = 0;
+
+                    courses.forEach(course => {
+                        const category = course.getAttribute('data-category');
+                        const shouldShow = (filter === 'all' || category === filter);
+                        
+                        if (shouldShow) {
+                            course.style.display = 'flex';
+                            fragment.appendChild(course);
+                            visibleCourses++;
+                        } else {
+                            course.style.display = 'none';
+                        }
+                    });
+                    
+                    // Append filtered courses back to the grid
+                    courseGrid.innerHTML = ''; // Clear grid
+                    courseGrid.appendChild(fragment);
+
+                    // Re-trigger animation for visible courses
+                    const visibleCourseElements = courseGrid.querySelectorAll('.course-card[style*="display: flex"]');
+                    visibleCourseElements.forEach((course, index) => {
+                        course.style.animation = 'none';
+                        //offsetHeight triggers reflow
+                        void course.offsetHeight;
+                        course.style.animation = `fadeIn 0.5s ease ${index * 0.1}s forwards`;
+                    });
+                });
+            });
+        });
+    </script>
+    {% endblock %}
+</body>
+</html>

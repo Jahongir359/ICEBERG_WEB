@@ -1,13 +1,15 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="uz">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ICEBERG - Questions</title>
+    <title>Ko'p Beriladigan Savollar - ICEBERG</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
 </head>
 <body class="text-gray-800 bg-gray-50">
 
@@ -27,15 +29,15 @@
                         </div>
                         <!-- Primary Navbar items -->
                         <div class="hidden md:flex items-center space-x-1">
-                            <a href="{{ url_for('index') }}" class="py-4 px-2 text-gray-500 font-semibold hover:text-green-500 transition duration-300">Home</a>
-                            <a href="{{ url_for('about') }}" class="py-4 px-2 text-gray-500 font-semibold hover:text-green-500 transition duration-300">About Us</a>
-                            <a href="{{ url_for('questions') }}" class="py-4 px-2 text-green-500 font-semibold">FAQ</a>
-                            <a href="{{ url_for('contact') }}" class="py-4 px-2 text-gray-500 font-semibold hover:text-green-500 transition duration-300">Contact</a>
+                            <a href="{{ url_for('index') }}" class="py-4 px-2 text-gray-500 font-semibold hover:text-green-500 transition duration-300">Asosiy sahifa</a>
+                            <a href="{{ url_for('about') }}" class="py-4 px-2 text-gray-500 font-semibold hover:text-green-500 transition duration-300">Biz haqimizda</a>
+                            <a href="{{ url_for('questions') }}" class="py-4 px-2 text-green-500 font-semibold">Ko'p Beriladigan Savollar</a>
+                            <a href="{{ url_for('contact') }}" class="py-4 px-2 text-gray-500 font-semibold hover:text-green-500 transition duration-300">Aloqa</a>
                         </div>
                     </div>
                     <!-- Secondary Navbar items -->
                     <div class="hidden md:flex items-center space-x-3 ">
-                        <a href="{{ url_for('register') }}" class="py-2 px-2 font-medium text-white bg-green-500 rounded hover:bg-green-400 transition duration-300">Register</a>
+                        <a href="{{ url_for('register') }}" class="py-2 px-2 font-medium text-white bg-green-500 rounded hover:bg-green-400 transition duration-300">Ro'yxatdan o'tish</a>
                     </div>
                     <!-- Mobile menu button -->
                     <div class="md:hidden flex items-center">
@@ -57,11 +59,11 @@
             <!-- mobile menu -->
             <div class="hidden mobile-menu">
                 <ul class="">
-                    <li><a href="{{ url_for('index') }}" class="block text-sm px-2 py-4 hover:bg-green-500 transition duration-300">Home</a></li>
-                    <li><a href="{{ url_for('about') }}" class="block text-sm px-2 py-4 hover:bg-green-500 transition duration-300">About Us</a></li>
-                    <li class="active"><a href="{{ url_for('questions') }}" class="block text-sm px-2 py-4 text-white bg-green-500 font-semibold">FAQ</a></li>
-                    <li><a href="{{ url_for('contact') }}" class="block text-sm px-2 py-4 hover:bg-green-500 transition duration-300">Contact</a></li>
-                    <li><a href="{{ url_for('register') }}" class="block text-sm px-2 py-4 hover:bg-green-500 transition duration-300">Register</a></li>
+                    <li><a href="{{ url_for('index') }}" class="block text-sm px-2 py-4 hover:bg-green-500 transition duration-300">Asosiy sahifa</a></li>
+                    <li><a href="{{ url_for('about') }}" class="block text-sm px-2 py-4 hover:bg-green-500 transition duration-300">Biz haqimizda</a></li>
+                    <li class="active"><a href="{{ url_for('questions') }}" class="block text-sm px-2 py-4 text-white bg-green-500 font-semibold">Ko'p Beriladigan Savollar</a></li>
+                    <li><a href="{{ url_for('contact') }}" class="block text-sm px-2 py-4 hover:bg-green-500 transition duration-300">Aloqa</a></li>
+                    <li><a href="{{ url_for('register') }}" class="block text-sm px-2 py-4 hover:bg-green-500 transition duration-300">Ro'yxatdan o'tish</a></li>
                 </ul>
             </div>
             <script>
@@ -76,40 +78,83 @@
 
         <!-- Main Content: FAQ section -->
         <main>
-             <section class="py-12 md:py-20 px-4 sm:px-6 lg:px-8">
-                 <!-- Section Title: heading and subtitle -->
-                 <div class="text-center">
-                     <h1 class="text-5xl md:text-6xl font-bold tracking-wider text-gray-800">FREQUENTLY ASKED QUESTIONS</h1>
-                     <p class="text-xl text-gray-500 mt-4 tracking-widest">YOUR QUESTIONS, ANSWED</p>
-                 </div>
-                 <!-- FAQ Container -->
-                 <div class="max-w-4xl mx-auto mt-12 space-y-8">
-                     <!-- Question 1 -->
-                     <div class="bg-white p-6 rounded-lg shadow-md">
-                         <h3 class="font-semibold text-lg">What subjects do you offer tutoring for?</h3>
-                         <p class="text-gray-600 mt-2">We offer tutoring in a wide range of subjects, including Math, Science, English, and standardized test preparation (SAT, ACT).</p>
-                     </div>
-                     <!-- Question 2 -->
-                     <div class="bg-white p-6 rounded-lg shadow-md">
-                         <h3 class="font-semibold text-lg">What are your hours of operation?</h3>
-                         <p class="text-gray-600 mt-2">Our center is open from 9 AM to 8 PM on weekdays and from 10 AM to 6 PM on weekends.</p>
-                     </div>
-                     <!-- Question 3 -->
-                     <div class="bg-white p-6 rounded-lg shadow-md">
-                         <h3 class="font-semibold text-lg">How do you match students with tutors?</h3>
-                         <p class="text-gray-600 mt-2">We match students with tutors based on their academic needs, learning style, and personality to ensure the best possible fit.</p>
-                     </div>
-                 </div>
-            </section>
+            <div class="bg-white py-16 md:py-24">
+                <div class="container mx-auto px-6">
+                    <!-- Section Title -->
+                    <div class="text-center mb-12">
+                        <h1 class="text-4xl md:text-5xl font-serif font-bold text-gray-800">Ko'p Beriladigan Savollar</h1>
+                        <p class="text-lg text-gray-600 mt-2">SAVOLLARINGIZGA JAVOBLAR</p>
+                    </div>
+
+                    <!-- FAQ Container -->
+                    <div class="max-w-4xl mx-auto space-y-6">
+                        <!-- Accordion Item 1 -->
+                        <div class="bg-gray-50 rounded-lg shadow-sm border border-gray-200">
+                            <button class="w-full flex justify-between items-center text-left p-5 font-semibold text-lg text-gray-800 focus:outline-none accordion-toggle">
+                                <span>Qaysi fanlardan repetitorlik xizmatlarini taklif qilasiz?</span>
+                                <i class="fas fa-chevron-down transform transition-transform duration-300"></i>
+                            </button>
+                            <div class="accordion-content hidden px-5 pb-5 text-gray-600">
+                                <p>Biz keng ko'lamli fanlardan, jumladan, Matematika, Fan, Ingliz tili va standartlashtirilgan testlarga tayyorgarlik (SAT, ACT) bo'yicha repetitorlik xizmatlarini taklif etamiz.</p>
+                            </div>
+                        </div>
+
+                        <!-- Accordion Item 2 -->
+                        <div class="bg-gray-50 rounded-lg shadow-sm border border-gray-200">
+                            <button class="w-full flex justify-between items-center text-left p-5 font-semibold text-lg text-gray-800 focus:outline-none accordion-toggle">
+                                <span>Sizning ish vaqtingiz qanday?</span>
+                                <i class="fas fa-chevron-down transform transition-transform duration-300"></i>
+                            </button>
+                            <div class="accordion-content hidden px-5 pb-5 text-gray-600">
+                                <p>Markazimiz ish kunlari soat 9:00 dan 20:00 gacha, dam olish kunlari esa 10:00 dan 18:00 gacha ishlaydi.</p>
+                            </div>
+                        </div>
+
+                        <!-- Accordion Item 3 -->
+                        <div class="bg-gray-50 rounded-lg shadow-sm border border-gray-200">
+                            <button class="w-full flex justify-between items-center text-left p-5 font-semibold text-lg text-gray-800 focus:outline-none accordion-toggle">
+                                <span>O'quvchilarni repetitorlar bilan qanday bog'laysiz?</span>
+                                <i class="fas fa-chevron-down transform transition-transform duration-300"></i>
+                            </button>
+                            <div class="accordion-content hidden px-5 pb-5 text-gray-600">
+                                <p>Biz o'quvchilarni ularning akademik ehtiyojlari, o'rganish uslubi va shaxsiyatiga qarab repetitorlar bilan bog'laymiz, bu esa eng yaxshi moslikni ta'minlaydi.</p>
+                            </div>
+                        </div>
+
+                        <!-- Accordion Item 4 -->
+                        <div class="bg-gray-50 rounded-lg shadow-sm border border-gray-200">
+                            <button class="w-full flex justify-between items-center text-left p-5 font-semibold text-lg text-gray-800 focus:outline-none accordion-toggle">
+                                <span>Darslar qayerda o'tkaziladi?</span>
+                                <i class="fas fa-chevron-down transform transition-transform duration-300"></i>
+                            </button>
+                            <div class="accordion-content hidden px-5 pb-5 text-gray-600">
+                                <p>Darslar bizning zamonaviy o'quv markazimizda yoki o'quvchining xohishiga ko'ra onlayn tarzda o'tkazilishi mumkin.</p>
+                            </div>
+                        </div>
+
+                         <!-- Accordion Item 5 -->
+                        <div class="bg-gray-50 rounded-lg shadow-sm border border-gray-200">
+                            <button class="w-full flex justify-between items-center text-left p-5 font-semibold text-lg text-gray-800 focus:outline-none accordion-toggle">
+                                <span>Narxlar qanday?</span>
+                                <i class="fas fa-chevron-down transform transition-transform duration-300"></i>
+                            </button>
+                            <div class="accordion-content hidden px-5 pb-5 text-gray-600">
+                                <p>Narxlar dastur turiga va darslar soniga qarab o'zgaradi. Batafsil ma'lumot olish va bepul maslahat uchun biz bilan bog'laning.</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
         </main>
         
         <!-- ================= FOOTER ================= -->
         <footer class="bg-[#4E3A52] text-white text-center py-16">
             <div class="flex flex-col items-center px-4 sm:px-6 lg:px-8">
-                <h2 class="text-2xl font-bold">Stay Informed & Inspired</h2>
+                <h2 class="text-2xl font-bold">Yangiliklardan xabardor bo'ling</h2>
                 <div class="w-20 h-1 bg-white my-4 rounded"></div>
                 <p class="max-w-2xl">
-                    <strong>ICEBERG OFFICIAL SITE</strong>
+                    <strong>ICEBERG RASMIY SAYTI</strong>
                 </p>
                 <div class="flex justify-center space-x-6 mt-6">
                     <a href="https://t.me/Iceberg_study_center" class="hover:text-gray-300 flex items-center gap-2">
@@ -135,5 +180,32 @@
         </footer>
 
     </div>
+
+    {% block scripts %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const accordionToggles = document.querySelectorAll('.accordion-toggle');
+
+            accordionToggles.forEach(button => {
+                button.addEventListener('click', () => {
+                    const content = button.nextElementSibling;
+                    const icon = button.querySelector('i');
+
+                    // Close other accordions
+                    accordionToggles.forEach(otherButton => {
+                        if (otherButton !== button) {
+                            otherButton.nextElementSibling.classList.add('hidden');
+                            otherButton.querySelector('i').classList.remove('rotate-180');
+                        }
+                    });
+
+                    // Toggle current accordion
+                    content.classList.toggle('hidden');
+                    icon.classList.toggle('rotate-180');
+                });
+            });
+        });
+    </script>
+    {% endblock %}
 </body>
 </html>
