@@ -13,7 +13,7 @@ TELEGRAM_BOT_TOKEN = os.environ.get('TELEGRAM_BOT_TOKEN', '7983397749:AAFbfSoSoZ
 # 1. Open Telegram and search for the bot named "userinfobot".
 # 2. Start a chat with "userinfobot" and it will immediately reply with your user details, including your "Id".
 # 3. Replace 'YOUR_CHAT_ID' with that ID.
-TELEGRAM_CHAT_ID = os.environ.get('TELEGRAM_CHAT_ID', '5783171867') # <-- REPLACE
+TELEGRAM_CHAT_ID = os.environ.get('6040195761', '5783171867') # <-- REPLACE
 
 ADMIN_PASSWORD = "iceberg12345"
 
