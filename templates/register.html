@@ -40,6 +40,15 @@
     <div class="container mx-auto px-6">
         <div class="max-w-2xl mx-auto bg-white p-8 rounded-lg shadow-lg">
             <h2 class="text-2xl font-bold text-[#0D2444] mb-6">O'quvchi Ma'lumotlari</h2>
+            {% with messages = get_flashed_messages(with_categories=true) %}
+              {% if messages %}
+                {% for category, message in messages %}
+                  <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
+                    <span class="block sm:inline">{{ message }}</span>
+                  </div>
+                {% endfor %}
+              {% endif %}
+            {% endwith %}
             <form action="{{ url_for('register') }}" method="post">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
                     <div>
@@ -47,13 +56,18 @@
                         <input type="text" id="student_name" name="student_name" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
                     </div>
                     <div>
-                        <label for="dob" class="block text-gray-700 font-semibold mb-2">Tug'ilgan Sana</label>
-                        <input type="date" id="dob" name="dob" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                        <label for="student_phone" class="block text-sm font-medium text-gray-700 mb-1">Telefon Raqamingiz</label>
+                        <div class="flex">
+                            <span class="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">
+                                +998
+                            </span>
+                            <input type="tel" id="student_phone" name="student_phone" required pattern="[0-9]{9}" title="Please enter a valid 9-digit phone number" class="flex-1 block w-full px-3 py-2 border border-gray-300 rounded-none rounded-r-md focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="XX XXX XX XX">
+                        </div>
                     </div>
                 </div>
                 <div class="mb-4">
-                    <label for="phone" class="block text-gray-700 font-semibold mb-2">Telefon Raqami</label>
-                    <input type="tel" id="phone" name="phone" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                    <label for="dob" class="block text-sm font-medium text-gray-700 mb-1">Tug'ilgan Sanangiz</label>
+                    <input type="date" id="dob" name="dob" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
                 </div>
                 <div class="mb-6">
                     <label for="program" class="block text-gray-700 font-semibold mb-2">Dasturni Tanlang</label>

@@ -1,219 +1,128 @@
-<!DOCTYPE html>
-<html lang="uz">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Biz haqimizda - ICEBERG O'QUV MARKAZI</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Lora:wght@600&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
-    <style>
-        html { scroll-behavior: smooth; }
-        body { font-family: 'Inter', sans-serif; background-color: #FDFDFF; }
-        .font-serif { font-family: 'Lora', serif; }
-        /* This CSS rule makes the dropdown menu appear on hover for desktop */
-        .dropdown:hover .dropdown-menu {
-            display: block;
-        }
-        .logo-interactive {
-            transition: transform 0.3s ease-in-out;
-        }
-        .logo-interactive:hover {
-            transform: scale(1.1);
-        }
-    </style>
-</head>
-<body class="text-gray-700">
+{% extends "base.html" %}
 
-    <!-- Header -->
-    <header id="header" class="bg-white/80 backdrop-blur-md shadow-sm fixed top-0 left-0 right-0 z-50">
-        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
-            <!-- Logo -->
-            <a href="{{ url_for('index') }}" id="logo-link" class="flex items-center">
-                <img src="{{ url_for('static', filename='img/logo.png') }}" alt="ICEBERG Logo" class="h-12 logo-interactive">
-            </a>
-            
-            <!-- Desktop Menu Links -->
-            <div class="hidden md:flex items-center space-x-8">
-                <a href="{{ url_for('index') }}" class="text-gray-600 hover:text-blue-700 transition-colors">Bosh sahifa</a>
-                <a href="{{ url_for('about') }}" class="text-blue-700 font-bold transition-colors">Biz haqimizda</a>
-                <a href="{{ url_for('our_programs') }}" class="text-gray-600 hover:text-blue-700 transition-colors">Dasturlar</a>
-                <a href="{{ url_for('index', _anchor='testimonials') }}" class="text-gray-600 hover:text-blue-700 transition-colors">Muvaffaqiyat Hikoyalari</a>
-            </div>
-            
-            <!-- Desktop CTA Button -->
-            <a href="{{ url_for('contact') }}" class="hidden md:block bg-blue-600 text-white font-bold py-2 px-6 rounded-full hover:bg-blue-700 transition-colors">Biz bilan bog'lanish</a>
-            
-            <!-- Mobile Menu Button (Hamburger Icon) -->
-            <button id="mobile-menu-btn" class="md:hidden text-blue-900">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
-            </button>
-        </nav>
-        
-        <!-- Mobile Menu (Initially hidden) -->
-        <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-gray-200">
-            <div class="p-4 space-y-2">
-                <a href="{{ url_for('index') }}" class="block py-2 px-4 text-gray-700 hover:bg-gray-100 rounded-md">Bosh sahifa</a>
-                <a href="{{ url_for('about') }}" class="block py-2 px-4 text-gray-700 hover:bg-gray-100 rounded-md">Biz haqimizda</a>
-                <a href="{{ url_for('our_programs') }}" class="block py-2 px-4 text-gray-700 hover:bg-gray-100 rounded-md">Dasturlar</a>
-                <a href="{{ url_for('index', _anchor='testimonials') }}" class="block py-2 px-4 text-gray-700 hover:bg-gray-100 rounded-md">Muvaffaqiyat Hikoyalari</a>
-                <a href="{{ url_for('contact') }}" class="block mt-2 bg-blue-600 text-white text-center font-bold py-2 px-4 rounded-full">Biz bilan bog'lanish</a>
-            </div>
-        </div>
-    </header>
+{% block title %}Biz haqimizda - ICEBERG O'QUV MARKAZI{% endblock %}
 
-    {% extends "base.html" %}
+{% block styles %}
+{{ super() }}
+<style>
+    .page-header-bg {
+        background-color: #0D2444;
+        background-image: linear-gradient(rgba(13, 36, 68, 0.7), rgba(13, 36, 68, 0.7)), url('https://images.unsplash.com/photo-1524178232363-1fb2b075b655?q=80&w=2070&auto=format&fit=crop');
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+    }
+    .fade-in {
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+    }
+    .fade-in.visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
+</style>
+{% endblock %}
 
-    {% block title %}Biz haqimizda - ICEBERG O'QUV MARKAZI{% endblock %}
+{% block content %}
+<!-- Page Header Section -->
+<section class="page-header-bg text-white pt-32 pb-16 md:pt-40 md:pb-24">
+    <div class="container mx-auto px-6 text-center">
+        <h1 class="text-4xl md:text-6xl font-serif font-bold mb-4 tracking-tight">Bizning Hikoyamiz</h1>
+        <p class="text-lg md:text-xl text-blue-200 max-w-3xl mx-auto">
+            ICEBERG farqini belgilaydigan falsafa, odamlar va ishtiyoq.
+        </p>
+    </div>
+</section>
 
-    {% block styles %}
-    {{ super() }}
-    <style>
-        .page-header-bg {
-            background-color: #0D2444;
-            background-image: linear-gradient(rgba(13, 36, 68, 0.7), rgba(13, 36, 68, 0.7)), url('https://images.unsplash.com/photo-1524178232363-1fb2b075b655?q=80&w=2070&auto=format&fit=crop');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-        }
-        .fade-in {
-            opacity: 0;
-            transform: translateY(20px);
-            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
-        }
-        .fade-in.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    </style>
-    {% endblock %}
-
-    {% block content %}
-    <!-- Page Header Section -->
-    <section class="page-header-bg text-white pt-32 pb-16 md:pt-40 md:pb-24">
-        <div class="container mx-auto px-6 text-center">
-            <h1 class="text-4xl md:text-6xl font-serif font-bold mb-4 tracking-tight">Bizning Hikoyamiz</h1>
-            <p class="text-lg md:text-xl text-blue-200 max-w-3xl mx-auto">
-                ICEBERG farqini belgilaydigan falsafa, odamlar va ishtiyoq.
+<!-- Main Content Section -->
+<section class="py-16 md:py-24 bg-white">
+    <div class="container mx-auto px-6">
+        <!-- Our Mission -->
+        <div class="max-w-4xl mx-auto text-center mb-16 md:mb-24 fade-in">
+            <h2 class="text-3xl md:text-4xl font-serif font-bold text-[#0D2444] mb-4">Bizning Missiyamiz</h2>
+            <p class="text-lg text-gray-600 leading-relaxed">
+                Bizning missiyamiz - har bir o'quvchiga o'z potentsialini to'liq ochib berishga yordam beradigan, innovatsion va qo'llab-quvvatlovchi ta'lim muhitini taqdim etish. Biz nafaqat dasturlashni, balki tanqidiy fikrlashni, muammolarni hal qilishni va texnologiyalar olamida muvaffaqiyatga erishish uchun zarur bo'lgan ishonchni o'rgatamiz.
             </p>
         </div>
-    </section>
 
-    <!-- Our Journey Section -->
-    <section class="py-16 md:py-24 bg-white">
-        <div class="container mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div class="fade-in">
-                <img src="https://images.unsplash.com/photo-1552581234-26160f608093?q=80&w=2070&auto=format&fit=crop" 
-                     alt="Hamkorlik qilayotgan o'qituvchilar jamoasi" 
-                     class="rounded-xl shadow-xl object-cover w-full h-full">
-            </div>
-            <div class="prose lg:prose-lg max-w-none fade-in">
-                <h2 class="text-3xl md:text-4xl font-serif font-bold text-[#0D2444] mb-6">Umumiy Ishonchdan Yetakchi Muassasaga</h2>
-                <p class="text-gray-600">
-                    ICEBERG O'QUV MARKAZI oddiy, ammo kuchli ishonchga asoslangan: eng chuqur o'rganish yuzadan pastda sodir bo'ladi. Yodlashga qaratilgan ta'lim landshaftidan hafsalasi pir bo'lgan asoschilarimiz - fidoyi akademiklar va murabbiylar jamoasi - yangi turdagi o'quv muhitini yaratishga kirishdilar.
-                </p>
-            </div>
-        </div>
-    </section>
-    
-    <!-- Mission & Vision Section -->
-    <section class="bg-gray-50 py-16 md:py-24">
-        <div class="container mx-auto px-6">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
-                <div class="bg-[#0D2444] text-white p-10 rounded-lg shadow-lg fade-in">
-                    <h3 class="text-2xl font-serif font-bold mb-4">Bizning Missiyamiz</h3>
-                    <p class="text-blue-200">O'quvchilarni chuqur bilim, strategik fikrlash qobiliyatlari va o'zlarining akademik izlanishlarida va undan tashqarida muvaffaqiyat qozonish uchun qat'iy ishonch bilan ta'minlaydigan transformatsion ta'lim tajribalarini taqdim etish.</p>
+        <!-- Meet Our Team Section -->
+        <div class="mb-16 md:mb-24">
+            <h2 class="text-3xl md:text-4xl font-serif font-bold text-[#0D2444] text-center mb-12 fade-in">Jamoamiz bilan tanishing</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-12">
+                <!-- Team Member 1 -->
+                <div class="text-center fade-in" style="transition-delay: 100ms;">
+                    <div class="relative inline-block mb-4">
+                        <img src="{{ url_for('static', filename='img/azizbek.png') }}" alt="Jahongir To'xtaboyev" class="h-40 w-40 rounded-full object-cover shadow-lg mx-auto">
+                        <div class="absolute inset-0 rounded-full ring-4 ring-blue-500 ring-opacity-50 transform scale-105"></div>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800">Azizbek Nasriddinov</h3>
+                    <p class="text-blue-600 font-semibold">Markaz direktori</p>
                 </div>
-                <div class="bg-white p-10 rounded-lg shadow-lg fade-in">
-                    <h3 class="text-2xl font-serif font-bold text-[#0D2444] mb-4">Bizning Vizyonimiz</h3>
-                    <p class="text-gray-600">Har bir talaba o'z salohiyatini o'rganishga, an'analarga qarshi chiqishga va dunyoga mazmunli ta'sir ko'rsatishga ilhomlantirilgan jamiyatni rivojlantiradigan global ta'lim mukammalligining mayoqchasi bo'lish.</p>
+                <!-- Team Member 2 -->
+                <div class="text-center fade-in" style="transition-delay: 200ms;">
+                    <img src="{{ url_for('static', filename='img/maqsudbek.png') }}" alt="Maqsudbek Mirzayev" class="h-40 w-40 rounded-full object-cover shadow-lg mx-auto">
+                    <h3 class="text-xl font-bold text-gray-800 mt-4">Maqsudbek Mirzayev</h3>
+                    <p class="text-blue-600 font-semibold">Ingliz tili bo`yicha mutaxxasis</p>
+                </div>
+                <!-- Team Member 3 -->
+                <div class="text-center fade-in" style="transition-delay: 300ms;">
+                    <img src="{{ url_for('static', filename='img/islomjon.png') }}" alt="Islomjon Ergashboyev" class="h-40 w-40 rounded-full object-cover shadow-lg mx-auto">
+                    <h3 class="text-xl font-bold text-gray-800 mt-4">Islomjon Ergashboyev</h3>
+                    <p class="text-blue-600 font-semibold">Markaz asosiy tizim boshqaruvchisi</p>
                 </div>
             </div>
         </div>
-    </section>
 
-    <!-- Meet the Leadership Section -->
-    <section class="py-16 md:py-24 bg-white">
-        <div class="container mx-auto px-6 text-center">
-            <div class="mb-12 fade-in">
-                <h2 class="text-3xl md:text-4xl font-serif font-bold text-[#0D2444]">Bizning Rahbariyat Bilan Tanishing</h2>
-                <p class="text-gray-600 mt-2 max-w-2xl mx-auto">Bizning markazimiz sizning muvaffaqiyatingizga bag'ishlangan tajribali o'qituvchilar tomonidan boshqariladi.</p>
-            </div>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-                <div class="fade-in">
-                    <div class="p-4">
-                        <img src="{{ url_for('static', filename='img/azizbek.png') }}" class="w-32 h-32 rounded-full mx-auto mb-4 shadow-lg border-4 border-white" alt="Dr. Aris Thorne">
-                        <h4 class="text-xl font-bold text-gray-800">Mr. AZIZBEK NASRIDDINOV</h4>
-                        <p class="text-[#00A8B5] font-semibold">Asoschi va Direktor</p>
-                    </div>
+        <!-- Our Values Section -->
+        <div>
+            <h2 class="text-3xl md:text-4xl font-serif font-bold text-[#0D2444] text-center mb-12 fade-in">Bizning Qadriyatlarimiz</h2>
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Value 1 -->
+                <div class="bg-gray-50 p-8 rounded-lg shadow-sm hover:shadow-xl transition-shadow duration-300 fade-in" style="transition-delay: 100ms;">
+                    <h3 class="text-xl font-bold text-[#0D2444] mb-2">O'quvchilarga e'tibor</h3>
+                    <p class="text-gray-600">Bizning har bir qarorimiz o'quvchilarimizning manfaatlari uchun qabul qilinadi.</p>
                 </div>
-                <div class="fade-in">
-                     <div class="p-4">
-                        <img src="{{ url_for('static', filename='img/jahongir.png') }}" class="w-32 h-32 rounded-full mx-auto mb-4 shadow-lg border-4 border-white" alt="Dr. Elara Vance">
-                        <h4 class="text-xl font-bold text-gray-800">Mr. Jahongir</h4>
-                        <p class="text-[#00A8B5] font-semibold">Chet elda university bo`yicha maslaxatchi</p>
-                    </div>
+                <!-- Value 2 -->
+                <div class="bg-gray-50 p-8 rounded-lg shadow-sm hover:shadow-xl transition-shadow duration-300 fade-in" style="transition-delay: 200ms;">
+                    <h3 class="text-xl font-bold text-[#0D2444] mb-2">Innovatsiya</h3>
+                    <p class="text-gray-600">Biz doimo eng so'nggi texnologiyalar va o'qitish usullarini qo'llaymiz.</p>
                 </div>
-                <div class="fade-in">
-                     <div class="p-4">
-                        <img src="{{ url_for('static', filename='img/maqsudbek.png') }}" class="w-32 h-32 rounded-full mx-auto mb-4 shadow-lg border-4 border-white" alt="Rohan Shaw">
-                        <h4 class="text-xl font-bold text-gray-800">Mr. MAQSUDBEK</h4>
-                        <p class="text-[#00A8B5] font-semibold">IELTS bo'yicha mutaxassis</p>
-                    </div>
-                </div>
-                <div class="fade-in">
-                     <div class="p-4">
-                        <img src="{{ url_for('static', filename='img/islomjon.png') }}" class="w-32 h-32 rounded-full mx-auto mb-4 shadow-lg border-4 border-white" alt="Lena Chen">
-                        <h4 class="text-xl font-bold text-gray-800">Mr.Islomjon</h4>
-                        <p class="text-[#00A8B5] font-semibold">Markaz bo`yicha asosis mutaxassis</p>
-                    </div>
+                <!-- Value 3 -->
+                <div class="bg-gray-50 p-8 rounded-lg shadow-sm hover:shadow-xl transition-shadow duration-300 fade-in" style="transition-delay: 300ms;">
+                    <h3 class="text-xl font-bold text-[#0D2444] mb-2">Hamjamiyat</h3>
+                    <p class="text-gray-600">Biz bir-birini qo'llab-quvvatlaydigan va ilhomlantiradigan hamjamiyat yaratamiz.</p>
                 </div>
             </div>
         </div>
-    </section>
+    </div>
+</section>
+{% endblock %}
 
-    <!-- CTA Section -->
-    <section class="bg-gray-100">
-        <div class="container mx-auto px-6 py-20 text-center">
-            <div class="fade-in">
-                <h2 class="text-3xl font-serif font-bold text-[#0D2444] mb-4">Bizning Jamiyatimizga Qo'shiling</h2>
-                <p class="text-gray-600 max-w-2xl mx-auto mb-8">
-                    Bizning noyob yondashuvimiz sizning akademik sayohatingizda qanday farq yaratishi mumkinligini bilib oling. Dasturlarimizni o'rganing yoki bugun maslahatchi bilan suhbatlashing.
-                </p>
-                <a href="{{ url_for('our_programs') }}" class="inline-block bg-[#FFC107] text-[#0D2444] font-bold py-3 px-8 rounded-full shadow-lg hover:bg-amber-400 transition-transform transform hover:scale-105">
-                    Dasturlarimizni O'rganing
-                </a>
-            </div>
-        </div>
-    </section>
-    {% endblock %}
+{% block scripts %}
+{{ super() }}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const faders = document.querySelectorAll('.fade-in');
 
-    {% block scripts %}
-    {{ super() }}
-    <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // --- Intersection Observer for fade-in animations ---
-        const faders = document.querySelectorAll('.fade-in');
-        const appearOptions = {
-            threshold: 0.1,
-            rootMargin: "0px 0px -50px 0px"
-        };
-        const appearOnScroll = new IntersectionObserver(function(entries, appearOnScroll) {
-            entries.forEach(entry => {
-                if (!entry.isIntersecting) {
-                    return;
-                }
-                entry.target.classList.add('visible');
-                appearOnScroll.unobserve(entry.target);
-            });
-        }, appearOptions);
+    const appearOptions = {
+        threshold: 0.5,
+        rootMargin: "0px 0px -50px 0px"
+    };
 
-        faders.forEach(fader => {
-            appearOnScroll.observe(fader);
+    const appearOnScroll = new IntersectionObserver(function(entries, appearOnScroll) {
+        entries.forEach(entry => {
+            if (!entry.isIntersecting) {
+                return;
+            }
+            entry.target.classList.add('visible');
+            appearOnScroll.unobserve(entry.target);
         });
+    }, appearOptions);
+
+    faders.forEach(fader => {
+        appearOnScroll.observe(fader);
     });
-    </script>
-    {% endblock %}
-</body>
-</html>
+});
+</script>
+{% endblock %}

@@ -1,5 +1,9 @@
 {% extends "base.html" %}
 
+{% block header %}
+    {{ super() }}
+{% endblock %}
+
 {% block styles %}
     {{ super() }}
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -37,6 +41,16 @@
             <!-- Contact Form -->
             <div class="bg-white p-8 rounded-lg shadow-lg">
                 <h2 class="text-2xl font-bold text-[#0D2444] mb-6">Bizga Xabar Yuboring</h2>
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                  {% if messages %}
+                    {% for category, message in messages %}
+                      <div class="{{ category }}-message bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
+                        <strong class="font-bold">Success!</strong>
+                        <span class="block sm:inline">{{ message }}</span>
+                      </div>
+                    {% endfor %}
+                  {% endif %}
+                {% endwith %}
                 <form id="contactForm" action="{{ url_for('contact') }}" method="post">
                     <div class="mb-4">
                         <label for="name" class="block text-gray-700 font-semibold mb-2">To'liq Ism</label>
@@ -44,11 +58,16 @@
                     </div>
                     <div id="standard-fields">
                         <div class="mb-4">
-                            <label for="email" class="block text-gray-700 font-medium mb-2">Email</label>
-                            <input type="email" id="email" name="email" class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                            <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">Telefon Raqamingiz</label>
+                            <div class="flex">
+                                <span class="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">
+                                    +998
+                                </span>
+                                <input type="tel" id="phone" name="phone" required pattern="[0-9]{9}" title="Please enter a valid 9-digit phone number" class="flex-1 block w-full px-3 py-2 border border-gray-300 rounded-none rounded-r-md focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="XX XXX XX XX">
+                            </div>
                         </div>
                         <div class="mb-4">
-                            <label for="message" class="block text-gray-700 font-medium mb-2">Xabar</label>
+                            <label for="message" class="block text-sm font-medium text-gray-700 mb-1">Xabar</label>
                             <textarea id="message" name="message" rows="4" class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required></textarea>
                         </div>
                     </div>
@@ -65,14 +84,14 @@
             <div class="space-y-8">
                 <div class="bg-white p-8 rounded-lg shadow-lg">
                     <h3 class="text-xl font-bold text-[#0D2444] mb-4">Aloqa Ma'lumotlari</h3>
-                    <p class="text-gray-600 mb-2"><strong>Elektron pochta:</strong> contact@iceberg.edu</p>
-                    <p class="text-gray-600 mb-2"><strong>Telefon:</strong> 03-XXXX-XXXX</p>
-                    <p class="text-gray-600"><strong>Manzil:</strong> Shinjuku shahri, Tokio, Yaponiya</p>
+                    <p class="text-gray-600 mb-2"><strong>Elektron pochta:</strong> <a href="mailto:iceberg.edu.center@gmail.com" class="text-blue-600 hover:underline">iceberg.edu.center@gmail.com</a></p>
+                    <p class="text-gray-600 mb-2"><strong>Telefon:</strong> <a href="tel:+998939461699" class="text-blue-600 hover:underline">(+998) 939461699</a></p>
+                    <p class="text-gray-600"><strong>Manzil:</strong> <a href="https://www.google.com/maps/place/Uychi,+Uzbekistan/@40.9931812,71.9511161,12z/data=!3m1!4b1!4m6!3m5!1s0x38bb7f5764470e91:0x49d1123a4816a26c!8m2!3d40.9931812!4d71.9836908!16s%2Fm%2F02pr7w0?entry=ttu" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">Uyci, Namangan Viloyati, Uzbekistan</a></p>
                 </div>
                 <div class="bg-white p-8 rounded-lg shadow-lg">
-                     <h3 class="text-xl font-bold text-[#0D2444] mb-4">Bizning Manzilimiz</h3>
+                    <h3 class="text-xl font-bold text-[#0D2444] mb-4">Bizning Manzilimiz</h3>
                     <div class="aspect-w-16 aspect-h-9 rounded-lg overflow-hidden">
-                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d25921.89680899353!2d139.68228552167968!3d35.6938253!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x60188cd0d6b1ba1f%3A0x1c32a1f2ec3d24d!2sShinjuku%20City%2C%20Tokyo!5e0!3m2!1sen!2sjp!4v1678886789123!5m2!1sen!2sjp" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d48448.83891956152!2d71.95111614999999!3d40.9931812!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x38bb7f5764470e91%3A0x49d1123a4816a26c!2sUychi%2C%20Uzbekistan!5e0!3m2!1sen!2sus!4v1678886400000!5m2!1sen!2sus" class="w-full h-full" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
                     </div>
                 </div>
             </div>
@@ -89,7 +108,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const contactForm = document.getElementById('contactForm');
     const standardFields = document.getElementById('standard-fields');
     const passwordField = document.getElementById('password-field');
-    const emailInput = document.getElementById('email');
+    const phoneInput = document.getElementById('phone');
     const messageInput = document.getElementById('message');
     const passwordInput = document.getElementById('password');
 
@@ -98,18 +117,24 @@ document.addEventListener('DOMContentLoaded', function() {
             // Switch to admin login
             standardFields.classList.add('hidden');
             passwordField.classList.remove('hidden');
-            contactForm.action = "{{ url_for('admin_login') }}";
-            emailInput.required = false;
+            // Make standard fields not required
+            phoneInput.required = false;
             messageInput.required = false;
+            // Make password required
             passwordInput.required = true;
+            // Change form action for admin login
+            contactForm.action = "{{ url_for('admin_login') }}";
         } else {
-            // Switch back to standard contact form
+            // Switch back to contact form
             standardFields.classList.remove('hidden');
             passwordField.classList.add('hidden');
-            contactForm.action = "{{ url_for('contact') }}";
-            emailInput.required = true;
+            // Make standard fields required
+            phoneInput.required = true;
             messageInput.required = true;
+            // Make password not required
             passwordInput.required = false;
+            // Revert form action
+            contactForm.action = "{{ url_for('contact') }}";
         }
     });
 });

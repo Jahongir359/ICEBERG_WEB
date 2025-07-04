@@ -13,10 +13,8 @@
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">O'quvchi Ismi</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">O'quvchi Telefoni</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ota-ona Ismi</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ota-ona Telefoni</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">O`quvchi tug`ilgan sanasi</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Kurs</th>
-                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Amallar</th>
                 </tr>
             </thead>
             <tbody class="bg-white divide-y divide-gray-200">
@@ -24,10 +22,9 @@
                 <tr>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ student[0] }}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ student[1] }}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ student[2] }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">+998{{ student[2] }}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ student[3] }}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ student[4] }}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ student[5] }}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                         <form action="{{ url_for('delete_student', student_id=student[0]) }}" method="POST" onsubmit="return confirm('Haqiqatan ham bu o\'quvchini oʻchirmoqchimisiz?');">
                             <button type="submit" class="text-red-600 hover:text-red-900">O'chirish</button>

@@ -25,64 +25,68 @@
 <body class="bg-gray-100 font-sans">
 
     {% block header %}
-    <header id="header" class="bg-white/90 backdrop-blur-md shadow-md fixed top-0 left-0 right-0 z-50 transition-all duration-300">
-        <nav class="container mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-20">
-                <!-- Logo -->
-                <a href="{{ url_for('index') }}" id="logo-link" class="flex-shrink-0">
-                    <img src="{{ url_for('static', filename='img/logo.png') }}" alt="ICEBERG Logo" class="h-14 logo-interactive">
-                </a>
-                
-                <!-- Desktop Menu Links (Centered) -->
-                <div class="hidden md:flex md:items-center md:justify-center flex-grow">
-                    <div class="flex items-baseline space-x-6">
-                        <a href="{{ url_for('index') }}" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-200 transition-all duration-300 {% if request.endpoint == 'index' %}text-blue-600 font-bold{% endif %}">Bosh Sahifa</a>
-                        <a href="{{ url_for('about') }}" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-200 transition-all duration-300 {% if request.endpoint == 'about' %}text-blue-600 font-bold{% endif %}">Biz Haqimizda</a>
-                        <a href="{{ url_for('our_programs') }}" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-200 transition-all duration-300 {% if request.endpoint == 'our_programs' %}text-blue-600 font-bold{% endif %}">Dasturlarimiz</a>
-                        <a href="{{ url_for('contact') }}" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-200 transition-all duration-300 {% if request.endpoint == 'contact' %}text-blue-600 font-bold{% endif %}">Bog'lanish</a>
-                        {% if 'logged_in' in session %}
-                        <a href="{{ url_for('admin_dashboard') }}" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-200 transition-all duration-300">Admin Panel</a>
-                        {% endif %}
-                    </div>
-                </div>
-
-                <!-- Desktop Right Side & Mobile Menu Button -->
-                <div class="flex items-center">
-                    <div class="hidden md:block flex-shrink-0">
-                        <a href="{{ url_for('register') }}" class="bg-blue-600 text-white font-bold py-2 px-5 rounded-full hover:bg-blue-700 transition-all duration-300 transform hover:scale-105">
-                            Ro'yxatdan O'tish
-                        </a>
-                    </div>
-                    <div class="md:hidden">
-                        <button id="mobile-menu-button" class="inline-flex items-center justify-center p-2 rounded-md text-gray-600 hover:text-gray-800 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500">
-                            <span class="sr-only">Open main menu</span>
-                            <i class="fas fa-bars text-2xl"></i>
-                        </button>
-                    </div>
-                </div>
+    <header id="header" class="bg-white/80 backdrop-blur-md shadow-sm fixed top-0 left-0 right-0 z-50 transition-all duration-300">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <!-- Logo -->
+            <a href="{{ url_for('index') }}" id="logo-link" class="flex items-center">
+                <img src="{{ url_for('static', filename='img/logo.png') }}" alt="ICEBERG Logo" class="h-12 logo-interactive">
+            </a>
+            
+            <!-- Desktop Menu Links -->
+            <div class="hidden md:flex items-center space-x-8">
+                <a href="{{ url_for('index') }}" class="text-gray-600 hover:text-blue-700 transition-colors">Bosh sahifa</a>
+                <a href="{{ url_for('about') }}" class="text-gray-600 hover:text-blue-700 transition-colors">Biz haqimizda</a>
+                <a href="{{ url_for('our_programs') }}" class="text-gray-600 hover:text-blue-700 transition-colors">Dasturlar</a>
+                <a href="{{ url_for('index', _anchor='testimonials') }}" class="text-gray-600 hover:text-blue-700 transition-colors">Muvaffaqiyat Hikoyalari</a>
             </div>
+            
+            <!-- Desktop CTA Button -->
+            <a href="{{ url_for('contact') }}" class="hidden md:block bg-blue-600 text-white font-bold py-2 px-6 rounded-full hover:bg-blue-700 transition-transform duration-300 transform hover:scale-105">Biz bilan bog'lanish</a>
+            
+            <!-- Mobile Menu Button (Hamburger Icon) -->
+            <button id="mobile-menu-btn" class="md:hidden text-blue-900 focus:outline-none">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+            </button>
         </nav>
-
-        <!-- Mobile Menu -->
-        <div id="mobile-menu" class="hidden md:hidden">
-            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3 border-t border-gray-200">
-                <a href="{{ url_for('index') }}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-200 transition-all duration-300 {% if request.endpoint == 'index' %}bg-blue-100 text-blue-700{% endif %}">Bosh Sahifa</a>
-                <a href="{{ url_for('about') }}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-200 transition-all duration-300 {% if request.endpoint == 'about' %}bg-blue-100 text-blue-700{% endif %}">Biz Haqimizda</a>
-                <a href="{{ url_for('our_programs') }}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-200 transition-all duration-300 {% if request.endpoint == 'our_programs' %}bg-blue-100 text-blue-700{% endif %}">Dasturlarimiz</a>
-                <a href="{{ url_for('contact') }}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-200 transition-all duration-300 {% if request.endpoint == 'contact' %}bg-blue-100 text-blue-700{% endif %}">Bog'lanish</a>
-                {% if 'logged_in' in session %}
-                <a href="{{ url_for('admin_dashboard') }}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-200 transition-all duration-300">Admin Panel</a>
-                <a href="{{ url_for('logout') }}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-200 transition-all duration-300">Chiqish</a>
-                {% endif %}
-                <div class="pt-4 pb-2">
-                    <a href="{{ url_for('register') }}" class="block w-full text-center bg-blue-600 text-white font-bold py-2 px-4 rounded-full hover:bg-blue-700 transition-all duration-300">Ro'yxatdan O'tish</a>
-                </div>
-            </div>
-        </div>
     </header>
     {% endblock %}
 
-    <main class="pt-20">
+    <!-- Mobile Menu (Slide-out Panel) -->
+    <div id="mobile-menu-panel" class="fixed top-0 right-0 h-full w-64 bg-white shadow-lg z-50 transform translate-x-full transition-transform duration-300 ease-in-out md:hidden">
+        <div class="p-5 border-b border-gray-200 flex justify-between items-center">
+            <h2 class="text-xl font-bold text-blue-900">Menyu</h2>
+            <button id="close-mobile-menu-btn" class="text-gray-600 hover:text-gray-900">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+        </div>
+        <div class="p-4 space-y-2">
+            <a href="{{ url_for('index') }}" class="flex items-center py-3 px-4 text-gray-700 hover:bg-blue-50 rounded-md transition-colors">
+                <svg class="w-5 h-5 mr-3 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                Bosh sahifa
+            </a>
+            <a href="{{ url_for('about') }}" class="flex items-center py-3 px-4 text-gray-700 hover:bg-blue-50 rounded-md transition-colors">
+                <svg class="w-5 h-5 mr-3 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                Biz haqimizda
+            </a>
+            <a href="{{ url_for('our_programs') }}" class="flex items-center py-3 px-4 text-gray-700 hover:bg-blue-50 rounded-md transition-colors">
+                <svg class="w-5 h-5 mr-3 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v11.494m-9-5.747h18"></path></svg>
+                Dasturlar
+            </a>
+            <a href="{{ url_for('index', _anchor='testimonials') }}" class="flex items-center py-3 px-4 text-gray-700 hover:bg-blue-50 rounded-md transition-colors">
+                <svg class="w-5 h-5 mr-3 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
+                Muvaffaqiyat Hikoyalari
+            </a>
+            <div class="pt-4">
+                <a href="{{ url_for('contact') }}" class="block bg-blue-600 text-white text-center font-bold py-3 px-4 rounded-full hover:bg-blue-700 transition-transform duration-300 transform hover:scale-105">
+                    Biz bilan bog'lanish
+                </a>
+            </div>
+        </div>
+    </div>
+    <!-- Overlay for mobile menu -->
+    <div id="mobile-menu-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden md:hidden"></div>
+
+    <main>
         {% block content %}{% endblock %}
     </main>
 
@@ -148,36 +152,41 @@
 
     {% block scripts %}
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const mobileMenuButton = document.getElementById('mobile-menu-button');
-            const mobileMenu = document.getElementById('mobile-menu');
+        document.addEventListener('DOMContentLoaded', function () {
+            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+            const closeMobileMenuBtn = document.getElementById('close-mobile-menu-btn');
+            const mobileMenuPanel = document.getElementById('mobile-menu-panel');
+            const mobileMenuOverlay = document.getElementById('mobile-menu-overlay');
             const header = document.getElementById('header');
 
-            if (mobileMenuButton && mobileMenu) {
-                mobileMenuButton.addEventListener('click', function() {
-                    mobileMenu.classList.toggle('hidden');
-                });
+            function openMenu() {
+                mobileMenuPanel.classList.remove('translate-x-full');
+                mobileMenuOverlay.classList.remove('hidden');
+                document.body.style.overflow = 'hidden'; // Prevent background scroll
             }
 
-            // Optional: Add a shadow to the header on scroll
-            if(header) {
-                window.addEventListener('scroll', function() {
-                    if (window.scrollY > 10) {
-                        header.classList.add('shadow-lg');
-                    } else {
-                        header.classList.remove('shadow-lg');
-                    }
-                });
+            function closeMenu() {
+                mobileMenuPanel.classList.add('translate-x-full');
+                mobileMenuOverlay.classList.add('hidden');
+                document.body.style.overflow = ''; // Restore scroll
             }
 
-            // Copyright year
-            const yearSpan = document.getElementById('year');
-            if (yearSpan) {
-                yearSpan.textContent = new Date().getFullYear();
-            }
+            mobileMenuBtn.addEventListener('click', openMenu);
+            closeMobileMenuBtn.addEventListener('click', closeMenu);
+            mobileMenuOverlay.addEventListener('click', closeMenu);
+
+            // Change header style on scroll
+            window.addEventListener('scroll', function() {
+                if (window.scrollY > 50) {
+                    header.classList.add('bg-white', 'shadow-lg');
+                    header.classList.remove('bg-white/80', 'backdrop-blur-md');
+                } else {
+                    header.classList.remove('bg-white', 'shadow-lg');
+                    header.classList.add('bg-white/80', 'backdrop-blur-md');
+                }
+            });
         });
     </script>
     {% endblock %}
-
 </body>
 </html>

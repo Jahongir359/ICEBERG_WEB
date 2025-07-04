@@ -25,4 +25,70 @@
         </div>
     </a>
 </div>
+
+<div class="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <!-- Recent Registrations -->
+    <div class="bg-white shadow-lg rounded-xl p-6">
+        <h3 class="text-xl font-semibold text-gray-800 mb-4">So'nggi Ro'yxatdan o'tganlar</h3>
+        <div class="overflow-x-auto">
+            <table class="min-w-full bg-white">
+                <thead class="bg-gray-100">
+                    <tr>
+                        <th class="text-left py-3 px-4 font-semibold text-sm text-gray-600 uppercase">Ism</th>
+                        <th class="text-left py-3 px-4 font-semibold text-sm text-gray-600 uppercase">Telefon</th>
+                        <th class="text-left py-3 px-4 font-semibold text-sm text-gray-600 uppercase">Kurs</th>
+                    </tr>
+                </thead>
+                <tbody class="text-gray-700">
+                    {% for student in recent_students %}
+                    <tr class="border-b border-gray-200 hover:bg-gray-50">
+                        <td class="py-3 px-4">{{ student.student_name }}</td>
+                        <td class="py-3 px-4">{{ student.student_phone }}</td>
+                        <td class="py-3 px-4">{{ student.course }}</td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="3" class="py-4 px-4 text-center text-gray-500">Hozircha yangi ro'yxatlar mavjud emas.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="mt-4 text-right">
+            <a href="{{ url_for('students') }}" class="text-blue-500 hover:text-blue-700 font-semibold">Barchasini ko'rish &rarr;</a>
+        </div>
+    </div>
+
+    <!-- Recent Contacts -->
+    <div class="bg-white shadow-lg rounded-xl p-6">
+        <h3 class="text-xl font-semibold text-gray-800 mb-4">So'nggi Aloqa Xabarlari</h3>
+        <div class="overflow-x-auto">
+            <table class="min-w-full bg-white">
+                <thead class="bg-gray-100">
+                    <tr>
+                        <th class="text-left py-3 px-4 font-semibold text-sm text-gray-600 uppercase">Ism</th>
+                        <th class="text-left py-3 px-4 font-semibold text-sm text-gray-600 uppercase">Telefon</th>
+                        <th class="text-left py-3 px-4 font-semibold text-sm text-gray-600 uppercase">Xabar</th>
+                    </tr>
+                </thead>
+                <tbody class="text-gray-700">
+                    {% for contact in recent_contacts %}
+                    <tr class="border-b border-gray-200 hover:bg-gray-50">
+                        <td class="py-3 px-4">{{ contact.name }}</td>
+                        <td class="py-3 px-4">{{ contact.phone }}</td>
+                        <td class="py-3 px-4 truncate max-w-xs">{{ contact.message }}</td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="3" class="py-4 px-4 text-center text-gray-500">Hozircha yangi xabarlar mavjud emas.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="mt-4 text-right">
+            <a href="{{ url_for('contacts_list') }}" class="text-blue-500 hover:text-blue-700 font-semibold">Barchasini ko'rish &rarr;</a>
+        </div>
+    </div>
+</div>
 {% endblock %}
