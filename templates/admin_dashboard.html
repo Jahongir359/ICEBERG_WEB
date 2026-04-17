@@ -5,43 +5,79 @@
 {% block page_title %}Boshqaruv paneli{% endblock %}
 
 {% block content %}
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-    <a href="{{ url_for('students') }}" class="bg-white shadow-lg rounded-xl p-6 flex items-center hover:shadow-xl transition-shadow duration-300">
-        <div class="bg-blue-500 rounded-full p-4 mr-4">
-            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M15 21a6 6 0 00-9-5.197M15 21a6 6 0 006-6v-1a3 3 0 00-3-3H9a3 3 0 00-3 3v1a6 6 0 006 6z"></path></svg>
+<div class="surface-card p-4 mb-6 flex flex-wrap items-center justify-between gap-3 interactive-panel">
+    <p class="text-sm text-slate-600">Tez boshqaruv: kerakli bo'limga bir bosishda o'ting.</p>
+    <div class="flex flex-wrap gap-2">
+        <a href="{{ url_for('admin_content') }}" class="btn-primary px-4 py-2 text-sm">Kontentni Tahrirlash</a>
+        <a href="{{ url_for('admin_news') }}" class="btn-ghost px-4 py-2 text-sm">Yangilik/Event Qo'shish</a>
+        <a href="{{ url_for('admin_assets') }}" class="btn-ghost px-4 py-2 text-sm">Rasmlarni Yangilash</a>
+        <a href="{{ url_for('admin_tools') }}" class="btn-ghost px-4 py-2 text-sm">Admin Tools</a>
+    </div>
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+    <a href="{{ url_for('students') }}" class="surface-card p-6 flex items-center hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5 interactive-panel">
+        <div class="rounded-2xl p-4 mr-4 text-white bg-gradient-to-br from-blue-500 to-blue-700 shadow-lg">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M15 21a6 6 0 00-9-5.197M15 21a6 6 0 006-6v-1a3 3 0 00-3-3H9a3 3 0 00-3 3v1a6 6 0 006 6z"></path></svg>
         </div>
         <div>
             <h3 class="text-lg font-semibold text-gray-700">Jami Ro'yxatdan o'tganlar</h3>
             <p class="text-3xl font-bold text-[#0D2444] mt-1">{{ stats.total_students }}</p>
         </div>
     </a>
-    <a href="{{ url_for('contacts_list') }}" class="bg-white shadow-lg rounded-xl p-6 flex items-center hover:shadow-xl transition-shadow duration-300">
-        <div class="bg-green-500 rounded-full p-4 mr-4">
-            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+    <a href="{{ url_for('contacts_list') }}" class="surface-card p-6 flex items-center hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5 interactive-panel">
+        <div class="rounded-2xl p-4 mr-4 text-white bg-gradient-to-br from-emerald-500 to-emerald-700 shadow-lg">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
         </div>
         <div>
             <h3 class="text-lg font-semibold text-gray-700">Jami Aloqa Xabarlari</h3>
             <p class="text-3xl font-bold text-[#0D2444] mt-1">{{ stats.total_contacts }}</p>
         </div>
     </a>
+    <a href="{{ url_for('admin_content') }}" class="surface-card p-6 flex items-center hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5 interactive-panel">
+        <div class="rounded-2xl p-4 mr-4 text-white bg-gradient-to-br from-cyan-500 to-sky-700 shadow-lg">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h8m-8 4h6M5 4h14a2 2 0 012 2v12a2 2 0 01-2 2H5a2 2 0 01-2-2V6a2 2 0 012-2z"></path></svg>
+        </div>
+        <div>
+            <h3 class="text-lg font-semibold text-gray-700">Sayt Kontenti</h3>
+            <p class="text-sm font-medium text-[#0D2444] mt-1">Matn, link va stilni boshqarish</p>
+        </div>
+    </a>
+    <a href="{{ url_for('admin_tools') }}" class="surface-card p-6 flex items-center hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5 interactive-panel">
+        <div class="rounded-2xl p-4 mr-4 text-white bg-gradient-to-br from-violet-500 to-indigo-700 shadow-lg">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 3a.75.75 0 01.75.75V5h3V3.75a.75.75 0 011.5 0V5h1.25A2.75 2.75 0 0119 7.75V9H5V7.75A2.75 2.75 0 017.75 5H9V3.75A.75.75 0 019.75 3zM5 10.5h14v5.75A2.75 2.75 0 0116.25 19H7.75A2.75 2.75 0 015 16.25V10.5zm5.25 2.25a.75.75 0 000 1.5h3.5a.75.75 0 000-1.5h-3.5z"></path></svg>
+        </div>
+        <div>
+            <h3 class="text-lg font-semibold text-gray-700">Admin Tools</h3>
+            <p class="text-sm font-medium text-[#0D2444] mt-1">Backup, audit, system health</p>
+        </div>
+    </a>
+    <a href="{{ url_for('admin_news') }}" class="surface-card p-6 flex items-center hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5 interactive-panel">
+        <div class="rounded-2xl p-4 mr-4 text-white bg-gradient-to-br from-orange-500 to-amber-700 shadow-lg">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 5H5a2 2 0 00-2 2v10a2 2 0 002 2h14a2 2 0 002-2V7a2 2 0 00-2-2zm-9 4h6m-6 4h4"></path></svg>
+        </div>
+        <div>
+            <h3 class="text-lg font-semibold text-gray-700">Yangilik/Event</h3>
+            <p class="text-sm font-medium text-[#0D2444] mt-1">Postlar: {{ stats.total_news }}</p>
+        </div>
+    </a>
 </div>
 
 <div class="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-8">
-    <!-- Recent Registrations -->
-    <div class="bg-white shadow-lg rounded-xl p-6">
+    <div class="surface-card p-6 interactive-panel">
         <h3 class="text-xl font-semibold text-gray-800 mb-4">So'nggi Ro'yxatdan o'tganlar</h3>
         <div class="overflow-x-auto">
-            <table class="min-w-full bg-white">
-                <thead class="bg-gray-100">
+            <table class="min-w-full bg-white/50 rounded-xl overflow-hidden">
+                <thead class="bg-slate-100/80">
                     <tr>
-                        <th class="text-left py-3 px-4 font-semibold text-sm text-gray-600 uppercase">Ism</th>
-                        <th class="text-left py-3 px-4 font-semibold text-sm text-gray-600 uppercase">Telefon</th>
-                        <th class="text-left py-3 px-4 font-semibold text-sm text-gray-600 uppercase">Kurs</th>
+                        <th class="text-left py-3 px-4 font-semibold text-xs tracking-wide text-gray-600 uppercase">Ism</th>
+                        <th class="text-left py-3 px-4 font-semibold text-xs tracking-wide text-gray-600 uppercase">Telefon</th>
+                        <th class="text-left py-3 px-4 font-semibold text-xs tracking-wide text-gray-600 uppercase">Kurs</th>
                     </tr>
                 </thead>
                 <tbody class="text-gray-700">
                     {% for student in recent_students %}
-                    <tr class="border-b border-gray-200 hover:bg-gray-50">
+                    <tr class="border-b border-slate-200 hover:bg-slate-50/80">
                         <td class="py-3 px-4">{{ student.student_name }}</td>
                         <td class="py-3 px-4">{{ student.student_phone }}</td>
                         <td class="py-3 px-4">{{ student.course }}</td>
@@ -55,25 +91,24 @@
             </table>
         </div>
         <div class="mt-4 text-right">
-            <a href="{{ url_for('students') }}" class="text-blue-500 hover:text-blue-700 font-semibold">Barchasini ko'rish &rarr;</a>
+            <a href="{{ url_for('students') }}" class="text-blue-600 hover:text-blue-800 font-semibold">Barchasini ko'rish &rarr;</a>
         </div>
     </div>
 
-    <!-- Recent Contacts -->
-    <div class="bg-white shadow-lg rounded-xl p-6">
+    <div class="surface-card p-6 interactive-panel">
         <h3 class="text-xl font-semibold text-gray-800 mb-4">So'nggi Aloqa Xabarlari</h3>
         <div class="overflow-x-auto">
-            <table class="min-w-full bg-white">
-                <thead class="bg-gray-100">
+            <table class="min-w-full bg-white/50 rounded-xl overflow-hidden">
+                <thead class="bg-slate-100/80">
                     <tr>
-                        <th class="text-left py-3 px-4 font-semibold text-sm text-gray-600 uppercase">Ism</th>
-                        <th class="text-left py-3 px-4 font-semibold text-sm text-gray-600 uppercase">Telefon</th>
-                        <th class="text-left py-3 px-4 font-semibold text-sm text-gray-600 uppercase">Xabar</th>
+                        <th class="text-left py-3 px-4 font-semibold text-xs tracking-wide text-gray-600 uppercase">Ism</th>
+                        <th class="text-left py-3 px-4 font-semibold text-xs tracking-wide text-gray-600 uppercase">Telefon</th>
+                        <th class="text-left py-3 px-4 font-semibold text-xs tracking-wide text-gray-600 uppercase">Xabar</th>
                     </tr>
                 </thead>
                 <tbody class="text-gray-700">
                     {% for contact in recent_contacts %}
-                    <tr class="border-b border-gray-200 hover:bg-gray-50">
+                    <tr class="border-b border-slate-200 hover:bg-slate-50/80">
                         <td class="py-3 px-4">{{ contact.name }}</td>
                         <td class="py-3 px-4">{{ contact.phone }}</td>
                         <td class="py-3 px-4 truncate max-w-xs">{{ contact.message }}</td>
@@ -87,7 +122,51 @@
             </table>
         </div>
         <div class="mt-4 text-right">
-            <a href="{{ url_for('contacts_list') }}" class="text-blue-500 hover:text-blue-700 font-semibold">Barchasini ko'rish &rarr;</a>
+            <a href="{{ url_for('contacts_list') }}" class="text-blue-600 hover:text-blue-800 font-semibold">Barchasini ko'rish &rarr;</a>
+        </div>
+    </div>
+</div>
+
+<div class="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <div class="surface-card p-6 interactive-panel">
+        <h3 class="text-xl font-semibold text-gray-800 mb-4">System Health</h3>
+        <div class="space-y-3 text-sm text-slate-700">
+            <div class="flex items-center justify-between border-b border-slate-200 pb-2">
+                <span>Uptime</span>
+                <span class="font-semibold">{{ health.uptime_human }}</span>
+            </div>
+            <div class="flex items-center justify-between border-b border-slate-200 pb-2">
+                <span>Database Size</span>
+                <span class="font-semibold">{{ health.db_size_mb }} MB</span>
+            </div>
+            <div class="flex items-center justify-between border-b border-slate-200 pb-2">
+                <span>Telegram</span>
+                <span class="font-semibold {{ 'text-emerald-600' if health.telegram_configured else 'text-amber-600' }}">{{ 'Configured' if health.telegram_configured else 'Not Configured' }}</span>
+            </div>
+            <div class="flex items-center justify-between">
+                <span>Secret Access Code</span>
+                <span class="font-semibold {{ 'text-emerald-600' if health.secret_code_configured else 'text-amber-600' }}">{{ 'Configured' if health.secret_code_configured else 'Not Configured' }}</span>
+            </div>
+        </div>
+        <div class="mt-4 text-right">
+            <a href="{{ url_for('admin_tools') }}" class="text-blue-600 hover:text-blue-800 font-semibold">Tools sahifasini ochish &rarr;</a>
+        </div>
+    </div>
+
+    <div class="surface-card p-6 interactive-panel">
+        <h3 class="text-xl font-semibold text-gray-800 mb-4">So'nggi Admin Faolligi</h3>
+        <div class="space-y-3">
+            {% for item in recent_activity %}
+            <div class="rounded-xl border border-slate-200 bg-white/70 p-3">
+                <p class="text-sm font-semibold text-slate-800">{{ item.action }}</p>
+                <p class="text-xs text-slate-500 mt-1">{{ item.target }} | {{ item.created_at }}</p>
+                {% if item.details %}
+                <p class="text-xs text-slate-600 mt-1">{{ item.details }}</p>
+                {% endif %}
+            </div>
+            {% else %}
+            <p class="text-sm text-slate-500">Hali admin activity mavjud emas.</p>
+            {% endfor %}
         </div>
     </div>
 </div>

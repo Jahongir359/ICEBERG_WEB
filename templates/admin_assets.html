@@ -1,0 +1,59 @@
+{% extends "admin_base.html" %}
+
+{% block title %}Rasmlarni Boshqarish - ICEBERG Admin{% endblock %}
+
+{% block page_title %}Rasmlarni Boshqarish{% endblock %}
+
+{% block content %}
+<div class="mb-6 surface-card px-4 py-3 text-slate-700 interactive-panel">
+    <p class="font-medium">Bu bo'lim orqali saytdagi rasmlarni almashtirishingiz mumkin.</p>
+    <p class="text-sm mt-1">Yangi rasm yuklangandan keyin u avtomatik ravishda tegishli sahifada ko'rinadi.</p>
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    {% for asset in assets %}
+    <div class="surface-card overflow-hidden interactive-panel">
+        <img src="{{ asset.current_url }}" alt="{{ asset.label }}" class="w-full h-52 object-cover bg-slate-100">
+        <div class="p-5">
+            <h3 class="text-lg font-semibold text-[#0D2444] mb-3">{{ asset.label }}</h3>
+            <form action="{{ url_for('admin_assets') }}" method="POST" enctype="multipart/form-data" class="space-y-3">
+                <input type="hidden" name="asset_key" value="{{ asset.key }}">
+                <input
+                    type="file"
+                    name="asset_file"
+                    accept="image/png,image/jpeg,image/webp,image/gif"
+                    class="block w-full text-sm text-gray-700 border border-slate-300 rounded-lg p-2.5 bg-white"
+                    data-file-input
+                    required
+                >
+                <p class="text-xs text-slate-500" data-file-name>Hali fayl tanlanmadi</p>
+                <button type="submit" class="w-full btn-primary py-2.5">
+                    Rasmni Yangilash
+                </button>
+            </form>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('[data-file-input]').forEach(function (input) {
+            input.addEventListener('change', function () {
+                var fileNameEl = input.closest('form').querySelector('[data-file-name]');
+                if (!fileNameEl) {
+                    return;
+                }
+                if (input.files && input.files[0]) {
+                    fileNameEl.textContent = 'Tanlangan fayl: ' + input.files[0].name;
+                } else {
+                    fileNameEl.textContent = 'Hali fayl tanlanmadi';
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

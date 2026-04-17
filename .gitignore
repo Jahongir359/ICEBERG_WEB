@@ -2,3 +2,6 @@ __pycache__/
 database.db
 *.pyc
 .env
+.venv/
+.venv-1/
+static/uploads/

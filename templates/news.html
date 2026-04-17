@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block title %}Yangiliklar va Eventlar - ICEBERG{% endblock %}
+
+{% block styles %}
+{{ super() }}
+<style>
+    .news-hero {
+        background: linear-gradient(rgba(13, 36, 68, 0.82), rgba(13, 36, 68, 0.82)),
+                    url('https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?q=80&w=2070&auto=format&fit=crop') center/cover;
+    }
+
+    @media (max-width: 1024px), (hover: none) {
+        .news-hero {
+            background-attachment: scroll;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="news-hero text-white pt-28 pb-16 md:pt-40 md:pb-24">
+    <div class="container mx-auto px-6 text-center">
+        <h1 class="text-3xl sm:text-4xl md:text-6xl font-serif font-bold mb-4 tracking-tight">Yangiliklar va Eventlar</h1>
+        <p class="text-base sm:text-lg md:text-xl text-blue-200 max-w-3xl mx-auto">Markazdagi yangi loyihalar, tadbirlar va e'lonlar shu sahifada.</p>
+    </div>
+</section>
+
+<section class="py-14 md:py-20 bg-gray-50">
+    <div class="container mx-auto px-6">
+        {% if posts %}
+        <div class="space-y-8">
+            {% for post in posts %}
+            <article class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+                <div class="p-6 md:p-8">
+                    <div class="flex flex-wrap items-center gap-2 mb-3">
+                        <span class="text-xs font-semibold px-2.5 py-1 rounded-full {{ 'bg-blue-100 text-blue-700' if post.post_type == 'news' else 'bg-amber-100 text-amber-700' }}">
+                            {{ 'Yangilik' if post.post_type == 'news' else 'Event' }}
+                        </span>
+                        {% if post.event_date %}
+                        <span class="text-xs text-gray-500">{{ post.event_date }}</span>
+                        {% endif %}
+                        <span class="text-xs text-gray-400">{{ post.created_at[:10] }}</span>
+                    </div>
+
+                    <h2 class="text-2xl md:text-3xl font-serif font-bold text-[#0D2444] mb-3">{{ post.title }}</h2>
+                    {% if post.excerpt %}
+                    <p class="text-gray-600 text-lg mb-4">{{ post.excerpt }}</p>
+                    {% endif %}
+                    <p class="text-gray-700 whitespace-pre-line">{{ post.body }}</p>
+                </div>
+
+                {% if post.media_items %}
+                <div class="px-6 md:px-8 pb-6 md:pb-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {% for media in post.media_items %}
+                    <div class="rounded-xl overflow-hidden border border-gray-200 bg-black/5">
+                        {% if media.media_type == 'image' %}
+                        <img src="{{ url_for('static', filename=media.file_path) }}" alt="{{ media.caption or post.title }}" class="w-full h-56 object-cover">
+                        {% else %}
+                        <video controls class="w-full h-56 object-cover bg-black">
+                            <source src="{{ url_for('static', filename=media.file_path) }}">
+                            Sizning brauzeringiz videoni qo'llab-quvvatlamaydi.
+                        </video>
+                        {% endif %}
+                        {% if media.caption %}
+                        <p class="text-sm text-gray-600 px-3 py-2">{{ media.caption }}</p>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </article>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-10 text-center">
+            <h3 class="text-2xl font-serif font-bold text-[#0D2444] mb-2">Hozircha yangiliklar yo'q</h3>
+            <p class="text-gray-600">Tez orada bu yerda yangi postlar joylanadi.</p>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

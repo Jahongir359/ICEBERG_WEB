@@ -17,71 +17,34 @@
 
 {% block content %}
 <!-- Main Content: FAQ section -->
-<div class="bg-white py-16 md:py-24">
+<div class="bg-white py-14 md:py-24">
     <div class="container mx-auto px-6">
         <!-- Section Title -->
         <div class="text-center mb-12">
-            <h1 class="text-4xl md:text-5xl font-serif font-bold text-gray-800">Ko'p Beriladigan Savollar</h1>
-            <p class="text-lg text-gray-600 mt-2">SAVOLLARINGIZGA JAVOBLAR</p>
+            <h1 class="text-3xl sm:text-4xl md:text-5xl font-serif font-bold text-gray-800">{{ content('faq_page_title', "Ko'p Beriladigan Savollar") }}</h1>
+            <p class="text-base sm:text-lg text-gray-600 mt-2">{{ content('faq_page_subtitle', 'SAVOLLARINGIZGA JAVOBLAR') }}</p>
         </div>
 
         <!-- FAQ Container -->
         <div class="max-w-4xl mx-auto space-y-6">
-            <!-- Accordion Item 1 -->
-            <div class="bg-gray-50 rounded-lg shadow-sm border border-gray-200">
-                <button class="w-full flex justify-between items-center text-left p-5 font-semibold text-lg text-gray-800 focus:outline-none accordion-toggle">
-                    <span>Qaysi fanlardan repetitorlik xizmatlarini taklif qilasiz?</span>
-                    <i class="fas fa-chevron-down transform transition-transform duration-300"></i>
-                </button>
-                <div class="accordion-content px-5 pb-5 text-gray-600">
-                    <p>Biz keng ko'lamli fanlardan, jumladan, Matematika, Fan, Ingliz tili va standartlashtirilgan testlarga tayyorgarlik (SAT, ACT) bo'yicha repetitorlik xizmatlarini taklif etamiz.</p>
+            {% if faqs %}
+                {% for faq in faqs %}
+                <!-- Accordion Item -->
+                <div class="bg-gray-50 rounded-lg shadow-sm border border-gray-200">
+                    <button class="w-full flex justify-between items-center text-left p-4 sm:p-5 font-semibold text-base sm:text-lg text-gray-800 focus:outline-none accordion-toggle">
+                        <span>{{ faq.question }}</span>
+                        <i class="fas fa-chevron-down transform transition-transform duration-300"></i>
+                    </button>
+                    <div class="accordion-content px-5 pb-5 text-gray-600">
+                        <p>{{ faq.answer }}</p>
+                    </div>
                 </div>
-            </div>
-
-            <!-- Accordion Item 2 -->
-            <div class="bg-gray-50 rounded-lg shadow-sm border border-gray-200">
-                <button class="w-full flex justify-between items-center text-left p-5 font-semibold text-lg text-gray-800 focus:outline-none accordion-toggle">
-                    <span>Sizning ish vaqtingiz qanday?</span>
-                    <i class="fas fa-chevron-down transform transition-transform duration-300"></i>
-                </button>
-                <div class="accordion-content px-5 pb-5 text-gray-600">
-                    <p>Markazimiz ish kunlari soat 9:00 dan 20:00 gacha, dam olish kunlari esa 10:00 dan 18:00 gacha ishlaydi.</p>
+                {% endfor %}
+            {% else %}
+                <div class="bg-blue-50 border border-blue-200 rounded-lg p-6 text-center">
+                    <p class="text-gray-600">FAQ savollari hozircha mavjud emas.</p>
                 </div>
-            </div>
-
-            <!-- Accordion Item 3 -->
-            <div class="bg-gray-50 rounded-lg shadow-sm border border-gray-200">
-                <button class="w-full flex justify-between items-center text-left p-5 font-semibold text-lg text-gray-800 focus:outline-none accordion-toggle">
-                    <span>O'quvchilarni repetitorlar bilan qanday bog'laysiz?</span>
-                    <i class="fas fa-chevron-down transform transition-transform duration-300"></i>
-                </button>
-                <div class="accordion-content px-5 pb-5 text-gray-600">
-                    <p>Biz o'quvchilarni ularning akademik ehtiyojlari, o'rganish uslubi va shaxsiyatiga qarab repetitorlar bilan bog'laymiz, bu esa eng yaxshi moslikni ta'minlaydi.</p>
-                </div>
-            </div>
-
-            <!-- Accordion Item 4 -->
-            <div class="bg-gray-50 rounded-lg shadow-sm border border-gray-200">
-                <button class="w-full flex justify-between items-center text-left p-5 font-semibold text-lg text-gray-800 focus:outline-none accordion-toggle">
-                    <span>Darslar qayerda o'tkaziladi?</span>
-                    <i class="fas fa-chevron-down transform transition-transform duration-300"></i>
-                </button>
-                <div class="accordion-content px-5 pb-5 text-gray-600">
-                    <p>Darslar bizning zamonaviy o'quv markazimizda yoki o'quvchining xohishiga ko'ra onlayn tarzda o'tkazilishi mumkin.</p>
-                </div>
-            </div>
-
-             <!-- Accordion Item 5 -->
-            <div class="bg-gray-50 rounded-lg shadow-sm border border-gray-200">
-                <button class="w-full flex justify-between items-center text-left p-5 font-semibold text-lg text-gray-800 focus:outline-none accordion-toggle">
-                    <span>Narxlar qanday?</span>
-                    <i class="fas fa-chevron-down transform transition-transform duration-300"></i>
-                </button>
-                <div class="accordion-content px-5 pb-5 text-gray-600">
-                    <p>Narxlar dastur turiga va darslar soniga qarab o'zgaradi. Batafsil ma'lumot olish va bepul maslahat uchun biz bilan bog'laning.</p>
-                </div>
-            </div>
-
+            {% endif %}
         </div>
     </div>
 </div>

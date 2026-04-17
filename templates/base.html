@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}ICEBERG O'QUV MARKAZI{% endblock %}</title>
+    <title>{% block title %}{{ content('site_title', "ICEBERG O'QUV MARKAZI") }}{% endblock %}</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
@@ -20,28 +20,75 @@
             transform: scale(0.95);
             filter: brightness(0.9);
         }
+
+        #google_translate_element {
+            display: none;
+        }
+
+        .goog-te-banner-frame.skiptranslate,
+        body > .skiptranslate {
+            display: none !important;
+        }
+
+        body {
+            top: 0 !important;
+        }
+
+        .lang-select {
+            border: 1px solid #d1d5db;
+            border-radius: 9999px;
+            padding: 6px 12px;
+            font-size: 0.875rem;
+            color: #1f2937;
+            background-color: #ffffff;
+        }
+
+        .lang-select:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+            border-color: #60a5fa;
+        }
+
+        @supports (padding: max(0px)) {
+            #header {
+                padding-top: env(safe-area-inset-top);
+            }
+
+            #mobile-menu-panel {
+                padding-top: env(safe-area-inset-top);
+            }
+        }
+        {{ content('custom_css', '') }}
     </style>
 </head>
-<body class="bg-gray-100 font-sans">
+<body class="bg-gray-100 font-sans overflow-x-hidden">
+    <div id="google_translate_element"></div>
 
     {% block header %}
     <header id="header" class="bg-white/80 backdrop-blur-md shadow-sm fixed top-0 left-0 right-0 z-50 transition-all duration-300">
         <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
             <!-- Logo -->
             <a href="{{ url_for('index') }}" id="logo-link" class="flex items-center">
-                <img src="{{ url_for('static', filename='img/logo.png') }}" alt="ICEBERG Logo" class="h-12 logo-interactive">
+                <img src="{{ asset_url('site_logo', 'img/logo.png') }}" alt="ICEBERG Logo" class="h-12 logo-interactive">
             </a>
             
             <!-- Desktop Menu Links -->
             <div class="hidden md:flex items-center space-x-8">
-                <a href="{{ url_for('index') }}" class="text-gray-600 hover:text-blue-700 transition-colors">Bosh sahifa</a>
-                <a href="{{ url_for('about') }}" class="text-gray-600 hover:text-blue-700 transition-colors">Biz haqimizda</a>
-                <a href="{{ url_for('our_programs') }}" class="text-gray-600 hover:text-blue-700 transition-colors">Dasturlar</a>
-                <a href="{{ url_for('index', _anchor='testimonials') }}" class="text-gray-600 hover:text-blue-700 transition-colors">Muvaffaqiyat Hikoyalari</a>
+                <a href="{{ url_for('index') }}" class="text-gray-600 hover:text-blue-700 transition-colors">{{ content('nav_home', 'Bosh sahifa') }}</a>
+                <a href="{{ url_for('about') }}" class="text-gray-600 hover:text-blue-700 transition-colors">{{ content('nav_about', 'Biz haqimizda') }}</a>
+                <a href="{{ url_for('our_programs') }}" class="text-gray-600 hover:text-blue-700 transition-colors">{{ content('nav_programs', 'Dasturlar') }}</a>
+                <a href="{{ url_for('news') }}" class="text-gray-600 hover:text-blue-700 transition-colors">{{ content('nav_news', 'Yangiliklar') }}</a>
+                <a href="{{ url_for('questions') }}" class="text-gray-600 hover:text-blue-700 transition-colors">{{ content('nav_questions', 'Savollar') }}</a>
+                <a href="{{ url_for('index', _anchor='testimonials') }}" class="text-gray-600 hover:text-blue-700 transition-colors">{{ content('nav_testimonials', 'Muvaffaqiyat Hikoyalari') }}</a>
+                <select id="desktop-language-select" class="lang-select" aria-label="Tilni tanlash">
+                    <option value="uz">UZ</option>
+                    <option value="ru">RU</option>
+                    <option value="en">EN</option>
+                </select>
             </div>
             
             <!-- Desktop CTA Button -->
-            <a href="{{ url_for('contact') }}" class="hidden md:block bg-blue-600 text-white font-bold py-2 px-6 rounded-full hover:bg-blue-700 transition-transform duration-300 transform hover:scale-105">Biz bilan bog'lanish</a>
+            <a href="{{ url_for('contact') }}" class="hidden md:block bg-blue-600 text-white font-bold py-2 px-6 rounded-full hover:bg-blue-700 transition-transform duration-300 transform hover:scale-105">{{ content('nav_contact_button', "Biz bilan bog'lanish") }}</a>
             
             <!-- Mobile Menu Button (Hamburger Icon) -->
             <button id="mobile-menu-btn" class="md:hidden text-blue-900 focus:outline-none">
@@ -54,7 +101,7 @@
     <!-- Mobile Menu (Slide-out Panel) -->
     <div id="mobile-menu-panel" class="fixed top-0 right-0 h-full w-64 bg-white shadow-lg z-50 transform translate-x-full transition-transform duration-300 ease-in-out md:hidden">
         <div class="p-5 border-b border-gray-200 flex justify-between items-center">
-            <h2 class="text-xl font-bold text-blue-900">Menyu</h2>
+            <h2 class="text-xl font-bold text-blue-900">{{ content('mobile_menu_title', 'Menyu') }}</h2>
             <button id="close-mobile-menu-btn" class="text-gray-600 hover:text-gray-900">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
             </button>
@@ -62,23 +109,39 @@
         <div class="p-4 space-y-2">
             <a href="{{ url_for('index') }}" class="flex items-center py-3 px-4 text-gray-700 hover:bg-blue-50 rounded-md transition-colors">
                 <svg class="w-5 h-5 mr-3 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
-                Bosh sahifa
+                {{ content('nav_home', 'Bosh sahifa') }}
             </a>
             <a href="{{ url_for('about') }}" class="flex items-center py-3 px-4 text-gray-700 hover:bg-blue-50 rounded-md transition-colors">
                 <svg class="w-5 h-5 mr-3 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                Biz haqimizda
+                {{ content('nav_about', 'Biz haqimizda') }}
             </a>
             <a href="{{ url_for('our_programs') }}" class="flex items-center py-3 px-4 text-gray-700 hover:bg-blue-50 rounded-md transition-colors">
                 <svg class="w-5 h-5 mr-3 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v11.494m-9-5.747h18"></path></svg>
-                Dasturlar
+                {{ content('nav_programs', 'Dasturlar') }}
+            </a>
+            <a href="{{ url_for('news') }}" class="flex items-center py-3 px-4 text-gray-700 hover:bg-blue-50 rounded-md transition-colors">
+                <svg class="w-5 h-5 mr-3 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 5H5a2 2 0 00-2 2v10a2 2 0 002 2h14a2 2 0 002-2V7a2 2 0 00-2-2zm-9 4h6m-6 4h4"></path></svg>
+                {{ content('nav_news', 'Yangiliklar') }}
+            </a>
+            <a href="{{ url_for('questions') }}" class="flex items-center py-3 px-4 text-gray-700 hover:bg-blue-50 rounded-md transition-colors">
+                <svg class="w-5 h-5 mr-3 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16h6M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                {{ content('nav_questions', 'Savollar') }}
             </a>
             <a href="{{ url_for('index', _anchor='testimonials') }}" class="flex items-center py-3 px-4 text-gray-700 hover:bg-blue-50 rounded-md transition-colors">
                 <svg class="w-5 h-5 mr-3 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
-                Muvaffaqiyat Hikoyalari
+                {{ content('nav_testimonials', 'Muvaffaqiyat Hikoyalari') }}
             </a>
             <div class="pt-4">
+                <div class="mb-3">
+                    <label for="mobile-language-select" class="block text-xs text-gray-500 mb-1">Til</label>
+                    <select id="mobile-language-select" class="lang-select w-full" aria-label="Tilni tanlash (mobil)">
+                        <option value="uz">UZ</option>
+                        <option value="ru">RU</option>
+                        <option value="en">EN</option>
+                    </select>
+                </div>
                 <a href="{{ url_for('contact') }}" class="block bg-blue-600 text-white text-center font-bold py-3 px-4 rounded-full hover:bg-blue-700 transition-transform duration-300 transform hover:scale-105">
-                    Biz bilan bog'lanish
+                    {{ content('nav_contact_button', "Biz bilan bog'lanish") }}
                 </a>
             </div>
         </div>
@@ -96,55 +159,57 @@
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                 <!-- About Section -->
                 <div class="mb-8 md:mb-0">
-                    <img src="{{ url_for('static', filename='img/logo.png') }}" alt="ICEBERG Logo" class="h-12 mb-4">
+                    <img src="{{ asset_url('site_logo', 'img/logo.png') }}" alt="ICEBERG Logo" class="h-12 mb-4">
                     <p class="text-sm">
-                        Zamonaviy kasblarni biz bilan o'rganing va kelajuingizni quring.
+                        {{ content('site_tagline', "Zamonaviy kasblarni biz bilan o'rganing va kelajuingizni quring.") }}
                     </p>
                 </div>
 
                 <!-- Quick Links -->
                 <div>
-                    <h3 class="text-lg font-semibold text-white mb-4">Tezkor Havolalar</h3>
+                    <h3 class="text-lg font-semibold text-white mb-4">{{ content('footer_quick_links_title', 'Tezkor Havolalar') }}</h3>
                     <ul class="space-y-2">
-                        <li><a href="{{ url_for('index') }}" class="hover:text-white transition-colors">Bosh Sahifa</a></li>
-                        <li><a href="{{ url_for('about') }}" class="hover:text-white transition-colors">Biz Haqimizda</a></li>
-                        <li><a href="{{ url_for('our_programs') }}" class="hover:text-white transition-colors">Dasturlarimiz</a></li>
-                        <li><a href="{{ url_for('contact') }}" class="hover:text-white transition-colors">Bog'lanish</a></li>
+                        <li><a href="{{ url_for('index') }}" class="hover:text-white transition-colors">{{ content('nav_home', 'Bosh sahifa') }}</a></li>
+                        <li><a href="{{ url_for('about') }}" class="hover:text-white transition-colors">{{ content('nav_about', 'Biz haqimizda') }}</a></li>
+                        <li><a href="{{ url_for('our_programs') }}" class="hover:text-white transition-colors">{{ content('nav_programs', 'Dasturlar') }}</a></li>
+                        <li><a href="{{ url_for('news') }}" class="hover:text-white transition-colors">{{ content('nav_news', 'Yangiliklar') }}</a></li>
+                        <li><a href="{{ url_for('questions') }}" class="hover:text-white transition-colors">{{ content('nav_questions', 'Savollar') }}</a></li>
+                        <li><a href="{{ url_for('contact') }}" class="hover:text-white transition-colors">{{ content('nav_contact_button', "Biz bilan bog'lanish") }}</a></li>
                     </ul>
                 </div>
 
                 <!-- Contact Info -->
                 <div>
-                    <h3 class="text-lg font-semibold text-white mb-4">Biz bilan aloqa</h3>
+                    <h3 class="text-lg font-semibold text-white mb-4">{{ content('footer_contact_title', 'Biz bilan aloqa') }}</h3>
                     <ul class="space-y-2 text-sm">
                         <li class="flex items-start">
                             <i class="fas fa-map-marker-alt mt-1 mr-3 flex-shrink-0"></i>
-                            <span>Uyci, Namangan Viloyati, Uzbekistan</span>
+                            <span>{{ content('contact_address', 'Uyci, Namangan Viloyati, Uzbekistan') }}</span>
                         </li>
                         <li class="flex items-center">
                             <i class="fas fa-phone-alt mr-3"></i>
-                            <a href="tel:+998939461699" class="hover:text-white transition-colors">+998 (93) 946-16-99</a>
+                            <a href="tel:{{ content('contact_phone', '+998939461699') }}" class="hover:text-white transition-colors">{{ content('contact_phone_display', '+998 (93) 946-16-99') }}</a>
                         </li>
                         <li class="flex items-center">
                             <i class="fas fa-envelope mr-3"></i>
-                            <a href="mailto:info@iceberg.uz" class="hover:text-white transition-colors">iceberg.edu.cen</a>
+                            <a href="mailto:{{ content('contact_email', 'iceberg.edu.center@gmail.com') }}" class="hover:text-white transition-colors">{{ content('contact_email', 'iceberg.edu.center@gmail.com') }}</a>
                         </li>
                     </ul>
                 </div>
 
                 <!-- Social Media -->
                 <div>
-                    <h3 class="text-lg font-semibold text-white mb-4">Ijtimoiy Tarmoqlar</h3>
+                    <h3 class="text-lg font-semibold text-white mb-4">{{ content('footer_social_title', 'Ijtimoiy Tarmoqlar') }}</h3>
                     <div class="flex space-x-4">
-                        <a href="https://t.me/Iceberg_study_center/1703" class="text-gray-400 hover:text-white transition-colors"><i class="fab fa-telegram fa-2x"></i></a>
-                        <a href="https://www.instagram.com/Iceberg_Study_Center" class="text-gray-400 hover:text-white transition-colors"><i class="fab fa-instagram fa-2x"></i></a>
-                        <a href="https://www.youtube.com/@ice_podcast"class="text-gray-400 hover:text-white transition-colors"><i class="fab fa-youtube fa-2x"></i></a>
+                        <a href="{{ content('footer_telegram_url', 'https://t.me/Iceberg_study_center/1703') }}" class="text-gray-400 hover:text-white transition-colors"><i class="fab fa-telegram fa-2x"></i></a>
+                        <a href="{{ content('footer_instagram_url', 'https://www.instagram.com/Iceberg_Study_Center') }}" class="text-gray-400 hover:text-white transition-colors"><i class="fab fa-instagram fa-2x"></i></a>
+                        <a href="{{ content('footer_youtube_url', 'https://www.youtube.com/@ice_podcast') }}" class="text-gray-400 hover:text-white transition-colors"><i class="fab fa-youtube fa-2x"></i></a>
                     </div>
                 </div>
             </div>
 
             <div class="mt-12 border-t border-gray-700 pt-8 text-center text-sm">
-                <p>&copy; <span id="year"></span> ICEBERG O'QUV MARKAZI.<a href="{{ url_for('admin_login') }}" class="text-gray-400 hover:text-white">Admin</a></p>
+                <p>&copy; <span id="year"></span> {{ content('site_title', "ICEBERG O'QUV MARKAZI") }}.</p>
             </div>
         </div>
     </footer>
@@ -152,31 +217,155 @@
 
     {% block scripts %}
     <script>
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement(
+                {
+                    pageLanguage: 'uz',
+                    includedLanguages: 'uz,ru,en',
+                    autoDisplay: false
+                },
+                'google_translate_element'
+            );
+        }
+
+        function getCookieValue(name) {
+            var prefix = name + '=';
+            var parts = document.cookie.split(';');
+            for (var i = 0; i < parts.length; i += 1) {
+                var cookie = parts[i].trim();
+                if (cookie.indexOf(prefix) === 0) {
+                    return cookie.substring(prefix.length);
+                }
+            }
+            return '';
+        }
+
+        function clearGoogleTranslateCookies() {
+            var host = window.location.hostname;
+            var expirations = 'expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/';
+            document.cookie = 'googtrans=;' + expirations;
+            document.cookie = 'googtrans=;' + expirations + ';domain=' + host;
+            document.cookie = 'googtrans=;' + expirations + ';domain=.' + host;
+        }
+
+        function setGoogleTranslateCookie(sourceLang, targetLang) {
+            var host = window.location.hostname;
+            var value = '/' + sourceLang + '/' + targetLang;
+            document.cookie = 'googtrans=' + value + ';path=/';
+            document.cookie = 'googtrans=' + value + ';path=/;domain=' + host;
+            document.cookie = 'googtrans=' + value + ';path=/;domain=.' + host;
+        }
+
+        function fireDomEvent(element, eventName) {
+            if (!element) {
+                return;
+            }
+            try {
+                var event = document.createEvent('HTMLEvents');
+                event.initEvent(eventName, true, true);
+                element.dispatchEvent(event);
+            } catch (err) {
+                var fallback = new Event(eventName);
+                element.dispatchEvent(fallback);
+            }
+        }
+
+        function waitForGoogleCombo(callback, retries) {
+            var remaining = typeof retries === 'number' ? retries : 40;
+            var combo = document.querySelector('.goog-te-combo');
+            if (combo) {
+                callback(combo);
+                return;
+            }
+            if (remaining <= 0) {
+                return;
+            }
+            setTimeout(function () {
+                waitForGoogleCombo(callback, remaining - 1);
+            }, 150);
+        }
+
+        function applyLanguageWithWidget(targetLang) {
+            waitForGoogleCombo(function (combo) {
+                var hasUzOption = Array.from(combo.options || []).some(function (opt) {
+                    return opt.value === 'uz';
+                });
+                var desiredValue = targetLang === 'uz' ? (hasUzOption ? 'uz' : '') : targetLang;
+                if (combo.value === desiredValue) {
+                    return;
+                }
+
+                combo.value = desiredValue;
+                fireDomEvent(combo, 'change');
+            });
+        }
+
+        function setTranslationLanguage(lang) {
+            var sourceLang = 'uz';
+            var target = lang || 'uz';
+
+            localStorage.setItem('preferredLang', target);
+
+            if (target === 'uz') {
+                clearGoogleTranslateCookies();
+                applyLanguageWithWidget('uz');
+                // If third-party widget keeps stale state, one hard reset ensures original language.
+                setTimeout(function () {
+                    window.location.reload();
+                }, 250);
+                return;
+            }
+
+            setGoogleTranslateCookie(sourceLang, target);
+            applyLanguageWithWidget(target);
+        }
+
         document.addEventListener('DOMContentLoaded', function () {
             const mobileMenuBtn = document.getElementById('mobile-menu-btn');
             const closeMobileMenuBtn = document.getElementById('close-mobile-menu-btn');
             const mobileMenuPanel = document.getElementById('mobile-menu-panel');
             const mobileMenuOverlay = document.getElementById('mobile-menu-overlay');
             const header = document.getElementById('header');
+            const desktopLanguageSelect = document.getElementById('desktop-language-select');
+            const mobileLanguageSelect = document.getElementById('mobile-language-select');
 
             function openMenu() {
+                if (!mobileMenuPanel || !mobileMenuOverlay) {
+                    return;
+                }
                 mobileMenuPanel.classList.remove('translate-x-full');
                 mobileMenuOverlay.classList.remove('hidden');
                 document.body.style.overflow = 'hidden'; // Prevent background scroll
             }
 
             function closeMenu() {
+                if (!mobileMenuPanel || !mobileMenuOverlay) {
+                    return;
+                }
                 mobileMenuPanel.classList.add('translate-x-full');
                 mobileMenuOverlay.classList.add('hidden');
                 document.body.style.overflow = ''; // Restore scroll
             }
 
-            mobileMenuBtn.addEventListener('click', openMenu);
-            closeMobileMenuBtn.addEventListener('click', closeMenu);
-            mobileMenuOverlay.addEventListener('click', closeMenu);
+            if (mobileMenuBtn) {
+                mobileMenuBtn.addEventListener('click', openMenu);
+            }
+            if (closeMobileMenuBtn) {
+                closeMobileMenuBtn.addEventListener('click', closeMenu);
+            }
+            if (mobileMenuOverlay) {
+                mobileMenuOverlay.addEventListener('click', closeMenu);
+            }
+            const yearElement = document.getElementById('year');
+            if (yearElement) {
+                yearElement.textContent = new Date().getFullYear();
+            }
 
             // Change header style on scroll
             window.addEventListener('scroll', function() {
+                if (!header) {
+                    return;
+                }
                 if (window.scrollY > 50) {
                     header.classList.add('bg-white', 'shadow-lg');
                     header.classList.remove('bg-white/80', 'backdrop-blur-md');
@@ -185,8 +374,33 @@
                     header.classList.add('bg-white/80', 'backdrop-blur-md');
                 }
             });
+
+            const cookieLangRaw = getCookieValue('googtrans');
+            const cookieLang = cookieLangRaw && cookieLangRaw.split('/').length >= 3 ? cookieLangRaw.split('/')[2] : '';
+            const preferredLang = localStorage.getItem('preferredLang') || cookieLang || 'uz';
+            if (desktopLanguageSelect) {
+                desktopLanguageSelect.value = preferredLang;
+                desktopLanguageSelect.addEventListener('change', function () {
+                    setTranslationLanguage(desktopLanguageSelect.value);
+                });
+            }
+            if (mobileLanguageSelect) {
+                mobileLanguageSelect.value = preferredLang;
+                mobileLanguageSelect.addEventListener('change', function () {
+                    setTranslationLanguage(mobileLanguageSelect.value);
+                });
+            }
+
+            if (preferredLang === 'uz') {
+                // Default language should not be forced repeatedly on load.
+                return;
+            }
+
+            setGoogleTranslateCookie('uz', preferredLang);
+            applyLanguageWithWidget(preferredLang);
         });
     </script>
+    <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
     {% endblock %}
 </body>
 </html>

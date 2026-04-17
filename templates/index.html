@@ -11,7 +11,7 @@
         .font-serif { font-family: 'Lora', serif; }
         .hero-bg {
             background-color: #0D2444;
-            background-image: linear-gradient(rgba(13, 36, 68, 0.8), rgba(13, 36, 68, 0.8)), url('https://images.unsplash.com/photo-1523050854058-8df90110c9f1?q=80&w=2070&auto=format&fit=crop');
+            background-image: linear-gradient(rgba(13, 36, 68, 0.8), rgba(13, 36, 68, 0.8)), url('{{ asset_url("index_hero_bg", "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?q=80&w=2070&auto=format&fit=crop") }}');
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
@@ -32,18 +32,35 @@
         .fade-in.visible { opacity: 1; transform: translateY(0); }
         .typewriter-cursor { animation: blink 1s step-end infinite; }
         @keyframes blink { from, to { border-color: transparent } 50% { border-color: #FFC107; } }
+
+        @media (max-width: 1024px), (hover: none) {
+            .hero-bg {
+                background-attachment: scroll;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .angled-divider {
+                clip-path: none;
+                margin-top: 0;
+            }
+            .angled-divider-top {
+                clip-path: none;
+                padding-bottom: 0;
+            }
+        }
     </style>
 {% endblock %}
 
 {% block content %}
         <!-- Hero Section -->
-        <section class="hero-bg text-white pt-32 pb-20 md:pt-48 md:pb-32">
+        <section class="hero-bg text-white pt-28 pb-16 md:pt-48 md:pb-32">
             <div class="container mx-auto px-6 text-center">
-                <h1 id="typewriter" class="text-4xl md:text-6xl font-serif font-bold mb-4 tracking-tight min-h-[100px] md:min-h-[150px]"></h1>
+                <h1 id="typewriter" class="text-3xl sm:text-4xl md:text-6xl font-serif font-bold mb-4 tracking-tight min-h-[72px] sm:min-h-[100px] md:min-h-[150px]"></h1>
                 <p class="text-lg md:text-xl text-blue-200 max-w-3xl mx-auto mb-8 fade-in" style="transition-delay: 2s;">
-                    Fundamental bilimlar — har qanday akademik cho'qqini zabt etishning kalitidir.
+                    {{ content('hero_main_subtitle', "Fundamental bilimlar - har qanday akademik cho'qqini zabt etishning kalitidir.") }}
                 </p>
-                <a href="{{ url_for('contact') }}" class="bg-[#FFC107] text-[#0D2444] font-bold py-3 px-8 rounded-full text-lg hover:bg-amber-400 transition-transform transform hover:scale-105 shadow-lg fade-in" style="transition-delay: 2.2s;">Maslaxatlar uchun aloqa bo`limi</a>
+                <a href="{{ url_for('contact') }}" class="bg-[#FFC107] text-[#0D2444] font-bold py-3 px-8 rounded-full text-lg hover:bg-amber-400 transition-transform transform hover:scale-105 shadow-lg fade-in" style="transition-delay: 2.2s;">{{ content('hero_main_cta', 'Maslaxatlar uchun aloqa bo`limi') }}</a>
             </div>
         </section>
 
@@ -71,7 +88,7 @@
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
                     <div class="fade-in">
-                        <img src="{{ url_for('static', filename='img/logo2.png') }}" alt="Iceberg with a large base underwater representing the foundational strategy" class="rounded-xl shadow-xl w-full max-w-lg mx-auto h-auto object-cover">
+                        <img src="{{ asset_url('index_method_image', 'img/logo2.png') }}" alt="Iceberg with a large base underwater representing the foundational strategy" class="rounded-xl shadow-xl w-full max-w-lg mx-auto h-auto object-cover">
                     </div>
                     <div class="fade-in">
                         <div class="space-y-6">
@@ -95,7 +112,7 @@
                 <div class="text-center mb-12 fade-in">
                     <h2 class="text-3xl md:text-4xl font-serif font-bold text-[#0D2444]">Bizning Asosiy Dasturlarimiz</h2>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
                     <div class="bg-white p-8 rounded-xl shadow-lg text-center transform hover:-translate-y-2 transition-transform duration-300 fade-in">
                         <h3 class="text-2xl font-serif font-bold text-[#0D2444] mb-4">ENGLISH IELTS, SAT</h3>
                         <p class="mb-6">Muvaffaqiyatingiz poydevori: SAT va IELTS imtihonlariga fundamental tayyorgarlik.</p>
@@ -167,7 +184,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     // Typewriter effect
     const typewriterElement = document.getElementById('typewriter');
-    const text = "HAPPINESS IS IN SCIENCE";
+    const text = {{ content('hero_main_title', 'HAPPINESS IS IN SCIENCE')|tojson }};
     let index = 0;
 
     function type() {

@@ -5,38 +5,293 @@
 {% block page_title %}Aloqa Xabarlari{% endblock %}
 
 {% block content %}
-<div class="bg-white shadow-lg rounded-xl overflow-hidden">
+<div class="surface-card p-4 mb-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between interactive-panel">
+    <div>
+        <p class="text-sm font-medium text-slate-700">Power Grid: qidirish, saralash, inline tahrir, tanlash, eksport va bulk delete.</p>
+        <p class="text-xs text-slate-500 mt-1">Qidiruv va saralash holati brauzerda saqlanadi.</p>
+    </div>
+    <input id="contacts-search" type="search" placeholder="Qidirish..." class="field md:w-96">
+</div>
+
+<div class="surface-card p-4 mb-4 flex flex-wrap items-center gap-2 interactive-panel">
+    <span id="contacts-selected-count" class="text-sm text-slate-600">0 ta tanlandi</span>
+    <form id="contacts-export-form" action="{{ url_for('export_contacts_csv') }}" method="POST" class="inline">
+        <input type="hidden" name="ids" id="contacts-export-ids">
+        <button type="submit" class="btn-ghost px-3 py-2 text-sm" data-no-loading="true">Tanlanganlarni Export (CSV)</button>
+    </form>
+    <form id="contacts-bulk-delete-form" action="{{ url_for('bulk_delete_contacts') }}" method="POST" class="inline" onsubmit="return confirm('Tanlangan xabarlar o\'chirilsinmi?');">
+        <input type="hidden" name="ids" id="contacts-delete-ids">
+        <button type="submit" class="px-3 py-2 text-sm rounded-lg bg-red-600 text-white font-semibold hover:bg-red-700" data-no-loading="true">Tanlanganlarni O'chirish</button>
+    </form>
+</div>
+
+<div class="surface-card overflow-hidden interactive-panel">
     <div class="overflow-x-auto">
-        <table class="min-w-full">
-            <thead class="bg-gray-100">
+        <table class="min-w-full" id="contacts-table">
+            <thead class="bg-slate-100/80 sticky top-0 z-10">
                 <tr>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ism</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Telefon</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Xabar</th>
-                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Amallar</th>
+                    <th class="px-4 py-3 text-left">
+                        <input id="contacts-select-all" type="checkbox" class="h-4 w-4 rounded border-slate-300">
+                    </th>
+                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                        <button type="button" class="hover:text-slate-800" data-sort="id">ID</button>
+                    </th>
+                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                        <button type="button" class="hover:text-slate-800" data-sort="name">Ism</button>
+                    </th>
+                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                        <button type="button" class="hover:text-slate-800" data-sort="phone">Telefon</button>
+                    </th>
+                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                        <button type="button" class="hover:text-slate-800" data-sort="message">Xabar</button>
+                    </th>
+                    <th class="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">Amallar</th>
                 </tr>
             </thead>
-            <tbody class="bg-white divide-y divide-gray-200">
+            <tbody class="bg-white/70 divide-y divide-slate-200" id="contacts-table-body">
                 {% for contact in contacts %}
-                <tr>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ contact[0] }}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ contact[1] }}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">+998{{ contact[2] }}</td>
-                    <td class="px-6 py-4 text-sm text-gray-500">{{ contact[3] }}</td>
+                <tr class="hover:bg-slate-50/70" data-contact-row data-row-id="{{ contact.id }}" data-row-search="{{ (contact.name ~ ' ' ~ contact.phone ~ ' ' ~ contact.message)|lower }}" data-id="{{ contact.id }}" data-name="{{ contact.name|lower }}" data-phone="{{ contact.phone or '' }}" data-message="{{ contact.message|lower }}">
+                    <td class="px-4 py-4 whitespace-nowrap">
+                        <input type="checkbox" class="contact-row-select h-4 w-4 rounded border-slate-300" value="{{ contact.id }}">
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ contact.id }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                        <span contenteditable="true" class="inline-edit rounded px-1 py-0.5 focus:outline-none focus:ring-2 focus:ring-sky-400" data-row-id="{{ contact.id }}" data-field="name">{{ contact.name }}</span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        <div class="flex items-center gap-2">
+                            <span contenteditable="true" class="inline-edit rounded px-1 py-0.5 focus:outline-none focus:ring-2 focus:ring-sky-400" data-row-id="{{ contact.id }}" data-field="phone">{% if contact.phone %}+998{{ contact.phone }}{% endif %}</span>
+                            <button type="button" class="text-blue-600 hover:text-blue-800 text-xs font-semibold" data-copy-phone="{% if contact.phone %}+998{{ contact.phone }}{% endif %}" data-no-loading="true">Nusxa</button>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 text-sm text-gray-500">
+                        <span contenteditable="true" class="inline-edit rounded px-1 py-0.5 focus:outline-none focus:ring-2 focus:ring-sky-400" data-row-id="{{ contact.id }}" data-field="message">{{ contact.message }}</span>
+                    </td>
                     <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                        <form action="{{ url_for('delete_contact', contact_id=contact[0]) }}" method="POST" onsubmit="return confirm('Haqiqatan ham bu xabarni oʻchirmoqchimisiz?');">
-                            <button type="submit" class="text-red-600 hover:text-red-900">O'chirish</button>
+                        <form action="{{ url_for('delete_contact', contact_id=contact.id) }}" method="POST" onsubmit="return confirm('Haqiqatan ham bu xabarni oʻchirmoqchimisiz?');">
+                            <button type="submit" class="text-red-600 hover:text-red-900 font-semibold">O'chirish</button>
                         </form>
                     </td>
                 </tr>
                 {% else %}
                 <tr>
-                    <td colspan="5" class="text-center py-8 text-gray-500">Hozircha xabarlar yo'q.</td>
+                    <td colspan="6" class="text-center py-8 text-gray-500">Hozircha xabarlar yo'q.</td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var storagePrefix = 'admin_contacts_grid_';
+        var searchInput = document.getElementById('contacts-search');
+        var rows = Array.from(document.querySelectorAll('[data-contact-row]'));
+        var tableBody = document.getElementById('contacts-table-body');
+        var selectedCount = document.getElementById('contacts-selected-count');
+        var selectAll = document.getElementById('contacts-select-all');
+        var exportIdsInput = document.getElementById('contacts-export-ids');
+        var deleteIdsInput = document.getElementById('contacts-delete-ids');
+
+        var sortState = {
+            key: localStorage.getItem(storagePrefix + 'sort_key') || 'id',
+            direction: localStorage.getItem(storagePrefix + 'sort_direction') || 'desc'
+        };
+
+        function saveSortState() {
+            localStorage.setItem(storagePrefix + 'sort_key', sortState.key);
+            localStorage.setItem(storagePrefix + 'sort_direction', sortState.direction);
+        }
+
+        function updateSelectionUi() {
+            var selected = rows
+                .filter(function (row) { return row.querySelector('.contact-row-select') && row.querySelector('.contact-row-select').checked; })
+                .map(function (row) { return row.getAttribute('data-row-id'); });
+            selectedCount.textContent = selected.length + ' ta tanlandi';
+            exportIdsInput.value = selected.join(',');
+            deleteIdsInput.value = selected.join(',');
+            if (selectAll) {
+                var totalVisible = rows.filter(function (row) { return row.style.display !== 'none'; }).length;
+                var selectedVisible = rows.filter(function (row) {
+                    return row.style.display !== 'none' && row.querySelector('.contact-row-select') && row.querySelector('.contact-row-select').checked;
+                }).length;
+                selectAll.checked = totalVisible > 0 && totalVisible === selectedVisible;
+            }
+        }
+
+        function applySearch() {
+            var query = (searchInput.value || '').toLowerCase().trim();
+            localStorage.setItem(storagePrefix + 'search', query);
+            rows.forEach(function (row) {
+                var haystack = row.getAttribute('data-row-search') || '';
+                row.style.display = haystack.indexOf(query) !== -1 ? '' : 'none';
+            });
+            updateSelectionUi();
+        }
+
+        function compareValues(a, b) {
+            if (a === b) {
+                return 0;
+            }
+            if (sortState.direction === 'asc') {
+                return a > b ? 1 : -1;
+            }
+            return a < b ? 1 : -1;
+        }
+
+        function applySort() {
+            rows.sort(function (rowA, rowB) {
+                var key = sortState.key;
+                var a = rowA.getAttribute('data-' + key) || '';
+                var b = rowB.getAttribute('data-' + key) || '';
+
+                if (key === 'id') {
+                    return compareValues(parseInt(a || '0', 10), parseInt(b || '0', 10));
+                }
+                return compareValues(a.toLowerCase(), b.toLowerCase());
+            });
+
+            rows.forEach(function (row) {
+                tableBody.appendChild(row);
+            });
+            saveSortState();
+        }
+
+        function updateRowDataset(row, field, serverValue, displayValue) {
+            if (field === 'name') {
+                row.setAttribute('data-name', (serverValue || '').toLowerCase());
+            }
+            if (field === 'phone') {
+                row.setAttribute('data-phone', serverValue || '');
+                var copyBtn = row.querySelector('[data-copy-phone]');
+                if (copyBtn) {
+                    copyBtn.setAttribute('data-copy-phone', displayValue || '');
+                }
+            }
+            if (field === 'message') {
+                row.setAttribute('data-message', (serverValue || '').toLowerCase());
+            }
+
+            var searchText = [
+                row.querySelector('[data-field="name"]').textContent,
+                row.querySelector('[data-field="phone"]').textContent,
+                row.querySelector('[data-field="message"]').textContent
+            ].join(' ').toLowerCase();
+            row.setAttribute('data-row-search', searchText);
+        }
+
+        if (searchInput) {
+            searchInput.value = localStorage.getItem(storagePrefix + 'search') || '';
+            searchInput.addEventListener('input', applySearch);
+        }
+
+        document.querySelectorAll('[data-sort]').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                var clickedKey = btn.getAttribute('data-sort');
+                if (sortState.key === clickedKey) {
+                    sortState.direction = sortState.direction === 'asc' ? 'desc' : 'asc';
+                } else {
+                    sortState.key = clickedKey;
+                    sortState.direction = 'asc';
+                }
+                applySort();
+            });
+        });
+
+        if (selectAll) {
+            selectAll.addEventListener('change', function () {
+                var shouldSelect = selectAll.checked;
+                rows.forEach(function (row) {
+                    if (row.style.display !== 'none') {
+                        var checkbox = row.querySelector('.contact-row-select');
+                        if (checkbox) {
+                            checkbox.checked = shouldSelect;
+                        }
+                    }
+                });
+                updateSelectionUi();
+            });
+        }
+
+        rows.forEach(function (row) {
+            var checkbox = row.querySelector('.contact-row-select');
+            if (checkbox) {
+                checkbox.addEventListener('change', updateSelectionUi);
+            }
+        });
+
+        document.querySelectorAll('.inline-edit').forEach(function (editable) {
+            editable.addEventListener('focus', function () {
+                editable.dataset.originalValue = editable.textContent.trim();
+            });
+
+            editable.addEventListener('blur', function () {
+                var rowId = editable.getAttribute('data-row-id');
+                var field = editable.getAttribute('data-field');
+                var newValue = editable.textContent.trim();
+                var oldValue = editable.dataset.originalValue || '';
+                if (newValue === oldValue) {
+                    return;
+                }
+
+                editable.classList.add('opacity-60');
+                fetch('/admin/contacts/update/' + rowId, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ field: field, value: newValue })
+                })
+                    .then(function (response) {
+                        return response.json().then(function (data) {
+                            return { ok: response.ok, data: data };
+                        });
+                    })
+                    .then(function (result) {
+                        if (!result.ok || !result.data.success) {
+                            throw new Error(result.data.message || 'Saqlashda xatolik yuz berdi.');
+                        }
+                        var displayValue = result.data.display_value || result.data.value || '';
+                        editable.textContent = displayValue;
+                        editable.dataset.originalValue = displayValue;
+                        var row = editable.closest('[data-contact-row]');
+                        updateRowDataset(row, field, result.data.value, displayValue);
+                        applySearch();
+                        applySort();
+                    })
+                    .catch(function (error) {
+                        editable.textContent = oldValue;
+                        alert(error.message);
+                    })
+                    .finally(function () {
+                        editable.classList.remove('opacity-60');
+                    });
+            });
+        });
+
+        document.querySelectorAll('[data-copy-phone]').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                var value = btn.getAttribute('data-copy-phone');
+                if (!value) {
+                    return;
+                }
+                navigator.clipboard.writeText(value).then(function () {
+                    var previous = btn.textContent;
+                    btn.textContent = 'Nusxalandi';
+                    setTimeout(function () {
+                        btn.textContent = previous;
+                    }, 1200);
+                });
+            });
+        });
+
+        applySort();
+        applySearch();
+        updateSelectionUi();
+    });
+</script>
 {% endblock %}

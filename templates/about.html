@@ -7,7 +7,7 @@
 <style>
     .page-header-bg {
         background-color: #0D2444;
-        background-image: linear-gradient(rgba(13, 36, 68, 0.7), rgba(13, 36, 68, 0.7)), url('https://images.unsplash.com/photo-1524178232363-1fb2b075b655?q=80&w=2070&auto=format&fit=crop');
+        background-image: linear-gradient(rgba(13, 36, 68, 0.7), rgba(13, 36, 68, 0.7)), url('{{ asset_url("about_hero_bg", "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?q=80&w=2070&auto=format&fit=crop") }}');
         background-size: cover;
         background-position: center;
         background-attachment: fixed;
@@ -21,16 +21,22 @@
         opacity: 1;
         transform: translateY(0);
     }
+
+    @media (max-width: 1024px), (hover: none) {
+        .page-header-bg {
+            background-attachment: scroll;
+        }
+    }
 </style>
 {% endblock %}
 
 {% block content %}
 <!-- Page Header Section -->
-<section class="page-header-bg text-white pt-32 pb-16 md:pt-40 md:pb-24">
+<section class="page-header-bg text-white pt-28 pb-14 md:pt-40 md:pb-24">
     <div class="container mx-auto px-6 text-center">
-        <h1 class="text-4xl md:text-6xl font-serif font-bold mb-4 tracking-tight">Bizning Hikoyamiz</h1>
-        <p class="text-lg md:text-xl text-blue-200 max-w-3xl mx-auto">
-            ICEBERG farqini belgilaydigan falsafa, odamlar va ishtiyoq.
+        <h1 class="text-3xl sm:text-4xl md:text-6xl font-serif font-bold mb-4 tracking-tight">{{ content('about_page_title', 'Bizning Hikoyamiz') }}</h1>
+        <p class="text-base sm:text-lg md:text-xl text-blue-200 max-w-3xl mx-auto mt-2">
+            {{ content('about_page_subtitle', 'ICEBERG farqini belgilaydigan falsafa, odamlar va ishtiyoq.') }}
         </p>
     </div>
 </section>
@@ -40,9 +46,9 @@
     <div class="container mx-auto px-6">
         <!-- Our Mission -->
         <div class="max-w-4xl mx-auto text-center mb-16 md:mb-24 fade-in">
-            <h2 class="text-3xl md:text-4xl font-serif font-bold text-[#0D2444] mb-4">Bizning Missiyamiz</h2>
+            <h2 class="text-3xl md:text-4xl font-serif font-bold text-[#0D2444] mb-4">{{ content('about_mission_title', 'Bizning Missiyamiz') }}</h2>
             <p class="text-lg text-gray-600 leading-relaxed">
-                Bizning missiyamiz - har bir o'quvchiga o'z potentsialini to'liq ochib berishga yordam beradigan, innovatsion va qo'llab-quvvatlovchi ta'lim muhitini taqdim etish. Biz nafaqat dasturlashni, balki tanqidiy fikrlashni, muammolarni hal qilishni va texnologiyalar olamida muvaffaqiyatga erishish uchun zarur bo'lgan ishonchni o'rgatamiz.
+                {{ content('about_mission_text', "Bizning missiyamiz - har bir o'quvchiga o'z potentsialini to'liq ochib berishga yordam beradigan, innovatsion va qo'llab-quvvatlovchi ta'lim muhitini taqdim etish.") }}
             </p>
         </div>
 
@@ -53,7 +59,7 @@
                 <!-- Team Member 1 -->
                 <div class="text-center fade-in" style="transition-delay: 100ms;">
                     <div class="relative inline-block mb-4">
-                        <img src="{{ url_for('static', filename='img/azizbek.png') }}" alt="Jahongir To'xtaboyev" class="h-40 w-40 rounded-full object-cover shadow-lg mx-auto">
+                        <img src="{{ asset_url('about_team_1', 'img/azizbek.png') }}" alt="Jahongir To'xtaboyev" class="h-40 w-40 rounded-full object-cover shadow-lg mx-auto">
                         <div class="absolute inset-0 rounded-full ring-4 ring-blue-500 ring-opacity-50 transform scale-105"></div>
                     </div>
                     <h3 class="text-xl font-bold text-gray-800">Azizbek Nasriddinov</h3>
@@ -61,13 +67,13 @@
                 </div>
                 <!-- Team Member 2 -->
                 <div class="text-center fade-in" style="transition-delay: 200ms;">
-                    <img src="{{ url_for('static', filename='img/maqsudbek.png') }}" alt="Maqsudbek Mirzayev" class="h-40 w-40 rounded-full object-cover shadow-lg mx-auto">
+                    <img src="{{ asset_url('about_team_2', 'img/maqsudbek.png') }}" alt="Maqsudbek Mirzayev" class="h-40 w-40 rounded-full object-cover shadow-lg mx-auto">
                     <h3 class="text-xl font-bold text-gray-800 mt-4">Maqsudbek Mirzayev</h3>
                     <p class="text-blue-600 font-semibold">Ingliz tili bo`yicha mutaxxasis</p>
                 </div>
                 <!-- Team Member 3 -->
                 <div class="text-center fade-in" style="transition-delay: 300ms;">
-                    <img src="{{ url_for('static', filename='img/islomjon.png') }}" alt="Islomjon Ergashboyev" class="h-40 w-40 rounded-full object-cover shadow-lg mx-auto">
+                    <img src="{{ asset_url('about_team_3', 'img/islomjon.png') }}" alt="Islomjon Ergashboyev" class="h-40 w-40 rounded-full object-cover shadow-lg mx-auto">
                     <h3 class="text-xl font-bold text-gray-800 mt-4">Islomjon Ergashboyev</h3>
                     <p class="text-blue-600 font-semibold">Markaz asosiy tizim boshqaruvchisi</p>
                 </div>

@@ -12,7 +12,7 @@
     .font-serif { font-family: 'Lora', serif; }
     .page-header-bg {
         background-color: #0D2444;
-        background-image: linear-gradient(rgba(13, 36, 68, 0.7), rgba(13, 36, 68, 0.7)), url('https://images.unsplash.com/photo-1542744095-291d1f67b221?q=80&w=2070&auto=format&fit=crop');
+        background-image: linear-gradient(rgba(13, 36, 68, 0.7), rgba(13, 36, 68, 0.7)), url('{{ asset_url("programs_hero_bg", "https://images.unsplash.com/photo-1542744095-291d1f67b221?q=80&w=2070&auto=format&fit=crop") }}');
         background-size: cover;
         background-position: center;
         background-attachment: fixed;
@@ -42,15 +42,21 @@
             transform: translateY(0);
         }
     }
+
+    @media (max-width: 1024px), (hover: none) {
+        .page-header-bg {
+            background-attachment: scroll;
+        }
+    }
 </style>
 {% endblock %}
 
 {% block content %}
 <!-- Page Header Section -->
-<section class="page-header-bg text-white pt-32 pb-16 md:pt-40 md:pb-24">
+<section class="page-header-bg text-white pt-28 pb-14 md:pt-40 md:pb-24">
     <div class="container mx-auto px-6 text-center">
-        <h1 class="text-4xl md:text-6xl font-serif font-bold mb-4 tracking-tight">Bizning Akademik Dasturlarimiz</h1>
-        <p class="text-lg md:text-xl text-blue-200 max-w-3xl mx-auto">
+        <h1 class="text-3xl sm:text-4xl md:text-6xl font-serif font-bold mb-4 tracking-tight">Bizning Akademik Dasturlarimiz</h1>
+        <p class="text-base sm:text-lg md:text-xl text-blue-200 max-w-3xl mx-auto">
             Eng yuqori akademik salohiyatingizga erishishingizga yordam berish uchun mahorat bilan ishlab chiqilgan yo'llar.
         </p>
     </div>
@@ -60,16 +66,16 @@
 <section class="py-16 md:py-24">
     <div class="container mx-auto px-6">
 
-        <!-- Tab Navigation -->Ingliz tili SAT/IELTS imtixonlari ichun tayyorgarlik
+        <!-- Tab Navigation -->
         <div class="border-b border-gray-200 mb-12">
-            <nav class="-mb-px flex justify-center space-x-4 md:space-x-8" aria-label="Tabs">
-                <button class="tab-button py-4 px-1 text-center text-gray-500 hover:text-gray-800 text-base md:text-lg active" data-target="#test-prep">
+            <nav class="-mb-px flex flex-col sm:flex-row sm:justify-center gap-2 sm:gap-4 md:gap-8" aria-label="Tabs">
+                <button class="tab-button py-3 sm:py-4 px-2 text-center text-gray-500 hover:text-gray-800 text-sm sm:text-base md:text-lg active" data-target="#test-prep">
                     Ingliz tili va Standart Testlarga Tayyorgarlik
                 </button>
-                <button class="tab-button py-4 px-1 text-center text-gray-500 hover:text-gray-800 text-base md:text-lg" data-target="#academic-tutoring">
+                <button class="tab-button py-3 sm:py-4 px-2 text-center text-gray-500 hover:text-gray-800 text-sm sm:text-base md:text-lg" data-target="#academic-tutoring">
                     Bolalar uchun maxsus dasturlar
                 </button>
-                <button class="tab-button py-4 px-1 text-center text-gray-500 hover:text-gray-800 text-base md:text-lg" data-target="#admissions-consulting">
+                <button class="tab-button py-3 sm:py-4 px-2 text-center text-gray-500 hover:text-gray-800 text-sm sm:text-base md:text-lg" data-target="#admissions-consulting">
                     Chet el va Milliy universitetlarida o`qish bo`yicha ko`nikmalar
                 </button>
             </nav>
@@ -86,7 +92,7 @@
                 <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                     <!-- SAT/ACT Course Card -->
                     <div class="course-card bg-white rounded-xl shadow-md overflow-hidden">
-                        <img src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?q=80&w=2070&auto=format&fit=crop" alt="Students studying for SAT/ACT" class="h-48 w-full object-cover">
+                        <img src="{{ asset_url('program_card_1', 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?q=80&w=2070&auto=format&fit=crop') }}" alt="Students studying for SAT/ACT" class="h-48 w-full object-cover">
                         <div class="p-6">
                             <h3 class="text-xl font-serif font-bold text-[#0D2444] mb-2">SAT/IELTS Kompleks Dasturi</h3>
                             <p class="text-sm text-gray-600 mb-4">Ingliz tili va Ingliz tili bilim ko`nikmalarini tekshirish uchun bo`ladigan kompleks testlar uchun tayyorgarlik</p>
@@ -95,7 +101,7 @@
                     </div>
                     <!-- AP Exams Course Card -->
                     <div class="course-card bg-white rounded-xl shadow-md overflow-hidden" style="animation-delay: 0.1s;">
-                        <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=2071&auto=format&fit=crop" alt="Students learning in a natural outdoor setting" class="h-48 w-full object-cover">
+                        <img src="{{ asset_url('program_card_2', 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=2071&auto=format&fit=crop') }}" alt="Students learning in a natural outdoor setting" class="h-48 w-full object-cover">
                         <div class="p-6">
                             <h3 class="text-xl font-serif font-bold text-[#0D2444] mb-2">Natural English</h3>
                             <p class="text-sm text-gray-600 mb-4">Ingliz tili bo`yicha chuqur bilimlar va mutaxasislar bilan real time muloqot.</p>
@@ -104,7 +110,7 @@
                     </div>
                     <!-- IELTS/TOEFL Course Card -->
                     <div class="course-card bg-white rounded-xl shadow-md overflow-hidden" style="animation-delay: 0.2s;">
-                        <img src="https://images.unsplash.com/photo-1528642474498-1af0c17fd8c3?q=80&w=2069&auto=format&fit=crop" alt="IELTS/TOEFL language test preparation" class="h-48 w-full object-cover">
+                        <img src="{{ asset_url('program_card_3', 'https://images.unsplash.com/photo-1528642474498-1af0c17fd8c3?q=80&w=2069&auto=format&fit=crop') }}" alt="IELTS/TOEFL language test preparation" class="h-48 w-full object-cover">
                         <div class="p-6">
                             <h3 class="text-xl font-serif font-bold text-[#0D2444] mb-2">Preperation for Universities</h3>
                             <p class="text-sm text-gray-600 mb-4">Xalqaro universitetlar uchun zarur bo'lgan til imtihonlarida muvaffaqiyat qozonish uchun nutq, tinglash, o'qish va yozish ko'nikmalaringizni oshiring.</p>
@@ -123,7 +129,7 @@
                 <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                     <!-- Early Learning Program Card -->
                     <div class="course-card bg-white rounded-xl shadow-md overflow-hidden">
-                        <img src="https://images.unsplash.com/photo-1521587760476-6c12a4b040da?q=80&w=2070&auto=format&fit=crop" alt="Child learning to read" class="h-48 w-full object-cover">
+                        <img src="{{ asset_url('program_card_4', 'https://images.unsplash.com/photo-1521587760476-6c12a4b040da?q=80&w=2070&auto=format&fit=crop') }}" alt="Child learning to read" class="h-48 w-full object-cover">
                         <div class="p-6">
                             <h3 class="text-xl font-serif font-bold text-[#0D2444] mb-2">Ilk Qadam (Maktabgacha Tayyorlov)</h3>
                             <p class="text-sm text-gray-600 mb-4">Algebradan tortib to Kalkulusgacha, biz tushunishni osonlashtiramiz va muammolarni hal qilish ko'nikmalarini mustahkamlaymiz.</p>
@@ -132,7 +138,7 @@
                     </div>
                     <!-- Science Tutoring -->
                     <div class="course-card bg-white rounded-xl shadow-md overflow-hidden" style="animation-delay: 0.1s;">
-                        <img src="https://images.unsplash.com/photo-1571260899304-425eee4c7efc?q=80&w=2070&auto=format&fit=crop" alt="Kids learning English with fun and games" class="h-48 w-full object-cover">
+                        <img src="{{ asset_url('program_card_5', 'https://images.unsplash.com/photo-1571260899304-425eee4c7efc?q=80&w=2070&auto=format&fit=crop') }}" alt="Kids learning English with fun and games" class="h-48 w-full object-cover">
                         <div class="p-6">
                             <h3 class="text-xl font-serif font-bold text-[#0D2444] mb-2">Kids English</h3>
                             <p class="text-sm text-gray-600 mb-4">Farzandingiz uchun ingliz tilini o'yinlar va interaktiv mashg'ulotlar orqali qiziqarli tarzda o'rgatamiz.</p>
@@ -141,7 +147,7 @@
                     </div>
                     <!-- Humanities Tutoring -->
                     <div class="course-card bg-white rounded-xl shadow-md overflow-hidden" style="animation-delay: 0.2s;">
-                        <img src="https://images.unsplash.com/photo-1456324504439-367cee3b3c32?q=80&w=2070&auto=format&fit=crop" alt="Humanities tutoring" class="h-48 w-full object-cover">
+                        <img src="{{ asset_url('program_card_6', 'https://images.unsplash.com/photo-1456324504439-367cee3b3c32?q=80&w=2070&auto=format&fit=crop') }}" alt="Humanities tutoring" class="h-48 w-full object-cover">
                         <div class="p-6">
                             <h3 class="text-xl font-serif font-bold text-[#0D2444] mb-2">Ona tili va Gumanitar Fanlar</h3>
                             <p class="text-sm text-gray-600 mb-4">Insho yozish, adabiy tahlil va tanqidiy o'qish ko'nikmalaringizni kuchaytiring.</p>
