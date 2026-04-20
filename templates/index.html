@@ -2,209 +2,188 @@
 
 {% block styles %}
     {{ super() }}
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Lora:wght@600&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         html { scroll-behavior: smooth; }
-        body { font-family: 'Inter', sans-serif; background-color: #FDFDFF; }
-        .font-serif { font-family: 'Lora', serif; }
-        .hero-bg {
-            background-color: #0D2444;
-            background-image: linear-gradient(rgba(13, 36, 68, 0.8), rgba(13, 36, 68, 0.8)), url('{{ asset_url("index_hero_bg", "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?q=80&w=2070&auto=format&fit=crop") }}');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-        }
-        .angled-divider {
-            position: relative;
-            background: #F3F4F6;
-            clip-path: polygon(0 0, 100% 5vw, 100% 100%, 0 100%);
-            margin-top: -5vw;
-        }
-        .angled-divider-top {
-             position: relative;
-             background: #FDFDFF;
-             clip-path: polygon(0 0, 100% 0, 100% calc(100% - 5vw), 0 100%);
-             padding-bottom: 5vw;
-        }
-        .fade-in { opacity: 0; transform: translateY(30px); transition: opacity 0.8s ease-out, transform 0.8s ease-out; }
-        .fade-in.visible { opacity: 1; transform: translateY(0); }
-        .typewriter-cursor { animation: blink 1s step-end infinite; }
-        @keyframes blink { from, to { border-color: transparent } 50% { border-color: #FFC107; } }
-
-        @media (max-width: 1024px), (hover: none) {
-            .hero-bg {
-                background-attachment: scroll;
-            }
-        }
-
-        @media (max-width: 640px) {
-            .angled-divider {
-                clip-path: none;
-                margin-top: 0;
-            }
-            .angled-divider-top {
-                clip-path: none;
-                padding-bottom: 0;
-            }
+        .hero-visual {
+            background:
+                linear-gradient(150deg, rgba(7, 20, 43, 0.82), rgba(16, 40, 76, 0.86)),
+                url('{{ asset_url("index_hero_bg", "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?q=80&w=2070&auto=format&fit=crop") }}') center/cover;
         }
     </style>
 {% endblock %}
 
 {% block content %}
-        <!-- Hero Section -->
-        <section class="hero-bg text-white pt-28 pb-16 md:pt-48 md:pb-32">
-            <div class="container mx-auto px-6 text-center">
-                <h1 id="typewriter" class="text-3xl sm:text-4xl md:text-6xl font-serif font-bold mb-4 tracking-tight min-h-[72px] sm:min-h-[100px] md:min-h-[150px]"></h1>
-                <p class="text-lg md:text-xl text-blue-200 max-w-3xl mx-auto mb-8 fade-in" style="transition-delay: 2s;">
-                    {{ content('hero_main_subtitle', "Fundamental bilimlar - har qanday akademik cho'qqini zabt etishning kalitidir.") }}
-                </p>
-                <a href="{{ url_for('contact') }}" class="bg-[#FFC107] text-[#0D2444] font-bold py-3 px-8 rounded-full text-lg hover:bg-amber-400 transition-transform transform hover:scale-105 shadow-lg fade-in" style="transition-delay: 2.2s;">{{ content('hero_main_cta', 'Maslaxatlar uchun aloqa bo`limi') }}</a>
-            </div>
-        </section>
-
-        <!-- Social Proof -->
-        <div class="bg-gray-50 py-8">
-            <div class="container mx-auto px-6">
-                <p class="text-center text-gray-500 uppercase tracking-widest">Bizning o'quvchilarimiz quyidagi muvofaqiyatlarga erish</p>
-                <div class="flex justify-center items-center flex-wrap gap-x-8 gap-y-4 mt-4 text-gray-400">
-                    <span class="font-semibold">Milliy Toshkent Universiteti</span>
-                    <span class="font-semibold">Milliy Namangan Universiteti</span>
-                    <span class="font-semibold">Yaponiya</span>
-                    <span class="font-semibold">Polsha</span>
-                    <span class="font-semibold">AQSH</span>
-
-                </div>
-            </div>
-        </div>
-        
-        <!-- The ICEBERG Method -->
-        <section id="philosophy" class="py-16 md:py-24 bg-white angled-divider-top">
-            <div class="container mx-auto px-6">
-                <div class="text-center mb-12 fade-in">
-                    <h2 class="text-3xl md:text-4xl font-serif font-bold text-[#0D2444]">ICEBERG Metodi</h2>
-                    <p class="text-gray-600 mt-2 max-w-2xl mx-auto">Muvaffaqiyat - bu siz ko'rgan narsa. Strategiya - bu sizning u yerga qanday borishingiz.</p>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
-                    <div class="fade-in">
-                        <img src="{{ asset_url('index_method_image', 'img/logo2.png') }}" alt="Iceberg with a large base underwater representing the foundational strategy" class="rounded-xl shadow-xl w-full max-w-lg mx-auto h-auto object-cover">
+        <section class="hero-shell">
+            <div class="hero-wrap">
+                <div class="hero-copy reveal">
+                    <span class="hero-kicker">Iceberg Study Center</span>
+                    <h1 id="typewriter" class="hero-title"></h1>
+                    <p class="hero-desc">
+                        {{ content('hero_main_subtitle', "Fundamental bilimlar - har qanday akademik cho'qqini zabt etishning kalitidir.") }}
+                    </p>
+                    <div class="hero-actions">
+                        <a href="{{ url_for('contact') }}" class="btn-main">{{ content('hero_main_cta', 'Maslaxatlar uchun aloqa bo`limi') }}</a>
+                        <a href="{{ url_for('our_programs') }}" class="btn-soft">Dasturlarni ko'rish</a>
                     </div>
-                    <div class="fade-in">
-                        <div class="space-y-6">
-                            <div class="p-6 bg-gray-50 rounded-lg border border-gray-200">
-                                <h3 class="font-bold text-xl text-[#00A8B5] mb-2">Ko'rinadigan Natijalar</h3>
-                                <p>Yuqori test ballari, elita universitetlarga kirish va akademik mukofotlar. Bular bizning metodimiz natijalaridir.</p>
-                            </div>
-                            <div class="p-6 bg-[#0D2444] text-white rounded-lg">
-                                <h3 class="font-bold text-xl text-white mb-2">Bizning E'tiborimiz: Asos</h3>
-                                <p class="text-blue-200">Biz shu yerda ishlaymiz. Biz fundamental mahorat, tanqidiy fikrlash qobiliyatlari va shaxsiylashtirilgan o'qish odatlarini shakllantiramiz. Muvaffaqiyatni muqarrar qiladigan narsa shu.</p>
-                            </div>
-                        </div>
-                    </div>
+                </div>
+                <div class="hero-visual reveal">
+                    <span class="hero-badge">500+ o'quvchi bilan natija</span>
+                    <span class="hero-badge">IELTS, SAT, Mentorlik</span>
                 </div>
             </div>
         </section>
 
-        <!-- Core Programs -->
-        <section id="programs" class="py-16 md:py-24 angled-divider">
-             <div class="container mx-auto px-6 pt-12">
-                <div class="text-center mb-12 fade-in">
-                    <h2 class="text-3xl md:text-4xl font-serif font-bold text-[#0D2444]">Bizning Asosiy Dasturlarimiz</h2>
+        <section class="section-shell">
+            <div class="section-head reveal">
+                <h2 class="section-title">Bizning o'quvchilarimiz global yo'nalishda</h2>
+                <p class="section-subtitle">Har bir dasturimiz universitetga kirish, til ko'rsatkichi va akademik fikrlashga aniq ta'sir qiladi.</p>
+            </div>
+            <div class="brand-row reveal">
+                <span class="brand-pill">Milliy Toshkent Universiteti</span>
+                <span class="brand-pill">Milliy Namangan Universiteti</span>
+                <span class="brand-pill">Yaponiya</span>
+                <span class="brand-pill">Polsha</span>
+                <span class="brand-pill">AQSH</span>
+            </div>
+        </section>
+
+        <section id="philosophy" class="section-shell">
+            <div class="section-head reveal">
+                <h2 class="section-title">ICEBERG Metodi</h2>
+                <p class="section-subtitle">Muvaffaqiyat bu faqat natija emas. Biz natijani olib keladigan poydevorni quramiz.</p>
+            </div>
+            <div class="method-grid">
+                <div class="reveal">
+                    <img src="{{ asset_url('index_method_image', 'img/logo2.png') }}" alt="Iceberg method visual" class="method-image">
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
-                    <div class="bg-white p-8 rounded-xl shadow-lg text-center transform hover:-translate-y-2 transition-transform duration-300 fade-in">
-                        <h3 class="text-2xl font-serif font-bold text-[#0D2444] mb-4">ENGLISH IELTS, SAT</h3>
-                        <p class="mb-6">Muvaffaqiyatingiz poydevori: SAT va IELTS imtihonlariga fundamental tayyorgarlik.</p>
-                        <a href="{{ url_for('our_programs') }}" class="font-bold text-[#00A8B5] hover:text-[#007A85]">Batafsil &rarr;</a>
-                    </div>
-                    <div class="bg-white p-8 rounded-xl shadow-lg text-center transform hover:-translate-y-2 transition-transform duration-300 fade-in" style="transition-delay: 0.2s;">
-                        <h3 class="text-2xl font-serif font-bold text-[#0D2444] mb-4">Akademik Repetitorlik</h3>
-                        <p class="mb-6">Matematika, fan va ingliz tilidan asosiy ko'nikmalarni shakllantirish uchun shaxsiy 1-ga-1 yordam.</p>
-                        <a href="{{ url_for('our_programs') }}" class="font-bold text-[#00A8B5] hover:text-[#007A85]">Batafsil &rarr;</a>
-                    </div>
-                    <div class="bg-white p-8 rounded-xl shadow-lg text-center transform hover:-translate-y-2 transition-transform duration-300 fade-in" style="transition-delay: 0.4s;">
-                        <h3 class="text-2xl font-serif font-bold text-[#0D2444] mb-4">Akademik Mentorlik</h3>
-                        <p class="mb-6">Maqsadingiz sari shunchaki yoʻl koʻrsatmaymiz — bu yoʻlda sizga ustozlik qilamiz.</p>
-                        <a href="{{ url_for('our_programs') }}" class="font-bold text-[#00A8B5] hover:text-[#007A85]">Batafsil &rarr;</a>
-                    </div>
+                <div class="story-grid">
+                    <article class="surface-card method-card reveal">
+                        <strong>Ko'rinadigan natijalar</strong>
+                        <p>Yuqori test ballari, top universitetlarga kirish va xalqaro tanlovlardagi natijalar - bular metodimizning ko'rinadigan qismi.</p>
+                    </article>
+                    <article class="surface-card method-card reveal">
+                        <strong>Asosiy e'tibor</strong>
+                        <p>Fundamental bilim, tanqidiy fikrlash va barqaror o'qish odatlari bilan biz natijani tasodif emas, tizimga aylantiramiz.</p>
+                    </article>
+                    <article class="surface-card method-card reveal">
+                        <strong>Shaxsiy yo'l xaritasi</strong>
+                        <p>Har bir o'quvchi uchun maqsad, daraja va muddat bo'yicha individual strategiya tuziladi.</p>
+                    </article>
+                    <article class="surface-card method-card reveal">
+                        <strong>Doimiy tahlil</strong>
+                        <p>Haftalik monitoring, mock testlar va mentor feedback orqali progress aniq boshqariladi.</p>
+                    </article>
                 </div>
             </div>
         </section>
-        
-        <!-- Success Metrics -->
-        <section class="py-16 bg-white">
-             <div class="container mx-auto px-6">
-         <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
-             <div class="fade-in">
-                 <p class="text-5xl font-bold text-[#00A8B5] counter" data-target="90">0</p>
-                 <p class="text-gray-600 mt-2">O'rtacha IELTS ballining oshishi</p>
-             </div>
-             <div class="fade-in">
-                 <p class="text-5xl font-bold text-[#00A8B5] counter" data-target="30">0</p>
-                 <p class="text-gray-600 mt-2">% Eng Yaxshi Universitetlarga Qabul</p>
-             </div>
-             <div class="fade-in">
-                 <p class="text-5xl font-bold text-[#00A8B5] counter" data-target="500">0</p>
-                 <p class="text-gray-600 mt-2">+ O'qitilgan Talabalar</p>
-             </div>
-         </div>
-     </div>
-</section>
 
-<!-- Testimonials -->
-<section id="testimonials" class="py-16 md:py-24 bg-[#0D2444] text-white">
-    <div class="container mx-auto px-6 text-center">
-        <div class="max-w-3xl mx-auto fade-in">
-            <p class="text-2xl font-serif italic text-blue-200 mb-6">"IELTS 8 — bu shunchaki ball emas. Bu ICEBERG metodi bilan erishilgan yangicha fikrlash tarzi. Ular formula emas, fikrlashni o'rgatishdi va natijalar shunga yarasha bo'ldi."</p>
-            <div class="font-bold text-[#00A8B5]">  (IELTS - 8 score holder)</div>
-        </div>
-    </div>
-</section>
+        <section id="programs" class="section-shell">
+            <div class="section-head reveal">
+                <h2 class="section-title">Asosiy Dasturlar</h2>
+                <p class="section-subtitle">Nazariya, amaliyot va mentorlikni birlashtirgan 3 asosiy yo'nalish.</p>
+            </div>
+            <div class="program-grid">
+                <article class="program-card reveal">
+                    <h3>English IELTS, SAT</h3>
+                    <p>Muvaffaqiyat poydevori: IELTS va SAT imtihonlariga strategik tayyorgarlik.</p>
+                    <a href="{{ url_for('our_programs') }}" class="program-link">Batafsil -></a>
+                </article>
+                <article class="program-card reveal">
+                    <h3>Akademik Repetitorlik</h3>
+                    <p>Matematika, fan va ingliz tilida 1-on-1 qo'llab-quvvatlash orqali mustahkamlash.</p>
+                    <a href="{{ url_for('our_programs') }}" class="program-link">Batafsil -></a>
+                </article>
+                <article class="program-card reveal">
+                    <h3>Akademik Mentorlik</h3>
+                    <p>Shunchaki yo'l ko'rsatish emas, balki maqsadga yetkazadigan hamrohlik tizimi.</p>
+                    <a href="{{ url_for('our_programs') }}" class="program-link">Batafsil -></a>
+                </article>
+            </div>
+        </section>
 
-<!-- Final CTA -->
-<section id="contact" class="bg-gray-50">
-    <div class="container mx-auto px-6 py-20 text-center">
-        <div class="fade-in">
-            <h2 class="text-3xl font-serif font-bold text-[#0D2444] mb-4">O'z Poydevoringizni Qurishga Tayyormisiz?</h2>
-            <p class="text-gray-600 max-w-2xl mx-auto mb-8">
-                Akademik mukammallikka sayohatingiz shu yerdan boshlanadi. ICEBERG farqini bilish uchun bugun bizning akademik maslahatchilarimiz bilan bepul maslaxatlar oling.
-            </p>
-            <a href="{{ url_for('contact') }}" class="inline-block bg-[#FFC107] text-[#0D2444] font-bold py-4 px-10 rounded-full shadow-lg hover:bg-amber-400 transition-transform transform hover:scale-105">
-                Maslaxatlar uchun aloqa bo`limi
-            </a>
-        </div>
-    </div>
-</section>
+        <section class="section-shell">
+            <div class="section-head reveal">
+                <h2 class="section-title">Raqamlar Ortidagi Ishonch</h2>
+            </div>
+            <div class="stat-grid">
+                <article class="stat-card reveal">
+                    <p class="stat-number counter" data-target="90">0</p>
+                    <p class="text-slate-600 mt-3">O'rtacha IELTS o'sishi</p>
+                </article>
+                <article class="stat-card reveal">
+                    <p class="stat-number counter" data-target="30">0</p>
+                    <p class="text-slate-600 mt-3">Top universitetlarga qabul</p>
+                </article>
+                <article class="stat-card reveal">
+                    <p class="stat-number counter" data-target="500">0</p>
+                    <p class="text-slate-600 mt-3">O'qitilgan talabalar</p>
+                </article>
+            </div>
+        </section>
+
+        <section id="testimonials" class="section-shell">
+            <div class="quote-panel reveal">
+                <p class="quote-text">"IELTS 8 bu shunchaki ball emas. ICEBERG metodi menga formulani emas, fikrlashni o'rgatdi va natijam aynan shundan keyin keskin o'zgardi."</p>
+                <p class="quote-sign">IELTS 8 score holder</p>
+            </div>
+        </section>
+
+        <section id="contact" class="section-shell">
+            <div class="final-cta reveal">
+                <h2 class="section-title">O'z poydevoringizni bugun boshlang</h2>
+                <p class="section-subtitle">Akademik mukammallik yo'li aniq rejadan boshlanadi. Siz uchun mos yo'l xaritasini birga tuzamiz.</p>
+                <div class="hero-actions justify-center">
+                    <a href="{{ url_for('contact') }}" class="btn-main">Maslahat olish</a>
+                    <a href="{{ url_for('news') }}" class="btn-soft">Yangiliklar</a>
+                </div>
+            </div>
+        </section>
+
+        <script id="hero-main-title-data" type="application/json">{{ content('hero_main_title', 'HAPPINESS IS IN SCIENCE')|tojson }}</script>
 {% endblock %}
 
 {% block scripts %}
 {{ super() }}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Typewriter effect
     const typewriterElement = document.getElementById('typewriter');
-    const text = {{ content('hero_main_title', 'HAPPINESS IS IN SCIENCE')|tojson }};
+    const heroMainTitleData = document.getElementById('hero-main-title-data');
+    let text = '';
+    if (heroMainTitleData && heroMainTitleData.textContent) {
+        try {
+            text = JSON.parse(heroMainTitleData.textContent);
+        } catch (err) {
+            text = 'HAPPINESS IS IN SCIENCE';
+        }
+    }
     let index = 0;
 
     function type() {
+        if (!typewriterElement) {
+            return;
+        }
         if (index < text.length) {
             typewriterElement.innerHTML += text.charAt(index) + (index === text.length - 1 ? '<span class="typewriter-cursor">|</span>' : '');
             index++;
             setTimeout(type, 100);
         } else {
-            // Blinking cursor remains
-            typewriterElement.querySelector('.typewriter-cursor').style.animation = 'blink 1s step-end infinite';
+            const cursor = typewriterElement.querySelector('.typewriter-cursor');
+            if (cursor) {
+                cursor.style.animation = 'blink 1s step-end infinite';
+            }
         }
     }
-    if(typewriterElement) type();
 
-    // --- Intersection Observer for fade-in animations ---
-    const faders = document.querySelectorAll('.fade-in');
+    if (typewriterElement) {
+        type();
+    }
+
+    const faders = document.querySelectorAll('.reveal');
     const appearOptions = {
         threshold: 0.1,
-        rootMargin: "0px 0px -50px 0px"
+        rootMargin: "0px 0px -40px 0px"
     };
+
     const appearOnScroll = new IntersectionObserver(function(entries, appearOnScroll) {
         entries.forEach(entry => {
             if (!entry.isIntersecting) {
@@ -219,9 +198,8 @@ document.addEventListener('DOMContentLoaded', function() {
         appearOnScroll.observe(fader);
     });
 
-    // Counter animation
     const counters = document.querySelectorAll('.counter');
-    const speed = 200; // The lower the slower
+    const speed = 200;
 
     const countObserver = new IntersectionObserver(entries => {
         entries.forEach(entry => {
@@ -240,7 +218,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 };
                 updateCount();
-                countObserver.unobserve(counter); // Stop observing once animated
+                countObserver.unobserve(counter);
             }
         });
     }, { threshold: 0.5 });

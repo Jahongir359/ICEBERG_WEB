@@ -6,54 +6,49 @@
 {{ super() }}
 <style>
     .news-hero {
-        background: linear-gradient(rgba(13, 36, 68, 0.82), rgba(13, 36, 68, 0.82)),
-                    url('https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?q=80&w=2070&auto=format&fit=crop') center/cover;
-    }
-
-    @media (max-width: 1024px), (hover: none) {
-        .news-hero {
-            background-attachment: scroll;
-        }
+        background:
+            linear-gradient(145deg, rgba(7, 20, 43, 0.84), rgba(16, 40, 76, 0.86)),
+            url('https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?q=80&w=2070&auto=format&fit=crop') center/cover;
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<section class="news-hero text-white pt-28 pb-16 md:pt-40 md:pb-24">
-    <div class="container mx-auto px-6 text-center">
-        <h1 class="text-3xl sm:text-4xl md:text-6xl font-serif font-bold mb-4 tracking-tight">Yangiliklar va Eventlar</h1>
-        <p class="text-base sm:text-lg md:text-xl text-blue-200 max-w-3xl mx-auto">Markazdagi yangi loyihalar, tadbirlar va e'lonlar shu sahifada.</p>
+<section class="page-hero">
+    <div class="page-hero-inner">
+        <div class="glass-hero-panel news-hero reveal">
+            <h1>Yangiliklar va Eventlar</h1>
+            <p>Markazdagi yangi loyihalar, tadbirlar va e'lonlar shu sahifada.</p>
+        </div>
     </div>
 </section>
 
-<section class="py-14 md:py-20 bg-gray-50">
-    <div class="container mx-auto px-6">
+<section class="section-shell">
+    <div class="page-grid">
         {% if posts %}
-        <div class="space-y-8">
+        <div class="space-y-5">
             {% for post in posts %}
-            <article class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
-                <div class="p-6 md:p-8">
-                    <div class="flex flex-wrap items-center gap-2 mb-3">
-                        <span class="text-xs font-semibold px-2.5 py-1 rounded-full {{ 'bg-blue-100 text-blue-700' if post.post_type == 'news' else 'bg-amber-100 text-amber-700' }}">
-                            {{ 'Yangilik' if post.post_type == 'news' else 'Event' }}
-                        </span>
-                        {% if post.event_date %}
-                        <span class="text-xs text-gray-500">{{ post.event_date }}</span>
-                        {% endif %}
-                        <span class="text-xs text-gray-400">{{ post.created_at[:10] }}</span>
-                    </div>
-
-                    <h2 class="text-2xl md:text-3xl font-serif font-bold text-[#0D2444] mb-3">{{ post.title }}</h2>
-                    {% if post.excerpt %}
-                    <p class="text-gray-600 text-lg mb-4">{{ post.excerpt }}</p>
+            <article class="info-card reveal">
+                <div class="flex flex-wrap items-center gap-2 mb-3">
+                    <span class="soft-pill {{ 'bg-blue-100 text-blue-700 border-blue-200' if post.post_type == 'news' else 'bg-amber-100 text-amber-700 border-amber-200' }}">
+                        {{ 'Yangilik' if post.post_type == 'news' else 'Event' }}
+                    </span>
+                    {% if post.event_date %}
+                    <span class="text-xs text-slate-500">{{ post.event_date }}</span>
                     {% endif %}
-                    <p class="text-gray-700 whitespace-pre-line">{{ post.body }}</p>
+                    <span class="text-xs text-slate-400">{{ post.created_at[:10] }}</span>
                 </div>
 
+                <h2 class="section-title !text-3xl mb-2">{{ post.title }}</h2>
+                {% if post.excerpt %}
+                <p class="text-slate-600 text-lg mb-3">{{ post.excerpt }}</p>
+                {% endif %}
+                <p class="text-slate-700 whitespace-pre-line">{{ post.body }}</p>
+
                 {% if post.media_items %}
-                <div class="px-6 md:px-8 pb-6 md:pb-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-5">
                     {% for media in post.media_items %}
-                    <div class="rounded-xl overflow-hidden border border-gray-200 bg-black/5">
+                    <div class="surface-card overflow-hidden">
                         {% if media.media_type == 'image' %}
                         <img src="{{ url_for('static', filename=media.file_path) }}" alt="{{ media.caption or post.title }}" class="w-full h-56 object-cover">
                         {% else %}
@@ -63,7 +58,7 @@
                         </video>
                         {% endif %}
                         {% if media.caption %}
-                        <p class="text-sm text-gray-600 px-3 py-2">{{ media.caption }}</p>
+                        <p class="text-sm text-slate-600 px-3 py-2">{{ media.caption }}</p>
                         {% endif %}
                     </div>
                     {% endfor %}
@@ -73,11 +68,33 @@
             {% endfor %}
         </div>
         {% else %}
-        <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-10 text-center">
-            <h3 class="text-2xl font-serif font-bold text-[#0D2444] mb-2">Hozircha yangiliklar yo'q</h3>
-            <p class="text-gray-600">Tez orada bu yerda yangi postlar joylanadi.</p>
-        </div>
+        <article class="info-card text-center reveal">
+            <h3 class="section-title !text-3xl mb-2">Hozircha yangiliklar yo'q</h3>
+            <p>Tez orada bu yerda yangi postlar joylanadi.</p>
+        </article>
         {% endif %}
     </div>
 </section>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const items = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+            if (!entry.isIntersecting) {
+                return;
+            }
+            entry.target.classList.add('visible');
+            observer.unobserve(entry.target);
+        });
+    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+
+    items.forEach(function(item) {
+        observer.observe(item);
+    });
+});
+</script>
 {% endblock %}

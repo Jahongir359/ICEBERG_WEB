@@ -4,206 +4,133 @@
 
 {% block styles %}
 {{ super() }}
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Lora:wght@600&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-    body { font-family: 'Inter', sans-serif; background-color: #FDFDFF; }
-    .font-serif { font-family: 'Lora', serif; }
-    .page-header-bg {
-        background-color: #0D2444;
-        background-image: linear-gradient(rgba(13, 36, 68, 0.7), rgba(13, 36, 68, 0.7)), url('{{ asset_url("programs_hero_bg", "https://images.unsplash.com/photo-1542744095-291d1f67b221?q=80&w=2070&auto=format&fit=crop") }}');
-        background-size: cover;
-        background-position: center;
-        background-attachment: fixed;
+    .programs-hero {
+        background:
+            linear-gradient(145deg, rgba(7, 20, 43, 0.85), rgba(16, 40, 76, 0.86)),
+            url('{{ asset_url("programs_hero_bg", "https://images.unsplash.com/photo-1542744095-291d1f67b221?q=80&w=2070&auto=format&fit=crop") }}') center/cover;
     }
-    .tab-button.active {
-        border-bottom-color: #00A8B5;
-        color: #0D2444;
-        font-weight: 700;
-    }
-    .tab-button {
-        transition: all 0.3s ease;
-        border-bottom: 3px solid transparent;
-    }
+
     .course-card {
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
         opacity: 0;
-        transform: translateY(20px);
-        animation: fadeIn 0.6s forwards;
+        transform: translateY(16px);
+        animation: fadeInUp 0.45s ease forwards;
     }
-    .course-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-    }
-    @keyframes fadeIn {
+
+    @keyframes fadeInUp {
         to {
             opacity: 1;
             transform: translateY(0);
-        }
-    }
-
-    @media (max-width: 1024px), (hover: none) {
-        .page-header-bg {
-            background-attachment: scroll;
         }
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<!-- Page Header Section -->
-<section class="page-header-bg text-white pt-28 pb-14 md:pt-40 md:pb-24">
-    <div class="container mx-auto px-6 text-center">
-        <h1 class="text-3xl sm:text-4xl md:text-6xl font-serif font-bold mb-4 tracking-tight">Bizning Akademik Dasturlarimiz</h1>
-        <p class="text-base sm:text-lg md:text-xl text-blue-200 max-w-3xl mx-auto">
-            Eng yuqori akademik salohiyatingizga erishishingizga yordam berish uchun mahorat bilan ishlab chiqilgan yo'llar.
-        </p>
+<section class="page-hero">
+    <div class="page-hero-inner">
+        <div class="glass-hero-panel programs-hero reveal">
+            <h1>Bizning Akademik Dasturlarimiz</h1>
+            <p>Maqsadga mos yo'nalish, kuchli mentorlik va aniq monitoring orqali natijaga olib boradigan o'quv tizimi.</p>
+        </div>
     </div>
 </section>
 
-<!-- Main Content with Tabs -->
-<section class="py-16 md:py-24">
-    <div class="container mx-auto px-6">
-
-        <!-- Tab Navigation -->
-        <div class="border-b border-gray-200 mb-12">
-            <nav class="-mb-px flex flex-col sm:flex-row sm:justify-center gap-2 sm:gap-4 md:gap-8" aria-label="Tabs">
-                <button class="tab-button py-3 sm:py-4 px-2 text-center text-gray-500 hover:text-gray-800 text-sm sm:text-base md:text-lg active" data-target="#test-prep">
-                    Ingliz tili va Standart Testlarga Tayyorgarlik
-                </button>
-                <button class="tab-button py-3 sm:py-4 px-2 text-center text-gray-500 hover:text-gray-800 text-sm sm:text-base md:text-lg" data-target="#academic-tutoring">
-                    Bolalar uchun maxsus dasturlar
-                </button>
-                <button class="tab-button py-3 sm:py-4 px-2 text-center text-gray-500 hover:text-gray-800 text-sm sm:text-base md:text-lg" data-target="#admissions-consulting">
-                    Chet el va Milliy universitetlarida o`qish bo`yicha ko`nikmalar
-                </button>
-            </nav>
+<section class="section-shell">
+    <div class="page-grid">
+        <div class="pill-list justify-center mb-2">
+            <button class="tab-chip active" data-target="#test-prep">Ingliz tili va test tayyorgarligi</button>
+            <button class="tab-chip" data-target="#academic-tutoring">Bolalar uchun maxsus</button>
+            <button class="tab-chip" data-target="#admissions-consulting">Universitetga tayyorgarlik</button>
         </div>
 
-        <!-- Tab Content -->
         <div id="tab-content">
-            <!-- Test Prep Section -->
-            <div id="test-prep" class="tab-pane active">
-                <div class="text-center mb-12">
-                    <h2 class="text-3xl md:text-4xl font-serif font-bold text-[#0D2444]">Testga Tayyorgarlik Mahorati</h2>
-                    <p class="mt-3 max-w-2xl mx-auto text-gray-600">Ingliz tili SAT/IELTS imtixonlari ichun tayyorgarlik</p>
+            <div id="test-prep" class="tab-pane">
+                <div class="info-card mb-4">
+                    <h2>Testga tayyorgarlik mahorati</h2>
+                    <p>IELTS va SAT uchun strategik tayyorgarlik: grammatika, reading, writing, listening va speaking bo'yicha tizimli o'sish.</p>
                 </div>
-                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    <!-- SAT/ACT Course Card -->
-                    <div class="course-card bg-white rounded-xl shadow-md overflow-hidden">
-                        <img src="{{ asset_url('program_card_1', 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?q=80&w=2070&auto=format&fit=crop') }}" alt="Students studying for SAT/ACT" class="h-48 w-full object-cover">
-                        <div class="p-6">
-                            <h3 class="text-xl font-serif font-bold text-[#0D2444] mb-2">SAT/IELTS Kompleks Dasturi</h3>
-                            <p class="text-sm text-gray-600 mb-4">Ingliz tili va Ingliz tili bilim ko`nikmalarini tekshirish uchun bo`ladigan kompleks testlar uchun tayyorgarlik</p>
-                            <a href="{{ url_for('register') }}" class="font-bold text-[#00A8B5] hover:text-[#007A85]">Hoziroq Ro'yxatdan O'ting &rarr;</a>
-                        </div>
-                    </div>
-                    <!-- AP Exams Course Card -->
-                    <div class="course-card bg-white rounded-xl shadow-md overflow-hidden" style="animation-delay: 0.1s;">
-                        <img src="{{ asset_url('program_card_2', 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=2071&auto=format&fit=crop') }}" alt="Students learning in a natural outdoor setting" class="h-48 w-full object-cover">
-                        <div class="p-6">
-                            <h3 class="text-xl font-serif font-bold text-[#0D2444] mb-2">Natural English</h3>
-                            <p class="text-sm text-gray-600 mb-4">Ingliz tili bo`yicha chuqur bilimlar va mutaxasislar bilan real time muloqot.</p>
-                            <a href="{{ url_for('register') }}" class="font-bold text-[#00A8B5] hover:text-[#007A85]">Batafsil Ma'lumot &rarr;</a>
-                        </div>
-                    </div>
-                    <!-- IELTS/TOEFL Course Card -->
-                    <div class="course-card bg-white rounded-xl shadow-md overflow-hidden" style="animation-delay: 0.2s;">
-                        <img src="{{ asset_url('program_card_3', 'https://images.unsplash.com/photo-1528642474498-1af0c17fd8c3?q=80&w=2069&auto=format&fit=crop') }}" alt="IELTS/TOEFL language test preparation" class="h-48 w-full object-cover">
-                        <div class="p-6">
-                            <h3 class="text-xl font-serif font-bold text-[#0D2444] mb-2">Preperation for Universities</h3>
-                            <p class="text-sm text-gray-600 mb-4">Xalqaro universitetlar uchun zarur bo'lgan til imtihonlarida muvaffaqiyat qozonish uchun nutq, tinglash, o'qish va yozish ko'nikmalaringizni oshiring.</p>
-                            <a href="{{ url_for('register') }}" class="font-bold text-[#00A8B5] hover:text-[#007A85]">Kursga Yozilish &rarr;</a>
-                        </div>
-                    </div>
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <article class="program-card course-card">
+                        <img src="{{ asset_url('program_card_1', 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?q=80&w=2070&auto=format&fit=crop') }}" alt="SAT IELTS" class="h-44 w-full object-cover rounded-xl mb-4">
+                        <h3>SAT/IELTS Kompleks Dasturi</h3>
+                        <p>Imtihon strukturasini chuqur o'rganish, mock testlar va personal feedback asosida intensiv kurs.</p>
+                        <a href="{{ url_for('register') }}" class="program-link">Ro'yxatdan o'tish -></a>
+                    </article>
+                    <article class="program-card course-card" style="animation-delay: .06s;">
+                        <img src="{{ asset_url('program_card_2', 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=2071&auto=format&fit=crop') }}" alt="Natural English" class="h-44 w-full object-cover rounded-xl mb-4">
+                        <h3>Natural English</h3>
+                        <p>Real muloqot, to'g'ri talaffuz va kundalik ingliz tilini mustahkamlash uchun interaktiv mashg'ulotlar.</p>
+                        <a href="{{ url_for('register') }}" class="program-link">Batafsil -></a>
+                    </article>
+                    <article class="program-card course-card" style="animation-delay: .12s;">
+                        <img src="{{ asset_url('program_card_3', 'https://images.unsplash.com/photo-1528642474498-1af0c17fd8c3?q=80&w=2069&auto=format&fit=crop') }}" alt="University prep" class="h-44 w-full object-cover rounded-xl mb-4">
+                        <h3>Preparation for Universities</h3>
+                        <p>Xalqaro universitetlar talabi bo'yicha writing portfolio, speaking confidence va test natijalariga fokus.</p>
+                        <a href="{{ url_for('register') }}" class="program-link">Kursga yozilish -></a>
+                    </article>
                 </div>
             </div>
 
-            <!-- Academic Tutoring Section (Hidden by default) -->
             <div id="academic-tutoring" class="tab-pane hidden">
-                <div class="text-center mb-12">
-                    <h2 class="text-3xl md:text-4xl font-serif font-bold text-[#0D2444]">Bolalar uchun maxsus</h2>
-                    <p class="mt-3 max-w-2xl mx-auto text-gray-600">Farzandingizning o'qishga bo'lgan ishtiyoqini uyg'otish uchun mo'ljallangan qiziqarli va interaktiv dasturlarimiz bilan tanishing. Biz yosh aqllar uchun mustahkam poydevor yaratamiz.</p>
+                <div class="info-card mb-4">
+                    <h2>Bolalar uchun maxsus dasturlar</h2>
+                    <p>Yosh o'quvchilar uchun qiziqarli metodika, mustahkam poydevor va doimiy ota-ona feedback tizimi.</p>
                 </div>
-                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    <!-- Early Learning Program Card -->
-                    <div class="course-card bg-white rounded-xl shadow-md overflow-hidden">
-                        <img src="{{ asset_url('program_card_4', 'https://images.unsplash.com/photo-1521587760476-6c12a4b040da?q=80&w=2070&auto=format&fit=crop') }}" alt="Child learning to read" class="h-48 w-full object-cover">
-                        <div class="p-6">
-                            <h3 class="text-xl font-serif font-bold text-[#0D2444] mb-2">Ilk Qadam (Maktabgacha Tayyorlov)</h3>
-                            <p class="text-sm text-gray-600 mb-4">Algebradan tortib to Kalkulusgacha, biz tushunishni osonlashtiramiz va muammolarni hal qilish ko'nikmalarini mustahkamlaymiz.</p>
-                            <a href="{{ url_for('register') }}" class="font-bold text-[#00A8B5] hover:text-[#007A85]">Repetitor Topish &rarr;</a>
-                        </div>
-                    </div>
-                    <!-- Science Tutoring -->
-                    <div class="course-card bg-white rounded-xl shadow-md overflow-hidden" style="animation-delay: 0.1s;">
-                        <img src="{{ asset_url('program_card_5', 'https://images.unsplash.com/photo-1571260899304-425eee4c7efc?q=80&w=2070&auto=format&fit=crop') }}" alt="Kids learning English with fun and games" class="h-48 w-full object-cover">
-                        <div class="p-6">
-                            <h3 class="text-xl font-serif font-bold text-[#0D2444] mb-2">Kids English</h3>
-                            <p class="text-sm text-gray-600 mb-4">Farzandingiz uchun ingliz tilini o'yinlar va interaktiv mashg'ulotlar orqali qiziqarli tarzda o'rgatamiz.</p>
-                            <a href="{{ url_for('register') }}" class="font-bold text-[#00A8B5] hover:text-[#007A85]">Guruhga Qo'shilish &rarr;</a>
-                        </div>
-                    </div>
-                    <!-- Humanities Tutoring -->
-                    <div class="course-card bg-white rounded-xl shadow-md overflow-hidden" style="animation-delay: 0.2s;">
-                        <img src="{{ asset_url('program_card_6', 'https://images.unsplash.com/photo-1456324504439-367cee3b3c32?q=80&w=2070&auto=format&fit=crop') }}" alt="Humanities tutoring" class="h-48 w-full object-cover">
-                        <div class="p-6">
-                            <h3 class="text-xl font-serif font-bold text-[#0D2444] mb-2">Ona tili va Gumanitar Fanlar</h3>
-                            <p class="text-sm text-gray-600 mb-4">Insho yozish, adabiy tahlil va tanqidiy o'qish ko'nikmalaringizni kuchaytiring.</p>
-                            <a href="{{ url_for('register') }}" class="font-bold text-[#00A8B5] hover:text-[#007A85]">Repetitor Topish &rarr;</a>
-                        </div>
-                    </div>
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <article class="program-card course-card">
+                        <img src="{{ asset_url('program_card_4', 'https://images.unsplash.com/photo-1521587760476-6c12a4b040da?q=80&w=2070&auto=format&fit=crop') }}" alt="Ilk qadam" class="h-44 w-full object-cover rounded-xl mb-4">
+                        <h3>Ilk Qadam</h3>
+                        <p>Maktabgacha va boshlang'ich bosqich uchun o'qish, yozish va mantiqiy fikrlash poydevori.</p>
+                        <a href="{{ url_for('register') }}" class="program-link">Ro'yxatga qo'shilish -></a>
+                    </article>
+                    <article class="program-card course-card" style="animation-delay: .06s;">
+                        <img src="{{ asset_url('program_card_5', 'https://images.unsplash.com/photo-1571260899304-425eee4c7efc?q=80&w=2070&auto=format&fit=crop') }}" alt="Kids English" class="h-44 w-full object-cover rounded-xl mb-4">
+                        <h3>Kids English</h3>
+                        <p>O'yinlar, gapirish mashqlari va interaktiv loyihalar orqali bolalar uchun ingliz tili.</p>
+                        <a href="{{ url_for('register') }}" class="program-link">Guruhga qo'shilish -></a>
+                    </article>
+                    <article class="program-card course-card" style="animation-delay: .12s;">
+                        <img src="{{ asset_url('program_card_6', 'https://images.unsplash.com/photo-1456324504439-367cee3b3c32?q=80&w=2070&auto=format&fit=crop') }}" alt="Gumanitar fanlar" class="h-44 w-full object-cover rounded-xl mb-4">
+                        <h3>Ona tili va gumanitar fanlar</h3>
+                        <p>Insho, tahlil va tanqidiy fikrlashni rivojlantirish uchun maxsus yo'nalish.</p>
+                        <a href="{{ url_for('register') }}" class="program-link">Batafsil -></a>
+                    </article>
                 </div>
             </div>
 
-            <!-- Admissions Consulting Section (Hidden by default) -->
             <div id="admissions-consulting" class="tab-pane hidden">
-                <div class="text-center mb-12">
-                    <h2 class="text-3xl md:text-4xl font-serif font-bold text-[#0D2444]">universitetlar uchun maxsus tayyorgarlik</h2>
-                    <p class="mt-3 max-w-2xl mx-auto text-gray-600">Bizning tajribali maslahatchilarimiz bilan raqobatbardosh qabul jarayonida yo'l-yo'riq oling. Biz sizga o'z hikoyangizni yaratishga yordam beramiz.</p>
-                </div>
-                <div class="grid md:grid-cols-2 gap-8 items-start">
-                    <!-- Application Strategy -->
-                    <div class="course-card bg-white rounded-xl shadow-md overflow-hidden">
-                        <div class="p-8">
-                            <h3 class="text-xl font-serif font-bold text-[#0D2444] mb-2">Ariza Strategiyasi va Insho Yozish</h3>
-                            <p class="text-gray-600 mb-4">G'olibona shaxsiy bayonot va qo'shimcha insholar yaratish uchun individual yordam. Biz sizga o'zingizni eng yaxshi nomzod sifatida ko'rsatishingizga yordam beramiz.</p>
-                            <ul class="space-y-2 text-sm text-gray-600">
-                                <li class="flex items-center"><i class="fas fa-check-circle text-green-500 mr-2"></i> Insho g'oyalarini ishlab chiqish</li>
-                                <li class="flex items-center"><i class="fas fa-check-circle text-green-500 mr-2"></i> Qayta ko'rib chiqish va tahrirlash</li>
-                                <li class="flex items-center"><i class="fas fa-check-circle text-green-500 mr-2"></i> Faoliyatlar ro'yxatini optimallashtirish</li>
-                            </ul>
-                        </div>
-                    </div>
-                    <!-- Interview Prep -->
-                    <div class="course-card bg-white rounded-xl shadow-md overflow-hidden" style="animation-delay: 0.1s;">
-                        <div class="p-8">
-                            <h3 class="text-xl font-serif font-bold text-[#0D2444] mb-2">Intervyuga Tayyorgarlik</h3>
-                            <p class="text-gray-600 mb-4">Qabul komissiyasi intervyularida ishonch bilan qatnashishni o'rganing. Biz sizga qiyin savollarga javob berish va o'zingizga bo'lgan ishonchni namoyon etishda yordam beramiz.</p>
-                            <ul class="space-y-2 text-sm text-gray-600">
-                                <li class="flex items-center"><i class="fas fa-check-circle text-green-500 mr-2"></i> Soxta intervyular</li>
-                                <li class="flex items-center"><i class="fas fa-check-circle text-green-500 mr-2"></i> Fikr-mulohaza va takomillashtirish</li>
-                                <li class="flex items-center"><i class="fas fa-check-circle text-green-500 mr-2"></i> O'ziga xos hikoya yaratish</li>
-                            </ul>
-                        </div>
-                    </div>
+                <div class="grid md:grid-cols-2 gap-4">
+                    <article class="info-card course-card">
+                        <h3>Ariza strategiyasi va insho</h3>
+                        <p>Shaxsiy bayonot, portfolio va hujjatlarni tayyorlashda individual konsultatsiya.</p>
+                        <ul class="mt-3 space-y-1 text-sm text-slate-600">
+                            <li><i class="fas fa-check-circle text-green-500 mr-2"></i>Insho g'oyasini ishlab chiqish</li>
+                            <li><i class="fas fa-check-circle text-green-500 mr-2"></i>Tahrirlash va qayta ko'rib chiqish</li>
+                            <li><i class="fas fa-check-circle text-green-500 mr-2"></i>Faoliyatlar ro'yxatini kuchaytirish</li>
+                        </ul>
+                    </article>
+                    <article class="info-card course-card" style="animation-delay: .06s;">
+                        <h3>Intervyuga tayyorgarlik</h3>
+                        <p>Mock-intervyu, javob tuzilmasi va o'zini ishonchli taqdim etish bo'yicha amaliy mashg'ulotlar.</p>
+                        <ul class="mt-3 space-y-1 text-sm text-slate-600">
+                            <li><i class="fas fa-check-circle text-green-500 mr-2"></i>Soxta intervyular</li>
+                            <li><i class="fas fa-check-circle text-green-500 mr-2"></i>Personal feedback</li>
+                            <li><i class="fas fa-check-circle text-green-500 mr-2"></i>Storytelling strategiyasi</li>
+                        </ul>
+                    </article>
                 </div>
             </div>
         </div>
-    </div>
-</section>
 
-<!-- Final CTA -->
-<section class="bg-gray-50">
-    <div class="container mx-auto px-6 py-20 text-center">
-        <h2 class="text-3xl font-serif font-bold text-[#0D2444] mb-4">Keyingi Qadamni Tashlashga Tayyormisiz?</h2>
-        <p class="text-gray-600 max-w-2xl mx-auto mb-8">
-            Bizning dasturlarimiz sizning muvaffaqiyatingiz uchun poydevor yaratadi. Bugun ro'yxatdan o'ting yoki ko'proq ma'lumot olish uchun biz bilan bog'laning.
-        </p>
-        <a href="{{ url_for('register') }}" class="inline-block bg-[#FFC107] text-[#0D2444] font-bold py-4 px-10 rounded-full shadow-lg hover:bg-amber-400 transition-transform transform hover:scale-105">
-            Hoziroq Ro'yxatdan O'tish
-        </a>
+        <article class="final-cta reveal">
+            <h2 class="section-title">Keyingi qadamni bugun tashlang</h2>
+            <p class="section-subtitle">Sizga mos dastur va jadvalni birga tanlaymiz. Birinchi konsultatsiya orqali reja tuzamiz.</p>
+            <div class="hero-actions justify-center">
+                <a href="{{ url_for('register') }}" class="btn-main">Hoziroq ro'yxatdan o'tish</a>
+                <a href="{{ url_for('contact') }}" class="btn-soft">Savol berish</a>
+            </div>
+        </article>
     </div>
 </section>
 {% endblock %}
@@ -212,22 +139,34 @@
 {{ super() }}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const tabs = document.querySelectorAll('.tab-button');
-    const tabPanes = document.querySelectorAll('.tab-pane');
+    const tabs = document.querySelectorAll('.tab-chip');
+    const panes = document.querySelectorAll('.tab-pane');
 
-    tabs.forEach(tab => {
-        tab.addEventListener('click', () => {
-            // Deactivate all tabs and panes
-            tabs.forEach(t => t.classList.remove('active'));
-            tabPanes.forEach(p => p.classList.add('hidden'));
-
-            // Activate clicked tab and corresponding pane
+    tabs.forEach(function(tab) {
+        tab.addEventListener('click', function() {
+            tabs.forEach(function(item) { item.classList.remove('active'); });
+            panes.forEach(function(pane) { pane.classList.add('hidden'); });
             tab.classList.add('active');
-            const targetPane = document.querySelector(tab.dataset.target);
-            if (targetPane) {
-                targetPane.classList.remove('hidden');
+            const target = document.querySelector(tab.dataset.target);
+            if (target) {
+                target.classList.remove('hidden');
             }
         });
+    });
+
+    const items = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+            if (!entry.isIntersecting) {
+                return;
+            }
+            entry.target.classList.add('visible');
+            observer.unobserve(entry.target);
+        });
+    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+
+    items.forEach(function(item) {
+        observer.observe(item);
     });
 });
 </script>

@@ -4,50 +4,46 @@
 
 {% block styles %}
     {{ super() }}
-    <!-- Font Awesome for icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
     <style>
         .accordion-content {
             max-height: 0;
             overflow: hidden;
-            transition: max-height 0.3s ease-out;
+            transition: max-height 0.28s ease;
         }
     </style>
 {% endblock %}
 
 {% block content %}
-<!-- Main Content: FAQ section -->
-<div class="bg-white py-14 md:py-24">
-    <div class="container mx-auto px-6">
-        <!-- Section Title -->
-        <div class="text-center mb-12">
-            <h1 class="text-3xl sm:text-4xl md:text-5xl font-serif font-bold text-gray-800">{{ content('faq_page_title', "Ko'p Beriladigan Savollar") }}</h1>
-            <p class="text-base sm:text-lg text-gray-600 mt-2">{{ content('faq_page_subtitle', 'SAVOLLARINGIZGA JAVOBLAR') }}</p>
-        </div>
-
-        <!-- FAQ Container -->
-        <div class="max-w-4xl mx-auto space-y-6">
-            {% if faqs %}
-                {% for faq in faqs %}
-                <!-- Accordion Item -->
-                <div class="bg-gray-50 rounded-lg shadow-sm border border-gray-200">
-                    <button class="w-full flex justify-between items-center text-left p-4 sm:p-5 font-semibold text-base sm:text-lg text-gray-800 focus:outline-none accordion-toggle">
-                        <span>{{ faq.question }}</span>
-                        <i class="fas fa-chevron-down transform transition-transform duration-300"></i>
-                    </button>
-                    <div class="accordion-content px-5 pb-5 text-gray-600">
-                        <p>{{ faq.answer }}</p>
-                    </div>
-                </div>
-                {% endfor %}
-            {% else %}
-                <div class="bg-blue-50 border border-blue-200 rounded-lg p-6 text-center">
-                    <p class="text-gray-600">FAQ savollari hozircha mavjud emas.</p>
-                </div>
-            {% endif %}
+<section class="page-hero">
+    <div class="page-hero-inner">
+        <div class="glass-hero-panel reveal">
+            <h1>{{ content('faq_page_title', "Ko'p Beriladigan Savollar") }}</h1>
+            <p>{{ content('faq_page_subtitle', 'SAVOLLARINGIZGA JAVOBLAR') }}</p>
         </div>
     </div>
-</div>
+</section>
+
+<section class="section-shell">
+    <div class="page-grid max-w-4xl">
+        {% if faqs %}
+            {% for faq in faqs %}
+            <article class="info-card reveal">
+                <button class="w-full flex justify-between items-center gap-4 text-left accordion-toggle">
+                    <span class="text-base sm:text-lg font-semibold text-slate-800">{{ faq.question }}</span>
+                    <i class="fas fa-chevron-down text-slate-500 transform transition-transform duration-300"></i>
+                </button>
+                <div class="accordion-content pt-0">
+                    <p class="pt-4 text-slate-600 leading-7">{{ faq.answer }}</p>
+                </div>
+            </article>
+            {% endfor %}
+        {% else %}
+            <article class="info-card text-center reveal">
+                <p>FAQ savollari hozircha mavjud emas.</p>
+            </article>
+        {% endif %}
+    </div>
+</section>
 {% endblock %}
 
 {% block scripts %}
@@ -56,28 +52,44 @@
 document.addEventListener('DOMContentLoaded', function () {
     const accordionToggles = document.querySelectorAll('.accordion-toggle');
 
-    accordionToggles.forEach(button => {
-        button.addEventListener('click', () => {
+    accordionToggles.forEach(function(button) {
+        button.addEventListener('click', function() {
             const content = button.nextElementSibling;
             const icon = button.querySelector('i');
 
-            // Close other open accordions
-            document.querySelectorAll('.accordion-content').forEach(item => {
+            document.querySelectorAll('.accordion-content').forEach(function(item) {
                 if (item !== content) {
                     item.style.maxHeight = null;
-                    item.previousElementSibling.querySelector('i').classList.remove('rotate-180');
+                    const otherIcon = item.previousElementSibling.querySelector('i');
+                    if (otherIcon) {
+                        otherIcon.classList.remove('rotate-180');
+                    }
                 }
             });
 
-            // Toggle current accordion
             if (content.style.maxHeight) {
                 content.style.maxHeight = null;
                 icon.classList.remove('rotate-180');
             } else {
-                content.style.maxHeight = content.scrollHeight + "px";
+                content.style.maxHeight = content.scrollHeight + 'px';
                 icon.classList.add('rotate-180');
             }
         });
+    });
+
+    const items = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+            if (!entry.isIntersecting) {
+                return;
+            }
+            entry.target.classList.add('visible');
+            observer.unobserve(entry.target);
+        });
+    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+
+    items.forEach(function(item) {
+        observer.observe(item);
     });
 });
 </script>

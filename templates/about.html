@@ -5,102 +5,79 @@
 {% block styles %}
 {{ super() }}
 <style>
-    .page-header-bg {
-        background-color: #0D2444;
-        background-image: linear-gradient(rgba(13, 36, 68, 0.7), rgba(13, 36, 68, 0.7)), url('{{ asset_url("about_hero_bg", "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?q=80&w=2070&auto=format&fit=crop") }}');
-        background-size: cover;
-        background-position: center;
-        background-attachment: fixed;
-    }
-    .fade-in {
-        opacity: 0;
-        transform: translateY(20px);
-        transition: opacity 0.6s ease-out, transform 0.6s ease-out;
-    }
-    .fade-in.visible {
-        opacity: 1;
-        transform: translateY(0);
+    .about-hero {
+        background:
+            linear-gradient(150deg, rgba(7, 20, 43, 0.82), rgba(16, 40, 76, 0.86)),
+            url('{{ asset_url("about_hero_bg", "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?q=80&w=2070&auto=format&fit=crop") }}') center/cover;
     }
 
-    @media (max-width: 1024px), (hover: none) {
-        .page-header-bg {
-            background-attachment: scroll;
-        }
+    .team-photo {
+        width: 122px;
+        height: 122px;
+        border-radius: 999px;
+        object-fit: cover;
+        border: 3px solid rgba(59, 163, 255, 0.2);
+        box-shadow: 0 14px 28px rgba(7, 20, 43, 0.12);
+        margin: 0 auto 0.8rem;
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<!-- Page Header Section -->
-<section class="page-header-bg text-white pt-28 pb-14 md:pt-40 md:pb-24">
-    <div class="container mx-auto px-6 text-center">
-        <h1 class="text-3xl sm:text-4xl md:text-6xl font-serif font-bold mb-4 tracking-tight">{{ content('about_page_title', 'Bizning Hikoyamiz') }}</h1>
-        <p class="text-base sm:text-lg md:text-xl text-blue-200 max-w-3xl mx-auto mt-2">
-            {{ content('about_page_subtitle', 'ICEBERG farqini belgilaydigan falsafa, odamlar va ishtiyoq.') }}
-        </p>
+<section class="page-hero">
+    <div class="page-hero-inner">
+        <div class="glass-hero-panel about-hero reveal">
+            <h1>{{ content('about_page_title', 'Bizning Hikoyamiz') }}</h1>
+            <p>{{ content('about_page_subtitle', 'ICEBERG farqini belgilaydigan falsafa, odamlar va ishtiyoq.') }}</p>
+        </div>
     </div>
 </section>
 
-<!-- Main Content Section -->
-<section class="py-16 md:py-24 bg-white">
-    <div class="container mx-auto px-6">
-        <!-- Our Mission -->
-        <div class="max-w-4xl mx-auto text-center mb-16 md:mb-24 fade-in">
-            <h2 class="text-3xl md:text-4xl font-serif font-bold text-[#0D2444] mb-4">{{ content('about_mission_title', 'Bizning Missiyamiz') }}</h2>
-            <p class="text-lg text-gray-600 leading-relaxed">
-                {{ content('about_mission_text', "Bizning missiyamiz - har bir o'quvchiga o'z potentsialini to'liq ochib berishga yordam beradigan, innovatsion va qo'llab-quvvatlovchi ta'lim muhitini taqdim etish.") }}
-            </p>
-        </div>
+<section class="section-shell">
+    <div class="page-grid">
+        <article class="info-card reveal text-center">
+            <h2>{{ content('about_mission_title', 'Bizning Missiyamiz') }}</h2>
+            <p>{{ content('about_mission_text', "Bizning missiyamiz - har bir o'quvchiga o'z potentsialini to'liq ochib berishga yordam beradigan, innovatsion va qo'llab-quvvatlovchi ta'lim muhitini taqdim etish.") }}</p>
+        </article>
 
-        <!-- Meet Our Team Section -->
-        <div class="mb-16 md:mb-24">
-            <h2 class="text-3xl md:text-4xl font-serif font-bold text-[#0D2444] text-center mb-12 fade-in">Jamoamiz bilan tanishing</h2>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-12">
-                <!-- Team Member 1 -->
-                <div class="text-center fade-in" style="transition-delay: 100ms;">
-                    <div class="relative inline-block mb-4">
-                        <img src="{{ asset_url('about_team_1', 'img/azizbek.png') }}" alt="Jahongir To'xtaboyev" class="h-40 w-40 rounded-full object-cover shadow-lg mx-auto">
-                        <div class="absolute inset-0 rounded-full ring-4 ring-blue-500 ring-opacity-50 transform scale-105"></div>
-                    </div>
-                    <h3 class="text-xl font-bold text-gray-800">Azizbek Nasriddinov</h3>
-                    <p class="text-blue-600 font-semibold">Markaz direktori</p>
+        <article class="info-card reveal">
+            <h2 class="text-center">Jamoamiz bilan tanishing</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mt-4">
+                <div class="text-center">
+                    <img src="{{ asset_url('about_team_1', 'img/azizbek.png') }}" alt="Azizbek Nasriddinov" class="team-photo">
+                    <h3 class="text-lg font-semibold text-slate-800">Azizbek Nasriddinov</h3>
+                    <p class="text-sm text-sky-700">Markaz direktori</p>
                 </div>
-                <!-- Team Member 2 -->
-                <div class="text-center fade-in" style="transition-delay: 200ms;">
-                    <img src="{{ asset_url('about_team_2', 'img/maqsudbek.png') }}" alt="Maqsudbek Mirzayev" class="h-40 w-40 rounded-full object-cover shadow-lg mx-auto">
-                    <h3 class="text-xl font-bold text-gray-800 mt-4">Maqsudbek Mirzayev</h3>
-                    <p class="text-blue-600 font-semibold">Ingliz tili bo`yicha mutaxxasis</p>
+                <div class="text-center">
+                    <img src="{{ asset_url('about_team_2', 'img/maqsudbek.png') }}" alt="Maqsudbek Mirzayev" class="team-photo">
+                    <h3 class="text-lg font-semibold text-slate-800">Maqsudbek Mirzayev</h3>
+                    <p class="text-sm text-sky-700">Ingliz tili bo'yicha mutaxassis</p>
                 </div>
-                <!-- Team Member 3 -->
-                <div class="text-center fade-in" style="transition-delay: 300ms;">
-                    <img src="{{ asset_url('about_team_3', 'img/islomjon.png') }}" alt="Islomjon Ergashboyev" class="h-40 w-40 rounded-full object-cover shadow-lg mx-auto">
-                    <h3 class="text-xl font-bold text-gray-800 mt-4">Islomjon Ergashboyev</h3>
-                    <p class="text-blue-600 font-semibold">Markaz asosiy tizim boshqaruvchisi</p>
+                <div class="text-center">
+                    <img src="{{ asset_url('about_team_3', 'img/islomjon.png') }}" alt="Islomjon Ergashboyev" class="team-photo">
+                    <h3 class="text-lg font-semibold text-slate-800">Islomjon Ergashboyev</h3>
+                    <p class="text-sm text-sky-700">Asosiy tizim boshqaruvchisi</p>
                 </div>
             </div>
-        </div>
+        </article>
 
-        <!-- Our Values Section -->
-        <div>
-            <h2 class="text-3xl md:text-4xl font-serif font-bold text-[#0D2444] text-center mb-12 fade-in">Bizning Qadriyatlarimiz</h2>
-            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <!-- Value 1 -->
-                <div class="bg-gray-50 p-8 rounded-lg shadow-sm hover:shadow-xl transition-shadow duration-300 fade-in" style="transition-delay: 100ms;">
-                    <h3 class="text-xl font-bold text-[#0D2444] mb-2">O'quvchilarga e'tibor</h3>
-                    <p class="text-gray-600">Bizning har bir qarorimiz o'quvchilarimizning manfaatlari uchun qabul qilinadi.</p>
+        <article class="info-card reveal">
+            <h2>Bizning qadriyatlarimiz</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+                <div class="surface-card p-5">
+                    <h3>O'quvchiga e'tibor</h3>
+                    <p>Har bir qarorimiz markazga kelgan o'quvchining rivoji va ishonchiga xizmat qiladi.</p>
                 </div>
-                <!-- Value 2 -->
-                <div class="bg-gray-50 p-8 rounded-lg shadow-sm hover:shadow-xl transition-shadow duration-300 fade-in" style="transition-delay: 200ms;">
-                    <h3 class="text-xl font-bold text-[#0D2444] mb-2">Innovatsiya</h3>
-                    <p class="text-gray-600">Biz doimo eng so'nggi texnologiyalar va o'qitish usullarini qo'llaymiz.</p>
+                <div class="surface-card p-5">
+                    <h3>Innovatsiya</h3>
+                    <p>Ta'limda yangi texnologiya va yondashuvlarni amaliy natijaga aylantiramiz.</p>
                 </div>
-                <!-- Value 3 -->
-                <div class="bg-gray-50 p-8 rounded-lg shadow-sm hover:shadow-xl transition-shadow duration-300 fade-in" style="transition-delay: 300ms;">
-                    <h3 class="text-xl font-bold text-[#0D2444] mb-2">Hamjamiyat</h3>
-                    <p class="text-gray-600">Biz bir-birini qo'llab-quvvatlaydigan va ilhomlantiradigan hamjamiyat yaratamiz.</p>
+                <div class="surface-card p-5">
+                    <h3>Hamjamiyat</h3>
+                    <p>O'zaro qo'llab-quvvatlash va ilhom kuchiga asoslangan sog'lom o'qish muhiti yaratamiz.</p>
                 </div>
             </div>
-        </div>
+        </article>
     </div>
 </section>
 {% endblock %}
@@ -109,25 +86,19 @@
 {{ super() }}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const faders = document.querySelectorAll('.fade-in');
-
-    const appearOptions = {
-        threshold: 0.5,
-        rootMargin: "0px 0px -50px 0px"
-    };
-
-    const appearOnScroll = new IntersectionObserver(function(entries, appearOnScroll) {
-        entries.forEach(entry => {
+    const items = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
             if (!entry.isIntersecting) {
                 return;
             }
             entry.target.classList.add('visible');
-            appearOnScroll.unobserve(entry.target);
+            observer.unobserve(entry.target);
         });
-    }, appearOptions);
+    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
 
-    faders.forEach(fader => {
-        appearOnScroll.observe(fader);
+    items.forEach(function(item) {
+        observer.observe(item);
     });
 });
 </script>

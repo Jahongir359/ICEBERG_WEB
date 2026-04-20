@@ -1,102 +1,75 @@
 {% extends "base.html" %}
 
-{% block header %}
-    {{ super() }}
-{% endblock %}
+{% block title %}Aloqa - ICEBERG O'QUV MARKAZI{% endblock %}
 
 {% block styles %}
-    {{ super() }}
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Lora:wght@600&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
-    <style>
-        html { scroll-behavior: smooth; }
-        body { font-family: 'Inter', sans-serif; background-color: #FDFDFF; }
-        .font-serif { font-family: 'Lora', serif; }
-        .page-header-bg {
-            background-color: #0D2444;
-            background-image: linear-gradient(rgba(13, 36, 68, 0.7), rgba(13, 36, 68, 0.7)), url('{{ asset_url("contact_hero_bg", "https://images.unsplash.com/photo-1586769852836-bc069f19e1b6?q=80&w=1974&auto=format&fit=crop") }}');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-        }
-
-        @media (max-width: 1024px), (hover: none) {
-            .page-header-bg {
-                background-attachment: scroll;
-            }
-        }
-    </style>
+{{ super() }}
+<style>
+    .contact-hero {
+        background:
+            linear-gradient(150deg, rgba(7, 20, 43, 0.84), rgba(16, 40, 76, 0.86)),
+            url('{{ asset_url("contact_hero_bg", "https://images.unsplash.com/photo-1586769852836-bc069f19e1b6?q=80&w=1974&auto=format&fit=crop") }}') center/cover;
+    }
+</style>
 {% endblock %}
 
 {% block content %}
-<!-- Page Header Section -->
-<section class="page-header-bg text-white pt-28 pb-14 md:pt-40 md:pb-24">
-    <div class="container mx-auto px-6 text-center">
-        <h1 class="text-3xl sm:text-4xl md:text-6xl font-serif font-bold mb-4 tracking-tight">{{ content('contact_page_title', 'Aloqaga Chiqing') }}</h1>
-        <p class="text-base sm:text-lg md:text-xl text-blue-200 max-w-3xl mx-auto">
-            {{ content('contact_page_subtitle', "Savollaringizga javob berish va muvaffaqiyat sari yo'lingizni boshlashga yordam berish uchun shu yerdamiz.") }}
-        </p>
+<section class="page-hero">
+    <div class="page-hero-inner">
+        <div class="glass-hero-panel contact-hero reveal">
+            <h1>{{ content('contact_page_title', 'Aloqaga Chiqing') }}</h1>
+            <p>{{ content('contact_page_subtitle', "Savollaringizga javob berish va muvaffaqiyat sari yo'lingizni boshlashga yordam berish uchun shu yerdamiz.") }}</p>
+        </div>
     </div>
 </section>
 
-<!-- Contact Form and Info Section -->
-<section class="py-16 md:py-24 bg-gray-50">
-    <div class="container mx-auto px-6">
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
-            <!-- Contact Form -->
-            <div class="bg-white p-8 rounded-lg shadow-lg">
-                <h2 class="text-2xl font-bold text-[#0D2444] mb-6">Bizga Xabar Yuboring</h2>
-                {% with messages = get_flashed_messages(with_categories=true) %}
-                  {% if messages %}
-                    {% for category, message in messages %}
-                                            <div class="{{ 'bg-green-100 border-green-400 text-green-700' if category == 'success' else 'bg-red-100 border-red-400 text-red-700' }} border px-4 py-3 rounded relative mb-4" role="alert">
-                                                <strong class="font-bold">{{ 'Muvaffaqiyat!' if category == 'success' else 'Xatolik!' }}</strong>
-                        <span class="block sm:inline">{{ message }}</span>
-                      </div>
-                    {% endfor %}
-                  {% endif %}
-                {% endwith %}
-                <form id="contactForm" action="{{ url_for('contact') }}" method="post">
-                    <div class="mb-4">
-                        <label for="name" class="block text-gray-700 font-semibold mb-2">To'liq Ism</label>
-                        <input type="text" id="name" name="name" class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
-                    </div>
-                    <div id="standard-fields">
-                        <div class="mb-4">
-                            <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">Telefon Raqamingiz</label>
-                            <div class="flex">
-                                <span class="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">
-                                    +998
-                                </span>
-                                <input type="tel" id="phone" name="phone" required pattern="[0-9]{9}" title="Please enter a valid 9-digit phone number" class="flex-1 block w-full px-3 py-2 border border-gray-300 rounded-none rounded-r-md focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="XX XXX XX XX">
-                            </div>
-                        </div>
-                        <div class="mb-4">
-                            <label for="message" class="block text-sm font-medium text-gray-700 mb-1">Xabar</label>
-                            <textarea id="message" name="message" rows="4" class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required></textarea>
-                        </div>
-                    </div>
-                    <div class="text-center">
-                        <button type="submit" class="bg-[#0D2444] text-white font-bold py-2 px-6 rounded-md hover:bg-blue-800 transition duration-300">Yuborish</button>
-                    </div>
-                </form>
-            </div>
-            <!-- Contact Info -->
-            <div class="space-y-8">
-                <div class="bg-white p-8 rounded-lg shadow-lg">
-                    <h3 class="text-xl font-bold text-[#0D2444] mb-4">Aloqa Ma'lumotlari</h3>
-                    <p class="text-gray-600 mb-2"><strong>Elektron pochta:</strong> <a href="mailto:{{ content('contact_email', 'iceberg.edu.center@gmail.com') }}" class="text-blue-600 hover:underline">{{ content('contact_email', 'iceberg.edu.center@gmail.com') }}</a></p>
-                    <p class="text-gray-600 mb-2"><strong>Telefon:</strong> <a href="tel:{{ content('contact_phone', '+998939461699') }}" class="text-blue-600 hover:underline">{{ content('contact_phone_display', '(+998) 939461699') }}</a></p>
-                    <p class="text-gray-600"><strong>Manzil:</strong> <a href="{{ content('contact_address_url', 'https://www.google.com/maps/place/Uychi,+Uzbekistan/') }}" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">{{ content('contact_address', 'Uyci, Namangan Viloyati, Uzbekistan') }}</a></p>
+<section class="section-shell">
+    <div class="page-grid lg:grid-cols-2">
+        <article class="form-shell reveal">
+            <h2 class="section-title !text-3xl mb-4">Bizga xabar yuboring</h2>
+            {% with messages = get_flashed_messages(with_categories=true) %}
+              {% if messages %}
+                <div class="space-y-2 mb-4">
+                {% for category, message in messages %}
+                    <div class="flash-card {{ 'success' if category == 'success' else 'error' }}">{{ message }}</div>
+                {% endfor %}
                 </div>
-                <div class="bg-white p-6 md:p-8 rounded-lg shadow-lg">
-                    <h3 class="text-xl font-bold text-[#0D2444] mb-4">Bizning Manzilimiz</h3>
-                    <div class="relative w-full rounded-lg overflow-hidden" style="aspect-ratio: 16 / 9;">
-                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d48448.83891956152!2d71.95111614999999!3d40.9931812!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x38bb7f5764470e91%3A0x49d1123a4816a26c!2sUychi%2C%20Uzbekistan!5e0!3m2!1sen!2sus!4v1678886400000!5m2!1sen!2sus" class="absolute inset-0 w-full h-full" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+              {% endif %}
+            {% endwith %}
+
+            <form id="contactForm" action="{{ url_for('contact') }}" method="post" class="space-y-4">
+                <div>
+                    <label for="name" class="field-label">To'liq ism</label>
+                    <input type="text" id="name" name="name" class="field-input" required>
+                </div>
+                <div>
+                    <label for="phone" class="field-label">Telefon raqamingiz</label>
+                    <div class="flex">
+                        <span class="inline-flex items-center px-3 rounded-l-xl border border-r-0 border-slate-300 bg-slate-50 text-slate-500 text-sm">+998</span>
+                        <input type="tel" id="phone" name="phone" required pattern="[0-9]{9}" title="9 xonali raqam kiriting" class="field-input rounded-l-none" placeholder="XX XXX XX XX">
                     </div>
                 </div>
-            </div>
+                <div>
+                    <label for="message" class="field-label">Xabar</label>
+                    <textarea id="message" name="message" rows="5" class="field-textarea" required></textarea>
+                </div>
+                <button type="submit" class="btn-main">Yuborish</button>
+            </form>
+        </article>
+
+        <div class="space-y-4 reveal">
+            <article class="info-card">
+                <h3>Aloqa ma'lumotlari</h3>
+                <p><strong>Elektron pochta:</strong> <a href="mailto:{{ content('contact_email', 'iceberg.edu.center@gmail.com') }}" class="program-link">{{ content('contact_email', 'iceberg.edu.center@gmail.com') }}</a></p>
+                <p><strong>Telefon:</strong> <a href="tel:{{ content('contact_phone', '+998939461699') }}" class="program-link">{{ content('contact_phone_display', '(+998) 939461699') }}</a></p>
+                <p><strong>Manzil:</strong> <a href="{{ content('contact_address_url', 'https://www.google.com/maps/place/Uychi,+Uzbekistan/') }}" target="_blank" rel="noopener noreferrer" class="program-link">{{ content('contact_address', 'Uyci, Namangan Viloyati, Uzbekistan') }}</a></p>
+            </article>
+            <article class="info-card">
+                <h3>Bizning manzilimiz</h3>
+                <div class="relative w-full rounded-xl overflow-hidden border border-slate-200" style="aspect-ratio: 16 / 10;">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d48448.83891956152!2d71.95111614999999!3d40.9931812!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x38bb7f5764470e91%3A0x49d1123a4816a26c!2sUychi%2C%20Uzbekistan!5e0!3m2!1sen!2sus!4v1678886400000!5m2!1sen!2sus" class="absolute inset-0 w-full h-full" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                </div>
+            </article>
         </div>
     </div>
 </section>
@@ -106,7 +79,20 @@
 {{ super() }}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Contact page currently has no custom JS behavior.
+    const items = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+            if (!entry.isIntersecting) {
+                return;
+            }
+            entry.target.classList.add('visible');
+            observer.unobserve(entry.target);
+        });
+    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+
+    items.forEach(function(item) {
+        observer.observe(item);
+    });
 });
 </script>
 {% endblock %}

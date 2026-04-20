@@ -4,99 +4,91 @@
 
 {% block styles %}
 {{ super() }}
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Lora:wght@600&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-    body {
-        font-family: 'Inter', sans-serif;
-        background-color: #FDFDFF;
-    }
-    .font-serif {
-        font-family: 'Lora', serif;
-    }
-    .page-header-bg {
-        background: linear-gradient(45deg, #0d2444, #1a4a8a);
+    .register-hero {
+        background: linear-gradient(145deg, rgba(7, 20, 43, 0.84), rgba(16, 40, 76, 0.86));
     }
 </style>
 {% endblock %}
 
-{% block header %}
-{% endblock %}
-
 {% block content %}
-<!-- Page Header Section -->
-<section class="page-header-bg text-white pt-24 pb-14 md:pt-40 md:pb-24">
-    <div class="container mx-auto px-6 text-center">
-        <h1 class="text-3xl sm:text-4xl md:text-6xl font-serif font-bold mb-4 tracking-tight">{{ content('register_page_title', "Dasturga Ro'yxatdan O'tish") }}</h1>
-        <p class="text-base sm:text-lg md:text-xl text-blue-200 max-w-3xl mx-auto">
-            {{ content('register_page_subtitle', "Akademik maqsadlaringizga erishish yo'lida birinchi qadamni tashlang.") }}
-        </p>
+<section class="page-hero">
+    <div class="page-hero-inner">
+        <div class="glass-hero-panel register-hero reveal">
+            <h1>{{ content('register_page_title', "Dasturga Ro'yxatdan O'tish") }}</h1>
+            <p>{{ content('register_page_subtitle', "Akademik maqsadlaringizga erishish yo'lida birinchi qadamni tashlang.") }}</p>
+        </div>
     </div>
 </section>
 
-<!-- Registration Form Section -->
-<section class="py-16 md:py-24 bg-gray-50">
-    <div class="container mx-auto px-6">
-        <div class="max-w-2xl mx-auto bg-white p-6 md:p-8 rounded-lg shadow-lg">
-            <h2 class="text-2xl font-bold text-[#0D2444] mb-6">O'quvchi Ma'lumotlari</h2>
+<section class="section-shell">
+    <div class="page-grid max-w-3xl">
+        <article class="form-shell reveal">
+            <h2 class="section-title !text-3xl mb-4">O'quvchi ma'lumotlari</h2>
             {% with messages = get_flashed_messages(with_categories=true) %}
               {% if messages %}
+                <div class="space-y-2 mb-4">
                 {% for category, message in messages %}
-                                    <div class="{{ 'bg-green-100 border-green-400 text-green-700' if category == 'success' else 'bg-red-100 border-red-400 text-red-700' }} border px-4 py-3 rounded relative mb-4" role="alert">
-                    <span class="block sm:inline">{{ message }}</span>
-                  </div>
+                    <div class="flash-card {{ 'success' if category == 'success' else 'error' }}">{{ message }}</div>
                 {% endfor %}
+                </div>
               {% endif %}
             {% endwith %}
-            <form action="{{ url_for('register') }}" method="post">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
+
+            <form action="{{ url_for('register') }}" method="post" class="space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                        <label for="student_name" class="block text-gray-700 font-semibold mb-2">O'quvchining Ismi</label>
-                        <input type="text" id="student_name" name="student_name" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                        <label for="student_name" class="field-label">O'quvchining ismi</label>
+                        <input type="text" id="student_name" name="student_name" class="field-input" required>
                     </div>
                     <div>
-                        <label for="student_phone" class="block text-sm font-medium text-gray-700 mb-1">Telefon Raqamingiz</label>
+                        <label for="student_phone" class="field-label">Telefon raqami</label>
                         <div class="flex">
-                            <span class="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">
-                                +998
-                            </span>
-                            <input type="tel" id="student_phone" name="student_phone" required pattern="[0-9]{9}" title="Please enter a valid 9-digit phone number" class="flex-1 block w-full px-3 py-2 border border-gray-300 rounded-none rounded-r-md focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="XX XXX XX XX">
+                            <span class="inline-flex items-center px-3 rounded-l-xl border border-r-0 border-slate-300 bg-slate-50 text-slate-500 text-sm">+998</span>
+                            <input type="tel" id="student_phone" name="student_phone" required pattern="[0-9]{9}" title="9 xonali raqam kiriting" class="field-input rounded-l-none" placeholder="XX XXX XX XX">
                         </div>
                     </div>
                 </div>
-                <div class="mb-4">
-                    <label for="dob" class="block text-sm font-medium text-gray-700 mb-1">Tug'ilgan Sanangiz</label>
-                    <input type="date" id="dob" name="dob" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                <div>
+                    <label for="dob" class="field-label">Tug'ilgan sana</label>
+                    <input type="date" id="dob" name="dob" class="field-input" required>
                 </div>
-                <div class="mb-6">
-                    <label for="program" class="block text-gray-700 font-semibold mb-2">Dasturni Tanlang</label>
-                    <select id="program" name="course" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                <div>
+                    <label for="program" class="field-label">Dasturni tanlang</label>
+                    <select id="program" name="course" class="field-select" required>
                         <option value="" disabled selected>Dasturni tanlang...</option>
                         <option value="SAT Mahorat Kursi">SAT Mahorat Kursi</option>
                         <option value="Ingliz Tili va Yozish">Ingliz Tili va Yozish</option>
                         <option value="Matematika bo'yicha Mukammallik Dasturi">Matematika bo'yicha Mukammallik Dasturi</option>
-                        <option value="Fan Olimpiadasiga Tayyorgarlik">Milliy imtixon uchun tayyorgarlik</option>
-                        <option value="Universitetga Qabul Tayyorgarlik">DTM imtixoni uchunu tayyorgarlik</option>
+                        <option value="Fan Olimpiadasiga Tayyorgarlik">Milliy imtihon uchun tayyorgarlik</option>
+                        <option value="Universitetga Qabul Tayyorgarlik">DTM imtihoni uchun tayyorgarlik</option>
                     </select>
                 </div>
-                <button type="submit" class="w-full bg-blue-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-blue-700 transition-colors">
-                    Ro'yxatdan O'tishni Yakunlash
-                </button>
+                <button type="submit" class="btn-main">Ro'yxatdan o'tishni yakunlash</button>
             </form>
-        </div>
+        </article>
     </div>
 </section>
-{% endblock %}
-
-{% block footer %}
 {% endblock %}
 
 {% block scripts %}
 {{ super() }}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Specific scripts for registration page can go here
+    const items = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+            if (!entry.isIntersecting) {
+                return;
+            }
+            entry.target.classList.add('visible');
+            observer.unobserve(entry.target);
+        });
+    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+
+    items.forEach(function(item) {
+        observer.observe(item);
+    });
 });
 </script>
 {% endblock %}
