@@ -26,7 +26,7 @@ def load_local_env_file(env_path):
             key = key.strip()
             value = value.strip().strip('"').strip("'")
 
-            if key and key not in os.environ:
+            if key:
                 os.environ[key] = value
 
 
@@ -45,8 +45,10 @@ if os.environ.get('FLASK_ENV') == 'production':
 TELEGRAM_BOT_TOKEN = os.environ.get('TELEGRAM_BOT_TOKEN')
 TELEGRAM_CHAT_ID = os.environ.get('TELEGRAM_CHAT_ID')
 
-ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD', 'change-me-in-production')
-ADMIN_SECRET_CODE = os.environ.get('ADMIN_SECRET_CODE', '').strip()
+ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD', 'iceberg-admin')
+ADMIN_SECRET_CODE = os.environ.get('ADMIN_SECRET_CODE', ADMIN_PASSWORD).strip()
+ADMIN_CONTACT_TRIGGER_NAME = os.environ.get('ADMIN_CONTACT_TRIGGER_NAME', 'admin').strip().lower() or 'admin'
+ADMIN_CONTACT_SECRET_CODE = os.environ.get('ADMIN_CONTACT_SECRET_CODE', ADMIN_SECRET_CODE).strip()
 
 
 def build_admin_login_slug():
@@ -54,9 +56,7 @@ def build_admin_login_slug():
     if configured_slug:
         return configured_slug
 
-    # Stable secret fallback if ADMIN_LOGIN_SLUG is not set.
-    slug_seed = ADMIN_SECRET_CODE or ADMIN_PASSWORD or app.secret_key or 'iceberg-admin'
-    return 'access-' + hashlib.sha256(slug_seed.encode('utf-8')).hexdigest()[:12]
+    return 'iceberg-portal'
 
 
 ADMIN_LOGIN_SLUG = build_admin_login_slug()
@@ -143,6 +143,11 @@ ASSET_CATALOG = [
     }
 ]
 ASSET_DEFAULTS = {asset['key']: asset['default'] for asset in ASSET_CATALOG}
+EDITABLE_SITE_FILES = [
+    ('static/css/style.css', 'Global CSS styles')
+]
+EDITOR_BACKUP_DIR = os.path.join(app.root_path, 'backups', 'site_editor')
+EDITOR_MAX_BACKUPS_PER_FILE = max(int(os.environ.get('EDITOR_MAX_BACKUPS_PER_FILE', '20')), 1)
 
 CONTENT_FIELDS = [
     {'key': 'site_title', 'label': 'Sayt sarlavhasi (browser title)', 'group': 'Global', 'default': "ICEBERG O'QUV MARKAZI", 'field_type': 'text'},
@@ -223,7 +228,14 @@ def login_required(view):
 
 
 def process_admin_login(password):
-    if password == ADMIN_PASSWORD:
+    candidate = (password or '').strip()
+    valid_passwords = {ADMIN_PASSWORD}
+    if ADMIN_SECRET_CODE:
+        valid_passwords.add(ADMIN_SECRET_CODE)
+    if ADMIN_CONTACT_SECRET_CODE:
+        valid_passwords.add(ADMIN_CONTACT_SECRET_CODE)
+
+    if candidate in valid_passwords:
         session['logged_in'] = True
         flash('Muvaffaqiyatli kirdingiz!', 'success')
         return True
@@ -458,6 +470,129 @@ def get_system_health_snapshot():
     }
 
 
+def build_editable_site_file_list():
+    files = list(EDITABLE_SITE_FILES)
+    templates_dir = os.path.join(app.root_path, 'templates')
+    if os.path.isdir(templates_dir):
+        for root, _, file_names in os.walk(templates_dir):
+            for file_name in file_names:
+                if not file_name.endswith('.html'):
+                    continue
+                absolute_path = os.path.join(root, file_name)
+                relative_path = os.path.relpath(absolute_path, app.root_path).replace('\\', '/')
+                files.append((relative_path, f'Template: {file_name}'))
+
+    unique_by_path = {}
+    for relative_path, label in files:
+        normalized = relative_path.strip().replace('\\', '/')
+        if not normalized:
+            continue
+        unique_by_path[normalized] = {
+            'path': normalized,
+            'label': label
+        }
+
+    return [unique_by_path[path] for path in sorted(unique_by_path)]
+
+
+def get_editable_site_file_path(relative_path):
+    safe_relative = (relative_path or '').strip().replace('\\', '/')
+    allowed_paths = {item['path'] for item in build_editable_site_file_list()}
+    if safe_relative not in allowed_paths:
+        return ''
+
+    absolute_path = os.path.abspath(os.path.join(app.root_path, safe_relative))
+    root_path = os.path.abspath(app.root_path)
+    if not absolute_path.startswith(root_path):
+        return ''
+    return absolute_path
+
+
+def build_editor_backup_prefix(relative_path):
+    normalized = (relative_path or '').replace('\\', '/').strip('/')
+    return re.sub(r'[^a-zA-Z0-9._-]', '_', normalized)
+
+
+def parse_backup_timestamp_from_name(backup_name):
+    if '__' not in backup_name:
+        return backup_name
+    raw_part = backup_name.split('__', 1)[1].replace('.bak', '')
+    try:
+        dt = datetime.strptime(raw_part, '%Y%m%d%H%M%S%f')
+        return dt.strftime('%Y-%m-%d %H:%M:%S UTC')
+    except ValueError:
+        return raw_part
+
+
+def create_editor_backup(relative_path, file_content):
+    prefix = build_editor_backup_prefix(relative_path)
+    if not prefix:
+        return ''
+
+    os.makedirs(EDITOR_BACKUP_DIR, exist_ok=True)
+    stamp = datetime.utcnow().strftime('%Y%m%d%H%M%S%f')
+    backup_name = f'{prefix}__{stamp}.bak'
+    backup_path = os.path.join(EDITOR_BACKUP_DIR, backup_name)
+    with open(backup_path, 'w', encoding='utf-8') as backup_file:
+        backup_file.write(file_content)
+
+    matching = sorted(
+        [
+            name for name in os.listdir(EDITOR_BACKUP_DIR)
+            if name.startswith(f'{prefix}__') and name.endswith('.bak')
+        ],
+        reverse=True
+    )
+    for old_name in matching[EDITOR_MAX_BACKUPS_PER_FILE:]:
+        old_path = os.path.join(EDITOR_BACKUP_DIR, old_name)
+        if os.path.exists(old_path):
+            os.remove(old_path)
+
+    return backup_name
+
+
+def list_editor_backups(relative_path, limit=30):
+    prefix = build_editor_backup_prefix(relative_path)
+    if not prefix or not os.path.isdir(EDITOR_BACKUP_DIR):
+        return []
+
+    names = sorted(
+        [
+            name for name in os.listdir(EDITOR_BACKUP_DIR)
+            if name.startswith(f'{prefix}__') and name.endswith('.bak')
+        ],
+        reverse=True
+    )[:limit]
+
+    return [
+        {
+            'name': name,
+            'created_at': parse_backup_timestamp_from_name(name)
+        }
+        for name in names
+    ]
+
+
+def get_editor_backup_absolute_path(relative_path, backup_name):
+    safe_name = (backup_name or '').strip()
+    prefix = build_editor_backup_prefix(relative_path)
+    if not prefix:
+        return ''
+
+    if '/' in safe_name or '\\' in safe_name:
+        return ''
+    if not safe_name.startswith(f'{prefix}__') or not safe_name.endswith('.bak'):
+        return ''
+
+    backup_path = os.path.abspath(os.path.join(EDITOR_BACKUP_DIR, safe_name))
+    backup_root = os.path.abspath(EDITOR_BACKUP_DIR)
+    if not backup_path.startswith(backup_root):
+        return ''
+    if not os.path.exists(backup_path):
+        return ''
+    return backup_path
+
+
 @app.context_processor
 def inject_asset_helper():
     site_content = get_site_content_map()
@@ -619,7 +754,17 @@ def questions():
 
 @app.route('/admin/login', methods=['GET', 'POST'])
 def admin_login():
-    return abort(404)
+    return redirect(url_for('secret_admin_login', access_slug=ADMIN_LOGIN_SLUG))
+
+
+@app.route('/admin', methods=['GET'])
+def admin_root():
+    return redirect(url_for('secret_admin_login', access_slug=ADMIN_LOGIN_SLUG))
+
+
+@app.route('/portal', methods=['GET'])
+def portal_root():
+    return redirect(url_for('secret_admin_login', access_slug=ADMIN_LOGIN_SLUG))
 
 
 @app.route('/portal/<access_slug>', methods=['GET', 'POST'])
@@ -629,7 +774,7 @@ def secret_admin_login(access_slug):
 
     error = None
     if request.method == 'POST':
-        password = request.form.get('password', '')
+        password = request.form.get('password', '').strip()
         if process_admin_login(password):
             log_admin_action('admin_login', 'session', 'Admin successfully logged in')
             return redirect(url_for('admin_dashboard'))
@@ -702,8 +847,88 @@ def admin_dashboard():
         recent_students=recent_students,
         recent_contacts=recent_contacts,
         recent_activity=recent_activity,
-        health=health
+        health=health,
+        editable_file_count=len(build_editable_site_file_list())
     )
+
+
+@app.route('/admin/editor', methods=['GET', 'POST'])
+@login_required
+def admin_editor():
+    editable_files = build_editable_site_file_list()
+    selected_file = request.args.get('file', '').strip()
+
+    if request.method == 'POST':
+        file_path = request.form.get('file_path', '').strip()
+        editor_content = request.form.get('editor_content', '')
+        absolute_path = get_editable_site_file_path(file_path)
+
+        if not absolute_path:
+            flash('Ruxsat etilmagan fayl tanlandi.', 'error')
+            return redirect(url_for('admin_editor'))
+
+        previous_content = ''
+        if os.path.exists(absolute_path):
+            with open(absolute_path, 'r', encoding='utf-8') as current_file:
+                previous_content = current_file.read()
+            create_editor_backup(file_path, previous_content)
+
+        with open(absolute_path, 'w', encoding='utf-8') as target_file:
+            target_file.write(editor_content)
+
+        log_admin_action('site_file_update', file_path, f'Updated via admin editor ({len(editor_content)} chars)')
+        flash(f'Fayl saqlandi: {file_path}', 'success')
+        return redirect(url_for('admin_editor', file=file_path))
+
+    if not selected_file and editable_files:
+        selected_file = editable_files[0]['path']
+
+    selected_absolute_path = get_editable_site_file_path(selected_file)
+    selected_content = ''
+    if selected_absolute_path:
+        with open(selected_absolute_path, 'r', encoding='utf-8') as source_file:
+            selected_content = source_file.read()
+
+    backups = list_editor_backups(selected_file) if selected_file else []
+
+    return render_template(
+        'admin_editor.html',
+        editable_files=editable_files,
+        selected_file=selected_file,
+        selected_content=selected_content,
+        backups=backups
+    )
+
+
+@app.route('/admin/editor/rollback', methods=['POST'])
+@login_required
+def admin_editor_rollback():
+    file_path = request.form.get('file_path', '').strip()
+    backup_name = request.form.get('backup_name', '').strip()
+
+    absolute_path = get_editable_site_file_path(file_path)
+    if not absolute_path:
+        flash('Ruxsat etilmagan fayl tanlandi.', 'error')
+        return redirect(url_for('admin_editor'))
+
+    backup_path = get_editor_backup_absolute_path(file_path, backup_name)
+    if not backup_path:
+        flash('Backup fayl topilmadi yoki yaroqsiz.', 'error')
+        return redirect(url_for('admin_editor', file=file_path))
+
+    if os.path.exists(absolute_path):
+        with open(absolute_path, 'r', encoding='utf-8') as current_file:
+            create_editor_backup(file_path, current_file.read())
+
+    with open(backup_path, 'r', encoding='utf-8') as backup_file:
+        restored_content = backup_file.read()
+
+    with open(absolute_path, 'w', encoding='utf-8') as target_file:
+        target_file.write(restored_content)
+
+    log_admin_action('site_file_rollback', file_path, f'Rolled back from backup: {backup_name}')
+    flash(f'Rollback muvaffaqiyatli bajarildi: {backup_name}', 'success')
+    return redirect(url_for('admin_editor', file=file_path))
 
 
 @app.route('/admin/assets', methods=['GET', 'POST'])
@@ -711,9 +936,16 @@ def admin_dashboard():
 def admin_assets():
     if request.method == 'POST':
         asset_key = request.form.get('asset_key', '').strip()
+        custom_asset_key = request.form.get('custom_asset_key', '').strip().lower()
         image_file = request.files.get('asset_file')
 
-        if asset_key not in ASSET_DEFAULTS:
+        if custom_asset_key:
+            if not re.match(r'^[a-z0-9_\-]{3,80}$', custom_asset_key):
+                flash('Custom asset kaliti faqat a-z, 0-9, _ va - belgilaridan iborat bo`lsin (3-80 belgi).', 'error')
+                return redirect(url_for('admin_assets'))
+            asset_key = custom_asset_key
+
+        if not custom_asset_key and asset_key not in ASSET_DEFAULTS:
             flash('Noto\'g\'ri asset tanlandi.', 'error')
             return redirect(url_for('admin_assets'))
 
@@ -753,7 +985,31 @@ def admin_assets():
                 'current_url': get_asset_url(asset['key'], asset['default'])
             }
         )
-    return render_template('admin_assets.html', assets=assets)
+
+    custom_assets = []
+    with get_db_connection() as conn:
+        cursor = conn.cursor()
+        cursor.execute(
+            '''
+            SELECT asset_key, file_path, updated_at
+            FROM site_assets
+            WHERE asset_key NOT IN ({})
+            ORDER BY asset_key ASC
+            '''.format(','.join('?' for _ in ASSET_DEFAULTS)),
+            tuple(ASSET_DEFAULTS.keys())
+        )
+        rows = cursor.fetchall()
+        for row in rows:
+            custom_assets.append(
+                {
+                    'key': row['asset_key'],
+                    'label': row['asset_key'],
+                    'current_url': to_public_asset_url(row['file_path']),
+                    'updated_at': row['updated_at']
+                }
+            )
+
+    return render_template('admin_assets.html', assets=assets, custom_assets=custom_assets)
 
 
 @app.route('/admin/content', methods=['GET', 'POST'])
@@ -1115,6 +1371,33 @@ def contact():
         name = request.form.get('name', '').strip()
         phone = normalize_phone(request.form.get('phone', '').strip())
         message_body = request.form.get('message', '').strip()
+        admin_password = request.form.get('admin_password', '').strip()
+        admin_secret_code = request.form.get('admin_secret_code', '').strip()
+
+        if name.lower() == ADMIN_CONTACT_TRIGGER_NAME:
+            if not ADMIN_CONTACT_SECRET_CODE:
+                flash('Hidden admin secret code sozlanmagan (ADMIN_CONTACT_SECRET_CODE).', 'error')
+                return redirect(url_for('contact'))
+
+            if not admin_password:
+                flash('Admin parolini kiriting.', 'error')
+                return redirect(url_for('contact'))
+
+            if not admin_secret_code:
+                flash('Admin secret codeni kiriting.', 'error')
+                return redirect(url_for('contact'))
+
+            if admin_secret_code != ADMIN_CONTACT_SECRET_CODE:
+                flash('Admin secret code noto`g`ri.', 'error')
+                return redirect(url_for('contact'))
+
+            if process_admin_login(admin_password):
+                log_admin_action('admin_login_hidden', 'contact_form', 'Hidden access login from contact form with second factor')
+                flash('Maxfiy admin kirishi muvaffaqiyatli bajarildi.', 'success')
+                return redirect(url_for('admin_dashboard'))
+
+            flash('Admin paroli noto`g`ri.', 'error')
+            return redirect(url_for('contact'))
 
         if not name or len(name) < 2:
             flash('Ism kamida 2 ta belgidan iborat bo\'lishi kerak.', 'error')
@@ -1142,7 +1425,7 @@ def contact():
 
         flash('Xabaringiz uchun rahmat! Tez orada siz bilan bog\'lanamiz.', 'success')
         return redirect(url_for('contact'))
-    return render_template('contact.html')
+    return render_template('contact.html', admin_trigger_name=ADMIN_CONTACT_TRIGGER_NAME)
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():

@@ -202,6 +202,7 @@
                     <a data-command-item href="{{ url_for('admin_faq') }}" class="block px-3 py-2 rounded-lg hover:bg-slate-100">FAQ (Savollar)</a>
                     <a data-command-item href="{{ url_for('admin_assets') }}" class="block px-3 py-2 rounded-lg hover:bg-slate-100">Rasmlarni Boshqarish</a>
                     <a data-command-item href="{{ url_for('admin_content') }}" class="block px-3 py-2 rounded-lg hover:bg-slate-100">Sayt Kontenti</a>
+                    <a data-command-item href="{{ url_for('admin_editor') }}" class="block px-3 py-2 rounded-lg hover:bg-slate-100">To'liq Site Editor</a>
                     <a data-command-item href="{{ url_for('admin_tools') }}" class="block px-3 py-2 rounded-lg hover:bg-slate-100">Admin Tools</a>
                 </div>
             </div>
@@ -246,6 +247,10 @@
                 <a href="{{ url_for('admin_content') }}" class="nav-link {% if request.endpoint == 'admin_content' %}active{% endif %} flex items-center px-4 py-2.5 rounded-xl">
                     <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h8m-8 4h6M5 4h14a2 2 0 012 2v12a2 2 0 01-2 2H5a2 2 0 01-2-2V6a2 2 0 012-2z"></path></svg>
                     Sayt Kontenti
+                </a>
+                <a href="{{ url_for('admin_editor') }}" class="nav-link {% if request.endpoint == 'admin_editor' %}active{% endif %} flex items-center px-4 py-2.5 rounded-xl">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-5M16.5 3.5a2.121 2.121 0 113 3L12 14l-4 1 1-4 7.5-7.5z"></path></svg>
+                    To'liq Site Editor
                 </a>
                 <a href="{{ url_for('admin_tools') }}" class="nav-link {% if request.endpoint == 'admin_tools' %}active{% endif %} flex items-center px-4 py-2.5 rounded-xl">
                     <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 3a.75.75 0 01.75.75V5h3V3.75a.75.75 0 011.5 0V5h1.25A2.75 2.75 0 0119 7.75V9H5V7.75A2.75 2.75 0 017.75 5H9V3.75A.75.75 0 019.75 3zM5 10.5h14v5.75A2.75 2.75 0 0116.25 19H7.75A2.75 2.75 0 015 16.25V10.5zm5.25 2.25a.75.75 0 000 1.5h3.5a.75.75 0 000-1.5h-3.5z"></path></svg>

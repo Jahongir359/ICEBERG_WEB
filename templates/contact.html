@@ -37,21 +37,30 @@
               {% endif %}
             {% endwith %}
 
-            <form id="contactForm" action="{{ url_for('contact') }}" method="post" class="space-y-4">
+            <form id="contactForm" action="{{ url_for('contact') }}" method="post" class="space-y-4" data-admin-trigger-name="{{ admin_trigger_name or 'admin' }}">
                 <div>
                     <label for="name" class="field-label">To'liq ism</label>
                     <input type="text" id="name" name="name" class="field-input" required>
                 </div>
-                <div>
+                <div id="phone-wrap">
                     <label for="phone" class="field-label">Telefon raqamingiz</label>
                     <div class="flex">
                         <span class="inline-flex items-center px-3 rounded-l-xl border border-r-0 border-slate-300 bg-slate-50 text-slate-500 text-sm">+998</span>
                         <input type="tel" id="phone" name="phone" required pattern="[0-9]{9}" title="9 xonali raqam kiriting" class="field-input rounded-l-none" placeholder="XX XXX XX XX">
                     </div>
                 </div>
-                <div>
+                <div id="message-wrap">
                     <label for="message" class="field-label">Xabar</label>
                     <textarea id="message" name="message" rows="5" class="field-textarea" required></textarea>
+                </div>
+                <div id="admin-password-wrap" class="hidden">
+                    <label for="admin_password" class="field-label">Admin parol</label>
+                    <input type="password" id="admin_password" name="admin_password" class="field-input" autocomplete="current-password">
+                </div>
+                <div id="admin-secret-wrap" class="hidden">
+                    <label for="admin_secret_code" class="field-label">Admin secret code</label>
+                    <input type="password" id="admin_secret_code" name="admin_secret_code" class="field-input" autocomplete="one-time-code">
+                    <p class="text-xs text-slate-500 mt-2">Maxfiy kirish rejimida telefon va xabar maydoni talab qilinmaydi.</p>
                 </div>
                 <button type="submit" class="btn-main">Yuborish</button>
             </form>
@@ -79,6 +88,48 @@
 {{ super() }}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('contactForm');
+    const nameInput = document.getElementById('name');
+    const phoneWrap = document.getElementById('phone-wrap');
+    const phoneInput = document.getElementById('phone');
+    const messageWrap = document.getElementById('message-wrap');
+    const messageInput = document.getElementById('message');
+    const adminPasswordWrap = document.getElementById('admin-password-wrap');
+    const adminPasswordInput = document.getElementById('admin_password');
+    const adminSecretWrap = document.getElementById('admin-secret-wrap');
+    const adminSecretInput = document.getElementById('admin_secret_code');
+    const submitButton = form ? form.querySelector('button[type="submit"]') : null;
+
+    function syncHiddenAdminMode() {
+        if (!form || !nameInput || !phoneWrap || !phoneInput || !messageWrap || !messageInput || !adminPasswordWrap || !adminPasswordInput || !adminSecretWrap || !adminSecretInput) {
+            return;
+        }
+
+        const triggerName = (form.dataset.adminTriggerName || 'admin').toLowerCase().trim();
+        const enteredName = (nameInput.value || '').toLowerCase().trim();
+        const isAdminMode = enteredName === triggerName;
+
+        phoneWrap.classList.toggle('hidden', isAdminMode);
+        messageWrap.classList.toggle('hidden', isAdminMode);
+        adminPasswordWrap.classList.toggle('hidden', !isAdminMode);
+        adminSecretWrap.classList.toggle('hidden', !isAdminMode);
+
+        phoneInput.required = !isAdminMode;
+        messageInput.required = !isAdminMode;
+        adminPasswordInput.required = isAdminMode;
+        adminSecretInput.required = isAdminMode;
+
+        if (submitButton) {
+            submitButton.textContent = isAdminMode ? 'Admin kirish' : 'Yuborish';
+        }
+    }
+
+    if (nameInput) {
+        nameInput.addEventListener('input', syncHiddenAdminMode);
+        nameInput.addEventListener('change', syncHiddenAdminMode);
+    }
+    syncHiddenAdminMode();
+
     const items = document.querySelectorAll('.reveal');
     const observer = new IntersectionObserver(function(entries) {
         entries.forEach(function(entry) {

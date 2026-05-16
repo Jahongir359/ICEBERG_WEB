@@ -5,61 +5,63 @@
 {% block page_title %}Boshqaruv paneli{% endblock %}
 
 {% block content %}
-<div class="surface-card p-4 mb-6 flex flex-wrap items-center justify-between gap-3 interactive-panel">
-    <p class="text-sm text-slate-600">Tez boshqaruv: kerakli bo'limga bir bosishda o'ting.</p>
-    <div class="flex flex-wrap gap-2">
-        <a href="{{ url_for('admin_content') }}" class="btn-primary px-4 py-2 text-sm">Kontentni Tahrirlash</a>
-        <a href="{{ url_for('admin_news') }}" class="btn-ghost px-4 py-2 text-sm">Yangilik/Event Qo'shish</a>
-        <a href="{{ url_for('admin_assets') }}" class="btn-ghost px-4 py-2 text-sm">Rasmlarni Yangilash</a>
-        <a href="{{ url_for('admin_tools') }}" class="btn-ghost px-4 py-2 text-sm">Admin Tools</a>
+<section class="surface-card p-6 mb-6 interactive-panel bg-gradient-to-r from-slate-50 via-white to-sky-50/60">
+    <div class="flex flex-wrap items-start justify-between gap-4">
+        <div>
+            <p class="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">Full Access Control</p>
+            <h2 class="text-2xl font-serif font-bold text-[#0D2444] mt-1">Saytning barcha ko'rinadigan qismini shu yerdan boshqaring</h2>
+            <p class="text-sm text-slate-600 mt-2 max-w-3xl">Matn, logotip, rasmlar, yangiliklar, FAQ va template/CSS fayllari bir panelga jamlandi. Keng qamrovli o'zgarishlar uchun "To'liq Site Editor" bo'limidan foydalaning.</p>
+        </div>
+        <div class="flex flex-wrap gap-2">
+            <a href="{{ url_for('admin_editor') }}" class="btn-primary px-4 py-2 text-sm">To'liq Site Editor</a>
+            <a href="{{ url_for('admin_content') }}" class="btn-ghost px-4 py-2 text-sm">Kontent maydonlari</a>
+            <a href="{{ url_for('admin_assets') }}" class="btn-ghost px-4 py-2 text-sm">Rasmlar va logolar</a>
+        </div>
+    </div>
+</section>
+
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+    <div class="surface-card p-5 interactive-panel">
+        <p class="text-xs text-slate-500 uppercase tracking-[0.18em]">Ro'yxat</p>
+        <p class="text-3xl font-bold text-[#0D2444] mt-2">{{ stats.total_students }}</p>
+        <p class="text-sm text-slate-600 mt-1">Jami ro'yxatdan o'tgan o'quvchi</p>
+        <a href="{{ url_for('students') }}" class="inline-flex items-center gap-1 text-sm font-semibold text-blue-700 mt-3">Ko'rish</a>
+    </div>
+    <div class="surface-card p-5 interactive-panel">
+        <p class="text-xs text-slate-500 uppercase tracking-[0.18em]">Aloqa</p>
+        <p class="text-3xl font-bold text-[#0D2444] mt-2">{{ stats.total_contacts }}</p>
+        <p class="text-sm text-slate-600 mt-1">Jami kelgan kontakt xabarlari</p>
+        <a href="{{ url_for('contacts_list') }}" class="inline-flex items-center gap-1 text-sm font-semibold text-blue-700 mt-3">Ko'rish</a>
+    </div>
+    <div class="surface-card p-5 interactive-panel">
+        <p class="text-xs text-slate-500 uppercase tracking-[0.18em]">Yangiliklar</p>
+        <p class="text-3xl font-bold text-[#0D2444] mt-2">{{ stats.total_news }}</p>
+        <p class="text-sm text-slate-600 mt-1">Yangilik/event postlari</p>
+        <a href="{{ url_for('admin_news') }}" class="inline-flex items-center gap-1 text-sm font-semibold text-blue-700 mt-3">Boshqarish</a>
+    </div>
+    <div class="surface-card p-5 interactive-panel">
+        <p class="text-xs text-slate-500 uppercase tracking-[0.18em]">Fayl Editor</p>
+        <p class="text-3xl font-bold text-[#0D2444] mt-2">{{ editable_file_count }}</p>
+        <p class="text-sm text-slate-600 mt-1">Tahrirlanadigan template/CSS fayl</p>
+        <a href="{{ url_for('admin_editor') }}" class="inline-flex items-center gap-1 text-sm font-semibold text-blue-700 mt-3">Ochish</a>
     </div>
 </div>
 
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
-    <a href="{{ url_for('students') }}" class="surface-card p-6 flex items-center hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5 interactive-panel">
-        <div class="rounded-2xl p-4 mr-4 text-white bg-gradient-to-br from-blue-500 to-blue-700 shadow-lg">
-            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M15 21a6 6 0 00-9-5.197M15 21a6 6 0 006-6v-1a3 3 0 00-3-3H9a3 3 0 00-3 3v1a6 6 0 006 6z"></path></svg>
-        </div>
-        <div>
-            <h3 class="text-lg font-semibold text-gray-700">Jami Ro'yxatdan o'tganlar</h3>
-            <p class="text-3xl font-bold text-[#0D2444] mt-1">{{ stats.total_students }}</p>
-        </div>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+    <a href="{{ url_for('admin_content') }}" class="surface-card p-6 interactive-panel hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5">
+        <p class="text-xs uppercase tracking-[0.16em] text-slate-500">1-qadam</p>
+        <h3 class="text-lg font-semibold text-[#0D2444] mt-2">Sayt matnlarini boshqarish</h3>
+        <p class="text-sm text-slate-600 mt-2">Menyu, sahifa sarlavhalari, tugmalar, footer va custom CSS qiymatlarini tez o'zgartiring.</p>
     </a>
-    <a href="{{ url_for('contacts_list') }}" class="surface-card p-6 flex items-center hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5 interactive-panel">
-        <div class="rounded-2xl p-4 mr-4 text-white bg-gradient-to-br from-emerald-500 to-emerald-700 shadow-lg">
-            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
-        </div>
-        <div>
-            <h3 class="text-lg font-semibold text-gray-700">Jami Aloqa Xabarlari</h3>
-            <p class="text-3xl font-bold text-[#0D2444] mt-1">{{ stats.total_contacts }}</p>
-        </div>
+    <a href="{{ url_for('admin_assets') }}" class="surface-card p-6 interactive-panel hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5">
+        <p class="text-xs uppercase tracking-[0.16em] text-slate-500">2-qadam</p>
+        <h3 class="text-lg font-semibold text-[#0D2444] mt-2">Logolar va rasmlar</h3>
+        <p class="text-sm text-slate-600 mt-2">Asosiy logo, hero fonlari va bo'lim rasmlarini yuklab yangilang.</p>
     </a>
-    <a href="{{ url_for('admin_content') }}" class="surface-card p-6 flex items-center hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5 interactive-panel">
-        <div class="rounded-2xl p-4 mr-4 text-white bg-gradient-to-br from-cyan-500 to-sky-700 shadow-lg">
-            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h8m-8 4h6M5 4h14a2 2 0 012 2v12a2 2 0 01-2 2H5a2 2 0 01-2-2V6a2 2 0 012-2z"></path></svg>
-        </div>
-        <div>
-            <h3 class="text-lg font-semibold text-gray-700">Sayt Kontenti</h3>
-            <p class="text-sm font-medium text-[#0D2444] mt-1">Matn, link va stilni boshqarish</p>
-        </div>
-    </a>
-    <a href="{{ url_for('admin_tools') }}" class="surface-card p-6 flex items-center hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5 interactive-panel">
-        <div class="rounded-2xl p-4 mr-4 text-white bg-gradient-to-br from-violet-500 to-indigo-700 shadow-lg">
-            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 3a.75.75 0 01.75.75V5h3V3.75a.75.75 0 011.5 0V5h1.25A2.75 2.75 0 0119 7.75V9H5V7.75A2.75 2.75 0 017.75 5H9V3.75A.75.75 0 019.75 3zM5 10.5h14v5.75A2.75 2.75 0 0116.25 19H7.75A2.75 2.75 0 015 16.25V10.5zm5.25 2.25a.75.75 0 000 1.5h3.5a.75.75 0 000-1.5h-3.5z"></path></svg>
-        </div>
-        <div>
-            <h3 class="text-lg font-semibold text-gray-700">Admin Tools</h3>
-            <p class="text-sm font-medium text-[#0D2444] mt-1">Backup, audit, system health</p>
-        </div>
-    </a>
-    <a href="{{ url_for('admin_news') }}" class="surface-card p-6 flex items-center hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5 interactive-panel">
-        <div class="rounded-2xl p-4 mr-4 text-white bg-gradient-to-br from-orange-500 to-amber-700 shadow-lg">
-            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 5H5a2 2 0 00-2 2v10a2 2 0 002 2h14a2 2 0 002-2V7a2 2 0 00-2-2zm-9 4h6m-6 4h4"></path></svg>
-        </div>
-        <div>
-            <h3 class="text-lg font-semibold text-gray-700">Yangilik/Event</h3>
-            <p class="text-sm font-medium text-[#0D2444] mt-1">Postlar: {{ stats.total_news }}</p>
-        </div>
+    <a href="{{ url_for('admin_editor') }}" class="surface-card p-6 interactive-panel hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5 border border-sky-200 bg-sky-50/40">
+        <p class="text-xs uppercase tracking-[0.16em] text-slate-500">3-qadam</p>
+        <h3 class="text-lg font-semibold text-[#0D2444] mt-2">To'liq Site Editor</h3>
+        <p class="text-sm text-slate-600 mt-2">Template va style fayllarni tahrirlab har bir jumla, blok va ko'rinishni to'liq nazorat qiling.</p>
     </a>
 </div>
 

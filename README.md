@@ -120,6 +120,23 @@ This repository includes `render.yaml` using Gunicorn.
 
 Important: define all required environment variables in Render dashboard.
 
+## Deploy (DigitalOcean App Platform)
+
+Use the same Gunicorn start command as Render:
+
+`gunicorn app:app --bind 0.0.0.0:$PORT`
+
+Set these environment variables in DigitalOcean:
+
+- `SECRET_KEY`
+- `ADMIN_PASSWORD`
+- `ADMIN_SECRET_CODE`
+- `ADMIN_LOGIN_SLUG`
+- `FLASK_ENV=production`
+- `DATABASE_PATH` if you want the SQLite file stored outside the container default
+
+If those admin variables are omitted, the app falls back to `iceberg-admin` and `iceberg-portal` so the hidden login path stays consistent across deployments.
+
 ## Admin Image Management
 
 After admin login, open **Rasmlarni Boshqarish** from the admin sidebar.

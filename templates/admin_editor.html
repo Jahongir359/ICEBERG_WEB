@@ -1,0 +1,106 @@
+{% extends "admin_base.html" %}
+
+{% block title %}To'liq Site Editor - ICEBERG Admin{% endblock %}
+{% block page_title %}To'liq Site Editor{% endblock %}
+
+{% block content %}
+<div class="surface-card p-5 mb-6 interactive-panel border border-amber-200 bg-amber-50/70">
+    <p class="font-semibold text-amber-900">Diqqat: bu bo'lim template va CSS fayllarni to'g'ridan-to'g'ri saqlaydi.</p>
+    <p class="text-sm text-amber-800 mt-1">Katta o'zgarishlar oldidan Admin Tools bo'limidan backup oling. Saqlashdan keyin sahifani yangilab natijani tekshiring.</p>
+</div>
+
+<div class="grid grid-cols-1 xl:grid-cols-4 gap-6">
+    <section class="surface-card p-4 interactive-panel xl:col-span-1">
+        <h2 class="text-lg font-semibold text-[#0D2444] mb-3">Tahrirlanadigan fayllar</h2>
+        <div class="max-h-[70vh] overflow-auto space-y-1 pr-1">
+            {% for item in editable_files %}
+            <a href="{{ url_for('admin_editor', file=item.path) }}"
+               class="block rounded-lg border px-3 py-2 text-sm transition-colors {% if item.path == selected_file %}bg-[#0D2444] text-white border-[#0D2444]{% else %}bg-white border-slate-200 hover:bg-slate-50 text-slate-700{% endif %}">
+                <p class="font-semibold break-all">{{ item.path }}</p>
+                <p class="text-xs opacity-80 mt-0.5">{{ item.label }}</p>
+            </a>
+            {% endfor %}
+        </div>
+    </section>
+
+    <section class="surface-card p-5 interactive-panel xl:col-span-3">
+        <div class="flex flex-wrap items-start justify-between gap-3 mb-4">
+            <div>
+                <h2 class="text-lg font-semibold text-[#0D2444]">Fayl kodi</h2>
+                <p class="text-xs text-slate-500 mt-1">Joriy fayl: <span class="font-semibold">{{ selected_file or 'Fayl tanlanmagan' }}</span></p>
+            </div>
+            {% if selected_file %}
+            <a href="{{ url_for('admin_editor', file=selected_file) }}" class="btn-ghost px-3 py-2 text-sm" data-no-loading="true">Yangilash</a>
+            {% endif %}
+        </div>
+
+        {% if selected_file %}
+        <form action="{{ url_for('admin_editor') }}" method="POST" class="space-y-4" id="site-editor-form">
+            <input type="hidden" name="file_path" value="{{ selected_file }}">
+            <textarea id="editor_content" name="editor_content" rows="30" class="w-full rounded-xl border border-slate-300 bg-slate-950 text-slate-100 p-4 font-mono text-xs leading-5 focus:outline-none focus:ring-2 focus:ring-sky-500">{{ selected_content }}</textarea>
+            <div class="flex justify-end">
+                <button type="submit" class="btn-primary px-5 py-2.5">Faylni Saqlash</button>
+            </div>
+        </form>
+
+        <div class="mt-6 border-t border-slate-200 pt-4">
+            <div class="flex items-center justify-between gap-3 mb-3">
+                <h3 class="text-sm font-semibold text-slate-700 uppercase tracking-[0.14em]">Versioned Backups</h3>
+                <span class="text-xs text-slate-500">Saqlashdan oldin avtomatik backup olinadi</span>
+            </div>
+
+            {% if backups %}
+            <div class="space-y-2 max-h-56 overflow-auto pr-1">
+                {% for backup in backups %}
+                <form action="{{ url_for('admin_editor_rollback') }}" method="POST" class="rounded-lg border border-slate-200 bg-white/70 p-3 flex items-center justify-between gap-2" onsubmit="return confirm('Shu backupga qaytishni tasdiqlaysizmi?');">
+                    <input type="hidden" name="file_path" value="{{ selected_file }}">
+                    <input type="hidden" name="backup_name" value="{{ backup.name }}">
+                    <div>
+                        <p class="text-sm font-semibold text-slate-800 break-all">{{ backup.name }}</p>
+                        <p class="text-xs text-slate-500 mt-1">Yaratilgan vaqti: {{ backup.created_at }}</p>
+                    </div>
+                    <button type="submit" class="btn-ghost px-3 py-2 text-xs" data-no-loading="true">Rollback</button>
+                </form>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p class="text-sm text-slate-500">Hali backup mavjud emas.</p>
+            {% endif %}
+        </div>
+        {% else %}
+        <p class="text-sm text-slate-500">Tahrirlash uchun chap tomondan fayl tanlang.</p>
+        {% endif %}
+    </section>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var form = document.getElementById('site-editor-form');
+        if (!form) {
+            return;
+        }
+
+        var textarea = document.getElementById('editor_content');
+        if (!textarea) {
+            return;
+        }
+
+        var initialValue = textarea.value;
+
+        window.addEventListener('beforeunload', function (event) {
+            if (textarea.value === initialValue) {
+                return;
+            }
+            event.preventDefault();
+            event.returnValue = '';
+        });
+
+        form.addEventListener('submit', function () {
+            initialValue = textarea.value;
+        });
+    });
+</script>
+{% endblock %}
