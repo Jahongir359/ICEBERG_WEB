@@ -4,6 +4,120 @@
     {{ super() }}
     <style>
         html { scroll-behavior: smooth; }
+
+        /* ── Student check bar ─────────────────────────────── */
+        .student-check-wrap {
+            width: min(640px, 100% - 2.2rem);
+            margin: 1.6rem auto 0;
+        }
+
+        .student-check {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: rgba(255, 255, 255, 0.88);
+            border: 1px solid rgba(59, 163, 255, 0.18);
+            border-radius: 999px;
+            padding: 0.65rem 0.7rem 0.65rem 1.15rem;
+            box-shadow: 0 8px 28px rgba(7, 20, 43, 0.08), 0 1px 4px rgba(7, 20, 43, 0.04);
+            backdrop-filter: blur(12px);
+            transition: box-shadow 0.22s ease;
+        }
+
+        .student-check:hover {
+            box-shadow: 0 12px 36px rgba(7, 20, 43, 0.12), 0 2px 6px rgba(7, 20, 43, 0.05);
+        }
+
+        .student-check-icon {
+            font-size: 0.95rem;
+            color: var(--sky-500);
+            flex-shrink: 0;
+        }
+
+        .student-check-text {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--ink-800);
+            flex: 1;
+        }
+
+        .student-check-btns {
+            display: flex;
+            gap: 0.4rem;
+            flex-shrink: 0;
+        }
+
+        .student-check-btn-yes,
+        .student-check-btn-no {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.42rem 1.05rem;
+            border-radius: 999px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            letter-spacing: 0.01em;
+            cursor: pointer;
+            border: none;
+            font-family: inherit;
+            text-decoration: none;
+            transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+        }
+
+        .student-check-btn-yes {
+            background: linear-gradient(95deg, #0d2a50 0%, #2f6bac 100%);
+            color: #ffffff;
+            box-shadow: 0 4px 14px rgba(16, 40, 76, 0.25);
+        }
+
+        .student-check-btn-yes:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(16, 40, 76, 0.34);
+        }
+
+        .student-check-btn-no {
+            background: rgba(24, 57, 102, 0.07);
+            color: var(--ink-700);
+            border: 1px solid rgba(24, 57, 102, 0.14);
+        }
+
+        .student-check-btn-no:hover {
+            background: rgba(24, 57, 102, 0.13);
+            transform: translateY(-1px);
+        }
+
+        .student-check-msg {
+            text-align: center;
+            font-size: 0.8rem;
+            color: var(--text-soft);
+            margin-top: 0.5rem;
+            padding: 0 1rem;
+        }
+
+        .student-check-msg.show {
+            animation: studentMsgIn 0.28s ease;
+        }
+
+        @keyframes studentMsgIn {
+            from { opacity: 0; transform: translateY(-3px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 440px) {
+            .student-check {
+                border-radius: 18px;
+                padding: 0.88rem 1rem;
+                flex-wrap: wrap;
+            }
+            .student-check-text {
+                flex-basis: calc(100% - 1.7rem);
+            }
+            .student-check-btns {
+                margin-left: auto;
+            }
+        }
+        /* ─────────────────────────────────────────────────── */
+
         .hero-visual {
             background:
                 linear-gradient(150deg, rgba(7, 20, 43, 0.82), rgba(16, 40, 76, 0.86)),
@@ -32,6 +146,24 @@
                 </div>
             </div>
         </section>
+
+        <!-- Student check bar -->
+        <div class="student-check-wrap">
+            <div class="student-check reveal" role="region" aria-label="Student portal access">
+                <i class="fas fa-graduation-cap student-check-icon" aria-hidden="true"></i>
+                <p class="student-check-text">Are you already a student?</p>
+                <div class="student-check-btns">
+                    <a href="https://plankton-app-5m7yt.ondigitalocean.app/"
+                       target="_blank"
+                       rel="noopener noreferrer"
+                       class="student-check-btn-yes">Yes</a>
+                    <button type="button" class="student-check-btn-no" id="student-check-no">No</button>
+                </div>
+            </div>
+            <p class="student-check-msg hidden" id="student-check-msg">
+                You can explore our courses and apply anytime.
+            </p>
+        </div>
 
         <section class="section-shell">
             <div class="section-head reveal">
@@ -226,6 +358,20 @@ document.addEventListener('DOMContentLoaded', function() {
     counters.forEach(counter => {
         countObserver.observe(counter);
     });
+
+    // Student check bar – No button
+    var studentNoBtn = document.getElementById('student-check-no');
+    var studentMsg = document.getElementById('student-check-msg');
+    if (studentNoBtn && studentMsg) {
+        studentNoBtn.addEventListener('click', function() {
+            studentMsg.classList.remove('hidden');
+            studentMsg.classList.add('show');
+            var contactSection = document.getElementById('contact');
+            if (contactSection) {
+                contactSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    }
 });
 </script>
 {% endblock %}
