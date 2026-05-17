@@ -729,6 +729,11 @@ def init_db():
 
 init_db()
 
+@app.route('/favicon.ico')
+def favicon():
+    return app.send_static_file('img/logo2.png')
+
+
 @app.route('/robots.txt')
 def robots_txt():
     content = (
