@@ -160,6 +160,7 @@ CONTENT_FIELDS = [
     {'key': 'nav_news', 'label': 'Menyu: Yangiliklar', 'group': 'Header', 'default': 'Yangiliklar', 'field_type': 'text'},
     {'key': 'nav_questions', 'label': 'Menyu: Savollar', 'group': 'Header', 'default': 'Savollar', 'field_type': 'text'},
     {'key': 'nav_testimonials', 'label': 'Menyu: Muvaffaqiyat hikoyalari', 'group': 'Header', 'default': 'Muvaffaqiyat Hikoyalari', 'field_type': 'text'},
+    {'key': 'nav_contact', 'label': 'Menyu: Aloqa (nav havolasi)', 'group': 'Header', 'default': 'Aloqa', 'field_type': 'text'},
     {'key': 'nav_contact_button', 'label': 'Header tugma matni', 'group': 'Header', 'default': "Biz bilan bog'lanish", 'field_type': 'text'},
 
     {'key': 'hero_main_title', 'label': 'Bosh sahifa hero title (typewriter)', 'group': 'Home', 'default': 'HAPPINESS IS IN SCIENCE', 'field_type': 'text'},
@@ -1506,6 +1507,8 @@ def update_student(student_id):
             return jsonify({'success': False, 'message': 'Ism kamida 2 belgidan iborat bo\'lishi kerak.'}), 400
     elif field == 'student_phone':
         value = normalize_phone(value)
+        if len(value) == 12 and value.startswith('998'):
+            value = value[3:]
         if not PHONE_RE.match(value):
             return jsonify({'success': False, 'message': 'Telefon 9 xonali bo\'lishi kerak.'}), 400
     elif field == 'dob':
@@ -1599,6 +1602,8 @@ def update_contact(contact_id):
             return jsonify({'success': False, 'message': 'Ism kamida 2 belgidan iborat bo\'lishi kerak.'}), 400
     elif field == 'phone':
         value = normalize_phone(value)
+        if len(value) == 12 and value.startswith('998'):
+            value = value[3:]
         if value and not PHONE_RE.match(value):
             return jsonify({'success': False, 'message': 'Telefon 9 xonali bo\'lishi kerak.'}), 400
     elif field == 'message':
