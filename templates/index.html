@@ -213,36 +213,6 @@
 {% endblock %}
 
 {% block content %}
-        <!-- Student gate modal (shown once per session until answered) -->
-        <div class="student-gate" id="student-gate" role="dialog" aria-modal="true" aria-labelledby="student-gate-title">
-            <div class="student-gate-card">
-                <div class="student-gate-accent"></div>
-                <div class="student-gate-body">
-                    <div class="student-gate-icon-wrap">
-                        <i class="fas fa-graduation-cap"></i>
-                    </div>
-                    <p class="student-gate-eyebrow">ICEBERG O'quv Markazi</p>
-                    <h2 class="student-gate-title" id="student-gate-title">Siz allaqachon bizning o'quvchimisiz?</h2>
-                    <p class="student-gate-sub">Shaxsiy kabinetingizga kirish uchun «Ha» ni tanlang yoki dasturlarimiz bilan tanishib chiqing.</p>
-                    <div class="student-gate-btns">
-                        <a href="https://plankton-app-5m7yt.ondigitalocean.app/"
-                           target="_blank"
-                           rel="noopener noreferrer"
-                           class="student-gate-yes"
-                           id="student-gate-yes">
-                            <i class="fas fa-arrow-right-to-bracket"></i>
-                            Ha — Shaxsiy kabinetga o'tish
-                        </a>
-                        <div class="student-gate-divider">YOKI</div>
-                        <button type="button" class="student-gate-no" id="student-gate-no">
-                            <i class="fas fa-compass"></i>
-                            Yo'q — Dasturlarni ko'rish
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
         <section class="hero-shell">
             <div class="hero-wrap">
                 <div class="hero-copy reveal">
@@ -500,4 +470,35 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 </script>
+{% endblock %}
+
+{% block modals %}
+<div class="student-gate" id="student-gate" role="dialog" aria-modal="true" aria-labelledby="student-gate-title">
+    <div class="student-gate-card">
+        <div class="student-gate-accent"></div>
+        <div class="student-gate-body">
+            <div class="student-gate-icon-wrap">
+                <i class="fas fa-graduation-cap"></i>
+            </div>
+            <p class="student-gate-eyebrow">ICEBERG O'quv Markazi</p>
+            <h2 class="student-gate-title" id="student-gate-title">Siz allaqachon bizning o'quvchimisiz?</h2>
+            <p class="student-gate-sub">Shaxsiy kabinetingizga kirish uchun «Ha» ni tanlang yoki dasturlarimiz bilan tanishib chiqing.</p>
+            <div class="student-gate-btns">
+                <a href="https://plankton-app-5m7yt.ondigitalocean.app/"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   class="student-gate-yes"
+                   id="student-gate-yes">
+                    <i class="fas fa-arrow-right-to-bracket"></i>
+                    Ha — Shaxsiy kabinetga o'tish
+                </a>
+                <div class="student-gate-divider">YOKI</div>
+                <button type="button" class="student-gate-no" id="student-gate-no">
+                    <i class="fas fa-compass"></i>
+                    Yo'q — Dasturlarni ko'rish
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
