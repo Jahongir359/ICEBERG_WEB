@@ -160,6 +160,7 @@ CONTENT_FIELDS = [
     {'key': 'nav_news', 'label': 'Menyu: Yangiliklar', 'group': 'Header', 'default': 'Yangiliklar', 'field_type': 'text'},
     {'key': 'nav_questions', 'label': 'Menyu: Savollar', 'group': 'Header', 'default': 'Savollar', 'field_type': 'text'},
     {'key': 'nav_testimonials', 'label': 'Menyu: Muvaffaqiyat hikoyalari', 'group': 'Header', 'default': 'Muvaffaqiyat Hikoyalari', 'field_type': 'text'},
+    {'key': 'nav_contact', 'label': 'Menyu: Aloqa (nav havolasi)', 'group': 'Header', 'default': 'Aloqa', 'field_type': 'text'},
     {'key': 'nav_contact_button', 'label': 'Header tugma matni', 'group': 'Header', 'default': "Biz bilan bog'lanish", 'field_type': 'text'},
 
     {'key': 'hero_main_title', 'label': 'Bosh sahifa hero title (typewriter)', 'group': 'Home', 'default': 'HAPPINESS IS IN SCIENCE', 'field_type': 'text'},
