@@ -1,6 +1,24 @@
 {% extends "base.html" %}
 
-{% block title %}Biz haqimizda - ICEBERG O'QUV MARKAZI{% endblock %}
+{% block title %}Biz Haqimizda | ICEBERG O'quv Markazi — Namangan{% endblock %}
+
+{% block meta_description %}<meta name="description" content="ICEBERG O'quv Markazi haqida bilib oling: bizning missiyamiz, jamoamiz va ta'lim falsafamiz. Namangan shahrida zamonaviy ta'lim markazi.">{% endblock %}
+
+{% block og_description %}<meta property="og:description" content="ICEBERG O'quv Markazi haqida bilib oling: bizning missiyamiz, jamoamiz va ta'lim falsafamiz. Namangan shahrida zamonaviy ta'lim markazi.">{% endblock %}
+{% block twitter_description %}<meta name="twitter:description" content="ICEBERG O'quv Markazi haqida bilib oling: bizning missiyamiz, jamoamiz va ta'lim falsafamiz. Namangan shahrida zamonaviy ta'lim markazi.">{% endblock %}
+
+{% block schema %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {"@type": "ListItem", "position": 1, "name": "Bosh sahifa", "item": "https://iceberglc.com/"},
+    {"@type": "ListItem", "position": 2, "name": "Biz haqimizda", "item": "https://iceberglc.com/about"}
+  ]
+}
+</script>
+{% endblock %}
 
 {% block styles %}
 {{ super() }}

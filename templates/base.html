@@ -3,7 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}{{ content('site_title', "ICEBERG O'QUV MARKAZI") }}{% endblock %}</title>
+    <title>{% block title %}ICEBERG O'quv Markazi | Ta'lim Markazi — Namangan{% endblock %}</title>
+
+    <!-- Primary Meta Tags -->
+    {% block meta_description %}<meta name="description" content="ICEBERG O'quv Markazi — IELTS, SAT tayyorgarlik, akademik repetitorlik va mentorlik dasturlari. Namangan, O'zbekiston. 500+ muvaffaqiyatli o'quvchi.">{% endblock %}
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+    <meta name="author" content="ICEBERG O'quv Markazi">
+    <link rel="canonical" href="https://iceberglc.com{{ request.path }}">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/logo.png') }}">
+    <link rel="apple-touch-icon" href="{{ url_for('static', filename='img/logo.png') }}">
+
+    <!-- Open Graph / Facebook / Telegram -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://iceberglc.com{{ request.path }}">
+    <meta property="og:site_name" content="ICEBERG O'quv Markazi">
+    <meta property="og:title" content="{{ self.title() }}">
+    {% block og_description %}<meta property="og:description" content="ICEBERG O'quv Markazi — IELTS, SAT tayyorgarlik, akademik repetitorlik va mentorlik dasturlari. Namangan, O'zbekiston.">{% endblock %}
+    <meta property="og:image" content="https://iceberglc.com/static/img/logo.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:locale" content="uz_UZ">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ self.title() }}">
+    {% block twitter_description %}<meta name="twitter:description" content="ICEBERG O'quv Markazi — IELTS, SAT tayyorgarlik, akademik repetitorlik va mentorlik dasturlari. Namangan, O'zbekiston.">{% endblock %}
+    <meta name="twitter:image" content="https://iceberglc.com/static/img/logo.png">
+
+    <!-- JSON-LD: WebSite -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "ICEBERG O'quv Markazi",
+      "alternateName": "ICEBERG Study Center",
+      "url": "https://iceberglc.com",
+      "description": "IELTS, SAT tayyorgarlik, akademik repetitorlik va mentorlik dasturlari bilan o'quvchilarni muvaffaqiyatga tayyorlovchi zamonaviy ta'lim markazi"
+    }
+    </script>
+    {% block schema %}{% endblock %}
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">

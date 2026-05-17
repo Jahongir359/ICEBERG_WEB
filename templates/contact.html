@@ -1,6 +1,62 @@
 {% extends "base.html" %}
 
-{% block title %}Aloqa - ICEBERG O'QUV MARKAZI{% endblock %}
+{% block title %}Aloqa | ICEBERG O'quv Markazi — Namangan{% endblock %}
+
+{% block meta_description %}<meta name="description" content="ICEBERG O'quv Markazi bilan bog'laning. Manzil: Namangan, O'zbekiston. Tel: +998 93 946 16 99. Email: iceberg.edu.center@gmail.com. Bepul maslahat uchun murojaat qiling.">{% endblock %}
+
+{% block og_description %}<meta property="og:description" content="ICEBERG O'quv Markazi bilan bog'laning. Namangan, O'zbekiston. Tel: +998 93 946 16 99. Bepul maslahat uchun murojaat qiling.">{% endblock %}
+{% block twitter_description %}<meta name="twitter:description" content="ICEBERG O'quv Markazi bilan bog'laning. Namangan, O'zbekiston. Tel: +998 93 946 16 99. Bepul maslahat uchun murojaat qiling.">{% endblock %}
+
+{% block schema %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  "name": "ICEBERG O'quv Markazi",
+  "alternateName": "ICEBERG Study Center",
+  "@id": "https://iceberglc.com/#localbusiness",
+  "url": "https://iceberglc.com",
+  "logo": "https://iceberglc.com/static/img/logo.png",
+  "image": "https://iceberglc.com/static/img/logo.png",
+  "description": "IELTS, SAT tayyorgarlik, akademik repetitorlik va mentorlik dasturlari",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "Uychi ko'chasi",
+    "addressLocality": "Namangan",
+    "addressRegion": "Namangan viloyati",
+    "postalCode": "160000",
+    "addressCountry": "UZ"
+  },
+  "geo": {
+    "@type": "GeoCoordinates",
+    "latitude": "41.0",
+    "longitude": "71.67"
+  },
+  "telephone": "+998939461699",
+  "email": "iceberg.edu.center@gmail.com",
+  "openingHours": "Mo-Sa 08:00-20:00",
+  "priceRange": "$$",
+  "currenciesAccepted": "UZS",
+  "paymentAccepted": "Cash, Bank Transfer",
+  "contactPoint": {
+    "@type": "ContactPoint",
+    "telephone": "+998939461699",
+    "contactType": "customer service",
+    "availableLanguage": ["Uzbek", "Russian", "English"]
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {"@type": "ListItem", "position": 1, "name": "Bosh sahifa", "item": "https://iceberglc.com/"},
+    {"@type": "ListItem", "position": 2, "name": "Aloqa", "item": "https://iceberglc.com/contact"}
+  ]
+}
+</script>
+{% endblock %}
 
 {% block styles %}
 {{ super() }}

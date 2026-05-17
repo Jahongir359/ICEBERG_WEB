@@ -1,6 +1,24 @@
 {% extends "base.html" %}
 
-{% block title %}Bizning Dasturlarimiz - ICEBERG O'QUV MARKAZI{% endblock %}
+{% block title %}Dasturlar | IELTS, SAT, Repetitorlik — ICEBERG O'quv Markazi{% endblock %}
+
+{% block meta_description %}<meta name="description" content="ICEBERG O'quv Markazi dasturlari: IELTS va SAT tayyorgarlik, akademik repetitorlik (matematika, fan, ingliz tili) va shaxsiy mentorlik. Namangan, O'zbekiston.">{% endblock %}
+
+{% block og_description %}<meta property="og:description" content="ICEBERG dasturlari: IELTS va SAT tayyorgarlik, akademik repetitorlik va shaxsiy mentorlik. Namangan, O'zbekiston.">{% endblock %}
+{% block twitter_description %}<meta name="twitter:description" content="ICEBERG dasturlari: IELTS va SAT tayyorgarlik, akademik repetitorlik va shaxsiy mentorlik. Namangan, O'zbekiston.">{% endblock %}
+
+{% block schema %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {"@type": "ListItem", "position": 1, "name": "Bosh sahifa", "item": "https://iceberglc.com/"},
+    {"@type": "ListItem", "position": 2, "name": "Dasturlar", "item": "https://iceberglc.com/our_programs"}
+  ]
+}
+</script>
+{% endblock %}
 
 {% block styles %}
 {{ super() }}

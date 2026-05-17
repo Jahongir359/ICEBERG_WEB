@@ -729,6 +729,50 @@ def init_db():
 
 init_db()
 
+@app.route('/robots.txt')
+def robots_txt():
+    content = (
+        "User-agent: *\n"
+        "Allow: /\n"
+        "\n"
+        "Disallow: /admin\n"
+        "Disallow: /admin/\n"
+        "Disallow: /portal\n"
+        "Disallow: /portal/\n"
+        "Disallow: /students\n"
+        "Disallow: /contacts_list\n"
+        "\n"
+        "Sitemap: https://iceberglc.com/sitemap.xml\n"
+    )
+    return Response(content, mimetype='text/plain')
+
+
+@app.route('/sitemap.xml')
+def sitemap_xml():
+    from datetime import date as _date
+    today = _date.today().isoformat()
+    static_pages = [
+        ('https://iceberglc.com/', '1.0', 'daily'),
+        ('https://iceberglc.com/about', '0.8', 'monthly'),
+        ('https://iceberglc.com/our_programs', '0.9', 'weekly'),
+        ('https://iceberglc.com/news', '0.9', 'daily'),
+        ('https://iceberglc.com/questions', '0.7', 'monthly'),
+        ('https://iceberglc.com/contact', '0.8', 'monthly'),
+        ('https://iceberglc.com/register', '0.8', 'monthly'),
+    ]
+    lines = ['<?xml version="1.0" encoding="UTF-8"?>',
+             '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
+    for loc, priority, changefreq in static_pages:
+        lines.append('  <url>')
+        lines.append(f'    <loc>{loc}</loc>')
+        lines.append(f'    <lastmod>{today}</lastmod>')
+        lines.append(f'    <changefreq>{changefreq}</changefreq>')
+        lines.append(f'    <priority>{priority}</priority>')
+        lines.append('  </url>')
+    lines.append('</urlset>')
+    return Response('\n'.join(lines), mimetype='application/xml')
+
+
 @app.route('/')
 def index():
     return render_template('index.html')
