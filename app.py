@@ -1506,6 +1506,8 @@ def update_student(student_id):
             return jsonify({'success': False, 'message': 'Ism kamida 2 belgidan iborat bo\'lishi kerak.'}), 400
     elif field == 'student_phone':
         value = normalize_phone(value)
+        if len(value) == 12 and value.startswith('998'):
+            value = value[3:]
         if not PHONE_RE.match(value):
             return jsonify({'success': False, 'message': 'Telefon 9 xonali bo\'lishi kerak.'}), 400
     elif field == 'dob':
@@ -1599,6 +1601,8 @@ def update_contact(contact_id):
             return jsonify({'success': False, 'message': 'Ism kamida 2 belgidan iborat bo\'lishi kerak.'}), 400
     elif field == 'phone':
         value = normalize_phone(value)
+        if len(value) == 12 and value.startswith('998'):
+            value = value[3:]
         if value and not PHONE_RE.match(value):
             return jsonify({'success': False, 'message': 'Telefon 9 xonali bo\'lishi kerak.'}), 400
     elif field == 'message':
