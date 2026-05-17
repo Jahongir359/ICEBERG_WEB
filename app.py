@@ -60,7 +60,7 @@ def build_admin_login_slug():
 
 
 ADMIN_LOGIN_SLUG = build_admin_login_slug()
-DATABASE_PATH = os.environ.get('DATABASE_PATH', 'database.db')
+DATABASE_PATH = os.environ.get('DATABASE_PATH', os.path.join(app.root_path, 'database.db'))
 ALLOWED_IMAGE_EXTENSIONS = {'.jpg', '.jpeg', '.png', '.webp', '.gif'}
 ALLOWED_NEWS_IMAGE_EXTENSIONS = {'.jpg', '.jpeg', '.png', '.webp', '.gif'}
 ALLOWED_NEWS_VIDEO_EXTENSIONS = {'.mp4', '.webm', '.mov', '.m4v'}

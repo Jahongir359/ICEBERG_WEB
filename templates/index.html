@@ -5,115 +5,201 @@
     <style>
         html { scroll-behavior: smooth; }
 
-        /* ── Student check bar ─────────────────────────────── */
-        .student-check-wrap {
-            width: min(640px, 100% - 2.2rem);
-            margin: 1.6rem auto 0;
+        /* ── Student gate modal ───────────────────────────── */
+        .student-gate {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.25rem;
+            background: rgba(7, 20, 43, 0.72);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            animation: gateIn 0.38s cubic-bezier(0.16, 1, 0.3, 1) both;
         }
 
-        .student-check {
+        .student-gate.gate-out {
+            animation: gateOut 0.32s ease forwards;
+        }
+
+        @keyframes gateIn {
+            from { opacity: 0; }
+            to   { opacity: 1; }
+        }
+
+        @keyframes gateOut {
+            from { opacity: 1; }
+            to   { opacity: 0; }
+        }
+
+        .student-gate-card {
+            position: relative;
+            background: #ffffff;
+            border-radius: 24px;
+            box-shadow: 0 32px 80px rgba(7, 20, 43, 0.38), 0 4px 16px rgba(7, 20, 43, 0.14);
+            max-width: 460px;
+            width: 100%;
+            overflow: hidden;
+            animation: cardIn 0.42s cubic-bezier(0.16, 1, 0.3, 1) both;
+            animation-delay: 0.06s;
+        }
+
+        @keyframes cardIn {
+            from { opacity: 0; transform: translateY(28px) scale(0.96); }
+            to   { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .student-gate-accent {
+            height: 6px;
+            background: linear-gradient(90deg, #0d2a50 0%, #2f6bac 50%, #42d6c4 100%);
+        }
+
+        .student-gate-body {
+            padding: 2.5rem 2.25rem 2.25rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 0.5rem;
+        }
+
+        .student-gate-icon-wrap {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(13, 42, 80, 0.08) 0%, rgba(47, 107, 172, 0.12) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 0.5rem;
+            flex-shrink: 0;
+        }
+
+        .student-gate-icon-wrap i {
+            font-size: 2rem;
+            background: linear-gradient(135deg, #0d2a50, #2f6bac);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .student-gate-eyebrow {
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--sky-500, #3ba3ff);
+            margin-bottom: 0.1rem;
+        }
+
+        .student-gate-title {
+            font-family: 'Fraunces', serif;
+            font-size: clamp(1.35rem, 5vw, 1.7rem);
+            font-weight: 700;
+            color: var(--ink-900, #07142b);
+            line-height: 1.22;
+            margin: 0.15rem 0 0.6rem;
+        }
+
+        .student-gate-sub {
+            font-size: 0.875rem;
+            color: #6b7280;
+            line-height: 1.55;
+            max-width: 320px;
+            margin-bottom: 0.4rem;
+        }
+
+        .student-gate-btns {
+            display: flex;
+            flex-direction: column;
+            gap: 0.65rem;
+            width: 100%;
+            margin-top: 0.8rem;
+        }
+
+        .student-gate-yes {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.55rem;
+            padding: 0.9rem 1.4rem;
+            border-radius: 14px;
+            background: linear-gradient(100deg, #0d2a50 0%, #2f6bac 100%);
+            color: #ffffff;
+            font-size: 0.95rem;
+            font-weight: 700;
+            font-family: inherit;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 8px 24px rgba(13, 42, 80, 0.3);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .student-gate-yes:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 32px rgba(13, 42, 80, 0.4);
+            color: #ffffff;
+        }
+
+        .student-gate-yes i {
+            font-size: 1rem;
+            opacity: 0.85;
+        }
+
+        .student-gate-no {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.45rem;
+            padding: 0.82rem 1.4rem;
+            border-radius: 14px;
+            background: rgba(13, 42, 80, 0.05);
+            color: #374151;
+            font-size: 0.9rem;
+            font-weight: 600;
+            font-family: inherit;
+            border: 1.5px solid rgba(13, 42, 80, 0.12);
+            cursor: pointer;
+            transition: background 0.18s ease, transform 0.18s ease, border-color 0.18s ease;
+        }
+
+        .student-gate-no:hover {
+            background: rgba(13, 42, 80, 0.1);
+            border-color: rgba(13, 42, 80, 0.22);
+            transform: translateY(-1px);
+        }
+
+        .student-gate-divider {
             display: flex;
             align-items: center;
             gap: 0.75rem;
-            background: rgba(255, 255, 255, 0.88);
-            border: 1px solid rgba(59, 163, 255, 0.18);
-            border-radius: 999px;
-            padding: 0.65rem 0.7rem 0.65rem 1.15rem;
-            box-shadow: 0 8px 28px rgba(7, 20, 43, 0.08), 0 1px 4px rgba(7, 20, 43, 0.04);
-            backdrop-filter: blur(12px);
-            transition: box-shadow 0.22s ease;
+            width: 100%;
+            color: #d1d5db;
+            font-size: 0.75rem;
+            letter-spacing: 0.06em;
         }
 
-        .student-check:hover {
-            box-shadow: 0 12px 36px rgba(7, 20, 43, 0.12), 0 2px 6px rgba(7, 20, 43, 0.05);
-        }
-
-        .student-check-icon {
-            font-size: 0.95rem;
-            color: var(--sky-500);
-            flex-shrink: 0;
-        }
-
-        .student-check-text {
-            font-size: 0.875rem;
-            font-weight: 600;
-            color: var(--ink-800);
+        .student-gate-divider::before,
+        .student-gate-divider::after {
+            content: '';
             flex: 1;
+            height: 1px;
+            background: #e5e7eb;
         }
 
-        .student-check-btns {
-            display: flex;
-            gap: 0.4rem;
-            flex-shrink: 0;
-        }
-
-        .student-check-btn-yes,
-        .student-check-btn-no {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            padding: 0.42rem 1.05rem;
-            border-radius: 999px;
-            font-size: 0.8rem;
-            font-weight: 700;
-            letter-spacing: 0.01em;
-            cursor: pointer;
-            border: none;
-            font-family: inherit;
-            text-decoration: none;
-            transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
-        }
-
-        .student-check-btn-yes {
-            background: linear-gradient(95deg, #0d2a50 0%, #2f6bac 100%);
-            color: #ffffff;
-            box-shadow: 0 4px 14px rgba(16, 40, 76, 0.25);
-        }
-
-        .student-check-btn-yes:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 6px 20px rgba(16, 40, 76, 0.34);
-        }
-
-        .student-check-btn-no {
-            background: rgba(24, 57, 102, 0.07);
-            color: var(--ink-700);
-            border: 1px solid rgba(24, 57, 102, 0.14);
-        }
-
-        .student-check-btn-no:hover {
-            background: rgba(24, 57, 102, 0.13);
-            transform: translateY(-1px);
-        }
-
-        .student-check-msg {
-            text-align: center;
-            font-size: 0.8rem;
-            color: var(--text-soft);
-            margin-top: 0.5rem;
-            padding: 0 1rem;
-        }
-
-        .student-check-msg.show {
-            animation: studentMsgIn 0.28s ease;
-        }
-
-        @keyframes studentMsgIn {
-            from { opacity: 0; transform: translateY(-3px); }
-            to   { opacity: 1; transform: translateY(0); }
-        }
-
-        @media (max-width: 440px) {
-            .student-check {
-                border-radius: 18px;
-                padding: 0.88rem 1rem;
-                flex-wrap: wrap;
+        @media (max-width: 480px) {
+            .student-gate-body {
+                padding: 2rem 1.4rem 1.75rem;
             }
-            .student-check-text {
-                flex-basis: calc(100% - 1.7rem);
+            .student-gate-icon-wrap {
+                width: 60px;
+                height: 60px;
             }
-            .student-check-btns {
-                margin-left: auto;
+            .student-gate-icon-wrap i {
+                font-size: 1.65rem;
             }
         }
         /* ─────────────────────────────────────────────────── */
@@ -127,6 +213,36 @@
 {% endblock %}
 
 {% block content %}
+        <!-- Student gate modal (shown once per session until answered) -->
+        <div class="student-gate" id="student-gate" role="dialog" aria-modal="true" aria-labelledby="student-gate-title">
+            <div class="student-gate-card">
+                <div class="student-gate-accent"></div>
+                <div class="student-gate-body">
+                    <div class="student-gate-icon-wrap">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <p class="student-gate-eyebrow">ICEBERG O'quv Markazi</p>
+                    <h2 class="student-gate-title" id="student-gate-title">Siz allaqachon bizning o'quvchimisiz?</h2>
+                    <p class="student-gate-sub">Shaxsiy kabinetingizga kirish uchun «Ha» ni tanlang yoki dasturlarimiz bilan tanishib chiqing.</p>
+                    <div class="student-gate-btns">
+                        <a href="https://plankton-app-5m7yt.ondigitalocean.app/"
+                           target="_blank"
+                           rel="noopener noreferrer"
+                           class="student-gate-yes"
+                           id="student-gate-yes">
+                            <i class="fas fa-arrow-right-to-bracket"></i>
+                            Ha — Shaxsiy kabinetga o'tish
+                        </a>
+                        <div class="student-gate-divider">YOKI</div>
+                        <button type="button" class="student-gate-no" id="student-gate-no">
+                            <i class="fas fa-compass"></i>
+                            Yo'q — Dasturlarni ko'rish
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <section class="hero-shell">
             <div class="hero-wrap">
                 <div class="hero-copy reveal">
@@ -146,24 +262,6 @@
                 </div>
             </div>
         </section>
-
-        <!-- Student check bar -->
-        <div class="student-check-wrap">
-            <div class="student-check reveal" role="region" aria-label="Student portal access">
-                <i class="fas fa-graduation-cap student-check-icon" aria-hidden="true"></i>
-                <p class="student-check-text">Are you already a student?</p>
-                <div class="student-check-btns">
-                    <a href="https://plankton-app-5m7yt.ondigitalocean.app/"
-                       target="_blank"
-                       rel="noopener noreferrer"
-                       class="student-check-btn-yes">Yes</a>
-                    <button type="button" class="student-check-btn-no" id="student-check-no">No</button>
-                </div>
-            </div>
-            <p class="student-check-msg hidden" id="student-check-msg">
-                You can explore our courses and apply anytime.
-            </p>
-        </div>
 
         <section class="section-shell">
             <div class="section-head reveal">
@@ -359,17 +457,45 @@ document.addEventListener('DOMContentLoaded', function() {
         countObserver.observe(counter);
     });
 
-    // Student check bar – No button
-    var studentNoBtn = document.getElementById('student-check-no');
-    var studentMsg = document.getElementById('student-check-msg');
-    if (studentNoBtn && studentMsg) {
-        studentNoBtn.addEventListener('click', function() {
-            studentMsg.classList.remove('hidden');
-            studentMsg.classList.add('show');
-            var contactSection = document.getElementById('contact');
-            if (contactSection) {
-                contactSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }
+    // Student gate modal – required once per session
+    var gate = document.getElementById('student-gate');
+    var gateYes = document.getElementById('student-gate-yes');
+    var gateNo = document.getElementById('student-gate-no');
+
+    function closeGate() {
+        sessionStorage.setItem('studentGateAnswered', '1');
+        if (gate) {
+            gate.classList.add('gate-out');
+            gate.addEventListener('animationend', function () {
+                gate.style.display = 'none';
+                document.body.style.overflow = '';
+            }, { once: true });
+        }
+    }
+
+    if (gate) {
+        if (sessionStorage.getItem('studentGateAnswered')) {
+            gate.style.display = 'none';
+        } else {
+            document.body.style.overflow = 'hidden';
+        }
+    }
+
+    if (gateYes) {
+        gateYes.addEventListener('click', function () {
+            closeGate();
+        });
+    }
+
+    if (gateNo) {
+        gateNo.addEventListener('click', function () {
+            closeGate();
+            setTimeout(function () {
+                var programsSection = document.getElementById('programs');
+                if (programsSection) {
+                    programsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            }, 340);
         });
     }
 });

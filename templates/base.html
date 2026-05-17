@@ -382,6 +382,14 @@
                 }
             });
 
+            // Immediately reveal elements already visible in the viewport to prevent CSS flash
+            document.querySelectorAll('.reveal').forEach(function (el) {
+                var r = el.getBoundingClientRect();
+                if (r.top < window.innerHeight && r.bottom > 0) {
+                    el.classList.add('visible');
+                }
+            });
+
             const cookieLangRaw = getCookieValue('googtrans');
             const cookieLang = cookieLangRaw && cookieLangRaw.split('/').length >= 3 ? cookieLangRaw.split('/')[2] : '';
             const preferredLang = localStorage.getItem('preferredLang') || cookieLang || 'uz';
