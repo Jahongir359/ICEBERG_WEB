@@ -86,7 +86,6 @@
                 <a href="{{ url_for('our_programs') }}" class="desktop-link {{ 'active' if current_endpoint == 'our_programs' else '' }}">{{ content('nav_programs', 'Dasturlar') }}</a>
                 <a href="{{ url_for('news') }}" class="desktop-link {{ 'active' if current_endpoint == 'news' else '' }}">{{ content('nav_news', 'Yangiliklar') }}</a>
                 <a href="{{ url_for('questions') }}" class="desktop-link {{ 'active' if current_endpoint == 'questions' else '' }}">{{ content('nav_questions', 'Savollar') }}</a>
-                <a href="{{ url_for('index', _anchor='testimonials') }}" class="desktop-link {{ 'active' if current_endpoint == 'index' else '' }}">{{ content('nav_testimonials', 'Muvaffaqiyat Hikoyalari') }}</a>
                 <a href="{{ url_for('contact') }}" class="desktop-link {{ 'active' if current_endpoint == 'contact' else '' }}">{{ content('nav_contact', 'Aloqa') }}</a>
                 <select id="desktop-language-select" class="lang-select" aria-label="Tilni tanlash">
                     <option value="uz">UZ</option>
@@ -95,7 +94,17 @@
                 </select>
             </div>
 
-            <a href="{{ url_for('contact') }}" class="header-cta">{{ content('nav_contact_button', "Biz bilan bog'lanish") }}</a>
+            <div class="nav-cta-group">
+                <a href="https://plankton-app-5m7yt.ondigitalocean.app/"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   class="nav-login-btn"
+                   aria-label="Student portal login">
+                    <i class="fas fa-arrow-right-to-bracket" aria-hidden="true"></i>
+                    Login
+                </a>
+                <a href="{{ url_for('register') }}" class="header-cta">Ro'yxatdan O'tish</a>
+            </div>
         </nav>
 
         <div class="mobile-nav-strip md:hidden">
@@ -124,6 +133,19 @@
             <h2 class="mobile-panel-title">{{ content('mobile_menu_title', 'Menyu') }}</h2>
         </div>
         <div class="mobile-panel-body">
+            <div class="mobile-portal-strip">
+                <a href="https://plankton-app-5m7yt.ondigitalocean.app/"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   class="mobile-login-btn">
+                    <i class="fas fa-arrow-right-to-bracket" aria-hidden="true"></i>
+                    Login
+                </a>
+                <a href="{{ url_for('register') }}" class="mobile-register-btn">
+                    <i class="fas fa-user-plus" aria-hidden="true"></i>
+                    Ro'yxatdan O'tish
+                </a>
+            </div>
             <p class="mobile-panel-group-title">Sahifalar</p>
             <a href="{{ url_for('index') }}" class="mobile-link {{ 'active' if current_endpoint == 'index' else '' }}">
                 <svg class="w-5 h-5 text-blue-700" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
@@ -154,18 +176,15 @@
                 {{ content('nav_contact', 'Aloqa') }}
             </a>
             <div class="pt-4">
-                <p class="mobile-panel-group-title">Til va Aloqa</p>
+                <p class="mobile-panel-group-title">Til</p>
                 <div class="mb-3">
-                    <label for="mobile-language-select" class="block text-xs text-slate-500 mb-2">Til</label>
+                    <label for="mobile-language-select" class="block text-xs text-slate-500 mb-2">Tilni tanlang</label>
                     <select id="mobile-language-select" class="lang-select w-full" aria-label="Tilni tanlash (mobil)">
                         <option value="uz">UZ</option>
                         <option value="ru">RU</option>
                         <option value="en">EN</option>
                     </select>
                 </div>
-                <a href="{{ url_for('contact') }}" class="mobile-cta">
-                    {{ content('nav_contact_button', "Biz bilan bog'lanish") }}
-                </a>
             </div>
         </div>
     </div>
@@ -193,7 +212,8 @@
                         <li><a href="{{ url_for('our_programs') }}" class="footer-link">{{ content('nav_programs', 'Dasturlar') }}</a></li>
                         <li><a href="{{ url_for('news') }}" class="footer-link">{{ content('nav_news', 'Yangiliklar') }}</a></li>
                         <li><a href="{{ url_for('questions') }}" class="footer-link">{{ content('nav_questions', 'Savollar') }}</a></li>
-                        <li><a href="{{ url_for('contact') }}" class="footer-link">{{ content('nav_contact_button', "Biz bilan bog'lanish") }}</a></li>
+                        <li><a href="{{ url_for('register') }}" class="footer-link">Ro'yxatdan O'tish</a></li>
+                        <li><a href="{{ url_for('contact') }}" class="footer-link">{{ content('nav_contact', 'Aloqa') }}</a></li>
                     </ul>
                 </div>
 

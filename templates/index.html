@@ -40,38 +40,10 @@
     "@type": "OfferCatalog",
     "name": "Ta'lim Dasturlari",
     "itemListElement": [
-      {
-        "@type": "Offer",
-        "itemOffered": {
-          "@type": "Course",
-          "name": "IELTS Tayyorgarlik",
-          "description": "IELTS imtihoniga strategik tayyorgarlik kursi"
-        }
-      },
-      {
-        "@type": "Offer",
-        "itemOffered": {
-          "@type": "Course",
-          "name": "SAT Tayyorgarlik",
-          "description": "SAT imtihoniga tayyorgarlik kursi"
-        }
-      },
-      {
-        "@type": "Offer",
-        "itemOffered": {
-          "@type": "Course",
-          "name": "Akademik Repetitorlik",
-          "description": "Matematika, fan va ingliz tilida 1-on-1 repetitorlik"
-        }
-      },
-      {
-        "@type": "Offer",
-        "itemOffered": {
-          "@type": "Course",
-          "name": "Akademik Mentorlik",
-          "description": "Shaxsiy yo'l xaritasi va mentorlik dasturi"
-        }
-      }
+      {"@type": "Offer", "itemOffered": {"@type": "Course", "name": "IELTS Tayyorgarlik", "description": "IELTS imtihoniga strategik tayyorgarlik kursi"}},
+      {"@type": "Offer", "itemOffered": {"@type": "Course", "name": "SAT Tayyorgarlik", "description": "SAT imtihoniga tayyorgarlik kursi"}},
+      {"@type": "Offer", "itemOffered": {"@type": "Course", "name": "Akademik Repetitorlik", "description": "Matematika, fan va ingliz tilida 1-on-1 repetitorlik"}},
+      {"@type": "Offer", "itemOffered": {"@type": "Course", "name": "Akademik Mentorlik", "description": "Shaxsiy yo'l xaritasi va mentorlik dasturi"}}
     ]
   }
 }
@@ -83,210 +55,43 @@
     <style>
         html { scroll-behavior: smooth; }
 
-        /* ── Student gate modal ───────────────────────────── */
-        .student-gate {
-            position: fixed;
-            inset: 0;
-            z-index: 9999;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 1.25rem;
-            background: rgba(7, 20, 43, 0.72);
-            backdrop-filter: blur(14px);
-            -webkit-backdrop-filter: blur(14px);
-            animation: gateIn 0.38s cubic-bezier(0.16, 1, 0.3, 1) both;
-        }
-
-        .student-gate.gate-out {
-            animation: gateOut 0.32s ease forwards;
-        }
-
-        @keyframes gateIn {
-            from { opacity: 0; }
-            to   { opacity: 1; }
-        }
-
-        @keyframes gateOut {
-            from { opacity: 1; }
-            to   { opacity: 0; }
-        }
-
-        .student-gate-card {
-            position: relative;
-            background: #ffffff;
-            border-radius: 24px;
-            box-shadow: 0 32px 80px rgba(7, 20, 43, 0.38), 0 4px 16px rgba(7, 20, 43, 0.14);
-            max-width: 460px;
-            width: 100%;
-            overflow: hidden;
-            animation: cardIn 0.42s cubic-bezier(0.16, 1, 0.3, 1) both;
-            animation-delay: 0.06s;
-        }
-
-        @keyframes cardIn {
-            from { opacity: 0; transform: translateY(28px) scale(0.96); }
-            to   { opacity: 1; transform: translateY(0) scale(1); }
-        }
-
-        .student-gate-accent {
-            height: 6px;
-            background: linear-gradient(90deg, #0d2a50 0%, #2f6bac 50%, #42d6c4 100%);
-        }
-
-        .student-gate-body {
-            padding: 2.5rem 2.25rem 2.25rem;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            gap: 0.5rem;
-        }
-
-        .student-gate-icon-wrap {
-            width: 72px;
-            height: 72px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, rgba(13, 42, 80, 0.08) 0%, rgba(47, 107, 172, 0.12) 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 0.5rem;
-            flex-shrink: 0;
-        }
-
-        .student-gate-icon-wrap i {
-            font-size: 2rem;
-            background: linear-gradient(135deg, #0d2a50, #2f6bac);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .student-gate-eyebrow {
-            font-size: 0.7rem;
-            font-weight: 700;
-            letter-spacing: 0.12em;
-            text-transform: uppercase;
-            color: var(--sky-500, #3ba3ff);
-            margin-bottom: 0.1rem;
-        }
-
-        .student-gate-title {
-            font-family: 'Fraunces', serif;
-            font-size: clamp(1.35rem, 5vw, 1.7rem);
-            font-weight: 700;
-            color: var(--ink-900, #07142b);
-            line-height: 1.22;
-            margin: 0.15rem 0 0.6rem;
-        }
-
-        .student-gate-sub {
-            font-size: 0.875rem;
-            color: #6b7280;
-            line-height: 1.55;
-            max-width: 320px;
-            margin-bottom: 0.4rem;
-        }
-
-        .student-gate-btns {
-            display: flex;
-            flex-direction: column;
-            gap: 0.65rem;
-            width: 100%;
-            margin-top: 0.8rem;
-        }
-
-        .student-gate-yes {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.55rem;
-            padding: 0.9rem 1.4rem;
-            border-radius: 14px;
-            background: linear-gradient(100deg, #0d2a50 0%, #2f6bac 100%);
-            color: #ffffff;
-            font-size: 0.95rem;
-            font-weight: 700;
-            font-family: inherit;
-            text-decoration: none;
-            border: none;
-            cursor: pointer;
-            box-shadow: 0 8px 24px rgba(13, 42, 80, 0.3);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-
-        .student-gate-yes:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 12px 32px rgba(13, 42, 80, 0.4);
-            color: #ffffff;
-        }
-
-        .student-gate-yes i {
-            font-size: 1rem;
-            opacity: 0.85;
-        }
-
-        .student-gate-no {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.45rem;
-            padding: 0.82rem 1.4rem;
-            border-radius: 14px;
-            background: rgba(13, 42, 80, 0.05);
-            color: #374151;
-            font-size: 0.9rem;
-            font-weight: 600;
-            font-family: inherit;
-            border: 1.5px solid rgba(13, 42, 80, 0.12);
-            cursor: pointer;
-            transition: background 0.18s ease, transform 0.18s ease, border-color 0.18s ease;
-        }
-
-        .student-gate-no:hover {
-            background: rgba(13, 42, 80, 0.1);
-            border-color: rgba(13, 42, 80, 0.22);
-            transform: translateY(-1px);
-        }
-
-        .student-gate-divider {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            width: 100%;
-            color: #d1d5db;
-            font-size: 0.75rem;
-            letter-spacing: 0.06em;
-        }
-
-        .student-gate-divider::before,
-        .student-gate-divider::after {
-            content: '';
-            flex: 1;
-            height: 1px;
-            background: #e5e7eb;
-        }
-
-        @media (max-width: 480px) {
-            .student-gate-body {
-                padding: 2rem 1.4rem 1.75rem;
-            }
-            .student-gate-icon-wrap {
-                width: 60px;
-                height: 60px;
-            }
-            .student-gate-icon-wrap i {
-                font-size: 1.65rem;
-            }
-        }
-        /* ─────────────────────────────────────────────────── */
-
         .hero-visual {
             background:
                 linear-gradient(150deg, rgba(7, 20, 43, 0.82), rgba(16, 40, 76, 0.86)),
                 url('{{ asset_url("index_hero_bg", "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?q=80&w=2070&auto=format&fit=crop") }}') center/cover;
         }
+
+        /* ── Login hint strip below hero CTAs ────────────────── */
+        .hero-login-strip {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 1.1rem;
+            flex-wrap: wrap;
+        }
+
+        .hero-login-hint {
+            font-size: 0.82rem;
+            color: rgba(255, 255, 255, 0.65);
+            margin: 0;
+        }
+
+        .hero-login-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: rgba(255, 255, 255, 0.88);
+            text-decoration: underline;
+            text-underline-offset: 3px;
+            transition: color 0.18s ease;
+        }
+
+        .hero-login-link:hover {
+            color: #ffffff;
+        }
+        /* ──────────────────────────────────────────────────────── */
     </style>
 {% endblock %}
 
@@ -295,13 +100,23 @@
             <div class="hero-wrap">
                 <div class="hero-copy reveal">
                     <span class="hero-kicker">Iceberg Study Center</span>
-                    <h1 id="typewriter" class="hero-title"></h1>
+                    <h1 id="typewriter" class="hero-title" aria-label="{{ content('hero_main_title', 'HAPPINESS IS IN SCIENCE') }}"></h1>
                     <p class="hero-desc">
                         {{ content('hero_main_subtitle', "Fundamental bilimlar - har qanday akademik cho'qqini zabt etishning kalitidir.") }}
                     </p>
                     <div class="hero-actions">
-                        <a href="{{ url_for('contact') }}" class="btn-main">{{ content('hero_main_cta', 'Maslaxatlar uchun aloqa bo`limi') }}</a>
-                        <a href="{{ url_for('our_programs') }}" class="btn-soft">Dasturlarni ko'rish</a>
+                        <a href="{{ url_for('contact') }}" class="btn-main">{{ content('hero_main_cta', "Maslahat olish") }}</a>
+                        <a href="{{ url_for('register') }}" class="btn-soft">Ro'yxatdan O'tish</a>
+                    </div>
+                    <div class="hero-login-strip">
+                        <span class="hero-login-hint">Allaqachon o'quvchimisiz?</span>
+                        <a href="https://plankton-app-5m7yt.ondigitalocean.app/"
+                           target="_blank"
+                           rel="noopener noreferrer"
+                           class="hero-login-link">
+                            <i class="fas fa-arrow-right-to-bracket" aria-hidden="true"></i>
+                            Login
+                        </a>
                     </div>
                 </div>
                 <div class="hero-visual reveal">
@@ -364,17 +179,17 @@
                 <article class="program-card reveal">
                     <h3>English IELTS, SAT</h3>
                     <p>Muvaffaqiyat poydevori: IELTS va SAT imtihonlariga strategik tayyorgarlik.</p>
-                    <a href="{{ url_for('our_programs') }}" class="program-link">Batafsil -></a>
+                    <a href="{{ url_for('our_programs') }}" class="program-link">Batafsil &rarr;</a>
                 </article>
                 <article class="program-card reveal">
                     <h3>Akademik Repetitorlik</h3>
                     <p>Matematika, fan va ingliz tilida 1-on-1 qo'llab-quvvatlash orqali mustahkamlash.</p>
-                    <a href="{{ url_for('our_programs') }}" class="program-link">Batafsil -></a>
+                    <a href="{{ url_for('our_programs') }}" class="program-link">Batafsil &rarr;</a>
                 </article>
                 <article class="program-card reveal">
                     <h3>Akademik Mentorlik</h3>
                     <p>Shunchaki yo'l ko'rsatish emas, balki maqsadga yetkazadigan hamrohlik tizimi.</p>
-                    <a href="{{ url_for('our_programs') }}" class="program-link">Batafsil -></a>
+                    <a href="{{ url_for('our_programs') }}" class="program-link">Batafsil &rarr;</a>
                 </article>
             </div>
         </section>
@@ -411,8 +226,8 @@
                 <h2 class="section-title">O'z poydevoringizni bugun boshlang</h2>
                 <p class="section-subtitle">Akademik mukammallik yo'li aniq rejadan boshlanadi. Siz uchun mos yo'l xaritasini birga tuzamiz.</p>
                 <div class="hero-actions justify-center">
-                    <a href="{{ url_for('contact') }}" class="btn-main">Maslahat olish</a>
-                    <a href="{{ url_for('news') }}" class="btn-soft">Yangiliklar</a>
+                    <a href="{{ url_for('register') }}" class="btn-main">Ro'yxatdan O'tish</a>
+                    <a href="{{ url_for('contact') }}" class="btn-soft">Maslahat olish</a>
                 </div>
             </div>
         </section>
@@ -424,159 +239,67 @@
 {{ super() }}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const typewriterElement = document.getElementById('typewriter');
-    const heroMainTitleData = document.getElementById('hero-main-title-data');
-    let text = '';
-    if (heroMainTitleData && heroMainTitleData.textContent) {
-        try {
-            text = JSON.parse(heroMainTitleData.textContent);
-        } catch (err) {
-            text = 'HAPPINESS IS IN SCIENCE';
-        }
+    // ── Typewriter ────────────────────────────────────────────
+    var typewriterElement = document.getElementById('typewriter');
+    var heroMainTitleData = document.getElementById('hero-main-title-data');
+    var text = '';
+    if (heroMainTitleData) {
+        try { text = JSON.parse(heroMainTitleData.textContent); } catch (e) { text = 'HAPPINESS IS IN SCIENCE'; }
     }
-    let index = 0;
+    var twIndex = 0;
 
     function type() {
-        if (!typewriterElement) {
+        if (!typewriterElement || twIndex > text.length) return;
+        // Build text safely using textContent, append cursor span only at end
+        typewriterElement.textContent = text.slice(0, twIndex);
+        if (twIndex === text.length) {
+            var cursor = document.createElement('span');
+            cursor.className = 'typewriter-cursor';
+            cursor.textContent = '|';
+            cursor.style.animation = 'blink 1s step-end infinite';
+            typewriterElement.appendChild(cursor);
             return;
         }
-        if (index < text.length) {
-            typewriterElement.innerHTML += text.charAt(index) + (index === text.length - 1 ? '<span class="typewriter-cursor">|</span>' : '');
-            index++;
-            setTimeout(type, 100);
-        } else {
-            const cursor = typewriterElement.querySelector('.typewriter-cursor');
-            if (cursor) {
-                cursor.style.animation = 'blink 1s step-end infinite';
-            }
-        }
+        twIndex++;
+        setTimeout(type, 100);
     }
+    if (typewriterElement) type();
 
-    if (typewriterElement) {
-        type();
-    }
-
-    const faders = document.querySelectorAll('.reveal');
-    const appearOptions = {
-        threshold: 0.1,
-        rootMargin: "0px 0px -40px 0px"
-    };
-
-    const appearOnScroll = new IntersectionObserver(function(entries, appearOnScroll) {
-        entries.forEach(entry => {
-            if (!entry.isIntersecting) {
-                return;
-            }
+    // ── Scroll reveal ─────────────────────────────────────────
+    var appearOnScroll = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+            if (!entry.isIntersecting) return;
             entry.target.classList.add('visible');
             appearOnScroll.unobserve(entry.target);
         });
-    }, appearOptions);
+    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
 
-    faders.forEach(fader => {
-        appearOnScroll.observe(fader);
+    document.querySelectorAll('.reveal').forEach(function(el) {
+        appearOnScroll.observe(el);
     });
 
-    const counters = document.querySelectorAll('.counter');
-    const speed = 200;
-
-    const countObserver = new IntersectionObserver(entries => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                const counter = entry.target;
-                const updateCount = () => {
-                    const target = +counter.getAttribute('data-target');
-                    const count = +counter.innerText;
-                    const inc = target / speed;
-
-                    if (count < target) {
-                        counter.innerText = Math.ceil(count + inc);
-                        setTimeout(updateCount, 1);
-                    } else {
-                        counter.innerText = target;
-                    }
-                };
-                updateCount();
-                countObserver.unobserve(counter);
+    // ── Counter animation ─────────────────────────────────────
+    var countObserver = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+            if (!entry.isIntersecting) return;
+            var counter = entry.target;
+            var target = +counter.getAttribute('data-target');
+            var inc = target / 200;
+            function tick() {
+                var current = +counter.innerText;
+                if (current < target) {
+                    counter.innerText = Math.min(Math.ceil(current + inc), target);
+                    setTimeout(tick, 1);
+                } else {
+                    counter.innerText = target;
+                }
             }
+            tick();
+            countObserver.unobserve(counter);
         });
     }, { threshold: 0.5 });
 
-    counters.forEach(counter => {
-        countObserver.observe(counter);
-    });
-
-    // Student gate modal – required once per session
-    var gate = document.getElementById('student-gate');
-    var gateYes = document.getElementById('student-gate-yes');
-    var gateNo = document.getElementById('student-gate-no');
-
-    function closeGate() {
-        sessionStorage.setItem('studentGateAnswered', '1');
-        if (gate) {
-            gate.classList.add('gate-out');
-            gate.addEventListener('animationend', function () {
-                gate.style.display = 'none';
-                document.body.style.overflow = '';
-            }, { once: true });
-        }
-    }
-
-    if (gate) {
-        if (sessionStorage.getItem('studentGateAnswered')) {
-            gate.style.display = 'none';
-        } else {
-            document.body.style.overflow = 'hidden';
-        }
-    }
-
-    if (gateYes) {
-        gateYes.addEventListener('click', function () {
-            closeGate();
-        });
-    }
-
-    if (gateNo) {
-        gateNo.addEventListener('click', function () {
-            closeGate();
-            setTimeout(function () {
-                var programsSection = document.getElementById('programs');
-                if (programsSection) {
-                    programsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
-            }, 340);
-        });
-    }
+    document.querySelectorAll('.counter').forEach(function(c) { countObserver.observe(c); });
 });
 </script>
-{% endblock %}
-
-{% block modals %}
-<div class="student-gate" id="student-gate" role="dialog" aria-modal="true" aria-labelledby="student-gate-title">
-    <div class="student-gate-card">
-        <div class="student-gate-accent"></div>
-        <div class="student-gate-body">
-            <div class="student-gate-icon-wrap">
-                <i class="fas fa-graduation-cap"></i>
-            </div>
-            <p class="student-gate-eyebrow">ICEBERG O'quv Markazi</p>
-            <h2 class="student-gate-title" id="student-gate-title">Siz allaqachon bizning o'quvchimisiz?</h2>
-            <p class="student-gate-sub">Shaxsiy kabinetingizga kirish uchun «Ha» ni tanlang yoki dasturlarimiz bilan tanishib chiqing.</p>
-            <div class="student-gate-btns">
-                <a href="https://plankton-app-5m7yt.ondigitalocean.app/"
-                   target="_blank"
-                   rel="noopener noreferrer"
-                   class="student-gate-yes"
-                   id="student-gate-yes">
-                    <i class="fas fa-arrow-right-to-bracket"></i>
-                    Ha — Shaxsiy kabinetga o'tish
-                </a>
-                <div class="student-gate-divider">YOKI</div>
-                <button type="button" class="student-gate-no" id="student-gate-no">
-                    <i class="fas fa-compass"></i>
-                    Yo'q — Dasturlarni ko'rish
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
 {% endblock %}
