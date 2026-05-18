@@ -731,7 +731,16 @@ init_db()
 
 @app.route('/favicon.ico')
 def favicon():
-    return app.send_static_file('img/logo2.png')
+    response = app.send_static_file('favicon.ico')
+    response.headers['Cache-Control'] = 'public, max-age=604800'
+    return response
+
+
+@app.route('/manifest.json')
+def manifest():
+    response = app.send_static_file('manifest.json')
+    response.headers['Cache-Control'] = 'public, max-age=604800'
+    return response
 
 
 @app.route('/robots.txt')

@@ -11,10 +11,13 @@
     <meta name="author" content="ICEBERG O'quv Markazi">
     <link rel="canonical" href="https://iceberglc.com{{ request.path }}">
 
-    <!-- Favicon — square logo2.png (640x640) for correct display in browser tabs and Google search -->
-    <link rel="icon" type="image/png" sizes="64x64" href="{{ url_for('static', filename='img/logo2.png') }}">
-    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='img/logo2.png') }}">
-    <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='img/logo2.png') }}">
+    <!-- Favicons -->
+    <link rel="icon" href="/favicon.ico" sizes="any">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='favicon-32x32.png') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='favicon-16x16.png') }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='apple-touch-icon.png') }}">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#0d2a50">
 
     <!-- Open Graph / Facebook / Telegram -->
     <meta property="og:type" content="website">
