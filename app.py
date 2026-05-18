@@ -743,9 +743,19 @@ init_db()
 @app.after_request
 def add_no_cache_headers(response):
     if 'text/html' in (response.content_type or ''):
-        response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+        response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate, max-age=0, private'
         response.headers['Pragma'] = 'no-cache'
         response.headers['Expires'] = '0'
+        # Bypass edge/CDN caches (Cloudflare, DigitalOcean, Vercel, etc.)
+        response.headers['CDN-Cache-Control'] = 'no-store'
+        response.headers['Cloudflare-CDN-Cache-Control'] = 'no-store'
+        response.headers['Surrogate-Control'] = 'no-store'
+        response.headers['Vary'] = '*'
+        # Diagnostic: identify which instance/container served the response.
+        # If two refreshes show different X-Served-By values, multiple
+        # instances are running and each has its own SQLite file.
+        response.headers['X-Served-By'] = os.environ.get('HOSTNAME', 'unknown')
+        response.headers['X-App-Started'] = APP_STARTED_AT.isoformat()
     return response
 
 

@@ -1,0 +1,19 @@
+name: iceberg-web
+region: nyc
+services:
+  - name: web
+    github:
+      repo: jahongir359/iceberg_web
+      branch: main
+      deploy_on_push: true
+    run_command: gunicorn app:app --bind 0.0.0.0:8080 --workers 1 --timeout 120
+    environment_slug: python
+    instance_count: 1
+    instance_size_slug: basic-xxs
+    http_port: 8080
+    routes:
+      - path: /
+    envs:
+      - key: FLASK_ENV
+        value: production
+        scope: RUN_TIME
