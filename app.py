@@ -201,8 +201,16 @@ APP_STARTED_AT = datetime.utcnow()
 
 
 def get_db_connection():
-    conn = sqlite3.connect(DATABASE_PATH)
+    conn = sqlite3.connect(DATABASE_PATH, check_same_thread=False, timeout=30)
     conn.row_factory = sqlite3.Row
+    # WAL mode: readers never block writers; writers never block readers.
+    # Critical for gunicorn — prevents the "data appears/disappears" race
+    # condition where one worker writes while another reads stale state.
+    conn.execute('PRAGMA journal_mode=WAL')
+    conn.execute('PRAGMA synchronous=NORMAL')
+    conn.execute('PRAGMA cache_size=-64000')  # 64 MB page cache
+    conn.execute('PRAGMA temp_store=MEMORY')
+    conn.execute('PRAGMA foreign_keys=ON')
     return conn
 
 
