@@ -1098,10 +1098,30 @@ def admin_news():
                     (title, excerpt, body, post_type, event_date, is_published, now, now)
                 )
                 new_post_id = cursor.lastrowid
+
+                media_files = request.files.getlist('media_files')
+                uploaded_count = 0
+                current_sort = 0
+                for file_storage in media_files:
+                    if not file_storage or not file_storage.filename:
+                        continue
+                    if not detect_news_media_type(file_storage.filename):
+                        continue
+                    file_path, media_type = save_news_media_file(file_storage, new_post_id)
+                    current_sort += 1
+                    cursor.execute(
+                        'INSERT INTO news_media (post_id, media_type, file_path, caption, sort_order, created_at) VALUES (?, ?, ?, ?, ?, ?)',
+                        (new_post_id, media_type, file_path, '', current_sort, datetime.utcnow().isoformat())
+                    )
+                    uploaded_count += 1
+
                 conn.commit()
 
+            msg = 'Yangilik/Event posti yaratildi.'
+            if uploaded_count:
+                msg += f' {uploaded_count} ta media yuklandi.'
             log_admin_action('news_create', f'news:{new_post_id}', f'Created post: {title}')
-            flash('Yangilik/Event posti yaratildi.', 'success')
+            flash(msg, 'success')
             return redirect(url_for('admin_news'))
 
         if action == 'update_post':
