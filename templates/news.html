@@ -46,7 +46,7 @@
         {% if posts %}
         <div class="space-y-5">
             {% for post in posts %}
-            <article class="info-card reveal">
+            <article class="info-card">
                 <div class="flex flex-wrap items-center gap-2 mb-3">
                     <span class="soft-pill {{ 'bg-blue-100 text-blue-700 border-blue-200' if post.post_type == 'news' else 'bg-amber-100 text-amber-700 border-amber-200' }}">
                         {{ 'Yangilik' if post.post_type == 'news' else 'Event' }}
@@ -86,7 +86,7 @@
             {% endfor %}
         </div>
         {% else %}
-        <article class="info-card text-center reveal">
+        <article class="info-card text-center">
             <h3 class="section-title !text-3xl mb-2">Hozircha yangiliklar yo'q</h3>
             <p>Tez orada bu yerda yangi postlar joylanadi.</p>
         </article>

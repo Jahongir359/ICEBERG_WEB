@@ -86,7 +86,7 @@
 
 <section class="section-shell">
     <div class="page-grid lg:grid-cols-2">
-        <article class="form-shell reveal">
+        <article class="form-shell">
             <h2 class="section-title !text-3xl mb-4">Bizga xabar yuboring</h2>
             {% with messages = get_flashed_messages(with_categories=true) %}
               {% if messages %}
@@ -127,7 +127,7 @@
             </form>
         </article>
 
-        <div class="space-y-4 reveal">
+        <div class="space-y-4">
             <article class="info-card">
                 <h3>Aloqa ma'lumotlari</h3>
                 <p><strong>Elektron pochta:</strong> <a href="mailto:{{ content('contact_email', 'iceberg.edu.center@gmail.com') }}" class="program-link">{{ content('contact_email', 'iceberg.edu.center@gmail.com') }}</a></p>

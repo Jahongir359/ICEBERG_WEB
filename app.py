@@ -332,6 +332,7 @@ def fetch_news_posts(include_unpublished=False):
     query += ' ORDER BY COALESCE(event_date, created_at) DESC, id DESC '
 
     with get_db_connection() as conn:
+        conn.execute('BEGIN')
         cursor = conn.cursor()
         cursor.execute(query, tuple(params))
         posts = [dict(row) for row in cursor.fetchall()]
@@ -705,6 +706,7 @@ def init_db():
                 FOREIGN KEY(post_id) REFERENCES news_posts(id)
             )
         ''')
+        cursor.execute('PRAGMA wal_checkpoint(TRUNCATE)')
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS faq_items (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -736,6 +738,16 @@ def init_db():
         conn.commit()
 
 init_db()
+
+
+@app.after_request
+def add_no_cache_headers(response):
+    if 'text/html' in (response.content_type or ''):
+        response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+        response.headers['Pragma'] = 'no-cache'
+        response.headers['Expires'] = '0'
+    return response
+
 
 @app.route('/favicon.ico')
 def favicon():
@@ -1448,7 +1460,7 @@ def admin_faq():
 def contacts_list():
     with get_db_connection() as conn:
         cursor = conn.cursor()
-        cursor.execute('SELECT * FROM contacts')
+        cursor.execute('SELECT * FROM contacts ORDER BY id DESC')
         contacts = cursor.fetchall()
     return render_template('contacts_list.html', contacts=contacts)
 
@@ -1561,7 +1573,7 @@ def register():
 def students():
     with get_db_connection() as conn:
         cursor = conn.cursor()
-        cursor.execute('SELECT * FROM students')
+        cursor.execute('SELECT * FROM students ORDER BY id DESC')
         students = cursor.fetchall()
     return render_template('students.html', students=students)
 
