@@ -1,5 +1,55 @@
 {% extends "base.html" %}
 
+{% block title %}ICEBERG Study Center | Ta'lim va O'quv Markazi — Namangan{% endblock %}
+
+{% block meta_description %}<meta name="description" content="ICEBERG Study Center — IELTS, SAT tayyorgarlik, akademik repetitorlik va shaxsiy mentorlik dasturlari. 500+ muvaffaqiyatli o'quvchi. Namangan, O'zbekiston. Bugun boshlang!">{% endblock %}
+
+{% block og_description %}<meta property="og:description" content="ICEBERG Study Center — IELTS, SAT tayyorgarlik, akademik repetitorlik va shaxsiy mentorlik dasturlari. 500+ muvaffaqiyatli o'quvchi. Namangan, O'zbekiston.">{% endblock %}
+{% block twitter_description %}<meta name="twitter:description" content="ICEBERG Study Center — IELTS, SAT tayyorgarlik, akademik repetitorlik va shaxsiy mentorlik dasturlari. 500+ muvaffaqiyatli o'quvchi. Namangan, O'zbekiston.">{% endblock %}
+
+{% block schema %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "EducationalOrganization",
+  "name": "ICEBERG O'quv Markazi",
+  "alternateName": "ICEBERG Study Center",
+  "url": "https://iceberglc.com",
+  "logo": {
+    "@type": "ImageObject",
+    "url": "https://iceberglc.com/static/img/logo2.png",
+    "width": 640,
+    "height": 640
+  },
+  "image": "https://iceberglc.com/static/img/logo2.png",
+  "description": "IELTS, SAT tayyorgarlik, akademik repetitorlik va mentorlik dasturlari bilan o'quvchilarni muvaffaqiyatga tayyorlovchi zamonaviy ta'lim markazi. Namangan, O'zbekiston.",
+  "address": {
+    "@type": "PostalAddress",
+    "addressLocality": "Namangan",
+    "addressRegion": "Namangan viloyati",
+    "addressCountry": "UZ"
+  },
+  "contactPoint": {
+    "@type": "ContactPoint",
+    "telephone": "+998939461699",
+    "contactType": "customer service",
+    "email": "iceberg.edu.center@gmail.com",
+    "availableLanguage": ["Uzbek", "Russian", "English"]
+  },
+  "hasOfferCatalog": {
+    "@type": "OfferCatalog",
+    "name": "Ta'lim Dasturlari",
+    "itemListElement": [
+      {"@type": "Offer", "itemOffered": {"@type": "Course", "name": "IELTS Tayyorgarlik", "description": "IELTS imtihoniga strategik tayyorgarlik kursi"}},
+      {"@type": "Offer", "itemOffered": {"@type": "Course", "name": "SAT Tayyorgarlik", "description": "SAT imtihoniga tayyorgarlik kursi"}},
+      {"@type": "Offer", "itemOffered": {"@type": "Course", "name": "Akademik Repetitorlik", "description": "Matematika, fan va ingliz tilida 1-on-1 repetitorlik"}},
+      {"@type": "Offer", "itemOffered": {"@type": "Course", "name": "Akademik Mentorlik", "description": "Shaxsiy yo'l xaritasi va mentorlik dasturi"}}
+    ]
+  }
+}
+</script>
+{% endblock %}
+
 {% block styles %}
     {{ super() }}
     <style>
