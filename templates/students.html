@@ -43,17 +43,42 @@
                         <button type="button" class="hover:text-slate-800" data-sort="student_phone">O'quvchi Telefoni</button>
                     </th>
                     <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                        <button type="button" class="hover:text-slate-800" data-sort="parent_phone">Ota-ona Telefoni</button>
+                    </th>
+                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                        <button type="button" class="hover:text-slate-800" data-sort="email">Email</button>
+                    </th>
+                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
                         <button type="button" class="hover:text-slate-800" data-sort="dob">Tug'ilgan sana</button>
                     </th>
                     <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
                         <button type="button" class="hover:text-slate-800" data-sort="course">Kurs</button>
+                    </th>
+                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                        <button type="button" class="hover:text-slate-800" data-sort="preferred_branch">Filial</button>
+                    </th>
+                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                        <button type="button" class="hover:text-slate-800" data-sort="preferred_schedule">Qulay vaqt</button>
+                    </th>
+                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                        <button type="button" class="hover:text-slate-800" data-sort="social_source">Manba</button>
+                    </th>
+                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                        <button type="button" class="hover:text-slate-800" data-sort="social_handle">Username</button>
+                    </th>
+                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Izoh</th>
+                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                        <button type="button" class="hover:text-slate-800" data-sort="forwarded_to_management">Management</button>
+                    </th>
+                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                        <button type="button" class="hover:text-slate-800" data-sort="created_at">Yuborilgan</button>
                     </th>
                     <th class="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">Amallar</th>
                 </tr>
             </thead>
             <tbody class="bg-white/70 divide-y divide-slate-200" id="students-table-body">
                 {% for student in students %}
-                <tr class="hover:bg-slate-50/70" data-student-row data-row-id="{{ student.id }}" data-row-search="{{ (student.student_name ~ ' ' ~ student.student_phone ~ ' ' ~ student.course ~ ' ' ~ student.dob)|lower }}" data-id="{{ student.id }}" data-student_name="{{ student.student_name|lower }}" data-student_phone="{{ student.student_phone }}" data-dob="{{ student.dob }}" data-course="{{ student.course|lower }}">
+                <tr class="hover:bg-slate-50/70" data-student-row data-row-id="{{ student.id }}" data-row-search="{{ (student.student_name ~ ' ' ~ student.student_phone ~ ' ' ~ (student.parent_phone or '') ~ ' ' ~ (student.email or '') ~ ' ' ~ student.course ~ ' ' ~ student.dob ~ ' ' ~ (student.preferred_branch or '') ~ ' ' ~ (student.preferred_schedule or '') ~ ' ' ~ (student.social_source or '') ~ ' ' ~ (student.social_handle or '') ~ ' ' ~ (student.message or ''))|lower }}" data-id="{{ student.id }}" data-student_name="{{ student.student_name|lower }}" data-student_phone="{{ student.student_phone }}" data-parent_phone="{{ student.parent_phone or '' }}" data-email="{{ (student.email or '')|lower }}" data-dob="{{ student.dob }}" data-course="{{ student.course|lower }}" data-preferred_branch="{{ (student.preferred_branch or '')|lower }}" data-preferred_schedule="{{ (student.preferred_schedule or '')|lower }}" data-social_source="{{ (student.social_source or '')|lower }}" data-social_handle="{{ (student.social_handle or '')|lower }}" data-forwarded_to_management="{{ student.forwarded_to_management or 0 }}" data-created_at="{{ student.created_at or '' }}">
                     <td class="px-4 py-4 whitespace-nowrap">
                         <input type="checkbox" class="student-row-select h-4 w-4 rounded border-slate-300" value="{{ student.id }}">
                     </td>
@@ -68,11 +93,43 @@
                         </div>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        <div class="flex items-center gap-2">
+                            <span contenteditable="true" class="inline-edit rounded px-1 py-0.5 focus:outline-none focus:ring-2 focus:ring-sky-400" data-row-id="{{ student.id }}" data-field="parent_phone">{% if student.parent_phone %}+998{{ student.parent_phone }}{% endif %}</span>
+                            <button type="button" class="text-blue-600 hover:text-blue-800 text-xs font-semibold" data-copy-phone="{% if student.parent_phone %}+998{{ student.parent_phone }}{% endif %}" data-no-loading="true">Nusxa</button>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        <span contenteditable="true" class="inline-edit rounded px-1 py-0.5 focus:outline-none focus:ring-2 focus:ring-sky-400" data-row-id="{{ student.id }}" data-field="email">{{ student.email or '' }}</span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         <span contenteditable="true" class="inline-edit rounded px-1 py-0.5 focus:outline-none focus:ring-2 focus:ring-sky-400" data-row-id="{{ student.id }}" data-field="dob">{{ student.dob }}</span>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         <span contenteditable="true" class="inline-edit rounded px-1 py-0.5 focus:outline-none focus:ring-2 focus:ring-sky-400" data-row-id="{{ student.id }}" data-field="course">{{ student.course }}</span>
                     </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        <span contenteditable="true" class="inline-edit rounded px-1 py-0.5 focus:outline-none focus:ring-2 focus:ring-sky-400" data-row-id="{{ student.id }}" data-field="preferred_branch">{{ student.preferred_branch or '' }}</span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        <span contenteditable="true" class="inline-edit rounded px-1 py-0.5 focus:outline-none focus:ring-2 focus:ring-sky-400" data-row-id="{{ student.id }}" data-field="preferred_schedule">{{ student.preferred_schedule or '' }}</span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        <span contenteditable="true" class="inline-edit rounded px-1 py-0.5 focus:outline-none focus:ring-2 focus:ring-sky-400" data-row-id="{{ student.id }}" data-field="social_source">{{ student.social_source or '' }}</span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        <span contenteditable="true" class="inline-edit rounded px-1 py-0.5 focus:outline-none focus:ring-2 focus:ring-sky-400" data-row-id="{{ student.id }}" data-field="social_handle">{{ student.social_handle or '' }}</span>
+                    </td>
+                    <td class="px-6 py-4 min-w-64 text-sm text-gray-500">
+                        <span contenteditable="true" class="inline-edit rounded px-1 py-0.5 focus:outline-none focus:ring-2 focus:ring-sky-400" data-row-id="{{ student.id }}" data-field="message">{{ student.message or '' }}</span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {% if student.forwarded_to_management %}
+                            <span class="inline-flex rounded-full bg-emerald-50 px-2 py-1 text-xs font-semibold text-emerald-700">Sent</span>
+                        {% else %}
+                            <span class="inline-flex rounded-full bg-amber-50 px-2 py-1 text-xs font-semibold text-amber-700">Local only</span>
+                        {% endif %}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ student.created_at or '' }}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                         <form action="{{ url_for('delete_student', student_id=student.id) }}" method="POST" onsubmit="return confirm('Haqiqatan ham bu o\'quvchini oʻchirmoqchimisiz?');">
                             <button type="submit" class="text-red-600 hover:text-red-900 font-semibold">O'chirish</button>
@@ -81,7 +138,7 @@
                 </tr>
                 {% else %}
                 <tr>
-                    <td colspan="7" class="text-center py-8 text-gray-500">Hozircha ro'yxatdan o'tganlar yo'q.</td>
+                    <td colspan="17" class="text-center py-8 text-gray-500">Hozircha ro'yxatdan o'tganlar yo'q.</td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -168,12 +225,19 @@
         }
 
         function updateRowDataset(row, field, serverValue, displayValue) {
+            var normalizedValue = serverValue || '';
+            var datasetName = 'data-' + field;
+            if (field !== 'message' && field !== 'utm_source' && field !== 'utm_medium' && field !== 'utm_campaign') {
+                row.setAttribute(datasetName, normalizedValue.toLowerCase ? normalizedValue.toLowerCase() : normalizedValue);
+            }
+
             if (field === 'student_name') {
                 row.setAttribute('data-student_name', (serverValue || '').toLowerCase());
             }
-            if (field === 'student_phone') {
-                row.setAttribute('data-student_phone', serverValue || '');
-                var copyBtn = row.querySelector('[data-copy-phone]');
+            if (field === 'student_phone' || field === 'parent_phone') {
+                row.setAttribute('data-' + field, serverValue || '');
+                var editedField = row.querySelector('[data-field="' + field + '"]');
+                var copyBtn = editedField && editedField.closest('td') ? editedField.closest('td').querySelector('[data-copy-phone]') : null;
                 if (copyBtn) {
                     copyBtn.setAttribute('data-copy-phone', displayValue || '');
                 }
@@ -185,12 +249,10 @@
                 row.setAttribute('data-course', (serverValue || '').toLowerCase());
             }
 
-            var searchText = [
-                row.querySelector('[data-field="student_name"]').textContent,
-                row.querySelector('[data-field="student_phone"]').textContent,
-                row.querySelector('[data-field="course"]').textContent,
-                row.querySelector('[data-field="dob"]').textContent
-            ].join(' ').toLowerCase();
+            var searchText = Array.from(row.querySelectorAll('[data-field]'))
+                .map(function (fieldEl) { return fieldEl.textContent || ''; })
+                .join(' ')
+                .toLowerCase();
             row.setAttribute('data-row-search', searchText);
         }
 

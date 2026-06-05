@@ -492,7 +492,7 @@ def get_system_health_snapshot():
         'db_size_mb': round(db_size_bytes / (1024 * 1024), 3),
         'uptime_human': f'{uptime_hours}h {uptime_minutes}m',
         'telegram_configured': bool(TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID),
-        'registration_leads_configured': bool(REGISTRATION_LEADS_API_URL and REGISTRATION_LEADS_API_TOKEN),
+        'registration_leads_configured': bool(REGISTRATION_LEADS_API_URL),
         'secret_code_configured': bool(ADMIN_SECRET_CODE),
         'started_at': APP_STARTED_AT.strftime('%Y-%m-%d %H:%M:%S UTC')
     }
@@ -664,17 +664,9 @@ def send_registration_lead_to_management(payload):
         )
         return False
 
-    if not REGISTRATION_LEADS_API_TOKEN:
-        app.logger.warning('Registration lead forwarding token is not configured.')
-        log_admin_action(
-            'registration_forwarding_skipped',
-            payload.get('full_name', 'registration'),
-            'REGISTRATION_LEADS_API_TOKEN is not configured'
-        )
-        return False
-
     headers = {'Content-Type': 'application/json'}
-    headers['Authorization'] = f'Bearer {REGISTRATION_LEADS_API_TOKEN}'
+    if REGISTRATION_LEADS_API_TOKEN:
+        headers['Authorization'] = f'Bearer {REGISTRATION_LEADS_API_TOKEN}'
 
     try:
         response = requests.post(
@@ -685,6 +677,11 @@ def send_registration_lead_to_management(payload):
         )
         response.raise_for_status()
         app.logger.info('Registration lead forwarded to management system.')
+        log_admin_action(
+            'registration_forwarding_success',
+            payload.get('full_name', 'registration'),
+            f'Sent to {REGISTRATION_LEADS_API_URL}'
+        )
         return True
     except requests.exceptions.RequestException as exc:
         app.logger.error(f'Failed to forward registration lead: {exc}')
@@ -695,6 +692,14 @@ def send_registration_lead_to_management(payload):
         )
         return False
 
+
+def ensure_table_columns(cursor, table_name, column_definitions):
+    cursor.execute(f'PRAGMA table_info({table_name})')
+    existing_columns = {row[1] for row in cursor.fetchall()}
+    for column_name, column_sql in column_definitions.items():
+        if column_name not in existing_columns:
+            cursor.execute(f'ALTER TABLE {table_name} ADD COLUMN {column_name} {column_sql}')
+
 def init_db():
     with get_db_connection() as conn:
         cursor = conn.cursor()
@@ -703,8 +708,20 @@ def init_db():
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 student_name TEXT NOT NULL,
                 student_phone TEXT NOT NULL,
+                parent_phone TEXT,
+                email TEXT,
                 dob TEXT NOT NULL,
-                course TEXT NOT NULL
+                course TEXT NOT NULL,
+                preferred_branch TEXT,
+                preferred_schedule TEXT,
+                social_source TEXT,
+                social_handle TEXT,
+                utm_source TEXT,
+                utm_medium TEXT,
+                utm_campaign TEXT,
+                message TEXT,
+                forwarded_to_management INTEGER NOT NULL DEFAULT 0,
+                created_at TEXT
             )
         ''')
         cursor.execute('''
@@ -716,6 +733,25 @@ def init_db():
                 email TEXT
             )
         ''')
+        ensure_table_columns(
+            cursor,
+            'students',
+            {
+                'parent_phone': 'TEXT',
+                'email': 'TEXT',
+                'preferred_branch': 'TEXT',
+                'preferred_schedule': 'TEXT',
+                'social_source': 'TEXT',
+                'social_handle': 'TEXT',
+                'utm_source': 'TEXT',
+                'utm_medium': 'TEXT',
+                'utm_campaign': 'TEXT',
+                'message': 'TEXT',
+                'forwarded_to_management': 'INTEGER NOT NULL DEFAULT 0',
+                'created_at': 'TEXT'
+            }
+        )
+        ensure_table_columns(cursor, 'contacts', {'email': 'TEXT'})
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS site_assets (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -1626,51 +1662,83 @@ def register():
         if email and not re.match(r'^[^@\s]+@[^@\s]+\.[^@\s]+$', email):
             flash('Email manzil noto\'g\'ri.', 'error')
             return redirect(url_for('register'))
-        if not is_valid_dob(dob):
+        if dob and not is_valid_dob(dob):
             flash('Tug\'ilgan sana noto\'g\'ri.', 'error')
             return redirect(url_for('register'))
-        if not course:
-            flash('Kurs tanlanishi shart.', 'error')
-            return redirect(url_for('register'))
 
-        with get_db_connection() as conn:
-            cursor = conn.cursor()
-            cursor.execute('''INSERT INTO students (student_name, student_phone, dob, course) 
-                               VALUES (?, ?, ?, ?)''', 
-                           (student_name, student_phone, dob, course))
-            conn.commit()
-
-        # Send Telegram notification for new registration
-        telegram_message = (
-            "Kursga yangi yozilish!\n\n"
-            f"O'quvchi: {student_name}\n"
-            f"Telefon: {student_phone}\n"
-            f"Ota-ona telefoni: {parent_phone or '-'}\n"
-            f"Email: {email or '-'}\n"
-            f"Kurs: {course}\n"
-            f"Tug'ilgan sana: {dob}\n"
-            f"Filial: {preferred_branch or '-'}\n"
-            f"Vaqt: {preferred_schedule or '-'}\n"
-            f"Manba: {utm_source or social_source or '-'}"
-        )
-        send_telegram_notification(telegram_message)
-
+        created_at = utc_now().isoformat()
         lead_payload = {
             'full_name': student_name,
             'phone': format_uz_phone(student_phone),
+            'source': 'website',
+            'submitted_at': created_at
+        }
+        optional_lead_fields = {
             'parent_phone': format_uz_phone(parent_phone),
             'email': email,
             'course': course,
+            'date_of_birth': dob,
             'branch': preferred_branch,
             'preferred_schedule': preferred_schedule,
-            'source': 'website',
+            'social_source': social_source,
             'social_handle': social_handle,
             'utm_source': utm_source or social_source,
             'utm_medium': utm_medium,
             'utm_campaign': utm_campaign,
             'message': message
         }
-        send_registration_lead_to_management(lead_payload)
+        lead_payload.update({key: value for key, value in optional_lead_fields.items() if value})
+
+        with get_db_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute(
+                '''
+                INSERT INTO students (
+                    student_name, student_phone, parent_phone, email, dob, course,
+                    preferred_branch, preferred_schedule, social_source, social_handle,
+                    utm_source, utm_medium, utm_campaign, message,
+                    forwarded_to_management, created_at
+                )
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ''',
+                (
+                    student_name, student_phone, parent_phone, email, dob, course,
+                    preferred_branch, preferred_schedule, social_source, social_handle,
+                    utm_source, utm_medium, utm_campaign, message,
+                    0, created_at
+                )
+            )
+            student_id = cursor.lastrowid
+            conn.commit()
+
+        forwarded_to_management = 1 if send_registration_lead_to_management(lead_payload) else 0
+        if forwarded_to_management:
+            with get_db_connection() as conn:
+                cursor = conn.cursor()
+                cursor.execute(
+                    'UPDATE students SET forwarded_to_management = ? WHERE id = ?',
+                    (forwarded_to_management, student_id)
+                )
+                conn.commit()
+
+        telegram_lines = [
+            "Kursga yangi yozilish!",
+            "",
+            f"O'quvchi: {student_name}",
+            f"Telefon: {student_phone}"
+        ]
+        optional_telegram_lines = [
+            ("Ota-ona telefoni", parent_phone),
+            ("Email", email),
+            ("Kurs", course),
+            ("Tug'ilgan sana", dob),
+            ("Filial", preferred_branch),
+            ("Vaqt", preferred_schedule),
+            ("Manba", utm_source or social_source)
+        ]
+        telegram_lines.extend(f"{label}: {value}" for label, value in optional_telegram_lines if value)
+        telegram_message = "\n".join(telegram_lines)
+        send_telegram_notification(telegram_message)
 
         flash('Siz muvaffaqiyatli ro\'yxatdan o\'tdingiz!', 'success')
         return redirect(url_for('register'))
@@ -1704,7 +1772,22 @@ def update_student(student_id):
     field = (payload.get('field') or '').strip()
     value = (payload.get('value') or '').strip()
 
-    allowed_fields = {'student_name', 'student_phone', 'dob', 'course'}
+    allowed_fields = {
+        'student_name',
+        'student_phone',
+        'parent_phone',
+        'email',
+        'dob',
+        'course',
+        'preferred_branch',
+        'preferred_schedule',
+        'social_source',
+        'social_handle',
+        'utm_source',
+        'utm_medium',
+        'utm_campaign',
+        'message'
+    }
     if field not in allowed_fields:
         return jsonify({'success': False, 'message': 'Noto\'g\'ri maydon.'}), 400
 
@@ -1717,8 +1800,17 @@ def update_student(student_id):
             value = value[3:]
         if not PHONE_RE.match(value):
             return jsonify({'success': False, 'message': 'Telefon 9 xonali bo\'lishi kerak.'}), 400
+    elif field == 'parent_phone':
+        value = normalize_phone(value)
+        if len(value) == 12 and value.startswith('998'):
+            value = value[3:]
+        if value and not PHONE_RE.match(value):
+            return jsonify({'success': False, 'message': 'Ota-ona telefoni 9 xonali bo\'lishi kerak.'}), 400
+    elif field == 'email':
+        if value and not re.match(r'^[^@\s]+@[^@\s]+\.[^@\s]+$', value):
+            return jsonify({'success': False, 'message': 'Email manzil noto\'g\'ri.'}), 400
     elif field == 'dob':
-        if not is_valid_dob(value):
+        if value and not is_valid_dob(value):
             return jsonify({'success': False, 'message': 'Tug\'ilgan sana noto\'g\'ri.'}), 400
     elif field == 'course':
         if not value:
@@ -1732,7 +1824,10 @@ def update_student(student_id):
             return jsonify({'success': False, 'message': 'O\'quvchi topilmadi.'}), 404
     log_admin_action('student_inline_update', f'student:{student_id}', f'Field updated: {field}')
 
-    display_value = value if field != 'student_phone' else f'+998{value}'
+    if field in {'student_phone', 'parent_phone'}:
+        display_value = f'+998{value}' if value else ''
+    else:
+        display_value = value
     return jsonify({'success': True, 'message': 'Saqlandi.', 'value': value, 'display_value': display_value})
 
 
@@ -1764,21 +1859,58 @@ def export_students_csv():
         cursor = conn.cursor()
         if selected_ids:
             placeholders = ','.join(['?'] * len(selected_ids))
-            cursor.execute(
-                f'SELECT id, student_name, student_phone, dob, course FROM students WHERE id IN ({placeholders}) ORDER BY id DESC',
-                tuple(selected_ids)
-            )
+            cursor.execute(f'SELECT * FROM students WHERE id IN ({placeholders}) ORDER BY id DESC', tuple(selected_ids))
         else:
-            cursor.execute('SELECT id, student_name, student_phone, dob, course FROM students ORDER BY id DESC')
+            cursor.execute('SELECT * FROM students ORDER BY id DESC')
         rows = cursor.fetchall()
 
     export_rows = [
-        [row['id'], row['student_name'], f"+998{row['student_phone']}", row['dob'], row['course']]
+        [
+            row['id'],
+            row['student_name'],
+            f"+998{row['student_phone']}" if row['student_phone'] else '',
+            f"+998{row['parent_phone']}" if row['parent_phone'] else '',
+            row['email'] or '',
+            row['dob'],
+            row['course'],
+            row['preferred_branch'] or '',
+            row['preferred_schedule'] or '',
+            row['social_source'] or '',
+            row['social_handle'] or '',
+            row['utm_source'] or '',
+            row['utm_medium'] or '',
+            row['utm_campaign'] or '',
+            row['message'] or '',
+            'yes' if row['forwarded_to_management'] else 'no',
+            row['created_at'] or ''
+        ]
         for row in rows
     ]
     filename = f"students_export_{utc_now().strftime('%Y%m%d_%H%M%S')}.csv"
     log_admin_action('students_export', 'students', f'Exported rows: {len(export_rows)}')
-    return build_csv_response(filename, ['ID', 'Student Name', 'Phone', 'DOB', 'Course'], export_rows)
+    return build_csv_response(
+        filename,
+        [
+            'ID',
+            'Student Name',
+            'Student Phone',
+            'Parent Phone',
+            'Email',
+            'DOB',
+            'Course',
+            'Preferred Branch',
+            'Preferred Schedule',
+            'Social Source',
+            'Social Handle',
+            'UTM Source',
+            'UTM Medium',
+            'UTM Campaign',
+            'Message',
+            'Forwarded To Management',
+            'Created At'
+        ],
+        export_rows
+    )
 
 @app.route('/admin/delete_contact/<int:contact_id>', methods=['POST'])
 @login_required

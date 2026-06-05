@@ -99,12 +99,15 @@ Payload shape:
 {
   "full_name": "Student Name",
   "phone": "+998901234567",
+  "source": "website",
+  "submitted_at": "2026-06-05T12:00:00+00:00",
   "parent_phone": "+998991112233",
   "email": "student@example.com",
   "course": "IELTS",
   "branch": "Main branch",
   "preferred_schedule": "Evening",
-  "source": "website",
+  "date_of_birth": "2010-01-01",
+  "social_source": "Instagram",
   "social_handle": "@student",
   "utm_source": "instagram",
   "utm_medium": "ads",
@@ -112,6 +115,8 @@ Payload shape:
   "message": "Interested in weekend classes"
 }
 ```
+
+Only `full_name`, `phone`, `source`, and `submitted_at` are always sent by the website. The other fields are optional and are omitted when blank.
 
 The ERP endpoint should return any `2xx` response for success. If the ERP is down or returns an error, the website keeps the local registration and logs the forwarding failure.
 
