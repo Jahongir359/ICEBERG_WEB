@@ -77,13 +77,13 @@ Set these in `.env` (or your deployment platform):
 - `DATABASE_PATH`: SQLite file path (default: `database.db`)
 - `TELEGRAM_BOT_TOKEN`: Telegram bot token (optional)
 - `TELEGRAM_CHAT_ID`: Telegram chat ID (optional)
-- `REGISTRATION_LEADS_API_URL`: management/ERP endpoint that receives registration leads (optional)
+- `REGISTRATION_LEADS_API_URL`: management/ERP endpoint that receives registration leads (defaults to `https://app.iceberglc.com/public/registration-leads/`)
 - `REGISTRATION_LEADS_API_TOKEN`: bearer token sent to the ERP endpoint (optional)
 - `REGISTRATION_LEADS_API_TIMEOUT`: ERP request timeout in seconds (default: `8`)
 - `FLASK_ENV`: set to `production` in production
 
 If Telegram variables are missing, app still works without notifications.
-If ERP lead forwarding variables are missing, registrations are still saved locally and Telegram notifications still run.
+If the ERP lead forwarding URL is blank, registrations are still saved locally and Telegram notifications still run.
 
 ## Registration Lead Forwarding
 
@@ -119,6 +119,7 @@ Payload shape:
 Only `full_name`, `phone`, `source`, and `submitted_at` are always sent by the website. The other fields are optional and are omitted when blank.
 
 The ERP endpoint should return any `2xx` response for success. If the ERP is down or returns an error, the website keeps the local registration and logs the forwarding failure.
+For a Django management backend, the receiving endpoint should be an API endpoint that accepts server-to-server POSTs. If it is a normal Django form view, make it CSRF-exempt or use Django REST Framework/token authentication; otherwise Django can reject the request before saving the lead.
 
 Production values:
 
@@ -127,6 +128,8 @@ REGISTRATION_LEADS_API_URL=https://app.iceberglc.com/public/registration-leads/
 REGISTRATION_LEADS_API_TOKEN=replace-with-shared-token
 REGISTRATION_LEADS_API_TIMEOUT=8
 ```
+
+On DigitalOcean App Platform, set `REGISTRATION_LEADS_API_TOKEN` as an encrypted runtime environment variable if the Django endpoint requires the shared token.
 
 Manual test:
 

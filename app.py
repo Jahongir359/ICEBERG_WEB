@@ -44,7 +44,11 @@ if os.environ.get('FLASK_ENV') == 'production':
 # Telegram Bot configuration
 TELEGRAM_BOT_TOKEN = os.environ.get('TELEGRAM_BOT_TOKEN')
 TELEGRAM_CHAT_ID = os.environ.get('TELEGRAM_CHAT_ID')
-REGISTRATION_LEADS_API_URL = os.environ.get('REGISTRATION_LEADS_API_URL', '').strip()
+DEFAULT_REGISTRATION_LEADS_API_URL = 'https://app.iceberglc.com/public/registration-leads/'
+REGISTRATION_LEADS_API_URL = os.environ.get(
+    'REGISTRATION_LEADS_API_URL',
+    DEFAULT_REGISTRATION_LEADS_API_URL
+).strip()
 REGISTRATION_LEADS_API_TOKEN = os.environ.get('REGISTRATION_LEADS_API_TOKEN', '').strip()
 REGISTRATION_LEADS_API_TIMEOUT = float(os.environ.get('REGISTRATION_LEADS_API_TIMEOUT', '8'))
 
@@ -654,6 +658,52 @@ def send_telegram_notification(message_text):
         app.logger.error(f"Failed to send Telegram notification: {e}")
 
 
+def build_management_lead_payload(payload):
+    management_payload = dict(payload)
+    field_aliases = {
+        'student_name': payload.get('full_name', ''),
+        'student_phone': payload.get('phone', ''),
+        'created_at': payload.get('submitted_at', ''),
+        'dob': payload.get('date_of_birth', ''),
+        'preferred_branch': payload.get('branch', '')
+    }
+    management_payload.update({key: value for key, value in field_aliases.items() if value})
+    return management_payload
+
+
+def log_management_forwarding_failure(response=None, error=None):
+    if response is not None:
+        response_body = (response.text or '').replace('\n', ' ')[:500]
+        return f'{response.status_code} {response.reason}: {response_body}'
+    return str(error)[:500]
+
+
+def post_registration_lead(payload, headers):
+    response = requests.post(
+        REGISTRATION_LEADS_API_URL,
+        json=payload,
+        headers=headers,
+        timeout=REGISTRATION_LEADS_API_TIMEOUT
+    )
+    if response.ok:
+        return response
+
+    if response.status_code in {400, 415, 422}:
+        app.logger.warning(
+            'Management lead JSON POST failed; retrying as form data. Response: %s',
+            log_management_forwarding_failure(response=response)
+        )
+        form_headers = {key: value for key, value in headers.items() if key.lower() != 'content-type'}
+        return requests.post(
+            REGISTRATION_LEADS_API_URL,
+            data=payload,
+            headers=form_headers,
+            timeout=REGISTRATION_LEADS_API_TIMEOUT
+        )
+
+    return response
+
+
 def send_registration_lead_to_management(payload):
     if not REGISTRATION_LEADS_API_URL:
         app.logger.info('Registration lead forwarding is not configured.')
@@ -664,17 +714,18 @@ def send_registration_lead_to_management(payload):
         )
         return False
 
-    headers = {'Content-Type': 'application/json'}
+    management_payload = build_management_lead_payload(payload)
+    headers = {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+    }
     if REGISTRATION_LEADS_API_TOKEN:
         headers['Authorization'] = f'Bearer {REGISTRATION_LEADS_API_TOKEN}'
+        headers['X-Registration-Token'] = REGISTRATION_LEADS_API_TOKEN
+        headers['X-API-Key'] = REGISTRATION_LEADS_API_TOKEN
 
     try:
-        response = requests.post(
-            REGISTRATION_LEADS_API_URL,
-            json=payload,
-            headers=headers,
-            timeout=REGISTRATION_LEADS_API_TIMEOUT
-        )
+        response = post_registration_lead(management_payload, headers)
         response.raise_for_status()
         app.logger.info('Registration lead forwarded to management system.')
         log_admin_action(
@@ -684,11 +735,15 @@ def send_registration_lead_to_management(payload):
         )
         return True
     except requests.exceptions.RequestException as exc:
-        app.logger.error(f'Failed to forward registration lead: {exc}')
+        failure_detail = log_management_forwarding_failure(
+            response=getattr(exc, 'response', None),
+            error=exc
+        )
+        app.logger.error('Failed to forward registration lead: %s', failure_detail)
         log_admin_action(
             'registration_forwarding_failed',
             payload.get('full_name', 'registration'),
-            str(exc)[:500]
+            failure_detail
         )
         return False
 
