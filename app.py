@@ -7,7 +7,7 @@ import hashlib
 import csv
 import io
 import json
-from datetime import date, datetime
+from datetime import UTC, date, datetime
 from functools import wraps
 from werkzeug.utils import secure_filename
 
@@ -197,7 +197,13 @@ CONTENT_FIELDS = [
 CONTENT_KEYS = {field['key'] for field in CONTENT_FIELDS}
 
 PHONE_RE = re.compile(r'^\d{9}$')
-APP_STARTED_AT = datetime.utcnow()
+
+
+def utc_now():
+    return datetime.now(UTC).replace(tzinfo=None)
+
+
+APP_STARTED_AT = utc_now()
 
 
 def get_db_connection():
@@ -277,7 +283,7 @@ def get_asset_url(asset_key, fallback=''):
 def save_asset_file(file_storage, asset_key):
     safe_name = secure_filename(file_storage.filename)
     _, ext = os.path.splitext(safe_name)
-    timestamp = datetime.utcnow().strftime('%Y%m%d%H%M%S')
+    timestamp = utc_now().strftime('%Y%m%d%H%M%S')
     final_name = f'{asset_key}_{timestamp}{ext.lower()}'
     target_dir = os.path.join(app.root_path, 'static', 'uploads', 'assets')
     os.makedirs(target_dir, exist_ok=True)
@@ -300,7 +306,7 @@ def save_news_media_file(file_storage, post_id):
     safe_name = secure_filename(file_storage.filename)
     _, ext = os.path.splitext(safe_name)
     media_type = detect_news_media_type(file_storage.filename)
-    timestamp = datetime.utcnow().strftime('%Y%m%d%H%M%S%f')
+    timestamp = utc_now().strftime('%Y%m%d%H%M%S%f')
     final_name = f'news_{post_id}_{timestamp}{ext.lower()}'
     target_dir = os.path.join(app.root_path, 'static', 'uploads', 'news')
     os.makedirs(target_dir, exist_ok=True)
@@ -377,7 +383,7 @@ def upsert_site_content(content_key, content_value):
             ON CONFLICT(content_key)
             DO UPDATE SET content_value = excluded.content_value, updated_at = excluded.updated_at
             ''',
-            (content_key, content_value, datetime.utcnow().isoformat())
+            (content_key, content_value, utc_now().isoformat())
         )
         conn.commit()
 
@@ -444,7 +450,7 @@ def log_admin_action(action, target='', details=''):
                 INSERT INTO admin_activity_log (action, target, details, created_at)
                 VALUES (?, ?, ?, ?)
                 ''',
-                (action, target, details, datetime.utcnow().isoformat())
+                (action, target, details, utc_now().isoformat())
             )
             conn.commit()
     except Exception as exc:
@@ -464,7 +470,7 @@ def get_recent_admin_activity(limit=20):
 def get_system_health_snapshot():
     db_exists = os.path.exists(DATABASE_PATH)
     db_size_bytes = os.path.getsize(DATABASE_PATH) if db_exists else 0
-    uptime = datetime.utcnow() - APP_STARTED_AT
+    uptime = utc_now() - APP_STARTED_AT
     uptime_seconds = int(max(uptime.total_seconds(), 0))
     uptime_hours = uptime_seconds // 3600
     uptime_minutes = (uptime_seconds % 3600) // 60
@@ -540,7 +546,7 @@ def create_editor_backup(relative_path, file_content):
         return ''
 
     os.makedirs(EDITOR_BACKUP_DIR, exist_ok=True)
-    stamp = datetime.utcnow().strftime('%Y%m%d%H%M%S%f')
+    stamp = utc_now().strftime('%Y%m%d%H%M%S%f')
     backup_name = f'{prefix}__{stamp}.bak'
     backup_path = os.path.join(EDITOR_BACKUP_DIR, backup_name)
     with open(backup_path, 'w', encoding='utf-8') as backup_file:
@@ -721,7 +727,7 @@ def init_db():
         # Insert default FAQ items if table is empty
         cursor.execute('SELECT COUNT(*) FROM faq_items')
         if cursor.fetchone()[0] == 0:
-            now = datetime.utcnow().isoformat()
+            now = utc_now().isoformat()
             default_faqs = [
                 ('Qaysi fanlardan repetitorlik xizmatlarini taklif qilasiz?', 'Biz keng ko\'lamli fanlardan, jumladan, Matematika, Fan, Ingliz tili va standartlashtirilgan testlarga tayyorgarlik (SAT, ACT) bo\'yicha repetitorlik xizmatlarini taklif etamiz.'),
                 ('Sizning ish vaqtingiz qanday?', 'Markazimiz ish kunlari soat 9:00 dan 20:00 gacha, dam olish kunlari esa 10:00 dan 18:00 gacha ishlaydi.'),
@@ -1056,7 +1062,7 @@ def admin_assets():
                 ON CONFLICT(asset_key)
                 DO UPDATE SET file_path = excluded.file_path, updated_at = excluded.updated_at
                 ''',
-                (asset_key, file_path, datetime.utcnow().isoformat())
+                (asset_key, file_path, utc_now().isoformat())
             )
             conn.commit()
         log_admin_action('asset_update', asset_key, f'Asset updated with file {file_path}')
@@ -1175,7 +1181,7 @@ def admin_news():
             if post_type not in {'news', 'event'}:
                 post_type = 'news'
 
-            now = datetime.utcnow().isoformat()
+            now = utc_now().isoformat()
             with get_db_connection() as conn:
                 cursor = conn.cursor()
                 cursor.execute(
@@ -1199,7 +1205,7 @@ def admin_news():
                     current_sort += 1
                     cursor.execute(
                         'INSERT INTO news_media (post_id, media_type, file_path, caption, sort_order, created_at) VALUES (?, ?, ?, ?, ?, ?)',
-                        (new_post_id, media_type, file_path, '', current_sort, datetime.utcnow().isoformat())
+                        (new_post_id, media_type, file_path, '', current_sort, utc_now().isoformat())
                     )
                     uploaded_count += 1
 
@@ -1244,7 +1250,7 @@ def admin_news():
                     SET title = ?, excerpt = ?, body = ?, post_type = ?, event_date = ?, is_published = ?, updated_at = ?
                     WHERE id = ?
                     ''',
-                    (title, excerpt, body, post_type, event_date, is_published, datetime.utcnow().isoformat(), post_id_int)
+                    (title, excerpt, body, post_type, event_date, is_published, utc_now().isoformat(), post_id_int)
                 )
                 conn.commit()
 
@@ -1313,7 +1319,7 @@ def admin_news():
                         INSERT INTO news_media (post_id, media_type, file_path, caption, sort_order, created_at)
                         VALUES (?, ?, ?, ?, ?, ?)
                         ''',
-                        (post_id_int, media_type, file_path, '', current_sort, datetime.utcnow().isoformat())
+                        (post_id_int, media_type, file_path, '', current_sort, utc_now().isoformat())
                     )
                     uploaded_count += 1
 
@@ -1373,7 +1379,7 @@ def admin_faq():
                 flash('Javob kamida 10 belgidan iborat bo`lsin.', 'error')
                 return redirect(url_for('admin_faq'))
 
-            now = datetime.utcnow().isoformat()
+            now = utc_now().isoformat()
             with get_db_connection() as conn:
                 cursor = conn.cursor()
                 cursor.execute('SELECT COALESCE(MAX(sort_order), 0) FROM faq_items')
@@ -1418,7 +1424,7 @@ def admin_faq():
                     SET question = ?, answer = ?, updated_at = ?
                     WHERE id = ?
                     ''',
-                    (question, answer, datetime.utcnow().isoformat(), faq_id_int)
+                    (question, answer, utc_now().isoformat(), faq_id_int)
                 )
                 conn.commit()
 
@@ -1678,7 +1684,7 @@ def export_students_csv():
         [row['id'], row['student_name'], f"+998{row['student_phone']}", row['dob'], row['course']]
         for row in rows
     ]
-    filename = f"students_export_{datetime.utcnow().strftime('%Y%m%d_%H%M%S')}.csv"
+    filename = f"students_export_{utc_now().strftime('%Y%m%d_%H%M%S')}.csv"
     log_admin_action('students_export', 'students', f'Exported rows: {len(export_rows)}')
     return build_csv_response(filename, ['ID', 'Student Name', 'Phone', 'DOB', 'Course'], export_rows)
 
@@ -1770,7 +1776,7 @@ def export_contacts_csv():
         [row['id'], row['name'], f"+998{row['phone']}" if row['phone'] else '', row['message']]
         for row in rows
     ]
-    filename = f"contacts_export_{datetime.utcnow().strftime('%Y%m%d_%H%M%S')}.csv"
+    filename = f"contacts_export_{utc_now().strftime('%Y%m%d_%H%M%S')}.csv"
     log_admin_action('contacts_export', 'contacts', f'Exported rows: {len(export_rows)}')
     return build_csv_response(filename, ['ID', 'Name', 'Phone', 'Message'], export_rows)
 
@@ -1828,7 +1834,7 @@ def admin_tools_backup():
 
     payload = {
         'metadata': {
-            'exported_at': datetime.utcnow().isoformat() + 'Z',
+            'exported_at': utc_now().isoformat() + 'Z',
             'app': 'ICEBERG Admin',
             'version': '1.0'
         },
@@ -1841,7 +1847,7 @@ def admin_tools_backup():
         'admin_activity_log': activity_rows
     }
 
-    filename = f"iceberg_backup_{datetime.utcnow().strftime('%Y%m%d_%H%M%S')}.json"
+    filename = f"iceberg_backup_{utc_now().strftime('%Y%m%d_%H%M%S')}.json"
     log_admin_action('system_backup_export', 'backup', f'Backup created: {filename}')
     return Response(
         json.dumps(payload, ensure_ascii=True, indent=2),

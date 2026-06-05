@@ -7,7 +7,12 @@ def add_phone_column():
         conn = sqlite3.connect('database.db')
         cursor = conn.cursor()
 
-        # Add the 'phone' column to the 'contacts' table
+        cursor.execute('PRAGMA table_info(contacts)')
+        existing_columns = {row[1] for row in cursor.fetchall()}
+        if 'phone' in existing_columns:
+            print("The 'phone' column already exists in the 'contacts' table.")
+            return
+
         cursor.execute('ALTER TABLE contacts ADD COLUMN phone TEXT')
 
         conn.commit()
