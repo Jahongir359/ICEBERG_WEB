@@ -492,6 +492,7 @@ def get_system_health_snapshot():
         'db_size_mb': round(db_size_bytes / (1024 * 1024), 3),
         'uptime_human': f'{uptime_hours}h {uptime_minutes}m',
         'telegram_configured': bool(TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID),
+        'registration_leads_configured': bool(REGISTRATION_LEADS_API_URL and REGISTRATION_LEADS_API_TOKEN),
         'secret_code_configured': bool(ADMIN_SECRET_CODE),
         'started_at': APP_STARTED_AT.strftime('%Y-%m-%d %H:%M:%S UTC')
     }
@@ -656,11 +657,24 @@ def send_telegram_notification(message_text):
 def send_registration_lead_to_management(payload):
     if not REGISTRATION_LEADS_API_URL:
         app.logger.info('Registration lead forwarding is not configured.')
+        log_admin_action(
+            'registration_forwarding_skipped',
+            payload.get('full_name', 'registration'),
+            'REGISTRATION_LEADS_API_URL is not configured'
+        )
+        return False
+
+    if not REGISTRATION_LEADS_API_TOKEN:
+        app.logger.warning('Registration lead forwarding token is not configured.')
+        log_admin_action(
+            'registration_forwarding_skipped',
+            payload.get('full_name', 'registration'),
+            'REGISTRATION_LEADS_API_TOKEN is not configured'
+        )
         return False
 
     headers = {'Content-Type': 'application/json'}
-    if REGISTRATION_LEADS_API_TOKEN:
-        headers['Authorization'] = f'Bearer {REGISTRATION_LEADS_API_TOKEN}'
+    headers['Authorization'] = f'Bearer {REGISTRATION_LEADS_API_TOKEN}'
 
     try:
         response = requests.post(
@@ -674,6 +688,11 @@ def send_registration_lead_to_management(payload):
         return True
     except requests.exceptions.RequestException as exc:
         app.logger.error(f'Failed to forward registration lead: {exc}')
+        log_admin_action(
+            'registration_forwarding_failed',
+            payload.get('full_name', 'registration'),
+            str(exc)[:500]
+        )
         return False
 
 def init_db():

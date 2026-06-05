@@ -145,6 +145,10 @@
                 <span>Telegram</span>
                 <span class="font-semibold {{ 'text-emerald-600' if health.telegram_configured else 'text-amber-600' }}">{{ 'Configured' if health.telegram_configured else 'Not Configured' }}</span>
             </div>
+            <div class="flex items-center justify-between border-b border-slate-200 pb-2">
+                <span>Registration Leads API</span>
+                <span class="font-semibold {{ 'text-emerald-600' if health.registration_leads_configured else 'text-amber-600' }}">{{ 'Configured' if health.registration_leads_configured else 'Not Configured' }}</span>
+            </div>
             <div class="flex items-center justify-between">
                 <span>Secret Access Code</span>
                 <span class="font-semibold {{ 'text-emerald-600' if health.secret_code_configured else 'text-amber-600' }}">{{ 'Configured' if health.secret_code_configured else 'Not Configured' }}</span>
