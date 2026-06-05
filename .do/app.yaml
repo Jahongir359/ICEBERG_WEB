@@ -17,3 +17,12 @@ services:
       - key: FLASK_ENV
         value: production
         scope: RUN_TIME
+      - key: REGISTRATION_LEADS_API_URL
+        value: https://app.iceberglc.com/public/registration-leads/
+        scope: RUN_TIME
+      - key: REGISTRATION_LEADS_API_TOKEN
+        scope: RUN_TIME
+        type: SECRET
+      - key: REGISTRATION_LEADS_API_TIMEOUT
+        value: "8"
+        scope: RUN_TIME
