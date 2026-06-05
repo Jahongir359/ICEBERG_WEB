@@ -1,7 +1,11 @@
 __pycache__/
 database.db
 *.pyc
+
+# Local environment variables
 .env
+.env.local
+
 .venv/
 .venv-1/
 static/uploads/

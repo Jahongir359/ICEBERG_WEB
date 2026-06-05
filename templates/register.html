@@ -67,9 +67,28 @@
                         </div>
                     </div>
                 </div>
-                <div>
-                    <label for="dob" class="field-label">Tug'ilgan sana</label>
-                    <input type="date" id="dob" name="dob" class="field-input" required>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label for="parent_phone" class="field-label">Ota-ona telefon raqami</label>
+                        <div class="flex">
+                            <span class="inline-flex items-center px-3 rounded-l-xl border border-r-0 border-slate-300 bg-slate-50 text-slate-500 text-sm">+998</span>
+                            <input type="tel" id="parent_phone" name="parent_phone" pattern="[0-9]{9}" title="9 xonali raqam kiriting" class="field-input rounded-l-none" placeholder="XX XXX XX XX">
+                        </div>
+                    </div>
+                    <div>
+                        <label for="dob" class="field-label">Tug'ilgan sana</label>
+                        <input type="date" id="dob" name="dob" class="field-input" required>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label for="email" class="field-label">Email</label>
+                        <input type="email" id="email" name="email" class="field-input" placeholder="student@example.com">
+                    </div>
+                    <div>
+                        <label for="social_handle" class="field-label">Instagram/Telegram username</label>
+                        <input type="text" id="social_handle" name="social_handle" class="field-input" placeholder="@username">
+                    </div>
                 </div>
                 <div>
                     <label for="program" class="field-label">Dasturni tanlang</label>
@@ -82,6 +101,44 @@
                         <option value="DTM imtihoni uchun tayyorgarlik">DTM imtihoni uchun tayyorgarlik</option>
                     </select>
                 </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label for="preferred_branch" class="field-label">Filial</label>
+                        <select id="preferred_branch" name="preferred_branch" class="field-select">
+                            <option value="">Filialni tanlang...</option>
+                            <option value="Uychi">Uychi</option>
+                            <option value="Online">Online</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="preferred_schedule" class="field-label">Qulay vaqt</label>
+                        <select id="preferred_schedule" name="preferred_schedule" class="field-select">
+                            <option value="">Vaqtni tanlang...</option>
+                            <option value="Ertalab">Ertalab</option>
+                            <option value="Tushdan keyin">Tushdan keyin</option>
+                            <option value="Kechki payt">Kechki payt</option>
+                            <option value="Dam olish kunlari">Dam olish kunlari</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <label for="social_source" class="field-label">Bizni qayerdan topdingiz?</label>
+                    <select id="social_source" name="social_source" class="field-select">
+                        <option value="website">Website</option>
+                        <option value="Instagram">Instagram</option>
+                        <option value="Telegram">Telegram</option>
+                        <option value="YouTube">YouTube</option>
+                        <option value="Google">Google</option>
+                        <option value="Tanishlar orqali">Tanishlar orqali</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="message" class="field-label">Qo'shimcha izoh</label>
+                    <textarea id="message" name="message" rows="4" class="field-input" placeholder="Savol yoki qo'shimcha ma'lumot yozing"></textarea>
+                </div>
+                <input type="hidden" name="utm_source" value="{{ request.args.get('utm_source', '') }}">
+                <input type="hidden" name="utm_medium" value="{{ request.args.get('utm_medium', '') }}">
+                <input type="hidden" name="utm_campaign" value="{{ request.args.get('utm_campaign', '') }}">
                 <button type="submit" class="btn-main">Ro'yxatdan o'tishni yakunlash</button>
             </form>
         </article>

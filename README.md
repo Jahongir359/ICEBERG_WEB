@@ -77,9 +77,60 @@ Set these in `.env` (or your deployment platform):
 - `DATABASE_PATH`: SQLite file path (default: `database.db`)
 - `TELEGRAM_BOT_TOKEN`: Telegram bot token (optional)
 - `TELEGRAM_CHAT_ID`: Telegram chat ID (optional)
+- `REGISTRATION_LEADS_API_URL`: management/ERP endpoint that receives registration leads (optional)
+- `REGISTRATION_LEADS_API_TOKEN`: bearer token sent to the ERP endpoint (optional)
+- `REGISTRATION_LEADS_API_TIMEOUT`: ERP request timeout in seconds (default: `8`)
 - `FLASK_ENV`: set to `production` in production
 
 If Telegram variables are missing, app still works without notifications.
+If ERP lead forwarding variables are missing, registrations are still saved locally and Telegram notifications still run.
+
+## Registration Lead Forwarding
+
+When `REGISTRATION_LEADS_API_URL` is configured, every successful `/register` submission is copied to the management system with a JSON `POST`.
+
+If `REGISTRATION_LEADS_API_TOKEN` is set, the request includes:
+
+`Authorization: Bearer <REGISTRATION_LEADS_API_TOKEN>`
+
+Payload shape:
+
+```json
+{
+  "full_name": "Student Name",
+  "phone": "+998901234567",
+  "parent_phone": "+998991112233",
+  "email": "student@example.com",
+  "course": "IELTS",
+  "branch": "Main branch",
+  "preferred_schedule": "Evening",
+  "source": "website",
+  "social_handle": "@student",
+  "utm_source": "instagram",
+  "utm_medium": "ads",
+  "utm_campaign": "summer-intake",
+  "message": "Interested in weekend classes"
+}
+```
+
+The ERP endpoint should return any `2xx` response for success. If the ERP is down or returns an error, the website keeps the local registration and logs the forwarding failure.
+
+Production values:
+
+```env
+REGISTRATION_LEADS_API_URL=https://app.iceberglc.com/public/registration-leads/
+REGISTRATION_LEADS_API_TOKEN=replace-with-shared-token
+REGISTRATION_LEADS_API_TIMEOUT=8
+```
+
+Manual test:
+
+```bash
+curl -i -X POST "https://app.iceberglc.com/public/registration-leads/" \
+  -H "Authorization: Bearer YOUR_SHARED_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"full_name":"Test Lead","phone":"+998900000000","course":"IELTS","source":"website"}'
+```
 
 Set `ADMIN_PASSWORD` and `ADMIN_LOGIN_SLUG` in `.env`.
 

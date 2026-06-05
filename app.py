@@ -26,7 +26,7 @@ def load_local_env_file(env_path):
             key = key.strip()
             value = value.strip().strip('"').strip("'")
 
-            if key:
+            if key and key not in os.environ:
                 os.environ[key] = value
 
 
@@ -44,6 +44,9 @@ if os.environ.get('FLASK_ENV') == 'production':
 # Telegram Bot configuration
 TELEGRAM_BOT_TOKEN = os.environ.get('TELEGRAM_BOT_TOKEN')
 TELEGRAM_CHAT_ID = os.environ.get('TELEGRAM_CHAT_ID')
+REGISTRATION_LEADS_API_URL = os.environ.get('REGISTRATION_LEADS_API_URL', '').strip()
+REGISTRATION_LEADS_API_TOKEN = os.environ.get('REGISTRATION_LEADS_API_TOKEN', '').strip()
+REGISTRATION_LEADS_API_TIMEOUT = float(os.environ.get('REGISTRATION_LEADS_API_TIMEOUT', '8'))
 
 ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD', 'iceberg-admin')
 ADMIN_SECRET_CODE = os.environ.get('ADMIN_SECRET_CODE', ADMIN_PASSWORD).strip()
@@ -222,6 +225,14 @@ def get_db_connection():
 
 def normalize_phone(raw_phone):
     return ''.join(ch for ch in (raw_phone or '') if ch.isdigit())
+
+
+def format_uz_phone(phone_digits):
+    if not phone_digits:
+        return ''
+    if phone_digits.startswith('998') and len(phone_digits) == 12:
+        return f'+{phone_digits}'
+    return f'+998{phone_digits}'
 
 
 def is_valid_dob(dob_text):
@@ -640,6 +651,30 @@ def send_telegram_notification(message_text):
         app.logger.info("Telegram notification sent successfully.")
     except requests.exceptions.RequestException as e:
         app.logger.error(f"Failed to send Telegram notification: {e}")
+
+
+def send_registration_lead_to_management(payload):
+    if not REGISTRATION_LEADS_API_URL:
+        app.logger.info('Registration lead forwarding is not configured.')
+        return False
+
+    headers = {'Content-Type': 'application/json'}
+    if REGISTRATION_LEADS_API_TOKEN:
+        headers['Authorization'] = f'Bearer {REGISTRATION_LEADS_API_TOKEN}'
+
+    try:
+        response = requests.post(
+            REGISTRATION_LEADS_API_URL,
+            json=payload,
+            headers=headers,
+            timeout=REGISTRATION_LEADS_API_TIMEOUT
+        )
+        response.raise_for_status()
+        app.logger.info('Registration lead forwarded to management system.')
+        return True
+    except requests.exceptions.RequestException as exc:
+        app.logger.error(f'Failed to forward registration lead: {exc}')
+        return False
 
 def init_db():
     with get_db_connection() as conn:
@@ -1547,14 +1582,30 @@ def register():
     if request.method == 'POST':
         student_name = request.form.get('student_name', '').strip()
         student_phone = normalize_phone(request.form.get('student_phone', '').strip())
+        parent_phone = normalize_phone(request.form.get('parent_phone', '').strip())
+        email = request.form.get('email', '').strip()
         dob = request.form.get('dob', '').strip()
         course = request.form.get('course', '').strip()
+        preferred_branch = request.form.get('preferred_branch', '').strip()
+        preferred_schedule = request.form.get('preferred_schedule', '').strip()
+        social_source = request.form.get('social_source', '').strip()
+        social_handle = request.form.get('social_handle', '').strip()
+        utm_source = request.form.get('utm_source', '').strip()
+        utm_medium = request.form.get('utm_medium', '').strip()
+        utm_campaign = request.form.get('utm_campaign', '').strip()
+        message = request.form.get('message', '').strip()
 
         if not student_name or len(student_name) < 2:
             flash('O\'quvchi ismi kamida 2 ta belgidan iborat bo\'lishi kerak.', 'error')
             return redirect(url_for('register'))
         if not PHONE_RE.match(student_phone):
             flash('Telefon raqam 9 xonali bo\'lishi kerak.', 'error')
+            return redirect(url_for('register'))
+        if parent_phone and not PHONE_RE.match(parent_phone):
+            flash('Ota-ona telefon raqami 9 xonali bo\'lishi kerak.', 'error')
+            return redirect(url_for('register'))
+        if email and not re.match(r'^[^@\s]+@[^@\s]+\.[^@\s]+$', email):
+            flash('Email manzil noto\'g\'ri.', 'error')
             return redirect(url_for('register'))
         if not is_valid_dob(dob):
             flash('Tug\'ilgan sana noto\'g\'ri.', 'error')
@@ -1575,10 +1626,32 @@ def register():
             "Kursga yangi yozilish!\n\n"
             f"O'quvchi: {student_name}\n"
             f"Telefon: {student_phone}\n"
+            f"Ota-ona telefoni: {parent_phone or '-'}\n"
+            f"Email: {email or '-'}\n"
             f"Kurs: {course}\n"
-            f"Tug'ilgan sana: {dob}"
+            f"Tug'ilgan sana: {dob}\n"
+            f"Filial: {preferred_branch or '-'}\n"
+            f"Vaqt: {preferred_schedule or '-'}\n"
+            f"Manba: {utm_source or social_source or '-'}"
         )
         send_telegram_notification(telegram_message)
+
+        lead_payload = {
+            'full_name': student_name,
+            'phone': format_uz_phone(student_phone),
+            'parent_phone': format_uz_phone(parent_phone),
+            'email': email,
+            'course': course,
+            'branch': preferred_branch,
+            'preferred_schedule': preferred_schedule,
+            'source': 'website',
+            'social_handle': social_handle,
+            'utm_source': utm_source or social_source,
+            'utm_medium': utm_medium,
+            'utm_campaign': utm_campaign,
+            'message': message
+        }
+        send_registration_lead_to_management(lead_payload)
 
         flash('Siz muvaffaqiyatli ro\'yxatdan o\'tdingiz!', 'success')
         return redirect(url_for('register'))
