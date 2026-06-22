@@ -891,17 +891,28 @@ def init_db():
 init_db()
 
 
+# Private/dynamic HTML that must never be cached (admin panels and live data
+# views). Scoped tightly so public marketing pages stay cacheable for crawlers.
+NO_CACHE_PREFIXES = ('/admin', '/portal', '/students', '/contacts_list')
+
+
 @app.after_request
-def add_no_cache_headers(response):
+def add_cache_headers(response):
     if 'text/html' in (response.content_type or ''):
-        response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate, max-age=0, private'
-        response.headers['Pragma'] = 'no-cache'
-        response.headers['Expires'] = '0'
-        # Bypass edge/CDN caches (Cloudflare, DigitalOcean, Vercel, etc.)
-        response.headers['CDN-Cache-Control'] = 'no-store'
-        response.headers['Cloudflare-CDN-Cache-Control'] = 'no-store'
-        response.headers['Surrogate-Control'] = 'no-store'
-        response.headers['Vary'] = '*'
+        if (request.path or '').startswith(NO_CACHE_PREFIXES):
+            response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate, max-age=0, private'
+            response.headers['Pragma'] = 'no-cache'
+            response.headers['Expires'] = '0'
+            # Bypass edge/CDN caches (Cloudflare, DigitalOcean, Vercel, etc.)
+            response.headers['CDN-Cache-Control'] = 'no-store'
+            response.headers['Cloudflare-CDN-Cache-Control'] = 'no-store'
+            response.headers['Surrogate-Control'] = 'no-store'
+        else:
+            # Public pages: short cache + revalidate. Good for crawl efficiency
+            # while keeping CMS edits visible within ~1 minute. Note: no Vary:*
+            # (discouraged, hurts crawling). Lower max-age if edits must appear
+            # faster; raise it to reduce load.
+            response.headers['Cache-Control'] = 'public, max-age=60, must-revalidate'
         # Diagnostic: identify which instance/container served the response.
         # If two refreshes show different X-Served-By values, multiple
         # instances are running and each has its own SQLite file.
@@ -946,21 +957,33 @@ def robots_txt():
 def sitemap_xml():
     from datetime import date as _date
     today = _date.today().isoformat()
+
+    def _template_mtime(template_name):
+        # Real "last modified" signal = when the page's template last changed
+        # (i.e. the last deploy that touched it), not the current date.
+        try:
+            path = os.path.join(app.root_path, 'templates', template_name)
+            return _date.fromtimestamp(os.path.getmtime(path)).isoformat()
+        except OSError:
+            return today
+
+    # (loc, priority, changefreq, source template)
     static_pages = [
-        ('https://iceberglc.com/', '1.0', 'daily'),
-        ('https://iceberglc.com/about', '0.8', 'monthly'),
-        ('https://iceberglc.com/our_programs', '0.9', 'weekly'),
-        ('https://iceberglc.com/news', '0.9', 'daily'),
-        ('https://iceberglc.com/questions', '0.7', 'monthly'),
-        ('https://iceberglc.com/contact', '0.8', 'monthly'),
-        ('https://iceberglc.com/register', '0.8', 'monthly'),
+        ('https://iceberglc.com/', '1.0', 'daily', 'index.html'),
+        ('https://iceberglc.com/about', '0.8', 'monthly', 'about.html'),
+        ('https://iceberglc.com/our_programs', '0.9', 'weekly', 'our_programs.html'),
+        ('https://iceberglc.com/news', '0.9', 'daily', 'news.html'),
+        ('https://iceberglc.com/questions', '0.7', 'monthly', 'questions.html'),
+        ('https://iceberglc.com/contact', '0.8', 'monthly', 'contact.html'),
+        ('https://iceberglc.com/register', '0.8', 'monthly', 'register.html'),
     ]
     lines = ['<?xml version="1.0" encoding="UTF-8"?>',
              '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
-    for loc, priority, changefreq in static_pages:
+    for loc, priority, changefreq, template_name in static_pages:
+        lastmod = _template_mtime(template_name)
         lines.append('  <url>')
         lines.append(f'    <loc>{loc}</loc>')
-        lines.append(f'    <lastmod>{today}</lastmod>')
+        lines.append(f'    <lastmod>{lastmod}</lastmod>')
         lines.append(f'    <changefreq>{changefreq}</changefreq>')
         lines.append(f'    <priority>{priority}</priority>')
         lines.append('  </url>')
