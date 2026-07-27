@@ -77,7 +77,7 @@ Set these in `.env` (or your deployment platform):
 - `DATABASE_PATH`: SQLite file path (default: `database.db`)
 - `TELEGRAM_BOT_TOKEN`: Telegram bot token (optional)
 - `TELEGRAM_CHAT_ID`: Telegram chat ID (optional)
-- `REGISTRATION_LEADS_API_URL`: management/ERP endpoint that receives registration leads (defaults to `https://app.iceberglc.com/public/registration-leads/`)
+- `REGISTRATION_LEADS_API_URL`: optional management/ERP endpoint that receives registration leads
 - `REGISTRATION_LEADS_API_TOKEN`: bearer token sent to the ERP endpoint (optional)
 - `REGISTRATION_LEADS_API_TIMEOUT`: ERP request timeout in seconds (default: `8`)
 - `FLASK_ENV`: set to `production` in production
@@ -124,7 +124,7 @@ For a Django management backend, the receiving endpoint should be an API endpoin
 Production values:
 
 ```env
-REGISTRATION_LEADS_API_URL=https://app.iceberglc.com/public/registration-leads/
+REGISTRATION_LEADS_API_URL=https://your-production-api.example/registration-leads/
 REGISTRATION_LEADS_API_TOKEN=replace-with-shared-token
 REGISTRATION_LEADS_API_TIMEOUT=8
 ```
@@ -134,7 +134,7 @@ On DigitalOcean App Platform, set `REGISTRATION_LEADS_API_TOKEN` as an encrypted
 Manual test:
 
 ```bash
-curl -i -X POST "https://app.iceberglc.com/public/registration-leads/" \
+curl -i -X POST "https://your-production-api.example/registration-leads/" \
   -H "Authorization: Bearer YOUR_SHARED_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{"full_name":"Test Lead","phone":"+998900000000","course":"IELTS","source":"website"}'
@@ -195,6 +195,62 @@ Set these environment variables in DigitalOcean:
 - `DATABASE_PATH` if you want the SQLite file stored outside the container default
 
 If those admin variables are omitted, the app falls back to `iceberg-admin` and `iceberg-portal` so the hidden login path stays consistent across deployments.
+
+## Deploy the public site to Firebase Hosting (Spark/free plan)
+
+Firebase Hosting serves the public marketing pages as pre-rendered static HTML. The
+Flask admin, SQLite database, Telegram integration, and server-side form processing
+remain on the existing backend because Firebase Hosting does not execute Python.
+
+The generated `public/` directory is intentionally ignored by Git. Rebuild it before
+each local preview. `firebase deploy` also runs the build and validation automatically
+through its predeploy hooks:
+
+```bash
+python scripts/build_firebase.py
+python scripts/check_firebase_build.py
+npx firebase-tools emulators:start --only hosting
+npx firebase-tools deploy --only hosting --project YOUR_FIREBASE_PROJECT_ID
+```
+
+The static contact and registration forms open a pre-filled WhatsApp lead message.
+This keeps them functional without exposing credentials or requiring a paid backend.
+Override the public domain or destination WhatsApp number during the build when needed:
+
+```bash
+PUBLIC_SITE_URL=https://www.example.com \
+PUBLIC_WHATSAPP_NUMBER=998901234567 \
+python scripts/build_firebase.py
+```
+
+Firebase setup:
+
+1. Create a Firebase project and enable Hosting in the Firebase console.
+2. Install or run the Firebase CLI and authenticate with `firebase login`.
+3. Run the build command above.
+4. Preview locally with the Hosting emulator.
+5. Deploy with `firebase deploy --only hosting --project YOUR_FIREBASE_PROJECT_ID`.
+6. Add `iceberglc.com` as a custom domain in Firebase Hosting, then apply the DNS
+   records shown by Firebase.
+
+`firebase.json` enables clean URLs, a custom 404 page, conservative HTML caching,
+longer asset caching, and baseline browser security headers. Do not run
+`firebase init hosting` over this configuration unless you intend to replace it.
+
+## Deploy the landing page to Cloudflare Pages
+
+Use the following Cloudflare Pages build settings:
+
+- Framework preset: `None`
+- Build command: `pip install -r requirements.txt && python scripts/build_firebase.py && python scripts/check_firebase_build.py`
+- Build output directory: `public`
+- Root directory: leave blank (repository root)
+
+The build includes a top-level `index.html`, `404.html`, and `_headers` file.
+Cloudflare Pages automatically serves matching HTML files at extensionless routes,
+so `/about`, `/contact`, and the other public URLs work without redirect rules.
+The `_headers` file adds baseline browser security headers while leaving asset
+caching to Cloudflare Pages' deployment-aware defaults.
 
 ## Admin Image Management
 

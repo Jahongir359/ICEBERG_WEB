@@ -9,3 +9,10 @@ database.db
 .venv/
 .venv-1/
 static/uploads/
+
+# Generated Firebase Hosting output and local Firebase project selection
+public/
+.firebase/
+.firebaserc
+firebase-debug.log
+firebase-debug.*.log
