@@ -44,7 +44,7 @@ if os.environ.get('FLASK_ENV') == 'production':
 # Telegram Bot configuration
 TELEGRAM_BOT_TOKEN = os.environ.get('TELEGRAM_BOT_TOKEN')
 TELEGRAM_CHAT_ID = os.environ.get('TELEGRAM_CHAT_ID')
-DEFAULT_REGISTRATION_LEADS_API_URL = 'https://app.iceberglc.com/public/registration-leads/'
+DEFAULT_REGISTRATION_LEADS_API_URL = ''
 REGISTRATION_LEADS_API_URL = os.environ.get(
     'REGISTRATION_LEADS_API_URL',
     DEFAULT_REGISTRATION_LEADS_API_URL
