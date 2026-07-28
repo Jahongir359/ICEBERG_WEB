@@ -242,15 +242,35 @@ longer asset caching, and baseline browser security headers. Do not run
 Use the following Cloudflare Pages build settings:
 
 - Framework preset: `None`
-- Build command: `pip install -r requirements.txt && python scripts/build_firebase.py && python scripts/check_firebase_build.py`
+- Build command: `bash scripts/build_cloudflare.sh`
 - Build output directory: `public`
 - Root directory: leave blank (repository root)
+
+The checked-in `wrangler.toml` also declares `public` as the Pages output directory,
+which prevents Cloudflare from publishing the Jinja files in `templates/` as raw
+text. Do not set the output directory to the repository root or to `templates`.
 
 The build includes a top-level `index.html`, `404.html`, and `_headers` file.
 Cloudflare Pages automatically serves matching HTML files at extensionless routes,
 so `/about`, `/contact`, and the other public URLs work without redirect rules.
 The `_headers` file adds baseline browser security headers while leaving asset
 caching to Cloudflare Pages' deployment-aware defaults.
+
+For the production deployment, add this environment variable in
+**Workers & Pages → your project → Settings → Environment variables**:
+
+```text
+PUBLIC_SITE_URL=https://iceberglc.com
+```
+
+Preview deployments automatically use Cloudflare's `CF_PAGES_URL`. To test or
+deploy from the command line:
+
+```bash
+bash scripts/build_cloudflare.sh
+npx wrangler pages dev public
+npx wrangler pages deploy public
+```
 
 ## Admin Image Management
 
