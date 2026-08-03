@@ -1,6 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify, Response, abort
 import requests
-import sqlite3
 import os
 import re
 import hashlib
@@ -10,6 +9,15 @@ import json
 from datetime import UTC, date, datetime
 from functools import wraps
 from werkzeug.utils import secure_filename
+
+
+STATIC_BUILD_MODE = os.environ.get('ICEBERG_STATIC_BUILD') == '1'
+try:
+    import sqlite3
+except ModuleNotFoundError:
+    if not STATIC_BUILD_MODE:
+        raise
+    sqlite3 = None
 
 
 def load_local_env_file(env_path):
@@ -214,6 +222,8 @@ APP_STARTED_AT = utc_now()
 
 
 def get_db_connection():
+    if sqlite3 is None:
+        raise RuntimeError('SQLite is unavailable during the static Firebase build')
     conn = sqlite3.connect(DATABASE_PATH, check_same_thread=False, timeout=30)
     conn.row_factory = sqlite3.Row
     # WAL mode: readers never block writers; writers never block readers.
@@ -286,6 +296,8 @@ def to_public_asset_url(path_or_url):
 
 
 def get_asset_url(asset_key, fallback=''):
+    if STATIC_BUILD_MODE:
+        return to_public_asset_url(fallback or ASSET_DEFAULTS.get(asset_key, ''))
     with get_db_connection() as conn:
         cursor = conn.cursor()
         cursor.execute('SELECT file_path FROM site_assets WHERE asset_key = ?', (asset_key,))
@@ -343,6 +355,8 @@ def remove_static_file(relative_path):
 
 
 def fetch_news_posts(include_unpublished=False):
+    if STATIC_BUILD_MODE:
+        return []
     query = '''
         SELECT *
         FROM news_posts
@@ -372,6 +386,8 @@ def fetch_news_posts(include_unpublished=False):
 
 
 def get_site_content_map():
+    if STATIC_BUILD_MODE:
+        return {}
     with get_db_connection() as conn:
         cursor = conn.cursor()
         cursor.execute('SELECT content_key, content_value FROM site_content')
@@ -381,6 +397,15 @@ def get_site_content_map():
 
 def fetch_faq_items():
     """Fetch all FAQ items ordered by sort_order"""
+    if STATIC_BUILD_MODE:
+        return [
+            {
+                'question': question,
+                'answer': answer,
+                'sort_order': index,
+            }
+            for index, (question, answer) in enumerate(DEFAULT_FAQS, 1)
+        ]
     with get_db_connection() as conn:
         cursor = conn.cursor()
         cursor.execute('SELECT * FROM faq_items ORDER BY sort_order ASC, id ASC')
@@ -755,6 +780,15 @@ def ensure_table_columns(cursor, table_name, column_definitions):
         if column_name not in existing_columns:
             cursor.execute(f'ALTER TABLE {table_name} ADD COLUMN {column_name} {column_sql}')
 
+DEFAULT_FAQS = [
+    ('Qaysi fanlardan repetitorlik xizmatlarini taklif qilasiz?', 'Biz keng ko\'lamli fanlardan, jumladan, Matematika, Fan, Ingliz tili va standartlashtirilgan testlarga tayyorgarlik (SAT, ACT) bo\'yicha repetitorlik xizmatlarini taklif etamiz.'),
+    ('Sizning ish vaqtingiz qanday?', 'Markazimiz ish kunlari soat 9:00 dan 20:00 gacha, dam olish kunlari esa 10:00 dan 18:00 gacha ishlaydi.'),
+    ('O\'quvchilarni repetitorlar bilan qanday bog\'laysiz?', 'Biz o\'quvchilarni ularning akademik ehtiyojlari, o\'rganish uslubi va shaxsiyatiga qarab repetitorlar bilan bog\'laymiz, bu esa eng yaxshi moslikni ta\'minlaydi.'),
+    ('Darslar qayerda o\'tkaziladi?', 'Darslar bizning zamonaviy o\'quv markazimizda yoki o\'quvchining xohishiga ko\'ra onlayn tarzda o\'tkazilishi mumkin.'),
+    ('Narxlar qanday?', 'Narxlar dastur turiga va darslar soniga qarab o\'zgaradi. Batafsil ma\'lumot olish va bepul maslahat uchun biz bilan bog\'laning.'),
+]
+
+
 def init_db():
     with get_db_connection() as conn:
         cursor = conn.cursor()
@@ -873,14 +907,7 @@ def init_db():
         cursor.execute('SELECT COUNT(*) FROM faq_items')
         if cursor.fetchone()[0] == 0:
             now = utc_now().isoformat()
-            default_faqs = [
-                ('Qaysi fanlardan repetitorlik xizmatlarini taklif qilasiz?', 'Biz keng ko\'lamli fanlardan, jumladan, Matematika, Fan, Ingliz tili va standartlashtirilgan testlarga tayyorgarlik (SAT, ACT) bo\'yicha repetitorlik xizmatlarini taklif etamiz.'),
-                ('Sizning ish vaqtingiz qanday?', 'Markazimiz ish kunlari soat 9:00 dan 20:00 gacha, dam olish kunlari esa 10:00 dan 18:00 gacha ishlaydi.'),
-                ('O\'quvchilarni repetitorlar bilan qanday bog\'laysiz?', 'Biz o\'quvchilarni ularning akademik ehtiyojlari, o\'rganish uslubi va shaxsiyatiga qarab repetitorlar bilan bog\'laymiz, bu esa eng yaxshi moslikni ta\'minlaydi.'),
-                ('Darslar qayerda o\'tkaziladi?', 'Darslar bizning zamonaviy o\'quv markazimizda yoki o\'quvchining xohishiga ko\'ra onlayn tarzda o\'tkazilishi mumkin.'),
-                ('Narxlar qanday?', 'Narxlar dastur turiga va darslar soniga qarab o\'zgaradi. Batafsil ma\'lumot olish va bepul maslahat uchun biz bilan bog\'laning.'),
-            ]
-            for index, (question, answer) in enumerate(default_faqs, 1):
+            for index, (question, answer) in enumerate(DEFAULT_FAQS, 1):
                 cursor.execute(
                     '''INSERT INTO faq_items (question, answer, sort_order, created_at, updated_at) VALUES (?, ?, ?, ?, ?)''',
                     (question, answer, index, now, now)
@@ -888,7 +915,8 @@ def init_db():
         
         conn.commit()
 
-init_db()
+if not STATIC_BUILD_MODE:
+    init_db()
 
 
 # Private/dynamic HTML that must never be cached (admin panels and live data

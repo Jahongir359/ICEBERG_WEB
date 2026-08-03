@@ -37,6 +37,9 @@ def build() -> None:
     # Imports happen here so running --help or inspecting this script has no app side effects.
     os.chdir(ROOT)
     sys.path.insert(0, str(ROOT))
+    # Some hosting build images compile Python without the optional _sqlite3
+    # extension. Public static pages use checked-in defaults and need no DB.
+    os.environ["ICEBERG_STATIC_BUILD"] = "1"
     from app import app  # pylint: disable=import-outside-toplevel
 
     site_url = os.environ.get("PUBLIC_SITE_URL", "https://iceberglc.com").rstrip("/")
