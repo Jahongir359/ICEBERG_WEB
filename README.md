@@ -246,6 +246,10 @@ Use the following Cloudflare Pages build settings:
 - Build output directory: `public`
 - Root directory: leave blank (repository root)
 
+The repository pins Python in `.python-version`. Keep this pin in place because
+the static build imports the Flask application and therefore requires Python's
+compiled SQLite module; Cloudflare's default Python 3.13 build currently omits it.
+
 The checked-in `wrangler.toml` also declares `public` as the Pages output directory,
 which prevents Cloudflare from publishing the Jinja files in `templates/` as raw
 text. Do not set the output directory to the repository root or to `templates`.
