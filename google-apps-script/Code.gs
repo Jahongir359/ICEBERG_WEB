@@ -12,6 +12,7 @@ const HEADERS = [
   'Status',
   'Staff Notes'
 ];
+const RECEIVER_VERSION = '2026-08-05.1';
 
 function jsonResult_(body) {
   return ContentService
@@ -22,6 +23,14 @@ function jsonResult_(body) {
 function safeCell_(value) {
   const text = String(value || '').replace(/[\u0000-\u001f\u007f]/g, '').trim();
   return /^[=+\-@]/.test(text) ? "'" + text : text;
+}
+
+function doGet() {
+  return jsonResult_({
+    ok: true,
+    service: 'ICEBERG registration receiver',
+    version: RECEIVER_VERSION
+  });
 }
 
 function doPost(e) {
@@ -61,9 +70,15 @@ function doPost(e) {
         .matchEntireCell(true)
         .findNext();
       if (!existing) {
+        const parsedSubmittedAt = data.submitted_at
+          ? new Date(String(data.submitted_at))
+          : new Date();
+        const submittedAt = Number.isNaN(parsedSubmittedAt.getTime())
+          ? new Date()
+          : parsedSubmittedAt;
         sheet.appendRow([
           safeCell_(data.id),
-          safeCell_(data.submitted_at),
+          submittedAt,
           safeCell_(data.student_name),
           safeCell_(data.student_phone),
           safeCell_(data.utm_source),
@@ -74,6 +89,9 @@ function doPost(e) {
           'New',
           ''
         ]);
+        sheet
+          .getRange(sheet.getLastRow(), 2)
+          .setNumberFormat('yyyy-mm-dd hh:mm:ss');
       }
     } finally {
       lock.releaseLock();

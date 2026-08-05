@@ -8,11 +8,17 @@
 4. Select **Deploy > New deployment > Web app**.
 5. Set **Execute as** to **Me** and access to **Anyone**.
 6. Authorize the script and copy the deployment URL ending in `/exec`.
+   Opening that URL in a browser should return a JSON health response containing
+   `"version":"2026-08-05.1"`.
 7. In Cloudflare Pages, add these encrypted secrets for both production and preview:
    - `GOOGLE_SCRIPT_URL`: the `/exec` deployment URL
    - `GOOGLE_SCRIPT_SECRET`: the same value as `WEBHOOK_SECRET`
    - `TURNSTILE_SECRET_KEY`: the secret from the Cloudflare Turnstile widget
 8. Add `PUBLIC_TURNSTILE_SITE_KEY` as a plain build environment variable.
 9. Redeploy the Pages project after adding the values.
+
+After changing `Code.gs`, create a new Apps Script deployment version with
+**Deploy > Manage deployments > Edit > New version > Deploy**. Saving the editor
+alone does not update the public `/exec` deployment.
 
 Never put `GOOGLE_SCRIPT_SECRET` or `TURNSTILE_SECRET_KEY` in Git or a public build variable.
