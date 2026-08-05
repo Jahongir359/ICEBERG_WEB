@@ -5,6 +5,8 @@ database.db
 # Local environment variables
 .env
 .env.local
+.dev.vars
+.dev.vars.*
 
 .venv/
 .venv-1/
