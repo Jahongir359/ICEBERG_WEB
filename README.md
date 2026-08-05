@@ -267,6 +267,16 @@ For the production deployment, add this environment variable in
 PUBLIC_SITE_URL=https://iceberglc.com
 ```
 
+The static registration form can save leads to Google Sheets through a
+Cloudflare Pages Function. Follow `google-apps-script/README.md`, then configure:
+
+- Build variable: `PUBLIC_TURNSTILE_SITE_KEY`
+- Encrypted secrets: `TURNSTILE_SECRET_KEY`, `GOOGLE_SCRIPT_URL`, and
+  `GOOGLE_SCRIPT_SECRET`
+
+The registration endpoint will remain unavailable until all four values are set.
+The contact form continues to open WhatsApp.
+
 Preview deployments automatically use Cloudflare's `CF_PAGES_URL`. To test or
 deploy from the command line:
 

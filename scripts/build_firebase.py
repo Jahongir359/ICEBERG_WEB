@@ -24,12 +24,29 @@ PUBLIC_ROUTES = {
 ROOT_ASSETS = ("/favicon.ico", "/manifest.json", "/robots.txt", "/sitemap.xml")
 
 
-def make_form_static(html: str, route: str, whatsapp_number: str) -> str:
+def make_form_static(
+    html: str,
+    route: str,
+    whatsapp_number: str,
+    site_url: str,
+    turnstile_site_key: str,
+) -> str:
     local_action = f'action="{route}" method="post"'
-    static_action = (
-        f'action="https://wa.me/{whatsapp_number}" method="get" '
-        f'data-static-lead-form="{route.lstrip("/")}"'
-    )
+    if route == "/register":
+        turnstile_attribute = (
+            f' data-turnstile-sitekey="{turnstile_site_key}"'
+            if turnstile_site_key
+            else ""
+        )
+        static_action = (
+            f'action="{site_url}/api/register" method="post" '
+            f'data-static-lead-form="register"{turnstile_attribute}'
+        )
+    else:
+        static_action = (
+            f'action="https://wa.me/{whatsapp_number}" method="get" '
+            f'data-static-lead-form="{route.lstrip("/")}"'
+        )
     return html.replace(local_action, static_action)
 
 
@@ -46,6 +63,7 @@ def build() -> None:
     whatsapp_number = re.sub(
         r"\D", "", os.environ.get("PUBLIC_WHATSAPP_NUMBER", "998939461699")
     )
+    turnstile_site_key = os.environ.get("PUBLIC_TURNSTILE_SITE_KEY", "").strip()
     if not whatsapp_number:
         raise RuntimeError("PUBLIC_WHATSAPP_NUMBER must contain a phone number")
 
@@ -62,8 +80,12 @@ def build() -> None:
             raise RuntimeError(f"GET {route} returned HTTP {response.status_code}")
 
         html = response.get_data(as_text=True)
-        html = make_form_static(html, "/contact", whatsapp_number)
-        html = make_form_static(html, "/register", whatsapp_number)
+        html = make_form_static(
+            html, "/contact", whatsapp_number, site_url, turnstile_site_key
+        )
+        html = make_form_static(
+            html, "/register", whatsapp_number, site_url, turnstile_site_key
+        )
         # The Flask-only hidden admin login must not be exposed on the static site.
         html = re.sub(r'\sdata-admin-trigger-name="[^"]*"', "", html)
         html = re.sub(
@@ -118,7 +140,8 @@ def build() -> None:
     )
 
     print(f"Built {len(PUBLIC_ROUTES)} pages and static assets in {OUTPUT}")
-    print(f"Static lead forms open WhatsApp for +{whatsapp_number}")
+    print(f"Static contact form opens WhatsApp for +{whatsapp_number}")
+    print("Static registration form submits to /api/register")
 
 
 if __name__ == "__main__":
