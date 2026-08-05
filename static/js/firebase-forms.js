@@ -16,23 +16,6 @@
         ].join("\n");
     }
 
-    function registrationMessage(form) {
-        var query = new URLSearchParams(window.location.search);
-        var lines = [
-            "ICEBERG kursiga yangi ro'yxatdan o'tish",
-            "",
-            "O'quvchi: " + fieldValue(form, "student_name"),
-            "Telefon: +998" + fieldValue(form, "student_phone")
-        ];
-        ["utm_source", "utm_medium", "utm_campaign"].forEach(function (name) {
-            var value = fieldValue(form, name) || query.get(name) || "";
-            if (value) {
-                lines.push(name + ": " + value);
-            }
-        });
-        return lines.join("\n");
-    }
-
     function loadTurnstile(form) {
         var siteKey = form.getAttribute("data-turnstile-sitekey");
         if (!siteKey) {
@@ -72,6 +55,47 @@
         return status;
     }
 
+    function showAdminContactChoice(form, status) {
+        var previousChoice = form.querySelector("[data-admin-contact-choice]");
+        if (previousChoice) {
+            previousChoice.remove();
+        }
+
+        var choice = document.createElement("div");
+        choice.setAttribute("data-admin-contact-choice", "");
+        choice.className = "mt-4 rounded-2xl border border-sky-200 bg-sky-50 p-4";
+
+        var question = document.createElement("p");
+        question.className = "font-semibold text-slate-800";
+        question.textContent = "Administrator bilan hozir Telegram orqali bog'lanishni xohlaysizmi?";
+
+        var actions = document.createElement("div");
+        actions.className = "mt-3 flex flex-wrap gap-3";
+
+        var yesLink = document.createElement("a");
+        yesLink.href = "https://t.me/iceberg_qabulxona";
+        yesLink.target = "_blank";
+        yesLink.rel = "noopener noreferrer";
+        yesLink.className = "btn-main inline-flex items-center justify-center";
+        yesLink.textContent = "Ha, Telegram orqali";
+
+        var noButton = document.createElement("button");
+        noButton.type = "button";
+        noButton.className = "rounded-xl border border-slate-300 bg-white px-5 py-3 font-semibold text-slate-700";
+        noButton.textContent = "Yo'q";
+        noButton.addEventListener("click", function () {
+            choice.remove();
+            status.textContent = "Ma'lumotlaringiz saqlandi. Tez orada siz bilan bog'lanamiz.";
+            status.focus();
+        });
+
+        actions.appendChild(yesLink);
+        actions.appendChild(noButton);
+        choice.appendChild(question);
+        choice.appendChild(actions);
+        form.appendChild(choice);
+    }
+
     async function submitRegistration(form) {
         var button = form.querySelector('button[type="submit"]');
         var status = statusElement(form);
@@ -107,7 +131,10 @@
 
             form.reset();
             status.className = "mt-3 text-sm font-semibold text-emerald-700";
-            status.textContent = "Arizangiz qabul qilindi. Tez orada siz bilan bog'lanamiz.";
+            status.tabIndex = -1;
+            status.textContent = "Ma'lumotlaringiz muvaffaqiyatli saqlandi.";
+            showAdminContactChoice(form, status);
+            status.focus();
         } catch (error) {
             status.className = "mt-3 text-sm font-semibold text-red-700";
             status.textContent = error.message || "Xatolik yuz berdi. Qayta urinib ko'ring.";
@@ -148,9 +175,7 @@
                     submitRegistration(form);
                     return;
                 }
-                var message = kind === "register"
-                    ? registrationMessage(form)
-                    : contactMessage(form);
+                var message = contactMessage(form);
                 var number = new URL(form.action).pathname.replace(/\D/g, "");
                 window.location.assign(
                     "https://wa.me/" + number + "?text=" + encodeURIComponent(message)
