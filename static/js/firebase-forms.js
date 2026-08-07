@@ -55,54 +55,68 @@
         return status;
     }
 
-    function showAdminContactChoice(form, status) {
-        var previousChoice = form.querySelector("[data-admin-contact-choice]");
-        if (previousChoice) {
-            previousChoice.remove();
+    function normalizeUzPhone(value) {
+        var digits = String(value || "").replace(/\D/g, "");
+        if (digits.length === 12 && digits.indexOf("998") === 0) {
+            digits = digits.slice(3);
         }
+        return digits;
+    }
 
-        var choice = document.createElement("div");
-        choice.setAttribute("data-admin-contact-choice", "");
-        choice.className = "mt-4 rounded-2xl border border-sky-200 bg-sky-50 p-4";
+    function formatUzPhoneInput(value) {
+        var digits = normalizeUzPhone(value).slice(0, 9);
+        return [
+            digits.slice(0, 2),
+            digits.slice(2, 5),
+            digits.slice(5, 7),
+            digits.slice(7, 9)
+        ].filter(Boolean).join(" ");
+    }
 
-        var question = document.createElement("p");
-        question.className = "font-semibold text-slate-800";
-        question.textContent = "Administrator bilan hozir Telegram orqali bog'lanishni xohlaysizmi?";
+    function showRegistrationSuccess(form) {
+        var success = document.querySelector("[data-registration-success]");
+        form.reset();
+        form.hidden = true;
+        if (success) {
+            success.hidden = false;
+            success.focus();
+        }
+    }
 
-        var actions = document.createElement("div");
-        actions.className = "mt-3 flex flex-wrap gap-3";
+    function setFieldError(form, name, message) {
+        var field = form.elements.namedItem(name);
+        var error = form.querySelector('[data-error-for="' + name + '"]');
+        if (field) field.setAttribute("aria-invalid", message ? "true" : "false");
+        if (error) error.textContent = message || "";
+    }
 
-        var yesLink = document.createElement("a");
-        yesLink.href = "https://t.me/iceberg_qabulxona";
-        yesLink.target = "_blank";
-        yesLink.rel = "noopener noreferrer";
-        yesLink.className = "btn-main inline-flex items-center justify-center";
-        yesLink.textContent = "Ha, Telegram orqali";
-
-        var noButton = document.createElement("button");
-        noButton.type = "button";
-        noButton.className = "rounded-xl border border-slate-300 bg-white px-5 py-3 font-semibold text-slate-700";
-        noButton.textContent = "Yo'q";
-        noButton.addEventListener("click", function () {
-            choice.remove();
-            status.textContent = "Ma'lumotlaringiz saqlandi. Tez orada siz bilan bog'lanamiz.";
-            status.focus();
-        });
-
-        actions.appendChild(yesLink);
-        actions.appendChild(noButton);
-        choice.appendChild(question);
-        choice.appendChild(actions);
-        form.appendChild(choice);
+    function validateRegistration(form) {
+        var valid = true;
+        var name = fieldValue(form, "student_name");
+        var phone = normalizeUzPhone(fieldValue(form, "student_phone"));
+        var program = fieldValue(form, "course");
+        var branch = fieldValue(form, "preferred_branch");
+        setFieldError(form, "student_name", name.length >= 2 ? "" : "Ism va familiyangizni kiriting.");
+        setFieldError(form, "student_phone", /^\d{9}$/.test(phone) ? "" : "Telefon raqamingizni tekshiring.");
+        setFieldError(form, "course", program ? "" : "Dastur tanlang.");
+        setFieldError(form, "preferred_branch", branch ? "" : "Filial tanlang.");
+        valid = name.length >= 2 && /^\d{9}$/.test(phone) && Boolean(program) && Boolean(branch);
+        return valid;
     }
 
     async function submitRegistration(form) {
+        if (form.dataset.submitting === "true") return;
         var button = form.querySelector('button[type="submit"]');
         var status = statusElement(form);
         var originalLabel = button ? button.textContent : "";
+        var submissionId = form.dataset.submissionId || crypto.randomUUID();
+        form.dataset.submissionId = submissionId;
         var payload = {
+            submission_id: submissionId,
             student_name: fieldValue(form, "student_name"),
-            student_phone: fieldValue(form, "student_phone"),
+            student_phone: normalizeUzPhone(fieldValue(form, "student_phone")),
+            program: fieldValue(form, "course"),
+            branch: fieldValue(form, "preferred_branch"),
             utm_source: fieldValue(form, "utm_source"),
             utm_medium: fieldValue(form, "utm_medium"),
             utm_campaign: fieldValue(form, "utm_campaign"),
@@ -113,6 +127,7 @@
         };
 
         status.textContent = "";
+        form.dataset.submitting = "true";
         if (button) {
             button.disabled = true;
             button.textContent = "Yuborilmoqda...";
@@ -129,12 +144,7 @@
                 throw new Error(result.message || "Arizani yuborib bo'lmadi.");
             }
 
-            form.reset();
-            status.className = "mt-3 text-sm font-semibold text-emerald-700";
-            status.tabIndex = -1;
-            status.textContent = "Ma'lumotlaringiz muvaffaqiyatli saqlandi.";
-            showAdminContactChoice(form, status);
-            status.focus();
+            showRegistrationSuccess(form);
         } catch (error) {
             status.className = "mt-3 text-sm font-semibold text-red-700";
             status.textContent = error.message || "Xatolik yuz berdi. Qayta urinib ko'ring.";
@@ -146,10 +156,53 @@
                 button.disabled = false;
                 button.textContent = originalLabel;
             }
+            form.dataset.submitting = "false";
+        }
+    }
+
+    function configureRegistration(form) {
+        var params = new URLSearchParams(window.location.search);
+        var program = params.get("program");
+        var branch = params.get("branch");
+        var programSelect = form.elements.namedItem("course");
+        var branchSelect = form.elements.namedItem("preferred_branch");
+        var phone = form.elements.namedItem("student_phone");
+        if (programSelect && program && programSelect.querySelector('option[value="' + CSS.escape(program) + '"]')) {
+            programSelect.value = program;
+        }
+        if (branchSelect && branch && branchSelect.querySelector('option[value="' + CSS.escape(branch) + '"]')) {
+            branchSelect.value = branch;
+        }
+        if (phone) {
+            phone.value = formatUzPhoneInput(phone.value);
+            phone.addEventListener("input", function () {
+                phone.value = formatUzPhoneInput(phone.value);
+                setFieldError(form, "student_phone", "");
+            });
+        }
+        ["student_name", "course", "preferred_branch"].forEach(function (name) {
+            var field = form.elements.namedItem(name);
+            if (field) field.addEventListener("input", function () { setFieldError(form, name, ""); });
+        });
+        if (!form.hasAttribute("data-static-lead-form")) {
+            form.addEventListener("submit", function (event) {
+                if (!validateRegistration(form)) {
+                    event.preventDefault();
+                    var firstInvalid = form.querySelector('[aria-invalid="true"]');
+                    if (firstInvalid) firstInvalid.focus();
+                    return;
+                }
+                var button = form.querySelector('button[type="submit"]');
+                if (button) {
+                    button.disabled = true;
+                    button.textContent = "Yuborilmoqda...";
+                }
+            });
         }
     }
 
     document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll("form[data-registration-form]").forEach(configureRegistration);
         document.querySelectorAll("form[data-static-lead-form]").forEach(function (form) {
             if (form.getAttribute("data-static-lead-form") === "register") {
                 loadTurnstile(form);
@@ -172,6 +225,11 @@
 
                 var kind = form.getAttribute("data-static-lead-form");
                 if (kind === "register") {
+                    if (!validateRegistration(form)) {
+                        var firstInvalid = form.querySelector('[aria-invalid="true"]');
+                        if (firstInvalid) firstInvalid.focus();
+                        return;
+                    }
                     submitRegistration(form);
                     return;
                 }

@@ -76,6 +76,7 @@ def build_admin_login_slug():
 
 ADMIN_LOGIN_SLUG = build_admin_login_slug()
 DATABASE_PATH = os.environ.get('DATABASE_PATH', os.path.join(app.root_path, 'database.db'))
+REGISTRATION_CONFIG_PATH = os.path.join(app.root_path, 'config', 'registration.json')
 ALLOWED_IMAGE_EXTENSIONS = {'.jpg', '.jpeg', '.png', '.webp', '.gif'}
 ALLOWED_NEWS_IMAGE_EXTENSIONS = {'.jpg', '.jpeg', '.png', '.webp', '.gif'}
 ALLOWED_NEWS_VIDEO_EXTENSIONS = {'.mp4', '.webm', '.mov', '.m4v'}
@@ -214,6 +215,23 @@ CONTENT_KEYS = {field['key'] for field in CONTENT_FIELDS}
 PHONE_RE = re.compile(r'^\d{9}$')
 
 
+def load_registration_config():
+    with open(REGISTRATION_CONFIG_PATH, 'r', encoding='utf-8') as config_file:
+        config = json.load(config_file)
+    config['programs'] = [item for item in config.get('programs', []) if item.get('active')]
+    config['branches'] = [item for item in config.get('branches', []) if item.get('active')]
+    for group_name in ('programs', 'branches'):
+        ids = [item.get('id', '') for item in config[group_name]]
+        if len(ids) != len(set(ids)) or any(not re.fullmatch(r'[a-z0-9-]+', item_id) for item_id in ids):
+            raise RuntimeError(f'Invalid or duplicate active registration {group_name} ID')
+    return config
+
+
+REGISTRATION_CONFIG = load_registration_config()
+REGISTRATION_PROGRAMS = {item['id']: item for item in REGISTRATION_CONFIG['programs']}
+REGISTRATION_BRANCHES = {item['id']: item for item in REGISTRATION_CONFIG['branches']}
+
+
 def utc_now():
     return datetime.now(UTC).replace(tzinfo=None)
 
@@ -238,7 +256,10 @@ def get_db_connection():
 
 
 def normalize_phone(raw_phone):
-    return ''.join(ch for ch in (raw_phone or '') if ch.isdigit())
+    digits = ''.join(ch for ch in (raw_phone or '') if ch.isdigit())
+    if len(digits) == 12 and digits.startswith('998'):
+        return digits[3:]
+    return digits
 
 
 def format_uz_phone(phone_digits):
@@ -1740,58 +1761,58 @@ def contact():
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
+    form_data = {}
+    errors = {}
     if request.method == 'POST':
-        student_name = request.form.get('student_name', '').strip()
+        student_name = re.sub(
+            r'[\x00-\x1f\x7f]',
+            '',
+            request.form.get('student_name', '').strip(),
+        )[:100]
         student_phone = normalize_phone(request.form.get('student_phone', '').strip())
-        parent_phone = normalize_phone(request.form.get('parent_phone', '').strip())
-        email = request.form.get('email', '').strip()
-        dob = request.form.get('dob', '').strip()
         course = request.form.get('course', '').strip()
         preferred_branch = request.form.get('preferred_branch', '').strip()
-        preferred_schedule = request.form.get('preferred_schedule', '').strip()
-        social_source = request.form.get('social_source', '').strip()
-        social_handle = request.form.get('social_handle', '').strip()
-        utm_source = request.form.get('utm_source', '').strip()
-        utm_medium = request.form.get('utm_medium', '').strip()
-        utm_campaign = request.form.get('utm_campaign', '').strip()
-        message = request.form.get('message', '').strip()
+        utm_source = request.form.get('utm_source', '').strip()[:100]
+        utm_medium = request.form.get('utm_medium', '').strip()[:100]
+        utm_campaign = request.form.get('utm_campaign', '').strip()[:150]
+        form_data = {
+            'student_name': student_name,
+            'student_phone': student_phone,
+            'course': course,
+            'preferred_branch': preferred_branch,
+        }
 
         if not student_name or len(student_name) < 2:
-            flash('O\'quvchi ismi kamida 2 ta belgidan iborat bo\'lishi kerak.', 'error')
-            return redirect(url_for('register'))
+            errors['student_name'] = 'Ism va familiyangizni kiriting.'
         if not PHONE_RE.match(student_phone):
-            flash('Telefon raqam 9 xonali bo\'lishi kerak.', 'error')
-            return redirect(url_for('register'))
-        if parent_phone and not PHONE_RE.match(parent_phone):
-            flash('Ota-ona telefon raqami 9 xonali bo\'lishi kerak.', 'error')
-            return redirect(url_for('register'))
-        if email and not re.match(r'^[^@\s]+@[^@\s]+\.[^@\s]+$', email):
-            flash('Email manzil noto\'g\'ri.', 'error')
-            return redirect(url_for('register'))
-        if dob and not is_valid_dob(dob):
-            flash('Tug\'ilgan sana noto\'g\'ri.', 'error')
-            return redirect(url_for('register'))
+            errors['student_phone'] = 'Telefon raqamingizni tekshiring.'
+        if course not in REGISTRATION_PROGRAMS:
+            errors['course'] = 'Dastur tanlang.'
+        if preferred_branch not in REGISTRATION_BRANCHES:
+            errors['preferred_branch'] = 'Filial tanlang.'
+
+        if errors:
+            return render_template(
+                'register.html',
+                registration=REGISTRATION_CONFIG,
+                form_data=form_data,
+                errors=errors,
+                success=False,
+            ), 422
 
         created_at = utc_now().isoformat()
         lead_payload = {
             'full_name': student_name,
             'phone': format_uz_phone(student_phone),
+            'course': course,
+            'branch': preferred_branch,
             'source': 'website',
             'submitted_at': created_at
         }
         optional_lead_fields = {
-            'parent_phone': format_uz_phone(parent_phone),
-            'email': email,
-            'course': course,
-            'date_of_birth': dob,
-            'branch': preferred_branch,
-            'preferred_schedule': preferred_schedule,
-            'social_source': social_source,
-            'social_handle': social_handle,
-            'utm_source': utm_source or social_source,
+            'utm_source': utm_source,
             'utm_medium': utm_medium,
             'utm_campaign': utm_campaign,
-            'message': message
         }
         lead_payload.update({key: value for key, value in optional_lead_fields.items() if value})
 
@@ -1808,9 +1829,9 @@ def register():
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 ''',
                 (
-                    student_name, student_phone, parent_phone, email, dob, course,
-                    preferred_branch, preferred_schedule, social_source, social_handle,
-                    utm_source, utm_medium, utm_campaign, message,
+                    student_name, student_phone, '', '', '', course,
+                    preferred_branch, '', '', '',
+                    utm_source, utm_medium, utm_campaign, '',
                     0, created_at
                 )
             )
@@ -1831,24 +1852,30 @@ def register():
             "Kursga yangi yozilish!",
             "",
             f"O'quvchi: {student_name}",
-            f"Telefon: {student_phone}"
+            f"Telefon: {format_uz_phone(student_phone)}"
         ]
         optional_telegram_lines = [
-            ("Ota-ona telefoni", parent_phone),
-            ("Email", email),
-            ("Kurs", course),
-            ("Tug'ilgan sana", dob),
-            ("Filial", preferred_branch),
-            ("Vaqt", preferred_schedule),
-            ("Manba", utm_source or social_source)
+            ("Dastur", REGISTRATION_PROGRAMS[course]['name']),
+            ("Filial", REGISTRATION_BRANCHES[preferred_branch]['name']),
+            ("Manba", utm_source)
         ]
         telegram_lines.extend(f"{label}: {value}" for label, value in optional_telegram_lines if value)
         telegram_message = "\n".join(telegram_lines)
         send_telegram_notification(telegram_message)
 
-        flash('Siz muvaffaqiyatli ro\'yxatdan o\'tdingiz!', 'success')
-        return redirect(url_for('register'))
-    return render_template('register.html')
+        return redirect(url_for('register', success='1'))
+    requested_program = request.args.get('program', '').strip()
+    requested_branch = request.args.get('branch', '').strip()
+    return render_template(
+        'register.html',
+        registration=REGISTRATION_CONFIG,
+        form_data={
+            'course': requested_program if requested_program in REGISTRATION_PROGRAMS else '',
+            'preferred_branch': requested_branch if requested_branch in REGISTRATION_BRANCHES else '',
+        },
+        errors={},
+        success=request.args.get('success') == '1',
+    )
 
 @app.route('/students')
 @login_required

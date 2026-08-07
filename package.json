@@ -1,0 +1,8 @@
+{
+  "name": "iceberg-web",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test:registration": "node tests/test_cloudflare_registration.mjs"
+  }
+}

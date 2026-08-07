@@ -217,7 +217,11 @@
                         </li>
                         <li class="flex items-center">
                             <i class="fas fa-phone-alt mr-3"></i>
+                            {% if current_endpoint == 'register' and registration %}
+                            <a href="tel:{{ registration.contact.call_center_phone }}" class="footer-link">{{ registration.contact.call_center_display }}</a>
+                            {% else %}
                             <a href="tel:{{ content('contact_phone', '+998939461699') }}" class="footer-link">{{ content('contact_phone_display', '+998 (93) 946-16-99') }}</a>
+                            {% endif %}
                         </li>
                         <li class="flex items-center">
                             <i class="fas fa-envelope mr-3"></i>

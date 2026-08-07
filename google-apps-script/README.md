@@ -9,7 +9,7 @@
 5. Set **Execute as** to **Me** and access to **Anyone**.
 6. Authorize the script and copy the deployment URL ending in `/exec`.
    Opening that URL in a browser should return a JSON health response containing
-   `"version":"2026-08-05.1"`.
+   `"version":"2026-08-07.1"`.
 7. In Cloudflare Pages, add these encrypted secrets for both production and preview:
    - `GOOGLE_SCRIPT_URL`: the `/exec` deployment URL
    - `GOOGLE_SCRIPT_SECRET`: the same value as `WEBHOOK_SECRET`
@@ -22,3 +22,7 @@ After changing `Code.gs`, create a new Apps Script deployment version with
 alone does not update the public `/exec` deployment.
 
 Never put `GOOGLE_SCRIPT_SECRET` or `TURNSTILE_SECRET_KEY` in Git or a public build variable.
+
+The receiver stores stable Program ID and Branch ID columns. Existing sheets keep
+their existing rows; deploy the updated script before publishing the new form so
+new submissions are written with the expanded header order.

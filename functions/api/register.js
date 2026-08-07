@@ -14,6 +14,21 @@ function cleanText(value, maxLength) {
         : "";
 }
 
+async function loadRegistrationOptions(env) {
+    if (!env.ASSETS || typeof env.ASSETS.fetch !== "function") {
+        throw new Error("Registration options binding is unavailable");
+    }
+    const response = await env.ASSETS.fetch("https://iceberglc.com/registration-options.json");
+    if (!response.ok) {
+        throw new Error("Registration options could not be loaded");
+    }
+    const config = await response.json();
+    return {
+        programs: new Set((config.programs || []).filter(item => item.active).map(item => item.id)),
+        branches: new Set((config.branches || []).filter(item => item.active).map(item => item.id))
+    };
+}
+
 async function validateTurnstile(token, request, secret) {
     if (!secret) {
         return { success: false, configurationError: true };
@@ -60,12 +75,28 @@ export async function onRequestPost(context) {
     }
 
     const studentName = cleanText(input.student_name, 100);
-    const localPhone = cleanText(input.student_phone, 30).replace(/\D/g, "");
+    let localPhone = cleanText(input.student_phone, 30).replace(/\D/g, "");
+    if (localPhone.length === 12 && localPhone.startsWith("998")) {
+        localPhone = localPhone.slice(3);
+    }
+    const program = cleanText(input.program, 60);
+    const branch = cleanText(input.branch, 60);
     if (studentName.length < 2 || !/^\d{9}$/.test(localPhone)) {
         return jsonResponse(
-            { ok: false, message: "Ism va 9 xonali telefon raqamini tekshiring." },
+            { ok: false, message: "Ism va telefon raqamingizni tekshiring." },
             422
         );
+    }
+
+    let options;
+    try {
+        options = await loadRegistrationOptions(env);
+    } catch (error) {
+        console.error("Registration configuration failed", error.message);
+        return jsonResponse({ ok: false, message: "Ro'yxatdan o'tish xizmati vaqtincha ishlamayapti." }, 503);
+    }
+    if (!options.programs.has(program) || !options.branches.has(branch)) {
+        return jsonResponse({ ok: false, message: "Dastur va filialni qayta tanlang." }, 422);
     }
 
     let turnstile;
@@ -96,10 +127,14 @@ export async function onRequestPost(context) {
 
     const lead = {
         secret: env.GOOGLE_SCRIPT_SECRET,
-        id: crypto.randomUUID(),
+        id: /^[a-f0-9-]{20,64}$/i.test(cleanText(input.submission_id, 64))
+            ? cleanText(input.submission_id, 64)
+            : crypto.randomUUID(),
         submitted_at: new Date().toISOString(),
         student_name: studentName,
         student_phone: `+998${localPhone}`,
+        program,
+        branch,
         utm_source: cleanText(input.utm_source, 100),
         utm_medium: cleanText(input.utm_medium, 100),
         utm_campaign: cleanText(input.utm_campaign, 150),

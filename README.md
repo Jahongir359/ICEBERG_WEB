@@ -277,6 +277,20 @@ Cloudflare Pages Function. Follow `google-apps-script/README.md`, then configure
 The registration endpoint will remain unavailable until all four values are set.
 The contact form continues to open WhatsApp.
 
+### Registration programs, branches, and reception contact
+
+Maintain registration choices only in `config/registration.json`:
+
+- add a new object with a unique stable `id` to add a program or branch;
+- change `name` to rename its user-facing label without changing stored IDs;
+- set `active` to `false` to remove it from the form and server allowlist;
+- update the `contact` object for the call-center and reception Telegram links.
+
+Do not duplicate these values in templates or frontend JavaScript. Flask reads
+this file directly, and the static build publishes the same file for Cloudflare's
+server-side registration validation. Deploy the website after any configuration
+change so the form and endpoint always use the same version.
+
 Preview deployments automatically use Cloudflare's `CF_PAGES_URL`. To test or
 deploy from the command line:
 

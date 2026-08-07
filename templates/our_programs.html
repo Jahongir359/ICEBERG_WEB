@@ -73,13 +73,14 @@
                         <img src="{{ asset_url('program_card_1', 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?q=80&w=2070&auto=format&fit=crop') }}" alt="SAT IELTS" class="h-44 w-full object-cover rounded-xl mb-4">
                         <h3>SAT/IELTS Kompleks Dasturi</h3>
                         <p>Imtihon strukturasini chuqur o'rganish, mock testlar va personal feedback asosida intensiv kurs.</p>
-                        <a href="{{ url_for('register') }}" class="program-link">Ro'yxatdan o'tish -></a>
+                        <a href="{{ url_for('register', program='ielts') }}" class="program-link">IELTSga yozilish</a> ·
+                        <a href="{{ url_for('register', program='sat') }}" class="program-link">SATga yozilish</a>
                     </article>
                     <article class="program-card course-card" style="animation-delay: .06s;">
                         <img src="{{ asset_url('program_card_2', 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=2071&auto=format&fit=crop') }}" alt="Natural English" class="h-44 w-full object-cover rounded-xl mb-4">
                         <h3>Natural English</h3>
                         <p>Real muloqot, to'g'ri talaffuz va kundalik ingliz tilini mustahkamlash uchun interaktiv mashg'ulotlar.</p>
-                        <a href="{{ url_for('register') }}" class="program-link">Batafsil -></a>
+                        <a href="{{ url_for('register', program='english') }}" class="program-link">Ro'yxatdan o'tish -></a>
                     </article>
                     <article class="program-card course-card" style="animation-delay: .12s;">
                         <img src="{{ asset_url('program_card_3', 'https://images.unsplash.com/photo-1528642474498-1af0c17fd8c3?q=80&w=2069&auto=format&fit=crop') }}" alt="University prep" class="h-44 w-full object-cover rounded-xl mb-4">
@@ -106,7 +107,7 @@
                         <img src="{{ asset_url('program_card_5', 'https://images.unsplash.com/photo-1571260899304-425eee4c7efc?q=80&w=2070&auto=format&fit=crop') }}" alt="Kids English" class="h-44 w-full object-cover rounded-xl mb-4">
                         <h3>Kids English</h3>
                         <p>O'yinlar, gapirish mashqlari va interaktiv loyihalar orqali bolalar uchun ingliz tili.</p>
-                        <a href="{{ url_for('register') }}" class="program-link">Guruhga qo'shilish -></a>
+                        <a href="{{ url_for('register', program='english') }}" class="program-link">Guruhga qo'shilish -></a>
                     </article>
                     <article class="program-card course-card" style="animation-delay: .12s;">
                         <img src="{{ asset_url('program_card_6', 'https://images.unsplash.com/photo-1456324504439-367cee3b3c32?q=80&w=2070&auto=format&fit=crop') }}" alt="Gumanitar fanlar" class="h-44 w-full object-cover rounded-xl mb-4">
