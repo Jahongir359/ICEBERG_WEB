@@ -15,9 +15,11 @@ OUTPUT = ROOT / "public"
 PUBLIC_ROUTES = {
     "/": "index.html",
     "/about": "about.html",
-    "/our_programs": "our_programs.html",
+    "/programs": "programs.html",
+    "/programs/ielts": "programs/ielts.html",
+    "/programs/sat": "programs/sat.html",
     "/news": "news.html",
-    "/questions": "questions.html",
+    "/faq": "faq.html",
     "/contact": "contact.html",
     "/register": "register.html",
 }
@@ -106,7 +108,9 @@ def build() -> None:
                 "</body>",
                 '<script src="/static/js/firebase-forms.js" defer></script>\n</body>',
             )
-        (OUTPUT / filename).write_text(html, encoding="utf-8")
+        output_path = OUTPUT / filename
+        output_path.parent.mkdir(parents=True, exist_ok=True)
+        output_path.write_text(html, encoding="utf-8")
 
     for route in ROOT_ASSETS:
         response = client.get(route, base_url=site_url)
@@ -136,6 +140,11 @@ def build() -> None:
 <a href="/">Bosh sahifaga qaytish</a></main></body>
 </html>
 """,
+        encoding="utf-8",
+    )
+
+    (OUTPUT / "_redirects").write_text(
+        "/our_programs /programs 301\n/questions /faq 301\n",
         encoding="utf-8",
     )
 

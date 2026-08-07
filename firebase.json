@@ -13,6 +13,18 @@
     ],
     "cleanUrls": true,
     "trailingSlash": false,
+    "redirects": [
+      {
+        "source": "/our_programs",
+        "destination": "/programs",
+        "type": 301
+      },
+      {
+        "source": "/questions",
+        "destination": "/faq",
+        "type": 301
+      }
+    ],
     "headers": [
       {
         "source": "**",
