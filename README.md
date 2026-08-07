@@ -27,7 +27,7 @@ The primary goal is to convert website visitors into student leads, then help ad
 
 - Python + Flask
 - SQLite
-- Tailwind CSS (CDN)
+- Tailwind CSS (checked-in production build)
 - Gunicorn for production startup
 
 ## Quick Start
@@ -65,6 +65,20 @@ python app.py
 ```
 
 Open http://127.0.0.1:8080
+
+When template utility classes change, rebuild the checked-in production CSS:
+
+```bash
+npm ci
+npm run build:css
+python -m pip install -r requirements-dev.txt
+python scripts/optimize_images.py
+```
+
+Cloudflare Pages includes a host-level middleware redirect from
+`www.iceberglc.com` to the canonical `https://iceberglc.com` host. The owner
+must also point the `www` DNS record at the deployed Cloudflare Pages project;
+the redirect cannot run until DNS resolves.
 
 ## Environment Variables
 

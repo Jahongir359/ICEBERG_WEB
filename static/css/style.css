@@ -1,6 +1,4 @@
 @charset "UTF-8";
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Sora:wght@400;500;600;700;800&display=swap');
-
 :root {
     --ink-900: #07142b;
     --ink-800: #10284c;
@@ -68,7 +66,7 @@ body.site-shell {
 }
 
 .site-nav-wrap {
-    width: min(1180px, 100% - 2.2rem);
+    width: min(1180px, calc(100% - 2.2rem));
     margin: 0 auto;
     height: 86px;
     display: flex;
@@ -224,7 +222,7 @@ body.site-shell {
 }
 
 .mobile-nav-strip {
-    width: min(1180px, 100% - 2.2rem);
+    width: min(1180px, calc(100% - 2.2rem));
     margin: 0 auto 0.62rem;
     padding: 0.28rem;
     display: grid;
@@ -424,7 +422,7 @@ body.site-shell {
     .page-grid,
     .page-hero-inner,
     .footer-inner {
-        width: min(1180px, 100% - 1.2rem);
+        width: min(1180px, calc(100% - 1.2rem));
     }
 
     .mobile-panel {
@@ -496,7 +494,7 @@ body.site-shell {
 .footer-inner {
     position: relative;
     z-index: 1;
-    width: min(1180px, 100% - 2.2rem);
+    width: min(1180px, calc(100% - 2.2rem));
     margin: 0 auto;
     padding: 3.2rem 0 1.6rem;
 }
@@ -586,7 +584,7 @@ body.site-shell {
 }
 
 .hero-wrap {
-    width: min(1180px, 100% - 2.2rem);
+    width: min(1180px, calc(100% - 2.2rem));
     margin: 0 auto;
     display: grid;
     gap: 1.35rem;
@@ -706,7 +704,7 @@ body.site-shell {
 }
 
 .section-shell {
-    width: min(1180px, 100% - 2.2rem);
+    width: min(1180px, calc(100% - 2.2rem));
     margin: 0 auto;
     padding: 3.4rem 0;
 }
@@ -718,7 +716,7 @@ body.site-shell {
 }
 
 .page-hero-inner {
-    width: min(1180px, 100% - 2.2rem);
+    width: min(1180px, calc(100% - 2.2rem));
     margin: 0 auto;
 }
 
@@ -745,7 +743,7 @@ body.site-shell {
 }
 
 .page-grid {
-    width: min(1180px, 100% - 2.2rem);
+    width: min(1180px, calc(100% - 2.2rem));
     margin: 0 auto;
     display: grid;
     gap: 1rem;

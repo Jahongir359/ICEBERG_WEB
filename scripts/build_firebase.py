@@ -7,6 +7,7 @@ import os
 import re
 import shutil
 import sys
+import hashlib
 from pathlib import Path
 
 
@@ -24,6 +25,11 @@ PUBLIC_ROUTES = {
     "/register": "register.html",
 }
 ROOT_ASSETS = ("/favicon.ico", "/manifest.json", "/robots.txt", "/sitemap.xml")
+FINGERPRINTED_ASSETS = (
+    "css/style.css",
+    "css/tailwind.generated.css",
+    "js/firebase-forms.js",
+)
 
 
 def make_form_static(
@@ -52,6 +58,24 @@ def make_form_static(
     return html.replace(local_action, static_action)
 
 
+def fingerprint_public_assets() -> None:
+    replacements = {}
+    for relative_name in FINGERPRINTED_ASSETS:
+        source = OUTPUT / "static" / relative_name
+        digest = hashlib.sha256(source.read_bytes()).hexdigest()[:12]
+        fingerprinted = source.with_name(f"{source.stem}.{digest}{source.suffix}")
+        source.replace(fingerprinted)
+        replacements[f"/static/{relative_name}"] = (
+            f"/static/{fingerprinted.relative_to(OUTPUT / 'static').as_posix()}"
+        )
+
+    for html_path in OUTPUT.rglob("*.html"):
+        html = html_path.read_text(encoding="utf-8")
+        for original, fingerprinted in replacements.items():
+            html = html.replace(original, fingerprinted)
+        html_path.write_text(html, encoding="utf-8")
+
+
 def build() -> None:
     # Imports happen here so running --help or inspecting this script has no app side effects.
     os.chdir(ROOT)
@@ -72,7 +96,17 @@ def build() -> None:
     if OUTPUT.exists():
         shutil.rmtree(OUTPUT)
     OUTPUT.mkdir(parents=True)
-    shutil.copytree(ROOT / "static", OUTPUT / "static")
+    shutil.copytree(
+        ROOT / "static",
+        OUTPUT / "static",
+        ignore=shutil.ignore_patterns(
+            "uploads",
+            "image.png",
+            "azizbek.png",
+            "maqsudbek.png",
+            "islomjon.png",
+        ),
+    )
     shutil.copy2(ROOT / "cloudflare" / "_headers", OUTPUT / "_headers")
 
     client = app.test_client()
@@ -147,6 +181,7 @@ def build() -> None:
         "/our_programs /programs 301\n/questions /faq 301\n",
         encoding="utf-8",
     )
+    fingerprint_public_assets()
 
     print(f"Built {len(PUBLIC_ROUTES)} pages and static assets in {OUTPUT}")
     print(f"Static contact form opens WhatsApp for +{whatsapp_number}")

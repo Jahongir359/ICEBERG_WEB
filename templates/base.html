@@ -84,10 +84,13 @@
     }
     </script>
     {% block schema %}{% endblock %}
-    <link rel="preconnect" href="https://cdn.tailwindcss.com">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Sora:wght@400;500;600;700;800&display=swap" media="print" onload="this.media='all'">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Sora:wght@400;500;600;700;800&display=swap"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/tailwind.generated.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     {% block styles %}{% endblock %}
     <style>
@@ -220,7 +223,7 @@
                 <div class="mb-8 md:mb-0">
                     <img src="{{ asset_url('site_logo', 'img/logo.png') }}" alt="ICEBERG Study Center" class="footer-brand" width="426" height="69" loading="lazy">
                     <p class="text-sm text-blue-100/90 leading-7">
-                        {{ content('site_tagline', "Zamonaviy kasblarni biz bilan o'rganing va kelajuingizni quring.") }}
+                        {{ content('site_tagline', "Bilim poydevorini mustahkamlang va kelajagingizni biz bilan quring.") }}
                     </p>
                 </div>
 
@@ -285,6 +288,28 @@
                 },
                 'google_translate_element'
             );
+        }
+
+        var googleTranslateLoading = false;
+        function loadGoogleTranslate(callback) {
+            if (window.google && window.google.translate) {
+                if (callback) callback();
+                return;
+            }
+            if (callback) {
+                window.addEventListener('iceberg:translate-ready', callback, { once: true });
+            }
+            if (googleTranslateLoading) return;
+            googleTranslateLoading = true;
+            var previousInit = googleTranslateElementInit;
+            googleTranslateElementInit = function () {
+                previousInit();
+                window.dispatchEvent(new Event('iceberg:translate-ready'));
+            };
+            var script = document.createElement('script');
+            script.src = 'https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
+            script.async = true;
+            document.head.appendChild(script);
         }
 
         function getCookieValue(name) {
@@ -367,12 +392,18 @@
 
             if (target === 'uz') {
                 clearGoogleTranslateCookies();
-                applyLanguageWithWidget('uz');
+                if (window.google && window.google.translate) {
+                    applyLanguageWithWidget('uz');
+                } else {
+                    window.location.reload();
+                }
                 return;
             }
 
             setGoogleTranslateCookie(sourceLang, target);
-            applyLanguageWithWidget(target);
+            loadGoogleTranslate(function () {
+                applyLanguageWithWidget(target);
+            });
         }
 
         document.addEventListener('DOMContentLoaded', function () {
@@ -503,10 +534,11 @@
             }
 
             setGoogleTranslateCookie('uz', preferredLang);
-            applyLanguageWithWidget(preferredLang);
+            loadGoogleTranslate(function () {
+                applyLanguageWithWidget(preferredLang);
+            });
         });
     </script>
-    <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
     {% endblock %}
     {% block modals %}{% endblock %}
     <noscript>
