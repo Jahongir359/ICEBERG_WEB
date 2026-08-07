@@ -82,6 +82,20 @@ class RegistrationRouteTests(unittest.TestCase):
         self.assertIn('Arizangiz qabul qilindi!', html)
         self.assertIn('data-registration-success', html)
 
+    def test_static_build_uses_same_origin_registration_endpoint(self):
+        from scripts import build_firebase
+
+        rendered = '<form action="/register" method="post"></form>'
+        result = build_firebase.make_form_static(
+            rendered,
+            '/register',
+            '998701060404',
+            'https://preview.pages.dev',
+            'public-site-key',
+        )
+        self.assertIn('action="/api/register"', result)
+        self.assertNotIn('preview.pages.dev/api/register', result)
+
 
 if __name__ == '__main__':
     unittest.main()
