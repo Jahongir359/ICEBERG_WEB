@@ -52,6 +52,8 @@ class PageParser(HTMLParser):
         self._in_json_ld = False
         self._json_buffer: list[str] = []
         self._in_title = False
+        self.headings: list[int] = []
+        self.image_issues: list[str] = []
         self.lang = ""
 
     def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
@@ -70,6 +72,16 @@ class PageParser(HTMLParser):
             self.canonical = values.get("href") or ""
         elif tag == "h1":
             self.h1_count += 1
+            self.headings.append(1)
+        elif tag in {"h2", "h3", "h4", "h5", "h6"}:
+            self.headings.append(int(tag[1]))
+        elif tag == "img":
+            if "alt" not in values:
+                self.image_issues.append(f"{values.get('src', '<unknown>')}: missing alt")
+            if not values.get("width") or not values.get("height"):
+                self.image_issues.append(
+                    f"{values.get('src', '<unknown>')}: missing intrinsic width/height"
+                )
         elif tag == "script" and values.get("type") == "application/ld+json":
             self._in_json_ld = True
             self._json_buffer = []
@@ -149,6 +161,13 @@ def check() -> None:
                 errors.append(f"{relative_page}: canonical {parser.canonical!r} != {expected_canonical!r}")
             if parser.h1_count != 1:
                 errors.append(f"{relative_page}: expected one h1, found {parser.h1_count}")
+            for previous, current in zip(parser.headings, parser.headings[1:]):
+                if current > previous + 1:
+                    errors.append(
+                        f"{relative_page}: heading level jumps from h{previous} to h{current}"
+                    )
+            for image_issue in parser.image_issues:
+                errors.append(f"{relative_page}: {image_issue}")
             if "noindex" in parser.robots.lower():
                 errors.append(f"{relative_page}: canonical public page is noindex")
             normalized_title = parser.title.strip().casefold()
