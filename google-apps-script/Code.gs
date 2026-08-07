@@ -4,6 +4,8 @@ const HEADERS = [
   'Submitted At',
   'Student Name',
   'Phone',
+  'Program ID',
+  'Branch ID',
   'UTM Source',
   'UTM Medium',
   'UTM Campaign',
@@ -12,7 +14,7 @@ const HEADERS = [
   'Status',
   'Staff Notes'
 ];
-const RECEIVER_VERSION = '2026-08-05.1';
+const RECEIVER_VERSION = '2026-08-07.1';
 
 function jsonResult_(body) {
   return ContentService
@@ -46,7 +48,7 @@ function doPost(e) {
     if (!data.secret || data.secret !== expectedSecret) {
       return jsonResult_({ ok: false, error: 'Unauthorized' });
     }
-    if (!data.id || !data.student_name || !data.student_phone) {
+    if (!data.id || !data.student_name || !data.student_phone || !data.program || !data.branch) {
       return jsonResult_({ ok: false, error: 'Missing required fields' });
     }
 
@@ -62,6 +64,16 @@ function doPost(e) {
         sheet.appendRow(HEADERS);
         sheet.setFrozenRows(1);
         sheet.getRange(1, 1, 1, HEADERS.length).setFontWeight('bold');
+      } else {
+        const existingHeaders = sheet
+          .getRange(1, 1, 1, sheet.getLastColumn())
+          .getValues()[0]
+          .map(String);
+        if (!existingHeaders.includes('Program ID')) {
+          sheet.insertColumnsAfter(4, 2);
+          sheet.getRange(1, 5, 1, 2).setValues([['Program ID', 'Branch ID']]);
+          sheet.getRange(1, 1, 1, HEADERS.length).setFontWeight('bold');
+        }
       }
 
       const existing = sheet
@@ -81,6 +93,8 @@ function doPost(e) {
           submittedAt,
           safeCell_(data.student_name),
           safeCell_(data.student_phone),
+          safeCell_(data.program),
+          safeCell_(data.branch),
           safeCell_(data.utm_source),
           safeCell_(data.utm_medium),
           safeCell_(data.utm_campaign),

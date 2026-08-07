@@ -129,6 +129,22 @@ def check() -> None:
     except (OSError, json.JSONDecodeError) as error:
         errors.append(f"manifest.json: {error}")
 
+    registration_options_path = PUBLIC / "registration-options.json"
+    try:
+        registration_options = json.loads(registration_options_path.read_text(encoding="utf-8"))
+        active_programs = {
+            item.get("id") for item in registration_options.get("programs", []) if item.get("active")
+        }
+        active_branches = {
+            item.get("id") for item in registration_options.get("branches", []) if item.get("active")
+        }
+        if not {"ielts", "english", "sat"}.issubset(active_programs):
+            errors.append("registration-options.json: missing core active programs")
+        if not {"main", "gayrat", "unknown"}.issubset(active_branches):
+            errors.append("registration-options.json: missing required active branches")
+    except (OSError, json.JSONDecodeError) as error:
+        errors.append(f"registration-options.json: {error}")
+
     sitemap_path = PUBLIC / "sitemap.xml"
     try:
         sitemap = ElementTree.parse(sitemap_path)

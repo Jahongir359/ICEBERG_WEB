@@ -72,6 +72,10 @@ def build() -> None:
     OUTPUT.mkdir(parents=True)
     shutil.copytree(ROOT / "static", OUTPUT / "static")
     shutil.copy2(ROOT / "cloudflare" / "_headers", OUTPUT / "_headers")
+    shutil.copy2(
+        ROOT / "config" / "registration.json",
+        OUTPUT / "registration-options.json",
+    )
 
     client = app.test_client()
     for route, filename in PUBLIC_ROUTES.items():
@@ -101,7 +105,7 @@ def build() -> None:
             html,
             flags=re.DOTALL,
         )
-        if "data-static-lead-form" in html:
+        if "data-static-lead-form" in html and "/static/js/firebase-forms.js" not in html:
             html = html.replace(
                 "</body>",
                 '<script src="/static/js/firebase-forms.js" defer></script>\n</body>',

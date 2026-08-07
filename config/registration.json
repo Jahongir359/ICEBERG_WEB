@@ -1,0 +1,28 @@
+{
+  "contact": {
+    "call_center_phone": "+998701060404",
+    "call_center_display": "+998 70 106 04 04",
+    "telegram_username": "iceberg_qabulxona",
+    "telegram_url": "https://t.me/iceberg_qabulxona"
+  },
+  "programs": [
+    {"id": "ielts", "name": "IELTS", "active": true},
+    {"id": "english", "name": "CEFR / Ingliz tili", "active": true},
+    {"id": "sat", "name": "SAT", "active": true},
+    {"id": "mathematics", "name": "Matematika", "active": true},
+    {"id": "chemistry", "name": "Kimyo", "active": true},
+    {"id": "biology", "name": "Biologiya", "active": true}
+  ],
+  "branches": [
+    {"id": "main", "name": "Asosiy filial", "active": true},
+    {
+      "id": "gayrat",
+      "name": "G'ayrat filiali",
+      "active": true,
+      "location": "Oilaviy poliklinika yonidagi binoning 2-qavati",
+      "phone": "+998994576699",
+      "telegram_username": "Gayrat_qabulxona"
+    },
+    {"id": "unknown", "name": "Filialni bilmayman", "active": true}
+  ]
+}
