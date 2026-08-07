@@ -62,11 +62,12 @@
                     <span class="text-xs text-slate-400">{{ post.created_at[:10] }}</span>
                 </div>
 
-                <h2 class="section-title !text-3xl mb-2">{{ post.title }}</h2>
+                <h2 class="section-title !text-3xl mb-2"><a href="{{ url_for('news_detail', slug=post.slug) }}" class="program-link">{{ post.title }}</a></h2>
                 {% if post.excerpt %}
                 <p class="text-slate-600 text-lg mb-3">{{ post.excerpt }}</p>
                 {% endif %}
                 <p class="text-slate-700 whitespace-pre-line">{{ post.body }}</p>
+                <p class="mt-4"><a href="{{ url_for('news_detail', slug=post.slug) }}" class="program-link">Yangilikni to'liq o'qish</a></p>
 
                 {% if post.media_items %}
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-5">

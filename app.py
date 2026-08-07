@@ -4,6 +4,9 @@ import os
 import re
 import hashlib
 import hmac
+import secrets
+import time
+import unicodedata
 import csv
 import io
 import json
@@ -179,7 +182,7 @@ EDITOR_MAX_BACKUPS_PER_FILE = max(int(os.environ.get('EDITOR_MAX_BACKUPS_PER_FIL
 
 CONTENT_FIELDS = [
     {'key': 'site_title', 'label': 'Sayt sarlavhasi (browser title)', 'group': 'Global', 'default': "ICEBERG Study Center", 'field_type': 'text'},
-    {'key': 'site_tagline', 'label': 'Footer qisqa matni', 'group': 'Global', 'default': "Zamonaviy kasblarni biz bilan o'rganing va kelajuingizni quring.", 'field_type': 'textarea'},
+    {'key': 'site_tagline', 'label': 'Footer qisqa matni', 'group': 'Global', 'default': "Bilim poydevorini mustahkamlang va kelajagingizni biz bilan quring.", 'field_type': 'textarea'},
     {'key': 'custom_css', 'label': 'Custom CSS (ixtiyoriy)', 'group': 'Global', 'default': '', 'field_type': 'textarea'},
 
     {'key': 'nav_home', 'label': 'Menyu: Bosh sahifa', 'group': 'Header', 'default': 'Bosh sahifa', 'field_type': 'text'},
@@ -225,6 +228,13 @@ CONTENT_FIELDS = [
 CONTENT_KEYS = {field['key'] for field in CONTENT_FIELDS}
 
 PHONE_RE = re.compile(r'^\d{9}$')
+CSRF_FIELD_NAME = '_csrf_token'
+RATE_LIMITS = {
+    'secret_admin_login': (8, 300),
+    'admin_secret_access': (8, 300),
+    'contact': (5, 300),
+    'register': (5, 300),
+}
 
 
 def utc_now():
@@ -293,6 +303,53 @@ def process_admin_login(password):
     return False
 
 
+def get_csrf_token():
+    token = session.get(CSRF_FIELD_NAME)
+    if not token:
+        token = secrets.token_urlsafe(32)
+        session[CSRF_FIELD_NAME] = token
+    return token
+
+
+def get_request_rate_key():
+    # Remote address is supplied by the WSGI server/proxy configuration and is
+    # safer than trusting a client-provided X-Forwarded-For header directly.
+    return request.remote_addr or 'unknown'
+
+
+def is_rate_limited(endpoint, identifier, limit, window_seconds):
+    now = int(time.time())
+    window_start = now - window_seconds
+    with get_db_connection() as conn:
+        cursor = conn.cursor()
+        cursor.execute('BEGIN IMMEDIATE')
+        cursor.execute(
+            'DELETE FROM rate_limit_events WHERE created_at < ?',
+            (now - 86400,)
+        )
+        cursor.execute(
+            '''
+            SELECT COUNT(*)
+            FROM rate_limit_events
+            WHERE endpoint = ? AND identifier = ? AND created_at >= ?
+            ''',
+            (endpoint, identifier, window_start)
+        )
+        request_count = cursor.fetchone()[0]
+        if request_count >= limit:
+            conn.commit()
+            return True
+        cursor.execute(
+            '''
+            INSERT INTO rate_limit_events (endpoint, identifier, created_at)
+            VALUES (?, ?, ?)
+            ''',
+            (endpoint, identifier, now)
+        )
+        conn.commit()
+    return False
+
+
 def is_allowed_image(filename):
     _, ext = os.path.splitext(filename or '')
     return ext.lower() in ALLOWED_IMAGE_EXTENSIONS
@@ -316,6 +373,20 @@ def get_asset_url(asset_key, fallback=''):
     if row and row['file_path']:
         return to_public_asset_url(row['file_path'])
     return to_public_asset_url(fallback or ASSET_DEFAULTS.get(asset_key, ''))
+
+
+def get_asset_srcset(asset_key, fallback_variants):
+    if not STATIC_BUILD_MODE:
+        with get_db_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute('SELECT file_path FROM site_assets WHERE asset_key = ?', (asset_key,))
+            row = cursor.fetchone()
+        if row and row['file_path']:
+            return to_public_asset_url(row['file_path'])
+    return ', '.join(
+        f'{to_public_asset_url(path)} {width}w'
+        for path, width in fallback_variants
+    )
 
 
 def save_asset_file(file_storage, asset_key):
@@ -394,6 +465,50 @@ def fetch_news_posts(include_unpublished=False):
         post['media_items'] = media_by_post.get(post['id'], [])
 
     return posts
+
+
+def fetch_news_post_by_slug(slug):
+    if STATIC_BUILD_MODE:
+        return None
+    with get_db_connection() as conn:
+        cursor = conn.cursor()
+        cursor.execute(
+            'SELECT * FROM news_posts WHERE slug = ? AND is_published = 1',
+            (slug,)
+        )
+        row = cursor.fetchone()
+        if not row:
+            return None
+        post = dict(row)
+        cursor.execute(
+            'SELECT * FROM news_media WHERE post_id = ? ORDER BY sort_order ASC, id ASC',
+            (post['id'],)
+        )
+        post['media_items'] = [dict(media) for media in cursor.fetchall()]
+    return post
+
+
+def slugify_news_title(title):
+    normalized = unicodedata.normalize('NFKD', title or '').encode('ascii', 'ignore').decode('ascii')
+    slug = re.sub(r'[^a-z0-9]+', '-', normalized.lower()).strip('-')
+    return slug[:120] or 'yangilik'
+
+
+def unique_news_slug(cursor, title, exclude_id=None):
+    base_slug = slugify_news_title(title)
+    candidate = base_slug
+    suffix = 2
+    while True:
+        query = 'SELECT id FROM news_posts WHERE slug = ?'
+        params = [candidate]
+        if exclude_id is not None:
+            query += ' AND id != ?'
+            params.append(exclude_id)
+        cursor.execute(query, tuple(params))
+        if not cursor.fetchone():
+            return candidate
+        candidate = f'{base_slug}-{suffix}'
+        suffix += 1
 
 
 def get_site_content_map():
@@ -671,7 +786,9 @@ def inject_asset_helper():
 
     return {
         'asset_url': get_asset_url,
-        'content': content_value
+        'asset_srcset': get_asset_srcset,
+        'content': content_value,
+        'static_build_mode': STATIC_BUILD_MODE,
     }
 
 def send_telegram_notification(message_text):
@@ -799,6 +916,14 @@ DEFAULT_FAQS = [
     ('Kurs narxini qayerdan bilsam bo\'ladi?', "Amaldagi narxlar bo'yicha tasdiqlangan ma'lumotni markazdan oling. Saytdagi aloqa raqamiga qo'ng'iroq qilishingiz yoki ariza qoldirishingiz mumkin."),
 ]
 
+LEGACY_DEFAULT_FAQS = [
+    ('Qaysi fanlardan repetitorlik xizmatlarini taklif qilasiz?', 'Biz keng ko\'lamli fanlardan, jumladan, Matematika, Fan, Ingliz tili va standartlashtirilgan testlarga tayyorgarlik (SAT, ACT) bo\'yicha repetitorlik xizmatlarini taklif etamiz.'),
+    ('Sizning ish vaqtingiz qanday?', 'Markazimiz ish kunlari soat 9:00 dan 20:00 gacha, dam olish kunlari esa 10:00 dan 18:00 gacha ishlaydi.'),
+    ('O\'quvchilarni repetitorlar bilan qanday bog\'laysiz?', 'Biz o\'quvchilarni ularning akademik ehtiyojlari, o\'rganish uslubi va shaxsiyatiga qarab repetitorlar bilan bog\'laymiz, bu esa eng yaxshi moslikni ta\'minlaydi.'),
+    ('Darslar qayerda o\'tkaziladi?', 'Darslar bizning zamonaviy o\'quv markazimizda yoki o\'quvchining xohishiga ko\'ra onlayn tarzda o\'tkazilishi mumkin.'),
+    ('Narxlar qanday?', 'Narxlar dastur turiga va darslar soniga qarab o\'zgaradi. Batafsil ma\'lumot olish va bepul maslahat uchun biz bilan bog\'laning.'),
+]
+
 
 def init_db():
     with get_db_connection() as conn:
@@ -878,6 +1003,18 @@ def init_db():
             )
         ''')
         cursor.execute('''
+            CREATE TABLE IF NOT EXISTS rate_limit_events (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                endpoint TEXT NOT NULL,
+                identifier TEXT NOT NULL,
+                created_at INTEGER NOT NULL
+            )
+        ''')
+        cursor.execute('''
+            CREATE INDEX IF NOT EXISTS idx_rate_limit_lookup
+            ON rate_limit_events (endpoint, identifier, created_at)
+        ''')
+        cursor.execute('''
             CREATE TABLE IF NOT EXISTS news_posts (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 title TEXT NOT NULL,
@@ -890,6 +1027,14 @@ def init_db():
                 updated_at TEXT NOT NULL
             )
         ''')
+        ensure_table_columns(cursor, 'news_posts', {'slug': 'TEXT'})
+        cursor.execute('SELECT id, title FROM news_posts WHERE slug IS NULL OR slug = "" ORDER BY id')
+        for post_id, post_title in cursor.fetchall():
+            cursor.execute(
+                'UPDATE news_posts SET slug = ? WHERE id = ?',
+                (unique_news_slug(cursor, post_title, post_id), post_id)
+            )
+        cursor.execute('CREATE UNIQUE INDEX IF NOT EXISTS idx_news_posts_slug ON news_posts (slug)')
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS news_media (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -923,11 +1068,60 @@ def init_db():
                     '''INSERT INTO faq_items (question, answer, sort_order, created_at, updated_at) VALUES (?, ?, ?, ?, ?)''',
                     (question, answer, index, now, now)
                 )
+
+        # Replace only untouched historical defaults. Any FAQ edited by an
+        # administrator is preserved because both old question and answer must
+        # match exactly before the conservative migration is applied.
+        now = utc_now().isoformat()
+        for index, ((old_question, old_answer), (new_question, new_answer)) in enumerate(
+            zip(LEGACY_DEFAULT_FAQS, DEFAULT_FAQS),
+            1,
+        ):
+            cursor.execute(
+                '''
+                UPDATE faq_items
+                SET question = ?, answer = ?, sort_order = ?, updated_at = ?
+                WHERE question = ? AND answer = ?
+                ''',
+                (new_question, new_answer, index, now, old_question, old_answer)
+            )
         
         conn.commit()
 
 if not STATIC_BUILD_MODE:
     init_db()
+
+
+@app.context_processor
+def inject_security_helpers():
+    return {'csrf_token': get_csrf_token}
+
+
+@app.before_request
+def enforce_request_security():
+    if STATIC_BUILD_MODE or request.method not in {'POST', 'PUT', 'PATCH', 'DELETE'}:
+        return None
+
+    expected_token = session.get(CSRF_FIELD_NAME, '')
+    supplied_token = (
+        request.headers.get('X-CSRF-Token', '')
+        or request.form.get(CSRF_FIELD_NAME, '')
+    )
+    if not expected_token or not supplied_token or not hmac.compare_digest(expected_token, supplied_token):
+        return Response("So'rov xavfsizlik tekshiruvidan o'tmadi.", status=400, mimetype='text/plain')
+
+    endpoint = request.endpoint or ''
+    if endpoint in RATE_LIMITS:
+        limit, window_seconds = RATE_LIMITS[endpoint]
+        if is_rate_limited(endpoint, get_request_rate_key(), limit, window_seconds):
+            response = Response(
+                "Juda ko'p urinish. Bir necha daqiqadan so'ng qayta urinib ko'ring.",
+                status=429,
+                mimetype='text/plain'
+            )
+            response.headers['Retry-After'] = str(window_seconds)
+            return response
+    return None
 
 
 # Private/dynamic HTML that must never be cached (admin panels and live data
@@ -942,6 +1136,19 @@ def add_cache_headers(response):
     response.headers.setdefault('Referrer-Policy', 'strict-origin-when-cross-origin')
     response.headers.setdefault('Permissions-Policy', 'camera=(), microphone=(), geolocation=()')
     if 'text/html' in (response.content_type or ''):
+        if not STATIC_BUILD_MODE and response.status_code < 400:
+            token = get_csrf_token()
+            hidden_field = (
+                f'<input type="hidden" name="{CSRF_FIELD_NAME}" value="{token}">'
+            )
+            html = response.get_data(as_text=True)
+            html = re.sub(
+                r'(<form\b(?=[^>]*\bmethod=["\']?post\b)[^>]*>)',
+                lambda match: match.group(1) + hidden_field,
+                html,
+                flags=re.IGNORECASE,
+            )
+            response.set_data(html)
         if response.status_code >= 400:
             response.headers['X-Robots-Tag'] = 'noindex, nofollow, noarchive'
         if (request.path or '').startswith(NO_CACHE_PREFIXES):
@@ -1036,6 +1243,16 @@ def sitemap_xml():
         lines.append(f'    <changefreq>{changefreq}</changefreq>')
         lines.append(f'    <priority>{priority}</priority>')
         lines.append('  </url>')
+    if not STATIC_BUILD_MODE:
+        for post in fetch_news_posts(include_unpublished=False):
+            if not post.get('slug'):
+                continue
+            lines.append('  <url>')
+            lines.append(f"    <loc>https://iceberglc.com/news/{post['slug']}</loc>")
+            updated_at = (post.get('updated_at') or post.get('created_at') or '')[:10]
+            if updated_at:
+                lines.append(f'    <lastmod>{updated_at}</lastmod>')
+            lines.append('  </url>')
     lines.append('</urlset>')
     return Response('\n'.join(lines), mimetype='application/xml')
 
@@ -1072,6 +1289,14 @@ def legacy_our_programs():
 def news():
     posts = fetch_news_posts(include_unpublished=False)
     return render_template('news.html', posts=posts)
+
+
+@app.route('/news/<slug>')
+def news_detail(slug):
+    post = fetch_news_post_by_slug(slug)
+    if not post:
+        abort(404)
+    return render_template('news_detail.html', post=post)
 
 
 @app.route('/faq')
@@ -1135,7 +1360,7 @@ def admin_secret_access():
     return redirect(url_for('secret_admin_login', access_slug=ADMIN_LOGIN_SLUG))
 
 
-@app.route('/admin/logout')
+@app.route('/admin/logout', methods=['POST'])
 def logout():
     if session.get('logged_in'):
         log_admin_action('admin_logout', 'session', 'Admin logged out')
@@ -1421,12 +1646,13 @@ def admin_news():
             now = utc_now().isoformat()
             with get_db_connection() as conn:
                 cursor = conn.cursor()
+                slug = unique_news_slug(cursor, title)
                 cursor.execute(
                     '''
-                    INSERT INTO news_posts (title, excerpt, body, post_type, event_date, is_published, created_at, updated_at)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                    INSERT INTO news_posts (title, slug, excerpt, body, post_type, event_date, is_published, created_at, updated_at)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
                     ''',
-                    (title, excerpt, body, post_type, event_date, is_published, now, now)
+                    (title, slug, excerpt, body, post_type, event_date, is_published, now, now)
                 )
                 new_post_id = cursor.lastrowid
 
