@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block title %}IELTS tayyorgarlik kursi Namangan | ICEBERG{% endblock %}
+{% block meta_description %}<meta name="description" content="Namanganda IELTS tayyorgarlik: Listening, Reading, Writing va Speaking ko'nikmalari, imtihon strategiyasi va amaliy mashqlar. ICEBERG Study Center.">{% endblock %}
+{% block og_description %}<meta property="og:description" content="ICEBERG Study Center IELTS dasturi: to'rtta ko'nikma, imtihon strategiyasi va amaliy tayyorgarlik. Namangan viloyati.">{% endblock %}
+{% block twitter_description %}<meta name="twitter:description" content="ICEBERG Study Center IELTS dasturi: to'rtta ko'nikma, imtihon strategiyasi va amaliy tayyorgarlik. Namangan viloyati.">{% endblock %}
+
+{% block schema %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Course",
+      "@id": "https://iceberglc.com/programs/ielts#course",
+      "name": "IELTS tayyorgarlik",
+      "description": "IELTS Listening, Reading, Writing va Speaking ko'nikmalarini rivojlantirish hamda imtihon strategiyasini o'rganishga qaratilgan tayyorgarlik dasturi.",
+      "inLanguage": "uz-UZ",
+      "provider": {"@id": "https://iceberglc.com/#organization"},
+      "url": "https://iceberglc.com/programs/ielts"
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {"@type": "ListItem", "position": 1, "name": "Bosh sahifa", "item": "https://iceberglc.com/"},
+        {"@type": "ListItem", "position": 2, "name": "Dasturlar", "item": "https://iceberglc.com/programs"},
+        {"@type": "ListItem", "position": 3, "name": "IELTS tayyorgarlik", "item": "https://iceberglc.com/programs/ielts"}
+      ]
+    }
+  ]
+}
+</script>
+{% endblock %}
+
+{% block content %}
+<section class="page-hero"><div class="page-hero-inner"><div class="glass-hero-panel reveal">
+  <h1>IELTS tayyorgarlik kursi</h1>
+  <p>Namanganda IELTS imtihoniga to'rtta asosiy ko'nikma va aniq strategiya bilan tayyorlaning.</p>
+</div></div></section>
+
+<section class="section-shell"><div class="page-grid">
+  <nav class="breadcrumbs" aria-label="Sahifa yo'li"><a href="{{ url_for('index') }}">Bosh sahifa</a><span aria-hidden="true">›</span><a href="{{ url_for('our_programs') }}">Dasturlar</a><span aria-hidden="true">›</span><span aria-current="page">IELTS tayyorgarlik</span></nav>
+  <article class="info-card reveal">
+    <h2>Dastur kimlar uchun?</h2>
+    <p>IELTS natijasini universitet, ish yoki boshqa shaxsiy maqsad uchun yaxshilamoqchi bo'lgan o'quvchilar uchun. Boshlang'ich daraja va maqsad suhbat davomida aniqlanadi; guruh, jadval va davomiylik bo'yicha amaldagi ma'lumotni markazdan olish mumkin.</p>
+  </article>
+  <article class="info-card reveal">
+    <h2>Nimalar o'rganiladi?</h2>
+    <div class="grid md:grid-cols-2 gap-4 mt-4">
+      <div class="surface-card p-5"><h3>Listening va Reading</h3><p>Savol turlarini tushunish, vaqtni boshqarish, asosiy fikr va muhim tafsilotlarni ajratish.</p></div>
+      <div class="surface-card p-5"><h3>Writing va Speaking</h3><p>Javobni mantiqiy tuzish, fikrni asoslash, lug'at va grammatikani vazifaga mos qo'llash.</p></div>
+    </div>
+  </article>
+  <article class="info-card reveal"><h2>ICEBERG yondashuvi</h2><p>Mashg'ulotlarda ko'nikmalar bo'yicha tushuntirish, maqsadli mashq, xatolar tahlili va muntazam fikr-mulohaza birlashtiriladi. Dastur haqidagi aniq tashkiliy ma'lumotlar ro'yxatdan o'tishdan oldin markaz bilan kelishiladi.</p></article>
+  <article class="final-cta reveal"><h2>IELTS tayyorgarligini boshlash</h2><p>Ariza qoldiring yoki daraja va guruhlar haqida markazdan so'rang.</p><div class="hero-actions justify-center"><a href="{{ url_for('register') }}?course=ielts" class="btn-main">Ro'yxatdan o'tish</a><a href="{{ url_for('contact') }}" class="btn-soft">Savol berish</a></div></article>
+</div></section>
+{% endblock %}

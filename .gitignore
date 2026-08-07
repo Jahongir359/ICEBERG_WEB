@@ -10,6 +10,7 @@ database.db
 
 .venv/
 .venv-1/
+node_modules/
 static/uploads/
 
 # Generated Firebase Hosting output and local Firebase project selection

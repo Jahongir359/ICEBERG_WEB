@@ -13,6 +13,18 @@
     ],
     "cleanUrls": true,
     "trailingSlash": false,
+    "redirects": [
+      {
+        "source": "/our_programs",
+        "destination": "/programs",
+        "type": 301
+      },
+      {
+        "source": "/questions",
+        "destination": "/faq",
+        "type": 301
+      }
+    ],
     "headers": [
       {
         "source": "**",
@@ -44,7 +56,7 @@
         "headers": [
           {
             "key": "Cache-Control",
-            "value": "public, max-age=3600, must-revalidate"
+            "value": "public, max-age=31536000, immutable"
           },
           {
             "key": "X-Content-Type-Options",

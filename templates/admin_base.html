@@ -4,8 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex, nofollow">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{% block title %}ICEBERG Admin{% endblock %}</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/tailwind.generated.css') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Lora:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -260,10 +261,12 @@
             </nav>
 
             <div class="px-4 py-6 border-t border-white/15">
-                <a href="{{ url_for('logout') }}" class="nav-link flex items-center px-4 py-2.5 rounded-xl text-red-100 hover:text-white">
+                <form action="{{ url_for('logout') }}" method="post">
+                <button type="submit" data-no-loading="true" class="nav-link w-full flex items-center px-4 py-2.5 rounded-xl text-red-100 hover:text-white">
                     <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
                     Chiqish
-                </a>
+                </button>
+                </form>
             </div>
         </aside>
 

@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}ICEBERG O'quv Markazi | Ta'lim Markazi — Namangan{% endblock %}</title>
+    <title>{% block title %}ICEBERG Study Center | O'quv Markazi — Namangan{% endblock %}</title>
 
     <!-- Primary Meta Tags -->
-    {% block meta_description %}<meta name="description" content="ICEBERG O'quv Markazi — IELTS, SAT tayyorgarlik, akademik repetitorlik va mentorlik dasturlari. Namangan, O'zbekiston. 500+ muvaffaqiyatli o'quvchi.">{% endblock %}
+    {% block meta_description %}<meta name="description" content="ICEBERG Study Center — Namangandagi o'quv markazi. IELTS va SAT tayyorgarligi, ingliz tili, akademik fanlar hamda mentorlik dasturlari.">{% endblock %}
     <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
-    <meta name="author" content="ICEBERG O'quv Markazi">
+    <meta name="author" content="ICEBERG Study Center">
     <link rel="canonical" href="https://iceberglc.com{{ request.path }}">
 
     <!-- Favicons -->
@@ -22,9 +22,9 @@
     <!-- Open Graph / Facebook / Telegram -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://iceberglc.com{{ request.path }}">
-    <meta property="og:site_name" content="ICEBERG O'quv Markazi">
+    <meta property="og:site_name" content="ICEBERG Study Center">
     <meta property="og:title" content="{{ self.title() }}">
-    {% block og_description %}<meta property="og:description" content="ICEBERG O'quv Markazi — IELTS, SAT tayyorgarlik, akademik repetitorlik va mentorlik dasturlari. Namangan, O'zbekiston.">{% endblock %}
+    {% block og_description %}<meta property="og:description" content="ICEBERG Study Center — Namangandagi IELTS, SAT, ingliz tili va akademik ta'lim dasturlari markazi.">{% endblock %}
     <meta property="og:image" content="https://iceberglc.com/static/img/logo2.png">
     <meta property="og:image:width" content="640">
     <meta property="og:image:height" content="640">
@@ -33,29 +33,64 @@
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="{{ self.title() }}">
-    {% block twitter_description %}<meta name="twitter:description" content="ICEBERG O'quv Markazi — IELTS, SAT tayyorgarlik, akademik repetitorlik va mentorlik dasturlari. Namangan, O'zbekiston.">{% endblock %}
+    {% block twitter_description %}<meta name="twitter:description" content="ICEBERG Study Center — Namangandagi IELTS, SAT, ingliz tili va akademik ta'lim dasturlari markazi.">{% endblock %}
     <meta name="twitter:image" content="https://iceberglc.com/static/img/logo2.png">
 
-    <!-- JSON-LD: WebSite -->
+    <!-- JSON-LD: one stable organization and website entity graph -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
-      "@type": "WebSite",
-      "name": "ICEBERG O'quv Markazi",
-      "alternateName": "ICEBERG Study Center",
-      "url": "https://iceberglc.com",
-      "description": "IELTS, SAT tayyorgarlik, akademik repetitorlik va mentorlik dasturlari bilan o'quvchilarni muvaffaqiyatga tayyorlovchi zamonaviy ta'lim markazi",
-      "logo": {
-        "@type": "ImageObject",
-        "url": "https://iceberglc.com/static/img/logo2.png",
-        "width": 640,
-        "height": 640
-      }
+      "@graph": [
+        {
+          "@type": "EducationalOrganization",
+          "@id": "https://iceberglc.com/#organization",
+          "name": "ICEBERG Study Center",
+          "alternateName": ["ICEBERG", "ICEBERG O'quv Markazi"],
+          "url": "https://iceberglc.com/",
+          "description": "Namangan viloyatidagi IELTS, SAT, ingliz tili, akademik fanlar va mentorlik dasturlarini taklif qiluvchi o'quv markazi.",
+          "logo": {
+            "@type": "ImageObject",
+            "@id": "https://iceberglc.com/#logo",
+            "url": "https://iceberglc.com/static/img/logo2.png",
+            "contentUrl": "https://iceberglc.com/static/img/logo2.png",
+            "width": 640,
+            "height": 640
+          },
+          "image": {"@id": "https://iceberglc.com/#logo"},
+          "telephone": "+998939461699",
+          "email": "iceberg.edu.center@gmail.com",
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Uychi",
+            "addressRegion": "Namangan viloyati",
+            "addressCountry": "UZ"
+          },
+          "sameAs": [
+            "https://t.me/Iceberg_study_center/1703",
+            "https://www.instagram.com/Iceberg_Study_Center",
+            "https://www.youtube.com/@ice_podcast"
+          ]
+        },
+        {
+          "@type": "WebSite",
+          "@id": "https://iceberglc.com/#website",
+          "url": "https://iceberglc.com/",
+          "name": "ICEBERG Study Center",
+          "alternateName": "ICEBERG",
+          "inLanguage": "uz-UZ",
+          "publisher": {"@id": "https://iceberglc.com/#organization"}
+        }
+      ]
     }
     </script>
     {% block schema %}{% endblock %}
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Sora:wght@400;500;600;700;800&display=swap" media="print" onload="this.media='all'">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Sora:wght@400;500;600;700;800&display=swap"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/tailwind.generated.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     {% block styles %}{% endblock %}
     <style>
@@ -76,6 +111,7 @@
     <style id="custom-css"></style>
 </head>
 <body class="site-shell">
+    <a href="#main-content" class="skip-link">Asosiy mazmunga o'tish</a>
     {% set current_endpoint = request.endpoint or '' %}
     <div id="google_translate_element"></div>
 
@@ -83,7 +119,7 @@
     <header id="header" class="site-header">
         <nav class="site-nav-wrap">
             <a href="{{ url_for('index') }}" id="logo-link" class="flex items-center">
-                <img src="{{ asset_url('site_logo', 'img/logo.png') }}" alt="ICEBERG Logo" class="brand-logo">
+                <img src="{{ asset_url('site_logo', 'img/logo.png') }}" alt="ICEBERG Study Center" class="brand-logo" width="426" height="69">
             </a>
 
             <div class="desktop-nav">
@@ -112,7 +148,7 @@
             </a>
             <a href="{{ url_for('our_programs') }}" class="mobile-nav-quick-link {{ 'active' if current_endpoint == 'our_programs' else '' }}">
                 <i class="fas fa-book-open" aria-hidden="true"></i>
-                <span>Dastur</span>
+                <span>Dasturlar</span>
             </a>
             <a href="{{ url_for('contact') }}" class="mobile-nav-quick-link {{ 'active' if current_endpoint == 'contact' else '' }}">
                 <i class="fas fa-phone" aria-hidden="true"></i>
@@ -156,11 +192,7 @@
             </a>
             <a href="{{ url_for('questions') }}" class="mobile-link {{ 'active' if current_endpoint == 'questions' else '' }}">
                 <svg class="w-5 h-5 text-blue-700" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16h6M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                {{ content('nav_questions', 'Savollar') }}
-            </a>
-            <a href="{{ url_for('index', _anchor='testimonials') }}" class="mobile-link {{ 'active' if current_endpoint == 'index' else '' }}">
-                <svg class="w-5 h-5 text-blue-700" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
-                {{ content('nav_testimonials', 'Muvaffaqiyat Hikoyalari') }}
+                {{ content('nav_questions', "Ko'p beriladigan savollar") }}
             </a>
             <a href="{{ url_for('contact') }}" class="mobile-link {{ 'active' if current_endpoint == 'contact' else '' }}">
                 <svg class="w-5 h-5 text-blue-700" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
@@ -180,7 +212,7 @@
         </div>
     </div>
 
-    <main class="site-main">
+    <main id="main-content" class="site-main">
         {% block content %}{% endblock %}
     </main>
 
@@ -189,9 +221,9 @@
         <div class="footer-inner">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                 <div class="mb-8 md:mb-0">
-                    <img src="{{ asset_url('site_logo', 'img/logo.png') }}" alt="ICEBERG Logo" class="footer-brand">
+                    <img src="{{ asset_url('site_logo', 'img/logo.png') }}" alt="ICEBERG Study Center" class="footer-brand" width="426" height="69" loading="lazy">
                     <p class="text-sm text-blue-100/90 leading-7">
-                        {{ content('site_tagline', "Zamonaviy kasblarni biz bilan o'rganing va kelajuingizni quring.") }}
+                        {{ content('site_tagline', "Bilim poydevorini mustahkamlang va kelajagingizni biz bilan quring.") }}
                     </p>
                 </div>
 
@@ -201,8 +233,10 @@
                         <li><a href="{{ url_for('index') }}" class="footer-link">{{ content('nav_home', 'Bosh sahifa') }}</a></li>
                         <li><a href="{{ url_for('about') }}" class="footer-link">{{ content('nav_about', 'Biz haqimizda') }}</a></li>
                         <li><a href="{{ url_for('our_programs') }}" class="footer-link">{{ content('nav_programs', 'Dasturlar') }}</a></li>
+                        <li><a href="{{ url_for('ielts_program') }}" class="footer-link">IELTS tayyorgarlik</a></li>
+                        <li><a href="{{ url_for('sat_program') }}" class="footer-link">SAT tayyorgarlik</a></li>
                         <li><a href="{{ url_for('news') }}" class="footer-link">{{ content('nav_news', 'Yangiliklar') }}</a></li>
-                        <li><a href="{{ url_for('questions') }}" class="footer-link">{{ content('nav_questions', 'Savollar') }}</a></li>
+                        <li><a href="{{ url_for('questions') }}" class="footer-link">{{ content('nav_questions', "Ko'p beriladigan savollar") }}</a></li>
                         <li><a href="{{ url_for('register') }}" class="footer-link">Ro'yxatdan O'tish</a></li>
                         <li><a href="{{ url_for('contact') }}" class="footer-link">{{ content('nav_contact', 'Aloqa') }}</a></li>
                     </ul>
@@ -213,7 +247,7 @@
                     <ul class="space-y-2 text-sm text-blue-100/90">
                         <li class="flex items-start">
                             <i class="fas fa-map-marker-alt mt-1 mr-3 flex-shrink-0"></i>
-                            <span>{{ content('contact_address', 'Uyci, Namangan Viloyati, Uzbekistan') }}</span>
+                            <span>{{ content('contact_address', "Uychi, Namangan viloyati, O'zbekiston") }}</span>
                         </li>
                         <li class="flex items-center">
                             <i class="fas fa-phone-alt mr-3"></i>
@@ -229,9 +263,9 @@
                 <div>
                     <h3 class="footer-title">{{ content('footer_social_title', 'Ijtimoiy Tarmoqlar') }}</h3>
                     <div class="flex space-x-4">
-                        <a href="{{ content('footer_telegram_url', 'https://t.me/Iceberg_study_center/1703') }}" class="social-icon"><i class="fab fa-telegram"></i></a>
-                        <a href="{{ content('footer_instagram_url', 'https://www.instagram.com/Iceberg_Study_Center') }}" class="social-icon"><i class="fab fa-instagram"></i></a>
-                        <a href="{{ content('footer_youtube_url', 'https://www.youtube.com/@ice_podcast') }}" class="social-icon"><i class="fab fa-youtube"></i></a>
+                        <a href="{{ content('footer_telegram_url', 'https://t.me/Iceberg_study_center/1703') }}" class="social-icon" aria-label="ICEBERG Telegram sahifasi"><i class="fab fa-telegram" aria-hidden="true"></i></a>
+                        <a href="{{ content('footer_instagram_url', 'https://www.instagram.com/Iceberg_Study_Center') }}" class="social-icon" aria-label="ICEBERG Instagram sahifasi"><i class="fab fa-instagram" aria-hidden="true"></i></a>
+                        <a href="{{ content('footer_youtube_url', 'https://www.youtube.com/@ice_podcast') }}" class="social-icon" aria-label="ICEBERG YouTube kanali"><i class="fab fa-youtube" aria-hidden="true"></i></a>
                     </div>
                 </div>
             </div>
@@ -254,6 +288,28 @@
                 },
                 'google_translate_element'
             );
+        }
+
+        var googleTranslateLoading = false;
+        function loadGoogleTranslate(callback) {
+            if (window.google && window.google.translate) {
+                if (callback) callback();
+                return;
+            }
+            if (callback) {
+                window.addEventListener('iceberg:translate-ready', callback, { once: true });
+            }
+            if (googleTranslateLoading) return;
+            googleTranslateLoading = true;
+            var previousInit = googleTranslateElementInit;
+            googleTranslateElementInit = function () {
+                previousInit();
+                window.dispatchEvent(new Event('iceberg:translate-ready'));
+            };
+            var script = document.createElement('script');
+            script.src = 'https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
+            script.async = true;
+            document.head.appendChild(script);
         }
 
         function getCookieValue(name) {
@@ -336,12 +392,18 @@
 
             if (target === 'uz') {
                 clearGoogleTranslateCookies();
-                applyLanguageWithWidget('uz');
+                if (window.google && window.google.translate) {
+                    applyLanguageWithWidget('uz');
+                } else {
+                    window.location.reload();
+                }
                 return;
             }
 
             setGoogleTranslateCookie(sourceLang, target);
-            applyLanguageWithWidget(target);
+            loadGoogleTranslate(function () {
+                applyLanguageWithWidget(target);
+            });
         }
 
         document.addEventListener('DOMContentLoaded', function () {
@@ -472,10 +534,11 @@
             }
 
             setGoogleTranslateCookie('uz', preferredLang);
-            applyLanguageWithWidget(preferredLang);
+            loadGoogleTranslate(function () {
+                applyLanguageWithWidget(preferredLang);
+            });
         });
     </script>
-    <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
     {% endblock %}
     {% block modals %}{% endblock %}
     <noscript>

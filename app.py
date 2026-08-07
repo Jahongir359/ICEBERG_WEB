@@ -3,6 +3,10 @@ import requests
 import os
 import re
 import hashlib
+import hmac
+import secrets
+import time
+import unicodedata
 import csv
 import io
 import json
@@ -41,7 +45,9 @@ def load_local_env_file(env_path):
 load_local_env_file(os.path.join(os.path.dirname(__file__), '.env'))
 
 app = Flask(__name__)
-app.secret_key = os.environ.get('SECRET_KEY', 'dev-only-secret-change-me')
+DEFAULT_SECRET_KEY = 'dev-only-secret-change-me'
+DEFAULT_ADMIN_PASSWORD = 'iceberg-admin'
+app.secret_key = os.environ.get('SECRET_KEY', DEFAULT_SECRET_KEY)
 app.config.update(
     SESSION_COOKIE_HTTPONLY=True,
     SESSION_COOKIE_SAMESITE='Lax'
@@ -60,10 +66,20 @@ REGISTRATION_LEADS_API_URL = os.environ.get(
 REGISTRATION_LEADS_API_TOKEN = os.environ.get('REGISTRATION_LEADS_API_TOKEN', '').strip()
 REGISTRATION_LEADS_API_TIMEOUT = float(os.environ.get('REGISTRATION_LEADS_API_TIMEOUT', '8'))
 
-ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD', 'iceberg-admin')
+ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD', DEFAULT_ADMIN_PASSWORD)
 ADMIN_SECRET_CODE = os.environ.get('ADMIN_SECRET_CODE', ADMIN_PASSWORD).strip()
-ADMIN_CONTACT_TRIGGER_NAME = os.environ.get('ADMIN_CONTACT_TRIGGER_NAME', 'admin').strip().lower() or 'admin'
-ADMIN_CONTACT_SECRET_CODE = os.environ.get('ADMIN_CONTACT_SECRET_CODE', ADMIN_SECRET_CODE).strip()
+
+if os.environ.get('FLASK_ENV') == 'production':
+    insecure_settings = []
+    if app.secret_key == DEFAULT_SECRET_KEY:
+        insecure_settings.append('SECRET_KEY')
+    if ADMIN_PASSWORD == DEFAULT_ADMIN_PASSWORD:
+        insecure_settings.append('ADMIN_PASSWORD')
+    if insecure_settings:
+        raise RuntimeError(
+            'Refusing to start production with insecure defaults: '
+            + ', '.join(insecure_settings)
+        )
 
 
 def build_admin_login_slug():
@@ -165,8 +181,8 @@ EDITOR_BACKUP_DIR = os.path.join(app.root_path, 'backups', 'site_editor')
 EDITOR_MAX_BACKUPS_PER_FILE = max(int(os.environ.get('EDITOR_MAX_BACKUPS_PER_FILE', '20')), 1)
 
 CONTENT_FIELDS = [
-    {'key': 'site_title', 'label': 'Sayt sarlavhasi (browser title)', 'group': 'Global', 'default': "ICEBERG O'QUV MARKAZI", 'field_type': 'text'},
-    {'key': 'site_tagline', 'label': 'Footer qisqa matni', 'group': 'Global', 'default': "Zamonaviy kasblarni biz bilan o'rganing va kelajuingizni quring.", 'field_type': 'textarea'},
+    {'key': 'site_title', 'label': 'Sayt sarlavhasi (browser title)', 'group': 'Global', 'default': "ICEBERG Study Center", 'field_type': 'text'},
+    {'key': 'site_tagline', 'label': 'Footer qisqa matni', 'group': 'Global', 'default': "Bilim poydevorini mustahkamlang va kelajagingizni biz bilan quring.", 'field_type': 'textarea'},
     {'key': 'custom_css', 'label': 'Custom CSS (ixtiyoriy)', 'group': 'Global', 'default': '', 'field_type': 'textarea'},
 
     {'key': 'nav_home', 'label': 'Menyu: Bosh sahifa', 'group': 'Header', 'default': 'Bosh sahifa', 'field_type': 'text'},
@@ -178,7 +194,7 @@ CONTENT_FIELDS = [
     {'key': 'nav_contact', 'label': 'Menyu: Aloqa (nav havolasi)', 'group': 'Header', 'default': 'Aloqa', 'field_type': 'text'},
     {'key': 'nav_contact_button', 'label': 'Header tugma matni', 'group': 'Header', 'default': "Biz bilan bog'lanish", 'field_type': 'text'},
 
-    {'key': 'hero_main_title', 'label': 'Bosh sahifa hero title (typewriter)', 'group': 'Home', 'default': 'HAPPINESS IS IN SCIENCE', 'field_type': 'text'},
+    {'key': 'hero_main_title', 'label': 'Bosh sahifa asosiy sarlavhasi', 'group': 'Home', 'default': "ICEBERG Study Center — Namangandagi o'quv markazi", 'field_type': 'text'},
     {'key': 'hero_main_subtitle', 'label': 'Bosh sahifa hero subtitle', 'group': 'Home', 'default': "Fundamental bilimlar - har qanday akademik cho'qqini zabt etishning kalitidir.", 'field_type': 'textarea'},
     {'key': 'hero_main_cta', 'label': 'Bosh sahifa hero CTA', 'group': 'Home', 'default': 'Maslaxatlar uchun aloqa bo`limi', 'field_type': 'text'},
 
@@ -192,7 +208,7 @@ CONTENT_FIELDS = [
     {'key': 'contact_email', 'label': 'Aloqa email', 'group': 'Contact', 'default': 'iceberg.edu.center@gmail.com', 'field_type': 'text'},
     {'key': 'contact_phone', 'label': 'Aloqa telefon (+998...)', 'group': 'Contact', 'default': '+998939461699', 'field_type': 'text'},
     {'key': 'contact_phone_display', 'label': 'Aloqa telefon ko`rinishi', 'group': 'Contact', 'default': '(+998) 939461699', 'field_type': 'text'},
-    {'key': 'contact_address', 'label': 'Aloqa manzil matni', 'group': 'Contact', 'default': 'Uyci, Namangan Viloyati, Uzbekistan', 'field_type': 'text'},
+    {'key': 'contact_address', 'label': 'Aloqa manzil matni', 'group': 'Contact', 'default': "Uychi, Namangan viloyati, O'zbekiston", 'field_type': 'text'},
     {'key': 'contact_address_url', 'label': 'Aloqa manzil URL', 'group': 'Contact', 'default': 'https://www.google.com/maps/place/Uychi,+Uzbekistan/', 'field_type': 'text'},
 
     {'key': 'register_page_title', 'label': 'Register sahifa title', 'group': 'Register', 'default': "Dasturga Ro'yxatdan O'tish", 'field_type': 'text'},
@@ -212,6 +228,13 @@ CONTENT_FIELDS = [
 CONTENT_KEYS = {field['key'] for field in CONTENT_FIELDS}
 
 PHONE_RE = re.compile(r'^\d{9}$')
+CSRF_FIELD_NAME = '_csrf_token'
+RATE_LIMITS = {
+    'secret_admin_login': (8, 300),
+    'admin_secret_access': (8, 300),
+    'contact': (5, 300),
+    'register': (5, 300),
+}
 
 
 def utc_now():
@@ -272,13 +295,58 @@ def process_admin_login(password):
     valid_passwords = {ADMIN_PASSWORD}
     if ADMIN_SECRET_CODE:
         valid_passwords.add(ADMIN_SECRET_CODE)
-    if ADMIN_CONTACT_SECRET_CODE:
-        valid_passwords.add(ADMIN_CONTACT_SECRET_CODE)
 
-    if candidate in valid_passwords:
+    if any(hmac.compare_digest(candidate, valid) for valid in valid_passwords if valid):
         session['logged_in'] = True
         flash('Muvaffaqiyatli kirdingiz!', 'success')
         return True
+    return False
+
+
+def get_csrf_token():
+    token = session.get(CSRF_FIELD_NAME)
+    if not token:
+        token = secrets.token_urlsafe(32)
+        session[CSRF_FIELD_NAME] = token
+    return token
+
+
+def get_request_rate_key():
+    # Remote address is supplied by the WSGI server/proxy configuration and is
+    # safer than trusting a client-provided X-Forwarded-For header directly.
+    return request.remote_addr or 'unknown'
+
+
+def is_rate_limited(endpoint, identifier, limit, window_seconds):
+    now = int(time.time())
+    window_start = now - window_seconds
+    with get_db_connection() as conn:
+        cursor = conn.cursor()
+        cursor.execute('BEGIN IMMEDIATE')
+        cursor.execute(
+            'DELETE FROM rate_limit_events WHERE created_at < ?',
+            (now - 86400,)
+        )
+        cursor.execute(
+            '''
+            SELECT COUNT(*)
+            FROM rate_limit_events
+            WHERE endpoint = ? AND identifier = ? AND created_at >= ?
+            ''',
+            (endpoint, identifier, window_start)
+        )
+        request_count = cursor.fetchone()[0]
+        if request_count >= limit:
+            conn.commit()
+            return True
+        cursor.execute(
+            '''
+            INSERT INTO rate_limit_events (endpoint, identifier, created_at)
+            VALUES (?, ?, ?)
+            ''',
+            (endpoint, identifier, now)
+        )
+        conn.commit()
     return False
 
 
@@ -305,6 +373,20 @@ def get_asset_url(asset_key, fallback=''):
     if row and row['file_path']:
         return to_public_asset_url(row['file_path'])
     return to_public_asset_url(fallback or ASSET_DEFAULTS.get(asset_key, ''))
+
+
+def get_asset_srcset(asset_key, fallback_variants):
+    if not STATIC_BUILD_MODE:
+        with get_db_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute('SELECT file_path FROM site_assets WHERE asset_key = ?', (asset_key,))
+            row = cursor.fetchone()
+        if row and row['file_path']:
+            return to_public_asset_url(row['file_path'])
+    return ', '.join(
+        f'{to_public_asset_url(path)} {width}w'
+        for path, width in fallback_variants
+    )
 
 
 def save_asset_file(file_storage, asset_key):
@@ -383,6 +465,50 @@ def fetch_news_posts(include_unpublished=False):
         post['media_items'] = media_by_post.get(post['id'], [])
 
     return posts
+
+
+def fetch_news_post_by_slug(slug):
+    if STATIC_BUILD_MODE:
+        return None
+    with get_db_connection() as conn:
+        cursor = conn.cursor()
+        cursor.execute(
+            'SELECT * FROM news_posts WHERE slug = ? AND is_published = 1',
+            (slug,)
+        )
+        row = cursor.fetchone()
+        if not row:
+            return None
+        post = dict(row)
+        cursor.execute(
+            'SELECT * FROM news_media WHERE post_id = ? ORDER BY sort_order ASC, id ASC',
+            (post['id'],)
+        )
+        post['media_items'] = [dict(media) for media in cursor.fetchall()]
+    return post
+
+
+def slugify_news_title(title):
+    normalized = unicodedata.normalize('NFKD', title or '').encode('ascii', 'ignore').decode('ascii')
+    slug = re.sub(r'[^a-z0-9]+', '-', normalized.lower()).strip('-')
+    return slug[:120] or 'yangilik'
+
+
+def unique_news_slug(cursor, title, exclude_id=None):
+    base_slug = slugify_news_title(title)
+    candidate = base_slug
+    suffix = 2
+    while True:
+        query = 'SELECT id FROM news_posts WHERE slug = ?'
+        params = [candidate]
+        if exclude_id is not None:
+            query += ' AND id != ?'
+            params.append(exclude_id)
+        cursor.execute(query, tuple(params))
+        if not cursor.fetchone():
+            return candidate
+        candidate = f'{base_slug}-{suffix}'
+        suffix += 1
 
 
 def get_site_content_map():
@@ -660,7 +786,9 @@ def inject_asset_helper():
 
     return {
         'asset_url': get_asset_url,
-        'content': content_value
+        'asset_srcset': get_asset_srcset,
+        'content': content_value,
+        'static_build_mode': STATIC_BUILD_MODE,
     }
 
 def send_telegram_notification(message_text):
@@ -781,6 +909,14 @@ def ensure_table_columns(cursor, table_name, column_definitions):
             cursor.execute(f'ALTER TABLE {table_name} ADD COLUMN {column_name} {column_sql}')
 
 DEFAULT_FAQS = [
+    ('ICEBERG Study Center qayerda joylashgan?', "Markaz Uychi, Namangan viloyatida joylashgan. Aniq yo'nalish va aloqa ma'lumotlari uchun Aloqa sahifasini ko'ring."),
+    ('Qaysi ta\'lim yo\'nalishlari mavjud?', "Saytda IELTS va SAT tayyorgarligi, ingliz tili, bolalar uchun boshlang'ich dasturlar, akademik fanlar va universitetga tayyorgarlik yo'nalishlari ko'rsatilgan."),
+    ('IELTS yoki SAT dasturiga qanday yozilaman?', "Ro'yxatdan o'tish sahifasida ism va telefon raqamingizni qoldiring. Markaz vakili amaldagi guruhlar va keyingi qadamlar bo'yicha siz bilan bog'lanadi."),
+    ('Dars jadvali va davomiyligi qanday?', "Jadval va davomiylik tanlangan dastur hamda amaldagi guruhga bog'liq. Eng yangi ma'lumotni Aloqa sahifasidagi telefon yoki ariza orqali aniqlashtiring."),
+    ('Kurs narxini qayerdan bilsam bo\'ladi?', "Amaldagi narxlar bo'yicha tasdiqlangan ma'lumotni markazdan oling. Saytdagi aloqa raqamiga qo'ng'iroq qilishingiz yoki ariza qoldirishingiz mumkin."),
+]
+
+LEGACY_DEFAULT_FAQS = [
     ('Qaysi fanlardan repetitorlik xizmatlarini taklif qilasiz?', 'Biz keng ko\'lamli fanlardan, jumladan, Matematika, Fan, Ingliz tili va standartlashtirilgan testlarga tayyorgarlik (SAT, ACT) bo\'yicha repetitorlik xizmatlarini taklif etamiz.'),
     ('Sizning ish vaqtingiz qanday?', 'Markazimiz ish kunlari soat 9:00 dan 20:00 gacha, dam olish kunlari esa 10:00 dan 18:00 gacha ishlaydi.'),
     ('O\'quvchilarni repetitorlar bilan qanday bog\'laysiz?', 'Biz o\'quvchilarni ularning akademik ehtiyojlari, o\'rganish uslubi va shaxsiyatiga qarab repetitorlar bilan bog\'laymiz, bu esa eng yaxshi moslikni ta\'minlaydi.'),
@@ -867,6 +1003,18 @@ def init_db():
             )
         ''')
         cursor.execute('''
+            CREATE TABLE IF NOT EXISTS rate_limit_events (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                endpoint TEXT NOT NULL,
+                identifier TEXT NOT NULL,
+                created_at INTEGER NOT NULL
+            )
+        ''')
+        cursor.execute('''
+            CREATE INDEX IF NOT EXISTS idx_rate_limit_lookup
+            ON rate_limit_events (endpoint, identifier, created_at)
+        ''')
+        cursor.execute('''
             CREATE TABLE IF NOT EXISTS news_posts (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 title TEXT NOT NULL,
@@ -879,6 +1027,14 @@ def init_db():
                 updated_at TEXT NOT NULL
             )
         ''')
+        ensure_table_columns(cursor, 'news_posts', {'slug': 'TEXT'})
+        cursor.execute('SELECT id, title FROM news_posts WHERE slug IS NULL OR slug = "" ORDER BY id')
+        for post_id, post_title in cursor.fetchall():
+            cursor.execute(
+                'UPDATE news_posts SET slug = ? WHERE id = ?',
+                (unique_news_slug(cursor, post_title, post_id), post_id)
+            )
+        cursor.execute('CREATE UNIQUE INDEX IF NOT EXISTS idx_news_posts_slug ON news_posts (slug)')
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS news_media (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -912,11 +1068,60 @@ def init_db():
                     '''INSERT INTO faq_items (question, answer, sort_order, created_at, updated_at) VALUES (?, ?, ?, ?, ?)''',
                     (question, answer, index, now, now)
                 )
+
+        # Replace only untouched historical defaults. Any FAQ edited by an
+        # administrator is preserved because both old question and answer must
+        # match exactly before the conservative migration is applied.
+        now = utc_now().isoformat()
+        for index, ((old_question, old_answer), (new_question, new_answer)) in enumerate(
+            zip(LEGACY_DEFAULT_FAQS, DEFAULT_FAQS),
+            1,
+        ):
+            cursor.execute(
+                '''
+                UPDATE faq_items
+                SET question = ?, answer = ?, sort_order = ?, updated_at = ?
+                WHERE question = ? AND answer = ?
+                ''',
+                (new_question, new_answer, index, now, old_question, old_answer)
+            )
         
         conn.commit()
 
 if not STATIC_BUILD_MODE:
     init_db()
+
+
+@app.context_processor
+def inject_security_helpers():
+    return {'csrf_token': get_csrf_token}
+
+
+@app.before_request
+def enforce_request_security():
+    if STATIC_BUILD_MODE or request.method not in {'POST', 'PUT', 'PATCH', 'DELETE'}:
+        return None
+
+    expected_token = session.get(CSRF_FIELD_NAME, '')
+    supplied_token = (
+        request.headers.get('X-CSRF-Token', '')
+        or request.form.get(CSRF_FIELD_NAME, '')
+    )
+    if not expected_token or not supplied_token or not hmac.compare_digest(expected_token, supplied_token):
+        return Response("So'rov xavfsizlik tekshiruvidan o'tmadi.", status=400, mimetype='text/plain')
+
+    endpoint = request.endpoint or ''
+    if endpoint in RATE_LIMITS:
+        limit, window_seconds = RATE_LIMITS[endpoint]
+        if is_rate_limited(endpoint, get_request_rate_key(), limit, window_seconds):
+            response = Response(
+                "Juda ko'p urinish. Bir necha daqiqadan so'ng qayta urinib ko'ring.",
+                status=429,
+                mimetype='text/plain'
+            )
+            response.headers['Retry-After'] = str(window_seconds)
+            return response
+    return None
 
 
 # Private/dynamic HTML that must never be cached (admin panels and live data
@@ -926,7 +1131,26 @@ NO_CACHE_PREFIXES = ('/admin', '/portal', '/students', '/contacts_list')
 
 @app.after_request
 def add_cache_headers(response):
+    response.headers.setdefault('X-Content-Type-Options', 'nosniff')
+    response.headers.setdefault('X-Frame-Options', 'SAMEORIGIN')
+    response.headers.setdefault('Referrer-Policy', 'strict-origin-when-cross-origin')
+    response.headers.setdefault('Permissions-Policy', 'camera=(), microphone=(), geolocation=()')
     if 'text/html' in (response.content_type or ''):
+        if not STATIC_BUILD_MODE and response.status_code < 400:
+            token = get_csrf_token()
+            hidden_field = (
+                f'<input type="hidden" name="{CSRF_FIELD_NAME}" value="{token}">'
+            )
+            html = response.get_data(as_text=True)
+            html = re.sub(
+                r'(<form\b(?=[^>]*\bmethod=["\']?post\b)[^>]*>)',
+                lambda match: match.group(1) + hidden_field,
+                html,
+                flags=re.IGNORECASE,
+            )
+            response.set_data(html)
+        if response.status_code >= 400:
+            response.headers['X-Robots-Tag'] = 'noindex, nofollow, noarchive'
         if (request.path or '').startswith(NO_CACHE_PREFIXES):
             response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate, max-age=0, private'
             response.headers['Pragma'] = 'no-cache'
@@ -935,6 +1159,7 @@ def add_cache_headers(response):
             response.headers['CDN-Cache-Control'] = 'no-store'
             response.headers['Cloudflare-CDN-Cache-Control'] = 'no-store'
             response.headers['Surrogate-Control'] = 'no-store'
+            response.headers['X-Robots-Tag'] = 'noindex, nofollow, noarchive'
         else:
             # Public pages: short cache + revalidate. Good for crawl efficiency
             # while keeping CMS edits visible within ~1 minute. Note: no Vary:*
@@ -975,6 +1200,7 @@ def robots_txt():
         "Disallow: /portal/\n"
         "Disallow: /students\n"
         "Disallow: /contacts_list\n"
+        "Disallow: /api/\n"
         "\n"
         "Sitemap: https://iceberglc.com/sitemap.xml\n"
     )
@@ -999,9 +1225,11 @@ def sitemap_xml():
     static_pages = [
         ('https://iceberglc.com/', '1.0', 'daily', 'index.html'),
         ('https://iceberglc.com/about', '0.8', 'monthly', 'about.html'),
-        ('https://iceberglc.com/our_programs', '0.9', 'weekly', 'our_programs.html'),
+        ('https://iceberglc.com/programs', '0.9', 'weekly', 'our_programs.html'),
+        ('https://iceberglc.com/programs/ielts', '0.8', 'monthly', 'ielts.html'),
+        ('https://iceberglc.com/programs/sat', '0.8', 'monthly', 'sat.html'),
         ('https://iceberglc.com/news', '0.9', 'daily', 'news.html'),
-        ('https://iceberglc.com/questions', '0.7', 'monthly', 'questions.html'),
+        ('https://iceberglc.com/faq', '0.7', 'monthly', 'questions.html'),
         ('https://iceberglc.com/contact', '0.8', 'monthly', 'contact.html'),
         ('https://iceberglc.com/register', '0.8', 'monthly', 'register.html'),
     ]
@@ -1015,6 +1243,16 @@ def sitemap_xml():
         lines.append(f'    <changefreq>{changefreq}</changefreq>')
         lines.append(f'    <priority>{priority}</priority>')
         lines.append('  </url>')
+    if not STATIC_BUILD_MODE:
+        for post in fetch_news_posts(include_unpublished=False):
+            if not post.get('slug'):
+                continue
+            lines.append('  <url>')
+            lines.append(f"    <loc>https://iceberglc.com/news/{post['slug']}</loc>")
+            updated_at = (post.get('updated_at') or post.get('created_at') or '')[:10]
+            if updated_at:
+                lines.append(f'    <lastmod>{updated_at}</lastmod>')
+            lines.append('  </url>')
     lines.append('</urlset>')
     return Response('\n'.join(lines), mimetype='application/xml')
 
@@ -1027,9 +1265,24 @@ def index():
 def about():
     return render_template('about.html')
 
-@app.route('/our_programs')
+@app.route('/programs')
 def our_programs():
     return render_template('our_programs.html')
+
+
+@app.route('/programs/ielts')
+def ielts_program():
+    return render_template('ielts.html')
+
+
+@app.route('/programs/sat')
+def sat_program():
+    return render_template('sat.html')
+
+
+@app.route('/our_programs')
+def legacy_our_programs():
+    return redirect(url_for('our_programs'), code=301)
 
 
 @app.route('/news')
@@ -1038,10 +1291,23 @@ def news():
     return render_template('news.html', posts=posts)
 
 
-@app.route('/questions')
+@app.route('/news/<slug>')
+def news_detail(slug):
+    post = fetch_news_post_by_slug(slug)
+    if not post:
+        abort(404)
+    return render_template('news_detail.html', post=post)
+
+
+@app.route('/faq')
 def questions():
     faqs = fetch_faq_items()
     return render_template('questions.html', faqs=faqs)
+
+
+@app.route('/questions')
+def legacy_questions():
+    return redirect(url_for('questions'), code=301)
 
 @app.route('/admin/login', methods=['GET', 'POST'])
 def admin_login():
@@ -1094,7 +1360,7 @@ def admin_secret_access():
     return redirect(url_for('secret_admin_login', access_slug=ADMIN_LOGIN_SLUG))
 
 
-@app.route('/admin/logout')
+@app.route('/admin/logout', methods=['POST'])
 def logout():
     if session.get('logged_in'):
         log_admin_action('admin_logout', 'session', 'Admin logged out')
@@ -1380,12 +1646,13 @@ def admin_news():
             now = utc_now().isoformat()
             with get_db_connection() as conn:
                 cursor = conn.cursor()
+                slug = unique_news_slug(cursor, title)
                 cursor.execute(
                     '''
-                    INSERT INTO news_posts (title, excerpt, body, post_type, event_date, is_published, created_at, updated_at)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                    INSERT INTO news_posts (title, slug, excerpt, body, post_type, event_date, is_published, created_at, updated_at)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
                     ''',
-                    (title, excerpt, body, post_type, event_date, is_published, now, now)
+                    (title, slug, excerpt, body, post_type, event_date, is_published, now, now)
                 )
                 new_post_id = cursor.lastrowid
 
@@ -1682,34 +1949,6 @@ def contact():
         name = request.form.get('name', '').strip()
         phone = normalize_phone(request.form.get('phone', '').strip())
         message_body = request.form.get('message', '').strip()
-        admin_password = request.form.get('admin_password', '').strip()
-        admin_secret_code = request.form.get('admin_secret_code', '').strip()
-
-        if name.lower() == ADMIN_CONTACT_TRIGGER_NAME:
-            if not ADMIN_CONTACT_SECRET_CODE:
-                flash('Hidden admin secret code sozlanmagan (ADMIN_CONTACT_SECRET_CODE).', 'error')
-                return redirect(url_for('contact'))
-
-            if not admin_password:
-                flash('Admin parolini kiriting.', 'error')
-                return redirect(url_for('contact'))
-
-            if not admin_secret_code:
-                flash('Admin secret codeni kiriting.', 'error')
-                return redirect(url_for('contact'))
-
-            if admin_secret_code != ADMIN_CONTACT_SECRET_CODE:
-                flash('Admin secret code noto`g`ri.', 'error')
-                return redirect(url_for('contact'))
-
-            if process_admin_login(admin_password):
-                log_admin_action('admin_login_hidden', 'contact_form', 'Hidden access login from contact form with second factor')
-                flash('Maxfiy admin kirishi muvaffaqiyatli bajarildi.', 'success')
-                return redirect(url_for('admin_dashboard'))
-
-            flash('Admin paroli noto`g`ri.', 'error')
-            return redirect(url_for('contact'))
-
         if not name or len(name) < 2:
             flash('Ism kamida 2 ta belgidan iborat bo\'lishi kerak.', 'error')
             return redirect(url_for('contact'))
@@ -1736,7 +1975,7 @@ def contact():
 
         flash('Xabaringiz uchun rahmat! Tez orada siz bilan bog\'lanamiz.', 'success')
         return redirect(url_for('contact'))
-    return render_template('contact.html', admin_trigger_name=ADMIN_CONTACT_TRIGGER_NAME)
+    return render_template('contact.html')
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():

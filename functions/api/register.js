@@ -100,6 +100,7 @@ export async function onRequestPost(context) {
         submitted_at: new Date().toISOString(),
         student_name: studentName,
         student_phone: `+998${localPhone}`,
+        course: cleanText(input.course, 80),
         utm_source: cleanText(input.utm_source, 100),
         utm_medium: cleanText(input.utm_medium, 100),
         utm_campaign: cleanText(input.utm_campaign, 150),

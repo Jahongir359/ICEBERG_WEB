@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Ro'yxatdan O'tish | ICEBERG O'quv Markazi Dasturlariga Qo'shiling{% endblock %}
+{% block title %}Ro'yxatdan o'tish | ICEBERG Study Center{% endblock %}
 
 {% block meta_description %}<meta name="description" content="ICEBERG O'quv Markazi dasturlariga ro'yxatdan o'ting. IELTS, SAT tayyorgarlik, repetitorlik va mentorlik kurslari uchun ariza topshiring. Namangan, O'zbekiston.">{% endblock %}
 
@@ -41,6 +41,7 @@
 
 <section class="section-shell">
     <div class="page-grid max-w-3xl">
+        <nav class="breadcrumbs" aria-label="Sahifa yo'li"><a href="{{ url_for('index') }}">Bosh sahifa</a><span aria-hidden="true">›</span><span aria-current="page">Ro'yxatdan o'tish</span></nav>
         <article class="form-shell">
             <h2 class="section-title !text-3xl mb-4">Ro'yxatdan o'tish</h2>
             {% with messages = get_flashed_messages(with_categories=true) %}
@@ -70,6 +71,7 @@
                 <input type="hidden" name="utm_source" value="{{ request.args.get('utm_source', '') }}">
                 <input type="hidden" name="utm_medium" value="{{ request.args.get('utm_medium', '') }}">
                 <input type="hidden" name="utm_campaign" value="{{ request.args.get('utm_campaign', '') }}">
+                <input type="hidden" name="course" value="{{ request.args.get('course', '') }}">
                 <button type="submit" class="btn-main">Yuborish</button>
             </form>
         </article>

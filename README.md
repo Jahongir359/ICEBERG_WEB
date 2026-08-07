@@ -27,7 +27,7 @@ The primary goal is to convert website visitors into student leads, then help ad
 
 - Python + Flask
 - SQLite
-- Tailwind CSS (CDN)
+- Tailwind CSS (checked-in production build)
 - Gunicorn for production startup
 
 ## Quick Start
@@ -65,6 +65,20 @@ python app.py
 ```
 
 Open http://127.0.0.1:8080
+
+When template utility classes change, rebuild the checked-in production CSS:
+
+```bash
+npm ci
+npm run build:css
+python -m pip install -r requirements-dev.txt
+python scripts/optimize_images.py
+```
+
+Cloudflare Pages includes a host-level middleware redirect from
+`www.iceberglc.com` to the canonical `https://iceberglc.com` host. The owner
+must also point the `www` DNS record at the deployed Cloudflare Pages project;
+the redirect cannot run until DNS resolves.
 
 ## Environment Variables
 
@@ -194,7 +208,7 @@ Set these environment variables in DigitalOcean:
 - `FLASK_ENV=production`
 - `DATABASE_PATH` if you want the SQLite file stored outside the container default
 
-If those admin variables are omitted, the app falls back to `iceberg-admin` and `iceberg-portal` so the hidden login path stays consistent across deployments.
+Production startup fails closed if `SECRET_KEY` or `ADMIN_PASSWORD` uses the development default. Configure unique secrets in the deployment platform; a hidden login path is not a substitute for a strong password.
 
 ## Deploy the public site to Firebase Hosting (Spark/free plan)
 
