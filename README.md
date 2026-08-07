@@ -194,7 +194,7 @@ Set these environment variables in DigitalOcean:
 - `FLASK_ENV=production`
 - `DATABASE_PATH` if you want the SQLite file stored outside the container default
 
-If those admin variables are omitted, the app falls back to `iceberg-admin` and `iceberg-portal` so the hidden login path stays consistent across deployments.
+Production startup fails closed if `SECRET_KEY` or `ADMIN_PASSWORD` uses the development default. Configure unique secrets in the deployment platform; a hidden login path is not a substitute for a strong password.
 
 ## Deploy the public site to Firebase Hosting (Spark/free plan)
 

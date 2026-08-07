@@ -1,5 +1,5 @@
 {
-  "name": "ICEBERG O'quv Markazi",
+  "name": "ICEBERG Study Center",
   "short_name": "ICEBERG",
   "description": "IELTS, SAT tayyorgarlik, akademik repetitorlik va mentorlik dasturlari. Namangan, O'zbekiston.",
   "start_url": "/",
@@ -7,7 +7,7 @@
   "orientation": "portrait",
   "theme_color": "#0d2a50",
   "background_color": "#ffffff",
-  "lang": "uz",
+  "lang": "uz-UZ",
   "icons": [
     {
       "src": "/static/android-chrome-192x192.png",

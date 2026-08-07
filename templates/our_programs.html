@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Dasturlar | IELTS, SAT, Repetitorlik — ICEBERG O'quv Markazi{% endblock %}
+{% block title %}Ta'lim dasturlari | ICEBERG Study Center{% endblock %}
 
 {% block meta_description %}<meta name="description" content="ICEBERG O'quv Markazi dasturlari: IELTS va SAT tayyorgarlik, akademik repetitorlik (matematika, fan, ingliz tili) va shaxsiy mentorlik. Namangan, O'zbekiston.">{% endblock %}
 
@@ -14,7 +14,7 @@
   "@type": "BreadcrumbList",
   "itemListElement": [
     {"@type": "ListItem", "position": 1, "name": "Bosh sahifa", "item": "https://iceberglc.com/"},
-    {"@type": "ListItem", "position": 2, "name": "Dasturlar", "item": "https://iceberglc.com/our_programs"}
+    {"@type": "ListItem", "position": 2, "name": "Dasturlar", "item": "https://iceberglc.com/programs"}
   ]
 }
 </script>
@@ -56,6 +56,14 @@
 
 <section class="section-shell">
     <div class="page-grid">
+        <nav class="breadcrumbs" aria-label="Sahifa yo'li">
+            <a href="{{ url_for('index') }}">Bosh sahifa</a><span aria-hidden="true">›</span><span aria-current="page">Dasturlar</span>
+        </nav>
+        <article class="info-card reveal">
+            <h2>Imtihonlarga tayyorgarlik dasturlari</h2>
+            <p>IELTS va SAT uchun alohida sahifalarda dastur maqsadi, o'rganiladigan ko'nikmalar va ro'yxatdan o'tish jarayoni tushuntirilgan.</p>
+            <div class="hero-actions mt-4"><a href="{{ url_for('ielts_program') }}" class="btn-main">IELTS tayyorgarlik</a><a href="{{ url_for('sat_program') }}" class="btn-soft">SAT tayyorgarlik</a></div>
+        </article>
         <div class="pill-list justify-center mb-2">
             <button class="tab-chip active" data-target="#test-prep">Ingliz tili va test tayyorgarligi</button>
             <button class="tab-chip" data-target="#academic-tutoring">Bolalar uchun maxsus</button>
@@ -70,10 +78,10 @@
                 </div>
                 <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
                     <article class="program-card course-card">
-                        <img src="{{ asset_url('program_card_1', 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?q=80&w=2070&auto=format&fit=crop') }}" alt="SAT IELTS" class="h-44 w-full object-cover rounded-xl mb-4">
+                        <img src="{{ asset_url('program_card_1', 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?q=80&w=2070&auto=format&fit=crop') }}" alt="IELTS va SAT uchun birga tayyorlanayotgan o'quvchilar" class="h-44 w-full object-cover rounded-xl mb-4" width="640" height="176" loading="lazy">
                         <h3>SAT/IELTS Kompleks Dasturi</h3>
                         <p>Imtihon strukturasini chuqur o'rganish, mock testlar va personal feedback asosida intensiv kurs.</p>
-                        <a href="{{ url_for('register') }}" class="program-link">Ro'yxatdan o'tish -></a>
+                        <a href="{{ url_for('ielts_program') }}" class="program-link">IELTS dasturi</a> · <a href="{{ url_for('sat_program') }}" class="program-link">SAT dasturi</a>
                     </article>
                     <article class="program-card course-card" style="animation-delay: .06s;">
                         <img src="{{ asset_url('program_card_2', 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=2071&auto=format&fit=crop') }}" alt="Natural English" class="h-44 w-full object-cover rounded-xl mb-4">

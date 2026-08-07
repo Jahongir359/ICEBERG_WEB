@@ -103,6 +103,7 @@
         var payload = {
             student_name: fieldValue(form, "student_name"),
             student_phone: fieldValue(form, "student_phone"),
+            course: fieldValue(form, "course"),
             utm_source: fieldValue(form, "utm_source"),
             utm_medium: fieldValue(form, "utm_medium"),
             utm_campaign: fieldValue(form, "utm_campaign"),

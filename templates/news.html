@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Yangiliklar va Eventlar | ICEBERG O'quv Markazi{% endblock %}
+{% block title %}Yangiliklar | ICEBERG Study Center{% endblock %}
 
 {% block meta_description %}<meta name="description" content="ICEBERG O'quv Markazi yangiliklari va eventlari. O'quvchilar muvaffaqiyatlari, ta'lim yangiliklari, seminarlar va maxsus tadbirlar haqida bilib oling.">{% endblock %}
 
@@ -35,7 +35,7 @@
 <section class="page-hero">
     <div class="page-hero-inner">
         <div class="glass-hero-panel news-hero reveal">
-            <h1>Yangiliklar va Eventlar</h1>
+            <h1>ICEBERG yangiliklari</h1>
             <p>Markazdagi yangi loyihalar, tadbirlar va e'lonlar shu sahifada.</p>
         </div>
     </div>
@@ -43,6 +43,11 @@
 
 <section class="section-shell">
     <div class="page-grid">
+        <nav class="breadcrumbs" aria-label="Sahifa yo'li"><a href="{{ url_for('index') }}">Bosh sahifa</a><span aria-hidden="true">›</span><span aria-current="page">Yangiliklar</span></nav>
+        <article class="info-card reveal">
+            <h2>Markaz hayotidan yangiliklar</h2>
+            <p>Bu sahifada ICEBERG Study Center dasturlari, ta'lim tadbirlari va markazga oid muhim e'lonlar beriladi. Kurs tanlash uchun <a href="{{ url_for('our_programs') }}" class="program-link">dasturlarni ko'ring</a>; qabul bo'yicha savollar uchun <a href="{{ url_for('contact') }}" class="program-link">markaz bilan bog'laning</a>.</p>
+        </article>
         {% if posts %}
         <div class="space-y-5">
             {% for post in posts %}
@@ -87,8 +92,8 @@
         </div>
         {% else %}
         <article class="info-card text-center">
-            <h3 class="section-title !text-3xl mb-2">Hozircha yangiliklar yo'q</h3>
-            <p>Tez orada bu yerda yangi postlar joylanadi.</p>
+            <h2 class="section-title !text-3xl mb-2">Hozircha yangi e'lon yo'q</h2>
+            <p>Yangi, tasdiqlangan ma'lumotlar mavjud bo'lganda shu sahifada e'lon qilinadi.</p>
         </article>
         {% endif %}
     </div>

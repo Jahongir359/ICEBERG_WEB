@@ -1,8 +1,8 @@
 {% extends "base.html" %}
 
-{% block title %}Aloqa | ICEBERG O'quv Markazi — Namangan{% endblock %}
+{% block title %}Aloqa | ICEBERG Study Center — Namangan{% endblock %}
 
-{% block meta_description %}<meta name="description" content="ICEBERG O'quv Markazi bilan bog'laning. Manzil: Namangan, O'zbekiston. Tel: +998 93 946 16 99. Email: iceberg.edu.center@gmail.com. Bepul maslahat uchun murojaat qiling.">{% endblock %}
+{% block meta_description %}<meta name="description" content="ICEBERG Study Center bilan bog'laning. Manzil: Uychi, Namangan viloyati. Tel: +998 93 946 16 99. Email: iceberg.edu.center@gmail.com.">{% endblock %}
 
 {% block og_description %}<meta property="og:description" content="ICEBERG O'quv Markazi bilan bog'laning. Namangan, O'zbekiston. Tel: +998 93 946 16 99. Bepul maslahat uchun murojaat qiling.">{% endblock %}
 {% block twitter_description %}<meta name="twitter:description" content="ICEBERG O'quv Markazi bilan bog'laning. Namangan, O'zbekiston. Tel: +998 93 946 16 99. Bepul maslahat uchun murojaat qiling.">{% endblock %}
@@ -11,44 +11,13 @@
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@type": "LocalBusiness",
-  "name": "ICEBERG O'quv Markazi",
-  "alternateName": "ICEBERG Study Center",
-  "@id": "https://iceberglc.com/#localbusiness",
-  "url": "https://iceberglc.com",
-  "logo": {
-    "@type": "ImageObject",
-    "url": "https://iceberglc.com/static/img/logo2.png",
-    "width": 640,
-    "height": 640
-  },
-  "image": "https://iceberglc.com/static/img/logo2.png",
-  "description": "IELTS, SAT tayyorgarlik, akademik repetitorlik va mentorlik dasturlari",
-  "address": {
-    "@type": "PostalAddress",
-    "streetAddress": "Uychi ko'chasi",
-    "addressLocality": "Namangan",
-    "addressRegion": "Namangan viloyati",
-    "postalCode": "160000",
-    "addressCountry": "UZ"
-  },
-  "geo": {
-    "@type": "GeoCoordinates",
-    "latitude": "41.0",
-    "longitude": "71.67"
-  },
-  "telephone": "+998939461699",
-  "email": "iceberg.edu.center@gmail.com",
-  "openingHours": "Mo-Sa 08:00-20:00",
-  "priceRange": "$$",
-  "currenciesAccepted": "UZS",
-  "paymentAccepted": "Cash, Bank Transfer",
-  "contactPoint": {
-    "@type": "ContactPoint",
-    "telephone": "+998939461699",
-    "contactType": "customer service",
-    "availableLanguage": ["Uzbek", "Russian", "English"]
-  }
+  "@type": "ContactPage",
+  "@id": "https://iceberglc.com/contact#webpage",
+  "url": "https://iceberglc.com/contact",
+  "name": "ICEBERG Study Center bilan aloqa",
+  "inLanguage": "uz-UZ",
+  "isPartOf": {"@id": "https://iceberglc.com/#website"},
+  "about": {"@id": "https://iceberglc.com/#organization"}
 }
 </script>
 <script type="application/ld+json">
@@ -86,6 +55,7 @@
 
 <section class="section-shell">
     <div class="page-grid lg:grid-cols-2">
+        <nav class="breadcrumbs lg:col-span-2" aria-label="Sahifa yo'li"><a href="{{ url_for('index') }}">Bosh sahifa</a><span aria-hidden="true">›</span><span aria-current="page">Aloqa</span></nav>
         <article class="form-shell">
             <h2 class="section-title !text-3xl mb-4">Bizga xabar yuboring</h2>
             {% with messages = get_flashed_messages(with_categories=true) %}
@@ -98,7 +68,7 @@
               {% endif %}
             {% endwith %}
 
-            <form id="contactForm" action="{{ url_for('contact') }}" method="post" class="space-y-4" data-admin-trigger-name="{{ admin_trigger_name or 'admin' }}">
+            <form id="contactForm" action="{{ url_for('contact') }}" method="post" class="space-y-4">
                 <div>
                     <label for="name" class="field-label">To'liq ism</label>
                     <input type="text" id="name" name="name" class="field-input" required>
@@ -114,30 +84,21 @@
                     <label for="message" class="field-label">Xabar</label>
                     <textarea id="message" name="message" rows="5" class="field-textarea" required></textarea>
                 </div>
-                <div id="admin-password-wrap" class="hidden">
-                    <label for="admin_password" class="field-label">Admin parol</label>
-                    <input type="password" id="admin_password" name="admin_password" class="field-input" autocomplete="current-password">
-                </div>
-                <div id="admin-secret-wrap" class="hidden">
-                    <label for="admin_secret_code" class="field-label">Admin secret code</label>
-                    <input type="password" id="admin_secret_code" name="admin_secret_code" class="field-input" autocomplete="one-time-code">
-                    <p class="text-xs text-slate-500 mt-2">Maxfiy kirish rejimida telefon va xabar maydoni talab qilinmaydi.</p>
-                </div>
                 <button type="submit" class="btn-main">Yuborish</button>
             </form>
         </article>
 
         <div class="space-y-4">
             <article class="info-card">
-                <h3>Aloqa ma'lumotlari</h3>
+                <h2>Aloqa ma'lumotlari</h2>
                 <p><strong>Elektron pochta:</strong> <a href="mailto:{{ content('contact_email', 'iceberg.edu.center@gmail.com') }}" class="program-link">{{ content('contact_email', 'iceberg.edu.center@gmail.com') }}</a></p>
                 <p><strong>Telefon:</strong> <a href="tel:{{ content('contact_phone', '+998939461699') }}" class="program-link">{{ content('contact_phone_display', '(+998) 939461699') }}</a></p>
-                <p><strong>Manzil:</strong> <a href="{{ content('contact_address_url', 'https://www.google.com/maps/place/Uychi,+Uzbekistan/') }}" target="_blank" rel="noopener noreferrer" class="program-link">{{ content('contact_address', 'Uyci, Namangan Viloyati, Uzbekistan') }}</a></p>
+                <p><strong>Manzil:</strong> <a href="{{ content('contact_address_url', 'https://www.google.com/maps/place/Uychi,+Uzbekistan/') }}" target="_blank" rel="noopener noreferrer" class="program-link">{{ content('contact_address', "Uychi, Namangan viloyati, O'zbekiston") }}</a></p>
             </article>
             <article class="info-card">
-                <h3>Bizning manzilimiz</h3>
+                <h2>Bizning manzilimiz</h2>
                 <div class="relative w-full rounded-xl overflow-hidden border border-slate-200" style="aspect-ratio: 16 / 10;">
-                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d48448.83891956152!2d71.95111614999999!3d40.9931812!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x38bb7f5764470e91%3A0x49d1123a4816a26c!2sUychi%2C%20Uzbekistan!5e0!3m2!1sen!2sus!4v1678886400000!5m2!1sen!2sus" class="absolute inset-0 w-full h-full" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                    <iframe title="ICEBERG Study Center joylashuvi — Uychi, Namangan viloyati" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d48448.83891956152!2d71.95111614999999!3d40.9931812!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x38bb7f5764470e91%3A0x49d1123a4816a26c!2sUychi%2C%20Uzbekistan!5e0!3m2!1sen!2sus!4v1678886400000!5m2!1sen!2sus" class="absolute inset-0 w-full h-full" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
                 </div>
             </article>
         </div>
@@ -149,48 +110,6 @@
 {{ super() }}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const form = document.getElementById('contactForm');
-    const nameInput = document.getElementById('name');
-    const phoneWrap = document.getElementById('phone-wrap');
-    const phoneInput = document.getElementById('phone');
-    const messageWrap = document.getElementById('message-wrap');
-    const messageInput = document.getElementById('message');
-    const adminPasswordWrap = document.getElementById('admin-password-wrap');
-    const adminPasswordInput = document.getElementById('admin_password');
-    const adminSecretWrap = document.getElementById('admin-secret-wrap');
-    const adminSecretInput = document.getElementById('admin_secret_code');
-    const submitButton = form ? form.querySelector('button[type="submit"]') : null;
-
-    function syncHiddenAdminMode() {
-        if (!form || !nameInput || !phoneWrap || !phoneInput || !messageWrap || !messageInput || !adminPasswordWrap || !adminPasswordInput || !adminSecretWrap || !adminSecretInput) {
-            return;
-        }
-
-        const triggerName = (form.dataset.adminTriggerName || 'admin').toLowerCase().trim();
-        const enteredName = (nameInput.value || '').toLowerCase().trim();
-        const isAdminMode = enteredName === triggerName;
-
-        phoneWrap.classList.toggle('hidden', isAdminMode);
-        messageWrap.classList.toggle('hidden', isAdminMode);
-        adminPasswordWrap.classList.toggle('hidden', !isAdminMode);
-        adminSecretWrap.classList.toggle('hidden', !isAdminMode);
-
-        phoneInput.required = !isAdminMode;
-        messageInput.required = !isAdminMode;
-        adminPasswordInput.required = isAdminMode;
-        adminSecretInput.required = isAdminMode;
-
-        if (submitButton) {
-            submitButton.textContent = isAdminMode ? 'Admin kirish' : 'Yuborish';
-        }
-    }
-
-    if (nameInput) {
-        nameInput.addEventListener('input', syncHiddenAdminMode);
-        nameInput.addEventListener('change', syncHiddenAdminMode);
-    }
-    syncHiddenAdminMode();
-
     const items = document.querySelectorAll('.reveal');
     const observer = new IntersectionObserver(function(entries) {
         entries.forEach(function(entry) {

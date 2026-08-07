@@ -1092,3 +1092,48 @@ body.site-shell {
         scroll-behavior: auto !important;
     }
 }
+
+.skip-link {
+    position: fixed;
+    left: 1rem;
+    top: 1rem;
+    z-index: 9999;
+    transform: translateY(-160%);
+    padding: 0.75rem 1rem;
+    border-radius: 0.6rem;
+    background: #fff;
+    color: var(--ink-800);
+    font-weight: 700;
+}
+
+.skip-link:focus { transform: translateY(0); }
+
+.breadcrumbs {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text-soft);
+    font-size: 0.9rem;
+}
+
+.breadcrumbs a {
+    color: #1769aa;
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+}
+
+:where(a, button, input, textarea, select):focus-visible {
+    outline: 3px solid #f59e0b;
+    outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto !important; }
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+    .reveal { opacity: 1 !important; transform: none !important; }
+}

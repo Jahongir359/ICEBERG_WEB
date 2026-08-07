@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Ko'p Beriladigan Savollar (FAQ) | ICEBERG O'quv Markazi{% endblock %}
+{% block title %}Ko'p beriladigan savollar | ICEBERG Study Center{% endblock %}
 
 {% block meta_description %}<meta name="description" content="ICEBERG O'quv Markaziga oid tez-tez beriladigan savollar va javoblar. Kurslar, narxlar, qabul jarayoni va ta'lim dasturlari haqida batafsil ma'lumot.">{% endblock %}
 
@@ -14,7 +14,7 @@
   "@type": "BreadcrumbList",
   "itemListElement": [
     {"@type": "ListItem", "position": 1, "name": "Bosh sahifa", "item": "https://iceberglc.com/"},
-    {"@type": "ListItem", "position": 2, "name": "Savollar", "item": "https://iceberglc.com/questions"}
+    {"@type": "ListItem", "position": 2, "name": "Ko'p beriladigan savollar", "item": "https://iceberglc.com/faq"}
   ]
 }
 </script>
@@ -63,6 +63,7 @@
 
 <section class="section-shell">
     <div class="page-grid max-w-4xl">
+        <nav class="breadcrumbs" aria-label="Sahifa yo'li"><a href="{{ url_for('index') }}">Bosh sahifa</a><span aria-hidden="true">›</span><span aria-current="page">Ko'p beriladigan savollar</span></nav>
         {% if faqs %}
             {% for faq in faqs %}
             <article class="info-card reveal">
@@ -81,6 +82,7 @@
             </article>
         {% endif %}
     </div>
+    <div class="final-cta max-w-4xl mx-auto mt-6 reveal"><h2>Savolingizga javob topmadingizmi?</h2><p>Markaz bilan bog'laning yoki o'zingizga mos dastur uchun ariza qoldiring.</p><div class="hero-actions justify-center"><a href="{{ url_for('contact') }}" class="btn-main">Aloqa</a><a href="{{ url_for('register') }}" class="btn-soft">Ro'yxatdan o'tish</a></div></div>
 </section>
 {% endblock %}
 

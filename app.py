@@ -3,6 +3,7 @@ import requests
 import os
 import re
 import hashlib
+import hmac
 import csv
 import io
 import json
@@ -41,7 +42,9 @@ def load_local_env_file(env_path):
 load_local_env_file(os.path.join(os.path.dirname(__file__), '.env'))
 
 app = Flask(__name__)
-app.secret_key = os.environ.get('SECRET_KEY', 'dev-only-secret-change-me')
+DEFAULT_SECRET_KEY = 'dev-only-secret-change-me'
+DEFAULT_ADMIN_PASSWORD = 'iceberg-admin'
+app.secret_key = os.environ.get('SECRET_KEY', DEFAULT_SECRET_KEY)
 app.config.update(
     SESSION_COOKIE_HTTPONLY=True,
     SESSION_COOKIE_SAMESITE='Lax'
@@ -60,10 +63,20 @@ REGISTRATION_LEADS_API_URL = os.environ.get(
 REGISTRATION_LEADS_API_TOKEN = os.environ.get('REGISTRATION_LEADS_API_TOKEN', '').strip()
 REGISTRATION_LEADS_API_TIMEOUT = float(os.environ.get('REGISTRATION_LEADS_API_TIMEOUT', '8'))
 
-ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD', 'iceberg-admin')
+ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD', DEFAULT_ADMIN_PASSWORD)
 ADMIN_SECRET_CODE = os.environ.get('ADMIN_SECRET_CODE', ADMIN_PASSWORD).strip()
-ADMIN_CONTACT_TRIGGER_NAME = os.environ.get('ADMIN_CONTACT_TRIGGER_NAME', 'admin').strip().lower() or 'admin'
-ADMIN_CONTACT_SECRET_CODE = os.environ.get('ADMIN_CONTACT_SECRET_CODE', ADMIN_SECRET_CODE).strip()
+
+if os.environ.get('FLASK_ENV') == 'production':
+    insecure_settings = []
+    if app.secret_key == DEFAULT_SECRET_KEY:
+        insecure_settings.append('SECRET_KEY')
+    if ADMIN_PASSWORD == DEFAULT_ADMIN_PASSWORD:
+        insecure_settings.append('ADMIN_PASSWORD')
+    if insecure_settings:
+        raise RuntimeError(
+            'Refusing to start production with insecure defaults: '
+            + ', '.join(insecure_settings)
+        )
 
 
 def build_admin_login_slug():
@@ -165,7 +178,7 @@ EDITOR_BACKUP_DIR = os.path.join(app.root_path, 'backups', 'site_editor')
 EDITOR_MAX_BACKUPS_PER_FILE = max(int(os.environ.get('EDITOR_MAX_BACKUPS_PER_FILE', '20')), 1)
 
 CONTENT_FIELDS = [
-    {'key': 'site_title', 'label': 'Sayt sarlavhasi (browser title)', 'group': 'Global', 'default': "ICEBERG O'QUV MARKAZI", 'field_type': 'text'},
+    {'key': 'site_title', 'label': 'Sayt sarlavhasi (browser title)', 'group': 'Global', 'default': "ICEBERG Study Center", 'field_type': 'text'},
     {'key': 'site_tagline', 'label': 'Footer qisqa matni', 'group': 'Global', 'default': "Zamonaviy kasblarni biz bilan o'rganing va kelajuingizni quring.", 'field_type': 'textarea'},
     {'key': 'custom_css', 'label': 'Custom CSS (ixtiyoriy)', 'group': 'Global', 'default': '', 'field_type': 'textarea'},
 
@@ -178,7 +191,7 @@ CONTENT_FIELDS = [
     {'key': 'nav_contact', 'label': 'Menyu: Aloqa (nav havolasi)', 'group': 'Header', 'default': 'Aloqa', 'field_type': 'text'},
     {'key': 'nav_contact_button', 'label': 'Header tugma matni', 'group': 'Header', 'default': "Biz bilan bog'lanish", 'field_type': 'text'},
 
-    {'key': 'hero_main_title', 'label': 'Bosh sahifa hero title (typewriter)', 'group': 'Home', 'default': 'HAPPINESS IS IN SCIENCE', 'field_type': 'text'},
+    {'key': 'hero_main_title', 'label': 'Bosh sahifa asosiy sarlavhasi', 'group': 'Home', 'default': "ICEBERG Study Center — Namangandagi o'quv markazi", 'field_type': 'text'},
     {'key': 'hero_main_subtitle', 'label': 'Bosh sahifa hero subtitle', 'group': 'Home', 'default': "Fundamental bilimlar - har qanday akademik cho'qqini zabt etishning kalitidir.", 'field_type': 'textarea'},
     {'key': 'hero_main_cta', 'label': 'Bosh sahifa hero CTA', 'group': 'Home', 'default': 'Maslaxatlar uchun aloqa bo`limi', 'field_type': 'text'},
 
@@ -192,7 +205,7 @@ CONTENT_FIELDS = [
     {'key': 'contact_email', 'label': 'Aloqa email', 'group': 'Contact', 'default': 'iceberg.edu.center@gmail.com', 'field_type': 'text'},
     {'key': 'contact_phone', 'label': 'Aloqa telefon (+998...)', 'group': 'Contact', 'default': '+998939461699', 'field_type': 'text'},
     {'key': 'contact_phone_display', 'label': 'Aloqa telefon ko`rinishi', 'group': 'Contact', 'default': '(+998) 939461699', 'field_type': 'text'},
-    {'key': 'contact_address', 'label': 'Aloqa manzil matni', 'group': 'Contact', 'default': 'Uyci, Namangan Viloyati, Uzbekistan', 'field_type': 'text'},
+    {'key': 'contact_address', 'label': 'Aloqa manzil matni', 'group': 'Contact', 'default': "Uychi, Namangan viloyati, O'zbekiston", 'field_type': 'text'},
     {'key': 'contact_address_url', 'label': 'Aloqa manzil URL', 'group': 'Contact', 'default': 'https://www.google.com/maps/place/Uychi,+Uzbekistan/', 'field_type': 'text'},
 
     {'key': 'register_page_title', 'label': 'Register sahifa title', 'group': 'Register', 'default': "Dasturga Ro'yxatdan O'tish", 'field_type': 'text'},
@@ -272,10 +285,8 @@ def process_admin_login(password):
     valid_passwords = {ADMIN_PASSWORD}
     if ADMIN_SECRET_CODE:
         valid_passwords.add(ADMIN_SECRET_CODE)
-    if ADMIN_CONTACT_SECRET_CODE:
-        valid_passwords.add(ADMIN_CONTACT_SECRET_CODE)
 
-    if candidate in valid_passwords:
+    if any(hmac.compare_digest(candidate, valid) for valid in valid_passwords if valid):
         session['logged_in'] = True
         flash('Muvaffaqiyatli kirdingiz!', 'success')
         return True
@@ -781,11 +792,11 @@ def ensure_table_columns(cursor, table_name, column_definitions):
             cursor.execute(f'ALTER TABLE {table_name} ADD COLUMN {column_name} {column_sql}')
 
 DEFAULT_FAQS = [
-    ('Qaysi fanlardan repetitorlik xizmatlarini taklif qilasiz?', 'Biz keng ko\'lamli fanlardan, jumladan, Matematika, Fan, Ingliz tili va standartlashtirilgan testlarga tayyorgarlik (SAT, ACT) bo\'yicha repetitorlik xizmatlarini taklif etamiz.'),
-    ('Sizning ish vaqtingiz qanday?', 'Markazimiz ish kunlari soat 9:00 dan 20:00 gacha, dam olish kunlari esa 10:00 dan 18:00 gacha ishlaydi.'),
-    ('O\'quvchilarni repetitorlar bilan qanday bog\'laysiz?', 'Biz o\'quvchilarni ularning akademik ehtiyojlari, o\'rganish uslubi va shaxsiyatiga qarab repetitorlar bilan bog\'laymiz, bu esa eng yaxshi moslikni ta\'minlaydi.'),
-    ('Darslar qayerda o\'tkaziladi?', 'Darslar bizning zamonaviy o\'quv markazimizda yoki o\'quvchining xohishiga ko\'ra onlayn tarzda o\'tkazilishi mumkin.'),
-    ('Narxlar qanday?', 'Narxlar dastur turiga va darslar soniga qarab o\'zgaradi. Batafsil ma\'lumot olish va bepul maslahat uchun biz bilan bog\'laning.'),
+    ('ICEBERG Study Center qayerda joylashgan?', "Markaz Uychi, Namangan viloyatida joylashgan. Aniq yo'nalish va aloqa ma'lumotlari uchun Aloqa sahifasini ko'ring."),
+    ('Qaysi ta\'lim yo\'nalishlari mavjud?', "Saytda IELTS va SAT tayyorgarligi, ingliz tili, bolalar uchun boshlang'ich dasturlar, akademik fanlar va universitetga tayyorgarlik yo'nalishlari ko'rsatilgan."),
+    ('IELTS yoki SAT dasturiga qanday yozilaman?', "Ro'yxatdan o'tish sahifasida ism va telefon raqamingizni qoldiring. Markaz vakili amaldagi guruhlar va keyingi qadamlar bo'yicha siz bilan bog'lanadi."),
+    ('Dars jadvali va davomiyligi qanday?', "Jadval va davomiylik tanlangan dastur hamda amaldagi guruhga bog'liq. Eng yangi ma'lumotni Aloqa sahifasidagi telefon yoki ariza orqali aniqlashtiring."),
+    ('Kurs narxini qayerdan bilsam bo\'ladi?', "Amaldagi narxlar bo'yicha tasdiqlangan ma'lumotni markazdan oling. Saytdagi aloqa raqamiga qo'ng'iroq qilishingiz yoki ariza qoldirishingiz mumkin."),
 ]
 
 
@@ -926,7 +937,13 @@ NO_CACHE_PREFIXES = ('/admin', '/portal', '/students', '/contacts_list')
 
 @app.after_request
 def add_cache_headers(response):
+    response.headers.setdefault('X-Content-Type-Options', 'nosniff')
+    response.headers.setdefault('X-Frame-Options', 'SAMEORIGIN')
+    response.headers.setdefault('Referrer-Policy', 'strict-origin-when-cross-origin')
+    response.headers.setdefault('Permissions-Policy', 'camera=(), microphone=(), geolocation=()')
     if 'text/html' in (response.content_type or ''):
+        if response.status_code >= 400:
+            response.headers['X-Robots-Tag'] = 'noindex, nofollow, noarchive'
         if (request.path or '').startswith(NO_CACHE_PREFIXES):
             response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate, max-age=0, private'
             response.headers['Pragma'] = 'no-cache'
@@ -935,6 +952,7 @@ def add_cache_headers(response):
             response.headers['CDN-Cache-Control'] = 'no-store'
             response.headers['Cloudflare-CDN-Cache-Control'] = 'no-store'
             response.headers['Surrogate-Control'] = 'no-store'
+            response.headers['X-Robots-Tag'] = 'noindex, nofollow, noarchive'
         else:
             # Public pages: short cache + revalidate. Good for crawl efficiency
             # while keeping CMS edits visible within ~1 minute. Note: no Vary:*
@@ -975,6 +993,7 @@ def robots_txt():
         "Disallow: /portal/\n"
         "Disallow: /students\n"
         "Disallow: /contacts_list\n"
+        "Disallow: /api/\n"
         "\n"
         "Sitemap: https://iceberglc.com/sitemap.xml\n"
     )
@@ -999,9 +1018,11 @@ def sitemap_xml():
     static_pages = [
         ('https://iceberglc.com/', '1.0', 'daily', 'index.html'),
         ('https://iceberglc.com/about', '0.8', 'monthly', 'about.html'),
-        ('https://iceberglc.com/our_programs', '0.9', 'weekly', 'our_programs.html'),
+        ('https://iceberglc.com/programs', '0.9', 'weekly', 'our_programs.html'),
+        ('https://iceberglc.com/programs/ielts', '0.8', 'monthly', 'ielts.html'),
+        ('https://iceberglc.com/programs/sat', '0.8', 'monthly', 'sat.html'),
         ('https://iceberglc.com/news', '0.9', 'daily', 'news.html'),
-        ('https://iceberglc.com/questions', '0.7', 'monthly', 'questions.html'),
+        ('https://iceberglc.com/faq', '0.7', 'monthly', 'questions.html'),
         ('https://iceberglc.com/contact', '0.8', 'monthly', 'contact.html'),
         ('https://iceberglc.com/register', '0.8', 'monthly', 'register.html'),
     ]
@@ -1027,9 +1048,24 @@ def index():
 def about():
     return render_template('about.html')
 
-@app.route('/our_programs')
+@app.route('/programs')
 def our_programs():
     return render_template('our_programs.html')
+
+
+@app.route('/programs/ielts')
+def ielts_program():
+    return render_template('ielts.html')
+
+
+@app.route('/programs/sat')
+def sat_program():
+    return render_template('sat.html')
+
+
+@app.route('/our_programs')
+def legacy_our_programs():
+    return redirect(url_for('our_programs'), code=301)
 
 
 @app.route('/news')
@@ -1038,10 +1074,15 @@ def news():
     return render_template('news.html', posts=posts)
 
 
-@app.route('/questions')
+@app.route('/faq')
 def questions():
     faqs = fetch_faq_items()
     return render_template('questions.html', faqs=faqs)
+
+
+@app.route('/questions')
+def legacy_questions():
+    return redirect(url_for('questions'), code=301)
 
 @app.route('/admin/login', methods=['GET', 'POST'])
 def admin_login():
@@ -1682,34 +1723,6 @@ def contact():
         name = request.form.get('name', '').strip()
         phone = normalize_phone(request.form.get('phone', '').strip())
         message_body = request.form.get('message', '').strip()
-        admin_password = request.form.get('admin_password', '').strip()
-        admin_secret_code = request.form.get('admin_secret_code', '').strip()
-
-        if name.lower() == ADMIN_CONTACT_TRIGGER_NAME:
-            if not ADMIN_CONTACT_SECRET_CODE:
-                flash('Hidden admin secret code sozlanmagan (ADMIN_CONTACT_SECRET_CODE).', 'error')
-                return redirect(url_for('contact'))
-
-            if not admin_password:
-                flash('Admin parolini kiriting.', 'error')
-                return redirect(url_for('contact'))
-
-            if not admin_secret_code:
-                flash('Admin secret codeni kiriting.', 'error')
-                return redirect(url_for('contact'))
-
-            if admin_secret_code != ADMIN_CONTACT_SECRET_CODE:
-                flash('Admin secret code noto`g`ri.', 'error')
-                return redirect(url_for('contact'))
-
-            if process_admin_login(admin_password):
-                log_admin_action('admin_login_hidden', 'contact_form', 'Hidden access login from contact form with second factor')
-                flash('Maxfiy admin kirishi muvaffaqiyatli bajarildi.', 'success')
-                return redirect(url_for('admin_dashboard'))
-
-            flash('Admin paroli noto`g`ri.', 'error')
-            return redirect(url_for('contact'))
-
         if not name or len(name) < 2:
             flash('Ism kamida 2 ta belgidan iborat bo\'lishi kerak.', 'error')
             return redirect(url_for('contact'))
@@ -1736,7 +1749,7 @@ def contact():
 
         flash('Xabaringiz uchun rahmat! Tez orada siz bilan bog\'lanamiz.', 'success')
         return redirect(url_for('contact'))
-    return render_template('contact.html', admin_trigger_name=ADMIN_CONTACT_TRIGGER_NAME)
+    return render_template('contact.html')
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
