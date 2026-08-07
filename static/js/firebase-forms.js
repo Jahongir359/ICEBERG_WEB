@@ -147,7 +147,10 @@
             showRegistrationSuccess(form);
         } catch (error) {
             status.className = "mt-3 text-sm font-semibold text-red-700";
-            status.textContent = error.message || "Xatolik yuz berdi. Qayta urinib ko'ring.";
+            var rawMessage = error && error.message ? error.message : "";
+            status.textContent = /failed to fetch|networkerror|load failed/i.test(rawMessage)
+                ? "Internet aloqasini tekshiring va qayta urinib ko'ring."
+                : (rawMessage || "Xatolik yuz berdi. Qayta urinib ko'ring.");
         } finally {
             if (window.turnstile) {
                 window.turnstile.reset();

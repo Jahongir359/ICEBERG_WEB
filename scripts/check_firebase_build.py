@@ -114,10 +114,18 @@ def check() -> None:
 
         for action in parser.forms:
             parsed_action = urlsplit(action)
+            if action == "/api/register":
+                continue
             if parsed_action.scheme != "https" or not parsed_action.netloc:
                 errors.append(
                     f"{relative_page}: form action must be an absolute HTTPS URL: {action!r}"
                 )
+
+        if page.name == "register.html":
+            if 'action="/api/register"' not in text:
+                errors.append(f"{relative_page}: registration form must submit same-origin")
+            if re.search(r'action="https?://[^"]+\.pages\.dev/api/register"', text):
+                errors.append(f"{relative_page}: registration form points to a preview host")
 
     manifest_path = PUBLIC / "manifest.json"
     try:

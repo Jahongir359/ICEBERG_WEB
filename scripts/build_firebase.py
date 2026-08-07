@@ -39,7 +39,7 @@ def make_form_static(
             else ""
         )
         static_action = (
-            f'action="{site_url}/api/register" method="post" '
+            'action="/api/register" method="post" '
             f'data-static-lead-form="register"{turnstile_attribute}'
         )
     else:
