@@ -275,6 +275,8 @@ Cloudflare Pages Function. Follow `google-apps-script/README.md`, then configure
   `GOOGLE_SCRIPT_SECRET`
 
 The registration endpoint will remain unavailable until all four values are set.
+`TURNSTILE_SITE_KEY` is also accepted as a backwards-compatible build-variable
+name, but `PUBLIC_TURNSTILE_SITE_KEY` remains the documented default.
 The contact form continues to open WhatsApp.
 
 ### Registration programs, branches, and reception contact

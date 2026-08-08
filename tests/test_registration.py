@@ -28,6 +28,7 @@ class RegistrationRouteTests(unittest.TestCase):
             self.assertNotIn(f'name="{forbidden}"', html)
         self.assertIn('+998 70 106 04 04', html)
         self.assertIn('https://t.me/iceberg_qabulxona', html)
+        self.assertIn('/static/js/firebase-forms.js?v=20260808-1', html)
 
     def test_safe_query_preselection_and_unknown_fallback(self):
         selected = self.client.get('/register?program=ielts&branch=gayrat').get_data(as_text=True)

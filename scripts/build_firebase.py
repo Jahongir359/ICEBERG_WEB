@@ -63,7 +63,10 @@ def build() -> None:
     whatsapp_number = re.sub(
         r"\D", "", os.environ.get("PUBLIC_WHATSAPP_NUMBER", "998939461699")
     )
-    turnstile_site_key = os.environ.get("PUBLIC_TURNSTILE_SITE_KEY", "").strip()
+    turnstile_site_key = (
+        os.environ.get("PUBLIC_TURNSTILE_SITE_KEY", "").strip()
+        or os.environ.get("TURNSTILE_SITE_KEY", "").strip()
+    )
     if not whatsapp_number:
         raise RuntimeError("PUBLIC_WHATSAPP_NUMBER must contain a phone number")
 
@@ -146,6 +149,11 @@ def build() -> None:
     print(f"Built {len(PUBLIC_ROUTES)} pages and static assets in {OUTPUT}")
     print(f"Static contact form opens WhatsApp for +{whatsapp_number}")
     print("Static registration form submits to /api/register")
+    if not turnstile_site_key:
+        print(
+            "WARNING: Turnstile site key is missing; set PUBLIC_TURNSTILE_SITE_KEY "
+            "in the hosting build environment"
+        )
 
 
 if __name__ == "__main__":
