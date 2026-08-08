@@ -2,3 +2,8 @@ name = "iceberg-web"
 pages_build_output_dir = "./public"
 compatibility_date = "2026-07-28"
 
+# Public, non-sensitive configuration. Because this file is the Pages project's
+# source of truth, edit these values here rather than in the Cloudflare dashboard.
+[vars]
+PUBLIC_SITE_URL = "https://iceberglc.com"
+PUBLIC_TURNSTILE_SITE_KEY = "0x4AAAAAAEGkDLLEm8ptwrlK"

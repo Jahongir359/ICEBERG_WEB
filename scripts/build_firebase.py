@@ -7,6 +7,7 @@ import os
 import re
 import shutil
 import sys
+import tomllib
 from pathlib import Path
 
 
@@ -22,6 +23,16 @@ PUBLIC_ROUTES = {
     "/register": "register.html",
 }
 ROOT_ASSETS = ("/favicon.ico", "/manifest.json", "/robots.txt", "/sitemap.xml")
+
+
+def load_wrangler_vars() -> dict[str, str]:
+    config_path = ROOT / "wrangler.toml"
+    with config_path.open("rb") as config_file:
+        config = tomllib.load(config_file)
+    return {
+        str(key): str(value)
+        for key, value in config.get("vars", {}).items()
+    }
 
 
 def make_form_static(
@@ -59,13 +70,18 @@ def build() -> None:
     os.environ["ICEBERG_STATIC_BUILD"] = "1"
     from app import app  # pylint: disable=import-outside-toplevel
 
-    site_url = os.environ.get("PUBLIC_SITE_URL", "https://iceberglc.com").rstrip("/")
+    wrangler_vars = load_wrangler_vars()
+    site_url = os.environ.get(
+        "PUBLIC_SITE_URL",
+        wrangler_vars.get("PUBLIC_SITE_URL", "https://iceberglc.com"),
+    ).rstrip("/")
     whatsapp_number = re.sub(
         r"\D", "", os.environ.get("PUBLIC_WHATSAPP_NUMBER", "998939461699")
     )
     turnstile_site_key = (
         os.environ.get("PUBLIC_TURNSTILE_SITE_KEY", "").strip()
         or os.environ.get("TURNSTILE_SITE_KEY", "").strip()
+        or wrangler_vars.get("PUBLIC_TURNSTILE_SITE_KEY", "").strip()
     )
     if not whatsapp_number:
         raise RuntimeError("PUBLIC_WHATSAPP_NUMBER must contain a phone number")
@@ -152,7 +168,7 @@ def build() -> None:
     if not turnstile_site_key:
         print(
             "WARNING: Turnstile site key is missing; set PUBLIC_TURNSTILE_SITE_KEY "
-            "in the hosting build environment"
+            "under [vars] in wrangler.toml"
         )
 
 

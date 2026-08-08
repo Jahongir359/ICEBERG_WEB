@@ -261,24 +261,21 @@ so `/about`, `/contact`, and the other public URLs work without redirect rules.
 The `_headers` file adds baseline browser security headers while leaving asset
 caching to Cloudflare Pages' deployment-aware defaults.
 
-For the production deployment, add this environment variable in
-**Workers & Pages → your project → Settings → Environment variables**:
-
-```text
-PUBLIC_SITE_URL=https://iceberglc.com
-```
+Public Cloudflare configuration is maintained under `[vars]` in `wrangler.toml` because
+that file is the Pages project's source of truth. It contains `PUBLIC_SITE_URL` and the
+public `PUBLIC_TURNSTILE_SITE_KEY`. Update and deploy that file instead of trying to edit
+plain variables in the Dashboard.
 
 The static registration form saves leads to Google Sheets through a Cloudflare Pages
 Function. Follow the complete setup and troubleshooting runbook in
 `google-apps-script/README.md`, then configure:
 
-- Build variable: `PUBLIC_TURNSTILE_SITE_KEY`
-- Encrypted secrets: `TURNSTILE_SECRET_KEY`, `GOOGLE_SCRIPT_URL`, and
+- Wrangler public vars: `PUBLIC_SITE_URL` and `PUBLIC_TURNSTILE_SITE_KEY`
+- Dashboard encrypted Secrets: `TURNSTILE_SECRET_KEY`, `GOOGLE_SCRIPT_URL`, and
   `GOOGLE_SCRIPT_SECRET`
 
-The registration endpoint will remain unavailable until all four values are set.
-`TURNSTILE_SITE_KEY` is also accepted as a backwards-compatible build-variable
-name, but `PUBLIC_TURNSTILE_SITE_KEY` remains the documented default.
+The registration endpoint remains unavailable until all values are deployed. Do not
+put private secret values in `wrangler.toml`.
 The contact form continues to open WhatsApp.
 
 ### Registration programs, branches, and reception contact
