@@ -124,6 +124,8 @@ def check() -> None:
         if page.name == "register.html":
             if 'action="/api/register"' not in text:
                 errors.append(f"{relative_page}: registration form must submit same-origin")
+            if not re.search(r'data-turnstile-sitekey="[^\"]+"', text):
+                errors.append(f"{relative_page}: Turnstile site key is missing")
             if re.search(r'action="https?://[^"]+\.pages\.dev/api/register"', text):
                 errors.append(f"{relative_page}: registration form points to a preview host")
 

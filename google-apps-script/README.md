@@ -100,17 +100,30 @@ cannot be mixed with Cloudflare's test keys.
 
 ## 5. Configure Cloudflare Pages
 
-Open **Workers & Pages → ICEBERG Pages project → Settings → Environment variables**
-(the dashboard may label encrypted values as **Secrets**). Configure the **Production**
-environment:
+This project uses `wrangler.toml` as the Cloudflare Pages configuration source of truth.
+The Dashboard therefore shows plain environment variables as read-only and allows only
+encrypted Secrets to be edited.
 
-| Name | Type | Exact value |
-|---|---|---|
-| `PUBLIC_SITE_URL` | Plain text | `https://iceberglc.com` |
-| `PUBLIC_TURNSTILE_SITE_KEY` | Plain text | Turnstile site key |
-| `TURNSTILE_SECRET_KEY` | Encrypted/secret | Matching Turnstile secret key |
-| `GOOGLE_SCRIPT_URL` | Encrypted/secret | Apps Script deployment URL ending in `/exec` |
-| `GOOGLE_SCRIPT_SECRET` | Encrypted/secret | Exactly the same value as Apps Script `WEBHOOK_SECRET` |
+The two public values are checked into `wrangler.toml` under `[vars]`:
+
+```toml
+[vars]
+PUBLIC_SITE_URL = "https://iceberglc.com"
+PUBLIC_TURNSTILE_SITE_KEY = "0x4AAAAAAEGkDLLEm8ptwrlK"
+```
+
+The Turnstile site key is intentionally public. When it changes, update
+`PUBLIC_TURNSTILE_SITE_KEY` in `wrangler.toml`, commit the change, and redeploy. The
+static build reads this file directly so the widget key is present in generated HTML.
+
+Open **Workers & Pages → ICEBERG Pages project → Settings → Variables and Secrets** and
+add only these encrypted **Production Secrets**:
+
+| Name | Exact value |
+|---|---|
+| `TURNSTILE_SECRET_KEY` | Secret key matching the public Turnstile site key |
+| `GOOGLE_SCRIPT_URL` | Apps Script deployment URL ending in `/exec` |
+| `GOOGLE_SCRIPT_SECRET` | Exactly the same value as Apps Script `WEBHOOK_SECRET` |
 
 Important checks:
 
@@ -118,13 +131,13 @@ Important checks:
 - `GOOGLE_SCRIPT_SECRET` and `WEBHOOK_SECRET` must match character-for-character.
 - The Apps Script URL must begin with `https://script.google.com/macros/s/` and end
   with `/exec`.
-- Never put `GOOGLE_SCRIPT_SECRET` or `TURNSTILE_SECRET_KEY` in a public/build-only
-  variable, Git, frontend JavaScript, or generated HTML.
-- Add equivalent values under **Preview** only if preview registrations should work.
+- Never put `GOOGLE_SCRIPT_SECRET` or `TURNSTILE_SECRET_KEY` in `wrangler.toml`, Git,
+  frontend JavaScript, or generated HTML.
+- Add equivalent Secrets under **Preview** only if preview registrations should work.
   Prefer a different test sheet, webhook secret, and Turnstile widget for previews.
 
-After saving the values, create a fresh production deployment. A redeploy is required
-because the public Turnstile site key is embedded during the static build.
+After saving the Secrets, create a fresh production deployment. A redeploy is required
+for both the Function bindings and the public Turnstile key in generated HTML.
 
 ## 6. Verify production end to end
 
