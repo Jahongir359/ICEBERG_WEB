@@ -213,9 +213,10 @@ npx firebase-tools emulators:start --only hosting
 npx firebase-tools deploy --only hosting --project YOUR_FIREBASE_PROJECT_ID
 ```
 
-The static contact and registration forms open a pre-filled WhatsApp lead message.
-This keeps them functional without exposing credentials or requiring a paid backend.
-Override the public domain or destination WhatsApp number during the build when needed:
+The static contact form opens a pre-filled WhatsApp message. The registration form
+submits to a Cloudflare Pages Function, validates Turnstile server-side, and stores the
+lead in Google Sheets through Apps Script. Override the public domain or contact-form
+WhatsApp number during the build when needed:
 
 ```bash
 PUBLIC_SITE_URL=https://www.example.com \
@@ -267,8 +268,9 @@ For the production deployment, add this environment variable in
 PUBLIC_SITE_URL=https://iceberglc.com
 ```
 
-The static registration form can save leads to Google Sheets through a
-Cloudflare Pages Function. Follow `google-apps-script/README.md`, then configure:
+The static registration form saves leads to Google Sheets through a Cloudflare Pages
+Function. Follow the complete setup and troubleshooting runbook in
+`google-apps-script/README.md`, then configure:
 
 - Build variable: `PUBLIC_TURNSTILE_SITE_KEY`
 - Encrypted secrets: `TURNSTILE_SECRET_KEY`, `GOOGLE_SCRIPT_URL`, and

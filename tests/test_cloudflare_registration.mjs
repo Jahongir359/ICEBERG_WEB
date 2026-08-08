@@ -1,12 +1,12 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { onRequestPost } from '../functions/api/register.js';
+import { onRequest, onRequestPost } from '../functions/api/register.js';
 import registration from '../config/registration.json' with { type: 'json' };
 
 
 function environment() {
     return {
-        GOOGLE_SCRIPT_URL: 'https://script.example/exec',
+        GOOGLE_SCRIPT_URL: 'https://script.google.com/macros/s/test-deployment/exec',
         GOOGLE_SCRIPT_SECRET: 'test-secret',
         TURNSTILE_SECRET_KEY: 'turnstile-secret',
         ASSETS: {
@@ -94,6 +94,30 @@ test('reports a downstream backend failure', async () => {
     mockNetwork({ backendSuccess: false });
     const response = await onRequestPost({ request: request(), env: environment() });
     assert.equal(response.status, 502);
+    const result = await response.json();
+    assert.match(result.message, /Xato kodi/);
+    assert.ok(result.reference);
+});
+
+test('rejects an invalid Apps Script deployment URL before processing', async () => {
+    mockNetwork();
+    const env = environment();
+    env.GOOGLE_SCRIPT_URL = 'https://example.com/not-an-apps-script';
+    const response = await onRequestPost({ request: request(), env });
+    assert.equal(response.status, 503);
+});
+
+test('returns JSON for an unexpected handler failure', async () => {
+    mockNetwork();
+    const env = environment();
+    Object.defineProperty(env, 'GOOGLE_SCRIPT_SECRET', {
+        get() { throw new Error('unexpected test failure'); }
+    });
+    const response = await onRequest({ request: request(), env });
+    assert.equal(response.status, 500);
+    assert.match(response.headers.get('content-type'), /application\/json/);
+    const result = await response.json();
+    assert.ok(result.reference);
 });
 
 test('repeated client submission ID remains idempotent downstream', async () => {

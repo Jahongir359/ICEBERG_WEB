@@ -14,6 +14,21 @@ function cleanText(value, maxLength) {
         : "";
 }
 
+function requestReference(request) {
+    return cleanText(request.headers.get("CF-Ray"), 64) || crypto.randomUUID();
+}
+
+function validGoogleScriptUrl(value) {
+    try {
+        const url = new URL(value);
+        return url.protocol === "https:"
+            && url.hostname === "script.google.com"
+            && /^\/macros\/s\/[^/]+\/exec$/.test(url.pathname);
+    } catch (_error) {
+        return false;
+    }
+}
+
 async function loadRegistrationOptions(env) {
     if (!env.ASSETS || typeof env.ASSETS.fetch !== "function") {
         throw new Error("Registration options binding is unavailable");
@@ -51,9 +66,15 @@ async function validateTurnstile(token, request, secret) {
 
 export async function onRequestPost(context) {
     const { request, env } = context;
-    if (!env.GOOGLE_SCRIPT_URL || !env.GOOGLE_SCRIPT_SECRET) {
+    const reference = requestReference(request);
+    if (!validGoogleScriptUrl(env.GOOGLE_SCRIPT_URL) || !env.GOOGLE_SCRIPT_SECRET) {
+        console.error("Registration storage is not configured", reference);
         return jsonResponse(
-            { ok: false, message: "Ro'yxatdan o'tish xizmati hali sozlanmagan." },
+            {
+                ok: false,
+                message: "Ro'yxatdan o'tish xizmati hali sozlanmagan.",
+                reference
+            },
             503
         );
     }
@@ -149,14 +170,24 @@ export async function onRequestPost(context) {
             body: JSON.stringify(lead),
             redirect: "follow"
         });
-        const result = await response.json();
+        const responseText = await response.text();
+        let result;
+        try {
+            result = JSON.parse(responseText);
+        } catch (_error) {
+            throw new Error(`non_json_response:${response.status}`);
+        }
         if (!response.ok || !result.ok) {
-            throw new Error("Google Sheets rejected the submission");
+            throw new Error(`receiver_rejected:${cleanText(result.error, 80) || response.status}`);
         }
     } catch (error) {
-        console.error("Registration forwarding failed", error.message);
+        console.error("Registration forwarding failed", reference, error.message);
         return jsonResponse(
-            { ok: false, message: "Arizani saqlab bo'lmadi. Qayta urinib ko'ring." },
+            {
+                ok: false,
+                message: `Arizani saqlab bo'lmadi. Qayta urinib ko'ring. Xato kodi: ${reference}`,
+                reference
+            },
             502
         );
     }
@@ -168,5 +199,16 @@ export function onRequest(context) {
     if (context.request.method !== "POST") {
         return jsonResponse({ ok: false, message: "Method not allowed" }, 405);
     }
-    return onRequestPost(context);
+    return onRequestPost(context).catch(error => {
+        const reference = requestReference(context.request);
+        console.error("Unhandled registration error", reference, error.message);
+        return jsonResponse(
+            {
+                ok: false,
+                message: `Arizani yuborishda server xatosi yuz berdi. Xato kodi: ${reference}`,
+                reference
+            },
+            500
+        );
+    });
 }
