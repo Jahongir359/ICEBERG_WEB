@@ -3,6 +3,6 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test:registration": "node --test tests/test_cloudflare_registration.mjs tests/test_google_apps_script.mjs"
+    "test:registration": "node --test tests/test_cloudflare_registration.mjs tests/test_google_apps_script.mjs tests/test_public_forms.mjs"
   }
 }

@@ -9,12 +9,12 @@ import sys
 from html.parser import HTMLParser
 from pathlib import Path
 from urllib.parse import unquote, urlsplit
-from xml.etree import ElementTree
+from defusedxml import ElementTree
 
 
 ROOT = Path(__file__).resolve().parents[1]
 PUBLIC = ROOT / "public"
-HTML_FILES = sorted(PUBLIC.glob("*.html"))
+HTML_FILES = sorted(PUBLIC.rglob("*.html"))
 EXPECTED_PAGES = {
     "/": "index.html",
     "/about": "about.html",
@@ -24,6 +24,10 @@ EXPECTED_PAGES = {
     "/contact": "contact.html",
     "/register": "register.html",
 }
+for slug in ('international', 'private-school', 'admissions', 'privacy', 'results', 'student-life'):
+    EXPECTED_PAGES['/' + slug] = slug + '.html'
+for route, filename in list(EXPECTED_PAGES.items()):
+    EXPECTED_PAGES['/en' if route == '/' else '/en' + route] = 'en/index.html' if route == '/' else 'en/' + filename
 IGNORED_SCHEMES = {"data", "mailto", "tel", "javascript"}
 PRIVATE_MARKERS = (
     "admin_password",
@@ -41,9 +45,30 @@ class PageParser(HTMLParser):
         self.has_title = False
         self.has_description = False
         self.lang = ""
+        self.alternates: dict[str, str] = {}
+        self.ids: set[str] = set()
+        self.duplicate_ids: set[str] = set()
+        self.labels: set[str] = set()
+        self.unlabeled_controls: set[str] = set()
+        self.main_count = 0
+        self.heading_count = 0
 
     def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
         values = dict(attrs)
+        identifier = values.get('id')
+        if identifier:
+            if identifier in self.ids:
+                self.duplicate_ids.add(identifier)
+            self.ids.add(identifier)
+        if tag == 'label' and values.get('for'):
+            self.labels.add(values['for'])
+        if tag in ('input', 'select', 'textarea') and values.get('type') != 'hidden':
+            if not values.get('aria-label') and not values.get('aria-labelledby'):
+                self.unlabeled_controls.add(identifier or '(missing id)')
+        if tag == 'main':
+            self.main_count += 1
+        if tag == 'h1':
+            self.heading_count += 1
         if tag == "html":
             self.lang = values.get("lang") or ""
         elif tag == "title":
@@ -52,6 +77,8 @@ class PageParser(HTMLParser):
             self.has_description = bool(values.get("content"))
         elif tag == "form":
             self.forms.append(values.get("action") or "")
+        elif tag == 'link' and values.get('rel') == 'alternate':
+            self.alternates[values.get('hreflang') or ''] = values.get('href') or ''
 
         for attribute in ("href", "src", "poster"):
             value = values.get(attribute)
@@ -96,6 +123,20 @@ def check() -> None:
             errors.append(f"{relative_page}: unresolved Jinja template syntax")
         if not parser.lang:
             errors.append(f"{relative_page}: missing html lang attribute")
+        if page.name != '404.html':
+            if parser.main_count != 1 or parser.heading_count != 1:
+                errors.append(f'{relative_page}: expected one main landmark and one h1')
+            for identifier in parser.duplicate_ids:
+                errors.append(f'{relative_page}: duplicate id {identifier}')
+            for identifier in parser.unlabeled_controls - parser.labels:
+                errors.append(f'{relative_page}: form control lacks a label: {identifier}')
+            for language in ('uz', 'en'):
+                alternate = parser.alternates.get(language, '')
+                route = urlsplit(alternate).path
+                if route not in EXPECTED_PAGES:
+                    errors.append(f'{relative_page}: missing or invalid {language} alternate')
+                elif not (PUBLIC / EXPECTED_PAGES[route]).is_file():
+                    errors.append(f'{relative_page}: missing language page {route}')
         if not parser.has_title:
             errors.append(f"{relative_page}: missing title")
         if page.name != "404.html" and not parser.has_description:

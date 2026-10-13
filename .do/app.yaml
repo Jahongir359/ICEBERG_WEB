@@ -5,7 +5,8 @@ services:
     github:
       repo: jahongir359/iceberg_web
       branch: main
-      deploy_on_push: true
+      # SQLite and uploads need durable storage before enabling automatic deploys.
+      deploy_on_push: false
     run_command: gunicorn app:app --bind 0.0.0.0:8080 --workers 1 --timeout 120
     environment_slug: python
     instance_count: 1
@@ -14,6 +15,12 @@ services:
     routes:
       - path: /
     envs:
+      - key: SECRET_KEY
+        scope: RUN_TIME
+        type: SECRET
+      - key: ADMIN_PASSWORD
+        scope: RUN_TIME
+        type: SECRET
       - key: FLASK_ENV
         value: production
         scope: RUN_TIME

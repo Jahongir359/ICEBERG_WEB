@@ -1,84 +1,20 @@
 {% extends "base.html" %}
-
-{% block title %}Admin Kirish - ICEBERG{% endblock %}
-
-{% block styles %}
-{{ super() }}
-<style>
-    body {
-        background:
-            radial-gradient(1200px 500px at 10% -10%, rgba(13, 36, 68, 0.12), transparent 65%),
-            radial-gradient(900px 420px at 100% -10%, rgba(0, 168, 181, 0.15), transparent 60%),
-            #f2f6fb;
-    }
-</style>
-{% endblock %}
-
+{% block title %}Admin kirish | ICEBERG{% endblock %}
+{% block styles %}<meta name="robots" content="noindex, nofollow">{% endblock %}
 {% block header %}{% endblock %}
-
-{% block content %}
-<div class="flex items-center justify-center min-h-screen px-4">
-    <div class="w-full max-w-md p-8 space-y-6 bg-white/90 border border-white rounded-2xl shadow-2xl backdrop-blur-sm">
-        <div class="text-center">
-            <a href="{{ url_for('index') }}">
-                <img src="{{ asset_url('site_logo', 'img/logo.png') }}" alt="ICEBERG Logo" class="h-20 mx-auto mb-4 logo-interactive">
-            </a>
-            <h1 class="text-3xl font-serif font-bold text-[#0D2444]">Admin Kirish</h1>
-            <p class="text-gray-600 mt-2">.env dagi ADMIN_PASSWORD yoki ADMIN_SECRET_CODE bilan kiring.</p>
-        </div>
-
-        {% if error %}
-            <div class="p-4 text-sm text-red-700 bg-red-100 rounded-xl border border-red-200" role="alert">
-                <span class="font-medium">Xato!</span> {{ error }}
-            </div>
-        {% endif %}
-
-        <form action="{{ admin_login_url or request.path }}" method="post" class="space-y-6">
-            <div>
-                <label for="password" class="block text-sm font-semibold text-gray-700">Parol</label>
-                <div class="relative mt-1">
-                    <input type="password" id="password" name="password" class="w-full px-4 py-3 pr-20 text-gray-700 bg-white border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500" required>
-                    <button type="button" id="toggle-password" class="absolute right-2 top-1/2 -translate-y-1/2 text-xs font-semibold px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200" data-no-loading="true">Ko'rsat</button>
-                </div>
-                <p id="caps-warning" class="text-xs text-amber-700 mt-2 hidden">Caps Lock yoqilgan bo'lishi mumkin.</p>
-            </div>
-            <div>
-                <button type="submit" class="w-full px-4 py-3 font-bold text-white bg-gradient-to-r from-[#0D2444] to-[#1b4b82] rounded-xl hover:opacity-95 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-opacity">
-                    Kirish
-                </button>
-            </div>
-        </form>
-        <div class="text-center">
-            <a href="{{ url_for('index') }}" class="text-sm text-blue-600 hover:underline">&larr; Bosh Sahifaga Qaytish</a>
-        </div>
-    </div>
-</div>
-{% endblock %}
-
 {% block footer %}{% endblock %}
-
-{% block scripts %}
-{{ super() }}
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        var passwordInput = document.getElementById('password');
-        var toggleBtn = document.getElementById('toggle-password');
-        var capsWarning = document.getElementById('caps-warning');
-
-        if (passwordInput && toggleBtn) {
-            toggleBtn.addEventListener('click', function () {
-                var show = passwordInput.type === 'password';
-                passwordInput.type = show ? 'text' : 'password';
-                toggleBtn.textContent = show ? 'Yashir' : "Ko'rsat";
-            });
-
-            passwordInput.addEventListener('keyup', function (event) {
-                if (!capsWarning) {
-                    return;
-                }
-                capsWarning.classList.toggle('hidden', !event.getModifierState('CapsLock'));
-            });
-        }
-    });
-</script>
+{% block content %}
+<section class="editorial-content admin-login-wrap">
+    <div class="editorial-card">
+        <a class="program-link" href="/">ICEBERG</a>
+        <h1>Admin kirish</h1>
+        <p>Markaz boshqaruvi uchun ADMIN_PASSWORD bilan kiring.</p>
+        {% if error %}<p role="alert" class="info-notice">{{ error }}</p>{% endif %}
+        <form action="{{ admin_login_url }}" method="post" class="space-y-4">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <div><label class="field-label" for="password">Parol</label><input id="password" name="password" type="password" autocomplete="current-password" class="field-input" required maxlength="256"></div>
+            <button class="btn-main" type="submit">Kirish</button>
+        </form>
+    </div>
+</section>
 {% endblock %}

@@ -1,5 +1,17 @@
 (function () {
     "use strict";
+    var english = document.documentElement.lang === "en";
+    var translations = {
+        "Ism va familiyangizni kiriting.": "Enter your full name.",
+        "Telefon raqamingizni tekshiring.": "Check your phone number.",
+        "Dastur tanlang.": "Choose a program.",
+        "Filial tanlang.": "Choose a branch.",
+        "Yuborilmoqda...": "Sending...",
+        "Arizani yuborib bo'lmadi.": "Your request could not be submitted.",
+        "Internet aloqasini tekshiring va qayta urinib ko'ring.": "Check your connection and try again.",
+        "Xatolik yuz berdi. Qayta urinib ko'ring.": "Something went wrong. Please try again."
+    };
+    function translated(message) { return english ? (translations[message] || message) : message; }
 
     function fieldValue(form, name) {
         var field = form.elements.namedItem(name);
@@ -8,11 +20,11 @@
 
     function contactMessage(form) {
         return [
-            "ICEBERG saytidan yangi xabar",
+            english ? "New inquiry from the ICEBERG website" : "ICEBERG saytidan yangi xabar",
             "",
-            "Ism: " + fieldValue(form, "name"),
-            "Telefon: +998" + fieldValue(form, "phone"),
-            "Xabar: " + fieldValue(form, "message")
+            (english ? "Name: " : "Ism: ") + fieldValue(form, "name"),
+            (english ? "Phone: +998" : "Telefon: +998") + fieldValue(form, "phone"),
+            (english ? "Message: " : "Xabar: ") + fieldValue(form, "message")
         ].join("\n");
     }
 
@@ -27,6 +39,8 @@
         widget.className = "cf-turnstile";
         widget.setAttribute("data-sitekey", siteKey);
         widget.setAttribute("data-action", "register");
+        // Uzbek is not a supported Turnstile locale; use its browser fallback.
+        widget.setAttribute("data-language", english ? "en" : "auto");
         if (button) {
             button.parentNode.insertBefore(widget, button);
         } else {
@@ -87,7 +101,7 @@
         var field = form.elements.namedItem(name);
         var error = form.querySelector('[data-error-for="' + name + '"]');
         if (field) field.setAttribute("aria-invalid", message ? "true" : "false");
-        if (error) error.textContent = message || "";
+        if (error) error.textContent = translated(message) || "";
     }
 
     function validateRegistration(form) {
@@ -109,7 +123,7 @@
         var button = form.querySelector('button[type="submit"]');
         var status = statusElement(form);
         var originalLabel = button ? button.textContent : "";
-        var submissionId = form.dataset.submissionId || crypto.randomUUID();
+        var submissionId = form.dataset.submissionId || fieldValue(form, 'submission_id') || crypto.randomUUID();
         form.dataset.submissionId = submissionId;
         var payload = {
             submission_id: submissionId,
@@ -130,12 +144,13 @@
         form.dataset.submitting = "true";
         if (button) {
             button.disabled = true;
-            button.textContent = "Yuborilmoqda...";
+            button.textContent = translated("Yuborilmoqda...");
         }
 
         try {
             var response = await fetch(form.action, {
                 method: "POST",
+                signal: AbortSignal.timeout(20000),
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(payload)
             });
@@ -148,9 +163,11 @@
         } catch (error) {
             status.className = "mt-3 text-sm font-semibold text-red-700";
             var rawMessage = error && error.message ? error.message : "";
-            status.textContent = /failed to fetch|networkerror|load failed/i.test(rawMessage)
-                ? "Internet aloqasini tekshiring va qayta urinib ko'ring."
-                : (rawMessage || "Xatolik yuz berdi. Qayta urinib ko'ring.");
+            status.textContent = english
+                ? "Your request could not be confirmed. Please retry or contact admissions by phone or Telegram."
+                : (/failed to fetch|networkerror|load failed|timeout|aborted/i.test(rawMessage)
+                    ? "Internet aloqasini tekshiring va qayta urinib ko'ring."
+                    : (rawMessage || "Xatolik yuz berdi. Qayta urinib ko'ring."));
         } finally {
             if (window.turnstile) {
                 window.turnstile.reset();
@@ -198,7 +215,7 @@
                 var button = form.querySelector('button[type="submit"]');
                 if (button) {
                     button.disabled = true;
-                    button.textContent = "Yuborilmoqda...";
+                    button.textContent = translated("Yuborilmoqda...");
                 }
             });
         }
@@ -237,10 +254,9 @@
                     return;
                 }
                 var message = contactMessage(form);
-                var number = new URL(form.action).pathname.replace(/\D/g, "");
-                window.location.assign(
-                    "https://wa.me/" + number + "?text=" + encodeURIComponent(message)
-                );
+                var chat = new URL(form.action);
+                chat.searchParams.set("text", message);
+                window.location.assign(chat.toString());
             });
         });
     });

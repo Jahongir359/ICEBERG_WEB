@@ -16,10 +16,12 @@
 <div class="surface-card p-4 mb-4 flex flex-wrap items-center gap-2 interactive-panel">
     <span id="students-selected-count" class="text-sm text-slate-600">0 ta tanlandi</span>
     <form id="students-export-form" action="{{ url_for('export_students_csv') }}" method="POST" class="inline">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <input type="hidden" name="ids" id="students-export-ids">
         <button type="submit" class="btn-ghost px-3 py-2 text-sm" data-no-loading="true">Tanlanganlarni Export (CSV)</button>
     </form>
     <form id="students-bulk-delete-form" action="{{ url_for('bulk_delete_students') }}" method="POST" class="inline" onsubmit="return confirm('Tanlangan o\'quvchilar o\'chirilsinmi?');">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <input type="hidden" name="ids" id="students-delete-ids">
         <button type="submit" class="px-3 py-2 text-sm rounded-lg bg-red-600 text-white font-semibold hover:bg-red-700" data-no-loading="true">Tanlanganlarni O'chirish</button>
     </form>
@@ -132,6 +134,7 @@
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ student.created_at or '' }}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                         <form action="{{ url_for('delete_student', student_id=student.id) }}" method="POST" onsubmit="return confirm('Haqiqatan ham bu o\'quvchini oʻchirmoqchimisiz?');">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                             <button type="submit" class="text-red-600 hover:text-red-900 font-semibold">O'chirish</button>
                         </form>
                     </td>
@@ -314,7 +317,8 @@
                 fetch('/admin/students/update/' + rowId, {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content
                     },
                     body: JSON.stringify({ field: field, value: newValue })
                 })
