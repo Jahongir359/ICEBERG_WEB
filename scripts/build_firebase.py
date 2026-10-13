@@ -4,7 +4,6 @@
 from __future__ import annotations
 
 import os
-import re
 import shutil
 import sys
 import tomllib
@@ -22,6 +21,11 @@ PUBLIC_ROUTES = {
     "/contact": "contact.html",
     "/register": "register.html",
 }
+for slug in ('international', 'private-school', 'admissions', 'privacy', 'results', 'student-life'):
+    PUBLIC_ROUTES['/' + slug] = slug + '.html'
+for route, filename in list(PUBLIC_ROUTES.items()):
+    english_route = '/en' if route == '/' else '/en' + route
+    PUBLIC_ROUTES[english_route] = 'en/index.html' if route == '/' else 'en/' + filename
 ROOT_ASSETS = ("/favicon.ico", "/manifest.json", "/robots.txt", "/sitemap.xml")
 
 
@@ -38,12 +42,10 @@ def load_wrangler_vars() -> dict[str, str]:
 def make_form_static(
     html: str,
     route: str,
-    whatsapp_number: str,
-    site_url: str,
     turnstile_site_key: str,
 ) -> str:
     local_action = f'action="{route}" method="post"'
-    if route == "/register":
+    if route in ("/register", "/en/register"):
         turnstile_attribute = (
             f' data-turnstile-sitekey="{turnstile_site_key}"'
             if turnstile_site_key
@@ -54,11 +56,28 @@ def make_form_static(
             f'data-static-lead-form="register"{turnstile_attribute}'
         )
     else:
-        static_action = (
-            f'action="https://wa.me/{whatsapp_number}" method="get" '
-            f'data-static-lead-form="{route.lstrip("/")}"'
-        )
+        # Contact uses the configured Telegram chat in both Flask and static builds.
+        return html
     return html.replace(local_action, static_action)
+
+
+def copy_public_assets(static_root: Path, destination: Path, snapshot: dict) -> None:
+    """Copy code/default images plus media explicitly approved in the snapshot."""
+    shutil.copytree(
+        static_root, destination,
+        ignore=lambda directory, names: ['uploads', 'published'] if Path(directory) == static_root else [],
+    )
+    paths = list(snapshot.get('assets', {}).values())
+    paths.extend(media['file_path'] for post in snapshot.get('news', []) for media in post.get('media_items', []))
+    for relative_path in paths:
+        if relative_path.startswith('https://'):
+            continue
+        source = (static_root / relative_path).resolve()
+        if not source.is_relative_to(static_root.resolve()) or not source.is_file():
+            raise ValueError(f'Approved public media is missing or outside static/: {relative_path}')
+        target = destination / source.relative_to(static_root.resolve())
+        target.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(source, target)
 
 
 def build() -> None:
@@ -68,28 +87,25 @@ def build() -> None:
     # Some hosting build images compile Python without the optional _sqlite3
     # extension. Public static pages use checked-in defaults and need no DB.
     os.environ["ICEBERG_STATIC_BUILD"] = "1"
-    from app import app  # pylint: disable=import-outside-toplevel
+    from app import app, PUBLIC_CONTENT  # pylint: disable=import-outside-toplevel
 
     wrangler_vars = load_wrangler_vars()
     site_url = os.environ.get(
         "PUBLIC_SITE_URL",
         wrangler_vars.get("PUBLIC_SITE_URL", "https://iceberglc.com"),
     ).rstrip("/")
-    whatsapp_number = re.sub(
-        r"\D", "", os.environ.get("PUBLIC_WHATSAPP_NUMBER", "998939461699")
-    )
     turnstile_site_key = (
         os.environ.get("PUBLIC_TURNSTILE_SITE_KEY", "").strip()
         or os.environ.get("TURNSTILE_SITE_KEY", "").strip()
         or wrangler_vars.get("PUBLIC_TURNSTILE_SITE_KEY", "").strip()
     )
-    if not whatsapp_number:
-        raise RuntimeError("PUBLIC_WHATSAPP_NUMBER must contain a phone number")
 
     if OUTPUT.exists():
         shutil.rmtree(OUTPUT)
     OUTPUT.mkdir(parents=True)
-    shutil.copytree(ROOT / "static", OUTPUT / "static")
+    # Raw CMS uploads can include unpublished news. Only explicitly exported
+    # media under static/published/ belongs in a static deployment.
+    copy_public_assets(ROOT / 'static', OUTPUT / 'static', PUBLIC_CONTENT)
     shutil.copy2(ROOT / "cloudflare" / "_headers", OUTPUT / "_headers")
     shutil.copy2(
         ROOT / "config" / "registration.json",
@@ -104,32 +120,19 @@ def build() -> None:
 
         html = response.get_data(as_text=True)
         html = make_form_static(
-            html, "/contact", whatsapp_number, site_url, turnstile_site_key
+            html, "/register", turnstile_site_key
         )
-        html = make_form_static(
-            html, "/register", whatsapp_number, site_url, turnstile_site_key
-        )
-        # The Flask-only hidden admin login must not be exposed on the static site.
-        html = re.sub(r'\sdata-admin-trigger-name="[^"]*"', "", html)
-        html = re.sub(
-            r'\s*<div id="admin-(?:password|secret)-wrap".*?</div>',
-            "",
-            html,
-            flags=re.DOTALL,
-        )
-        html = re.sub(
-            r"\s*const form = document\.getElementById\('contactForm'\);"
-            r".*?\s*syncHiddenAdminMode\(\);",
-            "",
-            html,
-            flags=re.DOTALL,
-        )
+        html = make_form_static(html, '/en/register', turnstile_site_key)
+        if route in ('/register', '/en/register'):
+            html = html.replace('</head>', '<noscript><style>form[data-registration-form] { display: none; }</style></noscript></head>')
         if "data-static-lead-form" in html and "/static/js/firebase-forms.js" not in html:
             html = html.replace(
                 "</body>",
                 '<script src="/static/js/firebase-forms.js" defer></script>\n</body>',
             )
-        (OUTPUT / filename).write_text(html, encoding="utf-8")
+        page_path = OUTPUT / filename
+        page_path.parent.mkdir(parents=True, exist_ok=True)
+        page_path.write_text(html, encoding="utf-8")
 
     for route in ROOT_ASSETS:
         response = client.get(route, base_url=site_url)
@@ -163,7 +166,7 @@ def build() -> None:
     )
 
     print(f"Built {len(PUBLIC_ROUTES)} pages and static assets in {OUTPUT}")
-    print(f"Static contact form opens WhatsApp for +{whatsapp_number}")
+    print("Contact inquiries open the configured Telegram admissions chat")
     print("Static registration form submits to /api/register")
     if not turnstile_site_key:
         print(

@@ -3,6 +3,39 @@ const JSON_HEADERS = {
     "Cache-Control": "no-store",
     "X-Content-Type-Options": "nosniff"
 };
+const MAX_BODY_BYTES = 16_384;
+
+async function readJsonBody(request) {
+    if (!request.body) throw new SyntaxError('Missing request body');
+    const reader = request.body.getReader();
+    const chunks = [];
+    let size = 0;
+    try {
+        while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            size += value.byteLength;
+            if (size > MAX_BODY_BYTES) {
+                await reader.cancel();
+                throw new RangeError('Request too large');
+            }
+            chunks.push(value);
+        }
+    } finally {
+        reader.releaseLock();
+    }
+    const bytes = new Uint8Array(size);
+    let offset = 0;
+    for (const chunk of chunks) {
+        bytes.set(chunk, offset);
+        offset += chunk.byteLength;
+    }
+    const result = JSON.parse(new TextDecoder('utf-8', { fatal: true }).decode(bytes));
+    if (!result || typeof result !== 'object' || Array.isArray(result)) {
+        throw new SyntaxError('Expected an object');
+    }
+    return result;
+}
 
 function jsonResponse(body, status = 200) {
     return new Response(JSON.stringify(body), { status, headers: JSON_HEADERS });
@@ -56,7 +89,7 @@ async function validateTurnstile(token, request, secret) {
 
     const response = await fetch(
         "https://challenges.cloudflare.com/turnstile/v0/siteverify",
-        { method: "POST", body }
+        { method: "POST", body, signal: AbortSignal.timeout(8000) }
     );
     if (!response.ok) {
         return { success: false };
@@ -80,15 +113,15 @@ export async function onRequestPost(context) {
     }
 
     const contentLength = Number(request.headers.get("Content-Length") || 0);
-    if (contentLength > 16_384) {
+    if (contentLength > MAX_BODY_BYTES) {
         return jsonResponse({ ok: false, message: "So'rov juda katta." }, 413);
     }
 
     let input;
     try {
-        input = await request.json();
-    } catch (_error) {
-        return jsonResponse({ ok: false, message: "Noto'g'ri so'rov." }, 400);
+        input = await readJsonBody(request);
+    } catch (error) {
+        return jsonResponse({ ok: false, message: "Noto'g'ri so'rov." }, error instanceof RangeError ? 413 : 400);
     }
 
     if (cleanText(input.website, 100)) {
@@ -139,7 +172,8 @@ export async function onRequestPost(context) {
             503
         );
     }
-    if (!turnstile.success || (turnstile.action && turnstile.action !== "register")) {
+    if (!turnstile.success || turnstile.action !== "register"
+        || turnstile.hostname !== new URL(request.url).hostname) {
         return jsonResponse(
             { ok: false, message: "Xavfsizlik tekshiruvidan qayta o'ting." },
             403
@@ -168,6 +202,7 @@ export async function onRequestPost(context) {
             method: "POST",
             headers: { "Content-Type": "text/plain;charset=UTF-8" },
             body: JSON.stringify(lead),
+            signal: AbortSignal.timeout(10000),
             redirect: "follow"
         });
         const responseText = await response.text();

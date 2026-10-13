@@ -66,12 +66,15 @@
         <h2 class="text-xl font-semibold text-[#0D2444] mb-4">Maintenance & Backup</h2>
         <div class="space-y-3">
             <form action="{{ url_for('admin_tools_backup') }}" method="POST">
-                <button type="submit" class="btn-primary w-full py-2.5">Full Backup Download (JSON)</button>
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" class="btn-primary w-full py-2.5">Database Backup Download (JSON)</button>
             </form>
             <form action="{{ url_for('admin_db_maintenance') }}" method="POST" onsubmit="return confirm('Database maintenance ishga tushirilsinmi?');">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <button type="submit" class="btn-ghost w-full py-2.5" data-no-loading="true">Run DB Maintenance (VACUUM + ANALYZE)</button>
             </form>
             <div class="rounded-xl bg-amber-50 border border-amber-200 p-3 text-xs text-amber-800">
+                Yuklangan media fayllarini alohida zaxiralang.
                 Maintenance jarayonida katta database bo'lsa bir oz vaqt olishi mumkin.
             </div>
         </div>

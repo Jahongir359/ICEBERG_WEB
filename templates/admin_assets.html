@@ -14,6 +14,7 @@
 <section class="surface-card p-5 mb-6 interactive-panel">
     <h2 class="text-lg font-semibold text-[#0D2444] mb-3">Custom Asset Qo'shish</h2>
     <form action="{{ url_for('admin_assets') }}" method="POST" enctype="multipart/form-data" class="grid grid-cols-1 md:grid-cols-3 gap-3">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <div class="md:col-span-1">
             <label for="custom_asset_key" class="block text-sm font-semibold text-gray-700 mb-1">Custom kalit</label>
             <input id="custom_asset_key" name="custom_asset_key" type="text" placeholder="masalan: home_banner_logo" class="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500">
@@ -35,6 +36,7 @@
         <div class="p-5">
             <h3 class="text-lg font-semibold text-[#0D2444] mb-3">{{ asset.label }}</h3>
             <form action="{{ url_for('admin_assets') }}" method="POST" enctype="multipart/form-data" class="space-y-3">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <input type="hidden" name="asset_key" value="{{ asset.key }}">
                 <input
                     type="file"

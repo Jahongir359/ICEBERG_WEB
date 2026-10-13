@@ -1,192 +1,29 @@
-{% extends "base.html" %}
-
-{% block title %}Dasturlar | IELTS, SAT, Repetitorlik — ICEBERG O'quv Markazi{% endblock %}
-
-{% block meta_description %}<meta name="description" content="ICEBERG O'quv Markazi dasturlari: IELTS va SAT tayyorgarlik, akademik repetitorlik (matematika, fan, ingliz tili) va shaxsiy mentorlik. Namangan, O'zbekiston.">{% endblock %}
-
-{% block og_description %}<meta property="og:description" content="ICEBERG dasturlari: IELTS va SAT tayyorgarlik, akademik repetitorlik va shaxsiy mentorlik. Namangan, O'zbekiston.">{% endblock %}
-{% block twitter_description %}<meta name="twitter:description" content="ICEBERG dasturlari: IELTS va SAT tayyorgarlik, akademik repetitorlik va shaxsiy mentorlik. Namangan, O'zbekiston.">{% endblock %}
-
-{% block schema %}
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  "itemListElement": [
-    {"@type": "ListItem", "position": 1, "name": "Bosh sahifa", "item": "https://iceberglc.com/"},
-    {"@type": "ListItem", "position": 2, "name": "Dasturlar", "item": "https://iceberglc.com/our_programs"}
-  ]
-}
-</script>
-{% endblock %}
-
-{% block styles %}
-{{ super() }}
-<style>
-    .programs-hero {
-        background:
-            linear-gradient(145deg, rgba(7, 20, 43, 0.85), rgba(16, 40, 76, 0.86)),
-            url('{{ asset_url("programs_hero_bg", "https://images.unsplash.com/photo-1542744095-291d1f67b221?q=80&w=2070&auto=format&fit=crop") }}') center/cover;
-    }
-
-    .course-card {
-        opacity: 0;
-        transform: translateY(16px);
-        animation: fadeInUp 0.45s ease forwards;
-    }
-
-    @keyframes fadeInUp {
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-</style>
-{% endblock %}
-
+{% extends 'base.html' %}
+{% block title %}{{ 'Programs' if site_language == 'en' else 'Dasturlar' }} | ICEBERG{% endblock %}
+{% block meta_description %}<meta name="description" content="{{ 'Explore ICEBERG IELTS, English, SAT, mathematics, chemistry, and biology courses. Request current fees, schedules, and entry requirements.' if site_language == 'en' else 'ICEBERG IELTS, ingliz tili, SAT, matematika, kimyo va biologiya kurslari. Narx, jadval va talablar haqida ma’lumot so‘rang.' }}">{% endblock %}
 {% block content %}
-<section class="page-hero">
-    <div class="page-hero-inner">
-        <div class="glass-hero-panel programs-hero reveal">
-            <h1>Bizning Akademik Dasturlarimiz</h1>
-            <p>Maqsadga mos yo'nalish, kuchli mentorlik va aniq monitoring orqali natijaga olib boradigan o'quv tizimi.</p>
-        </div>
-    </div>
-</section>
-
-<section class="section-shell">
-    <div class="page-grid">
-        <div class="pill-list justify-center mb-2">
-            <button class="tab-chip active" data-target="#test-prep">Ingliz tili va test tayyorgarligi</button>
-            <button class="tab-chip" data-target="#academic-tutoring">Bolalar uchun maxsus</button>
-            <button class="tab-chip" data-target="#admissions-consulting">Universitetga tayyorgarlik</button>
-        </div>
-
-        <div id="tab-content">
-            <div id="test-prep" class="tab-pane">
-                <div class="info-card mb-4">
-                    <h2>Testga tayyorgarlik mahorati</h2>
-                    <p>IELTS va SAT uchun strategik tayyorgarlik: grammatika, reading, writing, listening va speaking bo'yicha tizimli o'sish.</p>
-                </div>
-                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    <article class="program-card course-card">
-                        <img src="{{ asset_url('program_card_1', 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?q=80&w=2070&auto=format&fit=crop') }}" alt="SAT IELTS" class="h-44 w-full object-cover rounded-xl mb-4">
-                        <h3>SAT/IELTS Kompleks Dasturi</h3>
-                        <p>Imtihon strukturasini chuqur o'rganish, mock testlar va personal feedback asosida intensiv kurs.</p>
-                        <a href="{{ url_for('register', program='ielts') }}" class="program-link">IELTSga yozilish</a> ·
-                        <a href="{{ url_for('register', program='sat') }}" class="program-link">SATga yozilish</a>
-                    </article>
-                    <article class="program-card course-card" style="animation-delay: .06s;">
-                        <img src="{{ asset_url('program_card_2', 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=2071&auto=format&fit=crop') }}" alt="Natural English" class="h-44 w-full object-cover rounded-xl mb-4">
-                        <h3>Natural English</h3>
-                        <p>Real muloqot, to'g'ri talaffuz va kundalik ingliz tilini mustahkamlash uchun interaktiv mashg'ulotlar.</p>
-                        <a href="{{ url_for('register', program='english') }}" class="program-link">Ro'yxatdan o'tish -></a>
-                    </article>
-                    <article class="program-card course-card" style="animation-delay: .12s;">
-                        <img src="{{ asset_url('program_card_3', 'https://images.unsplash.com/photo-1528642474498-1af0c17fd8c3?q=80&w=2069&auto=format&fit=crop') }}" alt="University prep" class="h-44 w-full object-cover rounded-xl mb-4">
-                        <h3>Preparation for Universities</h3>
-                        <p>Xalqaro universitetlar talabi bo'yicha writing portfolio, speaking confidence va test natijalariga fokus.</p>
-                        <a href="{{ url_for('register') }}" class="program-link">Kursga yozilish -></a>
-                    </article>
-                </div>
-            </div>
-
-            <div id="academic-tutoring" class="tab-pane hidden">
-                <div class="info-card mb-4">
-                    <h2>Bolalar uchun maxsus dasturlar</h2>
-                    <p>Yosh o'quvchilar uchun qiziqarli metodika, mustahkam poydevor va doimiy ota-ona feedback tizimi.</p>
-                </div>
-                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    <article class="program-card course-card">
-                        <img src="{{ asset_url('program_card_4', 'https://images.unsplash.com/photo-1521587760476-6c12a4b040da?q=80&w=2070&auto=format&fit=crop') }}" alt="Ilk qadam" class="h-44 w-full object-cover rounded-xl mb-4">
-                        <h3>Ilk Qadam</h3>
-                        <p>Maktabgacha va boshlang'ich bosqich uchun o'qish, yozish va mantiqiy fikrlash poydevori.</p>
-                        <a href="{{ url_for('register') }}" class="program-link">Ro'yxatga qo'shilish -></a>
-                    </article>
-                    <article class="program-card course-card" style="animation-delay: .06s;">
-                        <img src="{{ asset_url('program_card_5', 'https://images.unsplash.com/photo-1571260899304-425eee4c7efc?q=80&w=2070&auto=format&fit=crop') }}" alt="Kids English" class="h-44 w-full object-cover rounded-xl mb-4">
-                        <h3>Kids English</h3>
-                        <p>O'yinlar, gapirish mashqlari va interaktiv loyihalar orqali bolalar uchun ingliz tili.</p>
-                        <a href="{{ url_for('register', program='english') }}" class="program-link">Guruhga qo'shilish -></a>
-                    </article>
-                    <article class="program-card course-card" style="animation-delay: .12s;">
-                        <img src="{{ asset_url('program_card_6', 'https://images.unsplash.com/photo-1456324504439-367cee3b3c32?q=80&w=2070&auto=format&fit=crop') }}" alt="Gumanitar fanlar" class="h-44 w-full object-cover rounded-xl mb-4">
-                        <h3>Ona tili va gumanitar fanlar</h3>
-                        <p>Insho, tahlil va tanqidiy fikrlashni rivojlantirish uchun maxsus yo'nalish.</p>
-                        <a href="{{ url_for('register') }}" class="program-link">Batafsil -></a>
-                    </article>
-                </div>
-            </div>
-
-            <div id="admissions-consulting" class="tab-pane hidden">
-                <div class="grid md:grid-cols-2 gap-4">
-                    <article class="info-card course-card">
-                        <h3>Ariza strategiyasi va insho</h3>
-                        <p>Shaxsiy bayonot, portfolio va hujjatlarni tayyorlashda individual konsultatsiya.</p>
-                        <ul class="mt-3 space-y-1 text-sm text-slate-600">
-                            <li><i class="fas fa-check-circle text-green-500 mr-2"></i>Insho g'oyasini ishlab chiqish</li>
-                            <li><i class="fas fa-check-circle text-green-500 mr-2"></i>Tahrirlash va qayta ko'rib chiqish</li>
-                            <li><i class="fas fa-check-circle text-green-500 mr-2"></i>Faoliyatlar ro'yxatini kuchaytirish</li>
-                        </ul>
-                    </article>
-                    <article class="info-card course-card" style="animation-delay: .06s;">
-                        <h3>Intervyuga tayyorgarlik</h3>
-                        <p>Mock-intervyu, javob tuzilmasi va o'zini ishonchli taqdim etish bo'yicha amaliy mashg'ulotlar.</p>
-                        <ul class="mt-3 space-y-1 text-sm text-slate-600">
-                            <li><i class="fas fa-check-circle text-green-500 mr-2"></i>Soxta intervyular</li>
-                            <li><i class="fas fa-check-circle text-green-500 mr-2"></i>Personal feedback</li>
-                            <li><i class="fas fa-check-circle text-green-500 mr-2"></i>Storytelling strategiyasi</li>
-                        </ul>
-                    </article>
-                </div>
-            </div>
-        </div>
-
-        <article class="final-cta reveal">
-            <h2 class="section-title">Keyingi qadamni bugun tashlang</h2>
-            <p class="section-subtitle">Sizga mos dastur va jadvalni birga tanlaymiz. Birinchi konsultatsiya orqali reja tuzamiz.</p>
-            <div class="hero-actions justify-center">
-                <a href="{{ url_for('register') }}" class="btn-main">Hoziroq ro'yxatdan o'tish</a>
-                <a href="{{ url_for('contact') }}" class="btn-soft">Savol berish</a>
-            </div>
+<section class="editorial-hero"><div><h1>{{ 'Find your program' if site_language == 'en' else 'Dasturingizni tanlang' }}</h1><p>{{ 'Choose a subject, then confirm the course details with admissions.' if site_language == 'en' else 'Yo‘nalishni tanlang va kurs tafsilotlarini qabul jamoasi bilan aniqlang.' }}</p></div></section>
+<section class="editorial-content">
+    <p class="info-notice">{{ 'Schedules, fees, age requirements, duration, and group sizes are confirmed by admissions for your course and branch. Request these details before committing to enrollment.' if site_language == 'en' else 'Jadval, narx, yosh talabi, davomiylik va guruh hajmini kurs va filial bo‘yicha qabul jamoasi tasdiqlaydi. O‘qishga yozilishdan oldin bu ma’lumotlarni so‘rang.' }}</p>
+    <div class="editorial-grid">
+    {% for program in registration.programs %}
+        {% set copy = course_copy.get(program.id) %}
+        {% set details = program.get('details', {}).get(site_language, {}) %}
+        <article class="editorial-card" id="{{ program.id }}">
+            <h2>{{ (copy[1] if site_language == 'en' else copy[0]) if copy else program.name }}</h2>
+            <p>{{ (copy[3] if site_language == 'en' else copy[2]) if copy else ('Contact admissions for details.' if site_language == 'en' else 'Tafsilotlar uchun qabul bilan bog‘laning.') }}</p>
+            <dl class="course-details">
+                <div><dt>{{ 'Age & entry level' if site_language == 'en' else 'Yosh va boshlang‘ich daraja' }}</dt><dd>{{ details.get('age_level') or ('Discuss your age, goals, and current level with admissions.' if site_language == 'en' else 'Yosh, maqsad va mavjud darajangizni qabul jamoasi bilan muhokama qiling.') }}</dd></div>
+                <div><dt>{{ 'Duration & timetable' if site_language == 'en' else 'Davomiylik va jadval' }}</dt><dd>{{ details.get('duration_schedule') or ('Request the course length, weekly frequency, and lesson times.' if site_language == 'en' else 'Kurs muddati, haftalik dars soni va dars vaqtlarini so‘rang.') }}</dd></div>
+                <div><dt>{{ 'Class size & teacher' if site_language == 'en' else 'Guruh hajmi va o‘qituvchi' }}</dt><dd>{{ details.get('class_teacher') or ('Confirm group size, instructor, and available branch.' if site_language == 'en' else 'Guruh hajmi, o‘qituvchi va mavjud filialni aniqlang.') }}</dd></div>
+                <div><dt>{{ 'Teaching methods' if site_language == 'en' else 'Dars usullari' }}</dt><dd>{{ details.get('methods') or ('Ask about lesson format, practice tasks, and assessments.' if site_language == 'en' else 'Dars shakli, amaliy topshiriqlar va baholash usullarini so‘rang.') }}</dd></div>
+                <div><dt>{{ 'Tuition' if site_language == 'en' else 'To‘lov' }}</dt><dd>{{ details.get('tuition') or ('Ask for the current fee, payment dates, and any additional materials costs.' if site_language == 'en' else 'Joriy narx, to‘lov muddatlari va qo‘shimcha o‘quv materiallari xarajatlarini so‘rang.') }}</dd></div>
+            </dl>
+            <a href="{{ local_url('/register') }}?program={{ program.id }}">{{ 'Ask about this course & fees' if site_language == 'en' else 'Kurs va narxlar haqida so‘rash' }} →</a>
         </article>
+    {% endfor %}
     </div>
+    <article class="editorial-card mt-6"><h2>{{ 'Children’s programs & university guidance' if site_language == 'en' else 'Bolalar dasturlari va universitet bo‘yicha maslahat' }}</h2><p>{{ 'For younger learners, humanities, or university application support, ask which services are currently available and suitable. These are not separate enrollment options in the current application form.' if site_language == 'en' else 'Kichik yoshdagi o‘quvchilar, gumanitar fanlar yoki universitetga ariza bo‘yicha yordam uchun hozir qaysi xizmatlar mavjud va mosligini so‘rang. Joriy arizada bular alohida qabul variantlari emas.' }}</p><a href="{{ local_url('/contact') }}">{{ 'Ask about availability' if site_language == 'en' else 'Mavjudlikni so‘rash' }} →</a></article>
+    <p class="mt-6"><a class="program-link" href="{{ local_url('/admissions') }}">{{ 'Admissions steps and fees' if site_language == 'en' else 'Qabul tartibi va narxlar' }} →</a></p>
 </section>
-{% endblock %}
-
-{% block scripts %}
-{{ super() }}
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const tabs = document.querySelectorAll('.tab-chip');
-    const panes = document.querySelectorAll('.tab-pane');
-
-    tabs.forEach(function(tab) {
-        tab.addEventListener('click', function() {
-            tabs.forEach(function(item) { item.classList.remove('active'); });
-            panes.forEach(function(pane) { pane.classList.add('hidden'); });
-            tab.classList.add('active');
-            const target = document.querySelector(tab.dataset.target);
-            if (target) {
-                target.classList.remove('hidden');
-            }
-        });
-    });
-
-    const items = document.querySelectorAll('.reveal');
-    const observer = new IntersectionObserver(function(entries) {
-        entries.forEach(function(entry) {
-            if (!entry.isIntersecting) {
-                return;
-            }
-            entry.target.classList.add('visible');
-            observer.unobserve(entry.target);
-        });
-    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
-
-    items.forEach(function(item) {
-        observer.observe(item);
-    });
-});
-</script>
 {% endblock %}

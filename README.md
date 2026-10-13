@@ -13,10 +13,12 @@ The primary goal is to convert website visitors into student leads, then help ad
 
 ## Features
 
-- Public pages: home, about, programs, FAQ, contact
+- Uzbek and English public pages: home, about, programs, results, student life,
+  international cooperation, planned private school, news, admissions, FAQ,
+  contact, privacy, and course inquiry
 - Student registration form
-- Contact form with database storage
-- Telegram alerts for new registrations and messages
+- Contact inquiry drafts that open the Telegram admissions chat
+- Telegram alerts for new registrations
 - Admin login and protected dashboard
 - Admin lists for students and contact submissions
 - Delete actions for students and contacts
@@ -27,7 +29,7 @@ The primary goal is to convert website visitors into student leads, then help ad
 
 - Python + Flask
 - SQLite
-- Tailwind CSS (CDN)
+- Local CSS for public pages; Tailwind CSS (CDN) for the admin interface
 - Gunicorn for production startup
 
 ## Quick Start
@@ -70,9 +72,8 @@ Open http://127.0.0.1:8080
 
 Set these in `.env` (or your deployment platform):
 
-- `SECRET_KEY`: Flask secret key for sessions (required in production)
-- `ADMIN_PASSWORD`: Admin login password
-- `ADMIN_SECRET_CODE`: optional extra secret value used by internal admin access checks
+- `SECRET_KEY`: unique random session secret, at least 32 characters
+- `ADMIN_PASSWORD`: unique admin password, at least 12 characters
 - `ADMIN_LOGIN_SLUG`: hidden admin login path slug (example: `iceberg-portal`)
 - `DATABASE_PATH`: SQLite file path (default: `database.db`)
 - `TELEGRAM_BOT_TOKEN`: Telegram bot token (optional)
@@ -164,7 +165,6 @@ This repository is pre-configured for Railway with:
 4. Add environment variables in Railway:
 	- `SECRET_KEY`
 	- `ADMIN_PASSWORD`
-	- `ADMIN_SECRET_CODE`
 	- `ADMIN_LOGIN_SLUG`
 	- `FLASK_ENV=production`
 5. (Important for SQLite persistence) Add a Railway Volume and set:
@@ -179,22 +179,23 @@ This repository includes `render.yaml` using Gunicorn.
 
 Important: define all required environment variables in Render dashboard.
 
-## Deploy (DigitalOcean App Platform)
+## DigitalOcean App Platform — storage prerequisites
 
 Use the same Gunicorn start command as Render:
 
 `gunicorn app:app --bind 0.0.0.0:$PORT`
 
-Set these environment variables in DigitalOcean:
+The checked-in DigitalOcean spec disables deploy-on-push. App Platform local storage is ephemeral and does not provide persistent volumes; this SQLite-based backend needs a durable database/media design before use there. Applying the manifest is separate from changing existing dashboard settings. See [DigitalOcean storage documentation](https://docs.digitalocean.com/products/app-platform/how-to/store-data/).
+
+Set these environment variables only after resolving persistence:
 
 - `SECRET_KEY`
 - `ADMIN_PASSWORD`
-- `ADMIN_SECRET_CODE`
 - `ADMIN_LOGIN_SLUG`
 - `FLASK_ENV=production`
 - `DATABASE_PATH` if you want the SQLite file stored outside the container default
 
-If those admin variables are omitted, the app falls back to `iceberg-admin` and `iceberg-portal` so the hidden login path stays consistent across deployments.
+Admin access is disabled unless both a secure `SECRET_KEY` and `ADMIN_PASSWORD` are configured. The old public default and alternate secret-code logins are rejected. Public pages continue to work when admin access is disabled.
 
 ## Deploy the public site to Firebase Hosting (Spark/free plan)
 
@@ -213,14 +214,14 @@ npx firebase-tools emulators:start --only hosting
 npx firebase-tools deploy --only hosting --project YOUR_FIREBASE_PROJECT_ID
 ```
 
-The static contact form opens a pre-filled WhatsApp message. The registration form
+The contact form opens a pre-filled Telegram draft for the visitor to review and
+send to `iceberg_qabulxona`. Configure that chat in `config/registration.json`.
+The registration form
 submits to a Cloudflare Pages Function, validates Turnstile server-side, and stores the
-lead in Google Sheets through Apps Script. Override the public domain or contact-form
-WhatsApp number during the build when needed:
+lead in Google Sheets through Apps Script. Override the public domain when needed:
 
 ```bash
 PUBLIC_SITE_URL=https://www.example.com \
-PUBLIC_WHATSAPP_NUMBER=998901234567 \
 python scripts/build_firebase.py
 ```
 
@@ -276,7 +277,7 @@ Function. Follow the complete setup and troubleshooting runbook in
 
 The registration endpoint remains unavailable until all values are deployed. Do not
 put private secret values in `wrangler.toml`.
-The contact form continues to open WhatsApp.
+The contact form continues to open Telegram.
 
 ### Registration programs, branches, and reception contact
 
@@ -331,3 +332,89 @@ After admin login, open **Sayt Kontenti** from the admin sidebar.
 - Do not commit real bot tokens, chat IDs, admin passwords, or secret keys.
 - Keep `.env` out of git (already ignored).
 - Use a strong `ADMIN_PASSWORD` and `SECRET_KEY` in production.
+
+## Public content and languages
+
+Public pages have dedicated Uzbek and English URLs: `/` and `/en`, with matching
+paths such as `/international` and `/en/international`. Copy for the informational
+pages lives in `public_content.py`; course and branch choices live in
+`config/registration.json`. Contact inquiries open the configured Telegram
+admissions chat with a draft. The visitor must review and send it in Telegram.
+Registration still uses Flask when served dynamically, or `/api/register` on
+Cloudflare Pages. Firebase requires a separately configured registration backend;
+this repository's Firebase Hosting configuration alone does not provide one.
+
+No student totals, score claims, tuition amounts, agreements, or campus photographs
+have been invented. The private school is labeled as a separate planned project,
+with opening planned for September 2027. Staff should confirm this date and all
+institutional facts before publishing.
+
+To publish verified course details, add `details.uz` and `details.en` objects to the
+relevant program in `config/registration.json`. Supported text fields are
+`age_level`, `duration_schedule`, `class_teacher`, `methods`, and `tuition`.
+Missing values show an admissions inquiry prompt. Include lesson length and weekly
+frequency in `duration_schedule`, and payment periods/materials costs in `tuition`.
+
+### Publish CMS content on a static host
+
+Static builds read `config/public_content.json`. To export reviewed public records
+from the Flask CMS, run on the machine containing its database and uploaded media:
+
+```bash
+python scripts/export_public_content.py --database /path/to/database.db
+```
+
+The export includes only published news, public FAQs, approved asset references,
+and the supported public text keys (`hero_main_title`, `hero_main_subtitle`,
+`contact_email`). It copies referenced local media into `static/published/`.
+Applications, contacts, credentials, unknown content keys, and unpublished news
+are excluded. Review the exported copy and media permissions, transfer the snapshot
+and `static/published/` to the website checkout, then rebuild and deploy. Edits in
+Flask do not automatically trigger a static deployment.
+
+The static build excludes raw `static/uploads/` and unreferenced exported media.
+Only snapshot-referenced media is copied into generated output. Do not use a
+complete admin database backup as a public content source.
+
+```bash
+python -m unittest discover -s tests -p 'test_*.py'
+npm run test:registration
+python scripts/build_firebase.py
+python scripts/check_firebase_build.py
+```
+
+The build checker validates pages, local links, language alternates, basic form
+labels, document landmarks, sitemap coverage, and private markers. It does not
+replace browser/mobile testing, Lighthouse measurements, or production receipt
+verification.
+
+## Audit and release checks
+
+See `CODE_AUDIT.md` for the repository review, fixes, validation, and deployment
+follow-ups. Admin forms and JSON mutations require a session CSRF token; logout
+is POST-only. Only `ADMIN_PASSWORD` authenticates an admin. Sessions expire after
+eight hours, and private pages, registrations, CSV exports, and database backups
+are never publicly cacheable. The JSON database backup includes FAQs; uploaded
+media must be backed up separately.
+
+Flask registrations carry a per-form UUID. Repeating a UUID preserves one database
+record and avoids repeated forwarding/notifications. A success URL alone does not
+produce a confirmation. Static registration uses a per-browser submission UUID
+and the existing Apps Script deduplication. Both endpoints enforce request limits;
+Cloudflare also checks Turnstile action and hostname.
+
+For the optional isolated browser/security tools:
+
+```bash
+python -m pip install -r requirements-dev.txt
+python -m playwright install --with-deps chromium
+python scripts/check_browser.py
+python -m bandit -r app.py public_content.py scripts add_column.py
+python -m pip_audit -r requirements.txt
+```
+
+The browser script uses a temporary test database and disables external delivery.
+GitHub Actions runs the Python tests, Node tests, static build, and build checker
+on pull requests and pushes to main. The action revisions are pinned. Production
+rate limiting, persistent storage/backups, account ownership, and live message
+receipt remain hosting checks.

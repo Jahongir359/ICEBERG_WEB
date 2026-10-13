@@ -1,210 +1,38 @@
-{% extends "base.html" %}
-
-{% block title %}Aloqa | ICEBERG O'quv Markazi — Namangan{% endblock %}
-
-{% block meta_description %}<meta name="description" content="ICEBERG O'quv Markazi bilan bog'laning. Manzil: Namangan, O'zbekiston. Tel: +998 93 946 16 99. Email: iceberg.edu.center@gmail.com. Bepul maslahat uchun murojaat qiling.">{% endblock %}
-
-{% block og_description %}<meta property="og:description" content="ICEBERG O'quv Markazi bilan bog'laning. Namangan, O'zbekiston. Tel: +998 93 946 16 99. Bepul maslahat uchun murojaat qiling.">{% endblock %}
-{% block twitter_description %}<meta name="twitter:description" content="ICEBERG O'quv Markazi bilan bog'laning. Namangan, O'zbekiston. Tel: +998 93 946 16 99. Bepul maslahat uchun murojaat qiling.">{% endblock %}
-
-{% block schema %}
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "LocalBusiness",
-  "name": "ICEBERG O'quv Markazi",
-  "alternateName": "ICEBERG Study Center",
-  "@id": "https://iceberglc.com/#localbusiness",
-  "url": "https://iceberglc.com",
-  "logo": {
-    "@type": "ImageObject",
-    "url": "https://iceberglc.com/static/img/logo2.png",
-    "width": 640,
-    "height": 640
-  },
-  "image": "https://iceberglc.com/static/img/logo2.png",
-  "description": "IELTS, SAT tayyorgarlik, akademik repetitorlik va mentorlik dasturlari",
-  "address": {
-    "@type": "PostalAddress",
-    "streetAddress": "Uychi ko'chasi",
-    "addressLocality": "Namangan",
-    "addressRegion": "Namangan viloyati",
-    "postalCode": "160000",
-    "addressCountry": "UZ"
-  },
-  "geo": {
-    "@type": "GeoCoordinates",
-    "latitude": "41.0",
-    "longitude": "71.67"
-  },
-  "telephone": "+998939461699",
-  "email": "iceberg.edu.center@gmail.com",
-  "openingHours": "Mo-Sa 08:00-20:00",
-  "priceRange": "$$",
-  "currenciesAccepted": "UZS",
-  "paymentAccepted": "Cash, Bank Transfer",
-  "contactPoint": {
-    "@type": "ContactPoint",
-    "telephone": "+998939461699",
-    "contactType": "customer service",
-    "availableLanguage": ["Uzbek", "Russian", "English"]
-  }
-}
-</script>
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  "itemListElement": [
-    {"@type": "ListItem", "position": 1, "name": "Bosh sahifa", "item": "https://iceberglc.com/"},
-    {"@type": "ListItem", "position": 2, "name": "Aloqa", "item": "https://iceberglc.com/contact"}
-  ]
-}
-</script>
-{% endblock %}
-
-{% block styles %}
-{{ super() }}
-<style>
-    .contact-hero {
-        background:
-            linear-gradient(150deg, rgba(7, 20, 43, 0.84), rgba(16, 40, 76, 0.86)),
-            url('{{ asset_url("contact_hero_bg", "https://images.unsplash.com/photo-1586769852836-bc069f19e1b6?q=80&w=1974&auto=format&fit=crop") }}') center/cover;
-    }
-</style>
-{% endblock %}
-
+{% extends 'base.html' %}
+{% block title %}{{ 'Contact & campus information' if site_language == 'en' else 'Aloqa va filiallar' }} | ICEBERG{% endblock %}
+{% block meta_description %}<meta name="description" content="{{ 'Contact ICEBERG admissions in Namangan region. Request course fees, schedules, branch locations, or international cooperation information.' if site_language == 'en' else 'ICEBERG qabul jamoasi bilan bog‘laning. Kurs narxlari, jadval, filial manzili va hamkorlik haqida so‘rang.' }}">{% endblock %}
 {% block content %}
-<section class="page-hero">
-    <div class="page-hero-inner">
-        <div class="glass-hero-panel contact-hero reveal">
-            <h1>{{ content('contact_page_title', 'Aloqaga Chiqing') }}</h1>
-            <p>{{ content('contact_page_subtitle', "Savollaringizga javob berish va muvaffaqiyat sari yo'lingizni boshlashga yordam berish uchun shu yerdamiz.") }}</p>
-        </div>
-    </div>
-</section>
-
-<section class="section-shell">
-    <div class="page-grid lg:grid-cols-2">
-        <article class="form-shell">
-            <h2 class="section-title !text-3xl mb-4">Bizga xabar yuboring</h2>
-            {% with messages = get_flashed_messages(with_categories=true) %}
-              {% if messages %}
-                <div class="space-y-2 mb-4">
-                {% for category, message in messages %}
-                    <div class="flash-card {{ 'success' if category == 'success' else 'error' }}">{{ message }}</div>
-                {% endfor %}
-                </div>
-              {% endif %}
-            {% endwith %}
-
-            <form id="contactForm" action="{{ url_for('contact') }}" method="post" class="space-y-4" data-admin-trigger-name="{{ admin_trigger_name or 'admin' }}">
-                <div>
-                    <label for="name" class="field-label">To'liq ism</label>
-                    <input type="text" id="name" name="name" class="field-input" required>
-                </div>
-                <div id="phone-wrap">
-                    <label for="phone" class="field-label">Telefon raqamingiz</label>
-                    <div class="flex">
-                        <span class="inline-flex items-center px-3 rounded-l-xl border border-r-0 border-slate-300 bg-slate-50 text-slate-500 text-sm">+998</span>
-                        <input type="tel" id="phone" name="phone" required pattern="[0-9]{9}" title="9 xonali raqam kiriting" class="field-input rounded-l-none" placeholder="XX XXX XX XX">
-                    </div>
-                </div>
-                <div id="message-wrap">
-                    <label for="message" class="field-label">Xabar</label>
-                    <textarea id="message" name="message" rows="5" class="field-textarea" required></textarea>
-                </div>
-                <div id="admin-password-wrap" class="hidden">
-                    <label for="admin_password" class="field-label">Admin parol</label>
-                    <input type="password" id="admin_password" name="admin_password" class="field-input" autocomplete="current-password">
-                </div>
-                <div id="admin-secret-wrap" class="hidden">
-                    <label for="admin_secret_code" class="field-label">Admin secret code</label>
-                    <input type="password" id="admin_secret_code" name="admin_secret_code" class="field-input" autocomplete="one-time-code">
-                    <p class="text-xs text-slate-500 mt-2">Maxfiy kirish rejimida telefon va xabar maydoni talab qilinmaydi.</p>
-                </div>
-                <button type="submit" class="btn-main">Yuborish</button>
-            </form>
+<section class="editorial-hero"><div><h1>{{ 'Contact Iceberg' if site_language == 'en' else 'Iceberg bilan bog‘laning' }}</h1><p>{{ 'Course inquiries, campus visits, and cooperation proposals.' if site_language == 'en' else 'Kurslar, markazga tashrif va hamkorlik bo‘yicha murojaatlar.' }}</p></div></section>
+<section class="editorial-content">
+    <div class="editorial-grid">
+        <article class="editorial-card"><h2>{{ 'Admissions' if site_language == 'en' else 'Qabul' }}</h2>
+            <p><a href="tel:{{ registration.contact.call_center_phone }}">{{ registration.contact.call_center_display }}</a></p>
+            <p><a href="{{ registration.contact.telegram_url }}">{{ 'Message admissions on Telegram' if site_language == 'en' else 'Telegramda qabulga yozish' }}</a></p>
+            <p><a href="mailto:{{ contact_email }}">{{ contact_email }}</a></p>
+            <p>{{ 'For cooperation, use “International cooperation” in your email subject.' if site_language == 'en' else 'Hamkorlik xatining mavzusiga “International cooperation” yozing.' }}</p>
         </article>
-
-        <div class="space-y-4">
-            <article class="info-card">
-                <h3>Aloqa ma'lumotlari</h3>
-                <p><strong>Elektron pochta:</strong> <a href="mailto:{{ content('contact_email', 'iceberg.edu.center@gmail.com') }}" class="program-link">{{ content('contact_email', 'iceberg.edu.center@gmail.com') }}</a></p>
-                <p><strong>Telefon:</strong> <a href="tel:{{ content('contact_phone', '+998939461699') }}" class="program-link">{{ content('contact_phone_display', '(+998) 939461699') }}</a></p>
-                <p><strong>Manzil:</strong> <a href="{{ content('contact_address_url', 'https://www.google.com/maps/place/Uychi,+Uzbekistan/') }}" target="_blank" rel="noopener noreferrer" class="program-link">{{ content('contact_address', 'Uyci, Namangan Viloyati, Uzbekistan') }}</a></p>
-            </article>
-            <article class="info-card">
-                <h3>Bizning manzilimiz</h3>
-                <div class="relative w-full rounded-xl overflow-hidden border border-slate-200" style="aspect-ratio: 16 / 10;">
-                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d48448.83891956152!2d71.95111614999999!3d40.9931812!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x38bb7f5764470e91%3A0x49d1123a4816a26c!2sUychi%2C%20Uzbekistan!5e0!3m2!1sen!2sus!4v1678886400000!5m2!1sen!2sus" class="absolute inset-0 w-full h-full" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-                </div>
-            </article>
-        </div>
+        {% for branch in registration.branches if branch.id != 'unknown' %}
+        <article class="editorial-card"><h2>{{ branch.name_en if site_language == 'en' else branch.name }}</h2>
+            <p>{{ 'Namangan region, Uzbekistan' if site_language == 'en' else 'Namangan viloyati, O‘zbekiston' }}</p>
+            {% if branch.location %}<p>{{ branch.location_en if site_language == 'en' else branch.location }}</p>{% endif %}
+            {% if branch.phone %}<p><a href="tel:{{ branch.phone }}">{{ branch.phone }}</a></p>{% endif %}
+            {% if branch.telegram_username %}<p><a href="https://t.me/{{ branch.telegram_username }}">Telegram</a></p>{% endif %}
+            <p class="mt-3">{{ 'Confirm the precise address, opening hours, and available classes before visiting.' if site_language == 'en' else 'Tashrifdan oldin aniq manzil, ish vaqti va mavjud darslarni tasdiqlang.' }}</p>
+        </article>
+        {% endfor %}
     </div>
+    <article class="editorial-card mt-6">
+        <h2>{{ 'Send an inquiry' if site_language == 'en' else 'Xabar yuborish' }}</h2>
+        {% for category, message in get_flashed_messages(with_categories=true) %}<p role="status" class="info-notice">{{ message }}</p>{% endfor %}
+        <form id="contactForm" action="{{ registration.contact.telegram_url }}" method="get" data-static-lead-form="contact" class="space-y-4" data-contact-form>
+            <div><label class="field-label" for="name">{{ 'Full name' if site_language == 'en' else 'Ism va familiya' }}</label><input class="field-input" id="name" name="name" autocomplete="name" minlength="2" maxlength="100" required></div>
+            <div><label class="field-label" for="phone">{{ 'Uzbekistan phone number (9 digits, without +998)' if site_language == 'en' else 'Telefon raqami (9 xona, +998 siz)' }}</label><input class="field-input" id="phone" name="phone" type="tel" inputmode="tel" autocomplete="tel-national" pattern="[0-9]{9}" maxlength="9" placeholder="901234567" required></div>
+            <div><label class="field-label" for="message">{{ 'Message' if site_language == 'en' else 'Xabar' }}</label><textarea class="field-textarea" id="message" name="message" rows="5" minlength="5" maxlength="3000" required></textarea></div>
+            <p>{{ 'Please do not include sensitive documents or health details.' if site_language == 'en' else 'Maxfiy hujjatlar yoki sog‘liq ma’lumotlarini yubormang.' }} <a class="program-link" href="{{ local_url('/privacy') }}">{{ 'Privacy notice' if site_language == 'en' else 'Maxfiylik haqida' }}</a></p>
+            <button class="btn-main" type="submit">{{ 'Continue in Telegram' if site_language == 'en' else 'Telegramda davom etish' }}</button>
+            <p>{{ 'Telegram opens with your draft. Review and send it there; opening the chat does not send a message.' if site_language == 'en' else 'Telegram xabar loyihasi bilan ochiladi. Xabarni o‘sha yerda tekshirib yuboring; chatni ochishning o‘zi xabar yubormaydi.' }}</p><noscript><p><a href="{{ registration.contact.telegram_url }}">{{ 'Open the admissions chat and write your inquiry directly.' if site_language == 'en' else 'Qabul chatini ochib, xabaringizni bevosita yozing.' }}</a></p><style>#contactForm input, #contactForm textarea, #contactForm button, #contactForm label { display: none; }</style></noscript><p role="status" aria-live="polite" data-form-status></p>
+        </form>
+    </article>
 </section>
 {% endblock %}
-
-{% block scripts %}
-{{ super() }}
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const form = document.getElementById('contactForm');
-    const nameInput = document.getElementById('name');
-    const phoneWrap = document.getElementById('phone-wrap');
-    const phoneInput = document.getElementById('phone');
-    const messageWrap = document.getElementById('message-wrap');
-    const messageInput = document.getElementById('message');
-    const adminPasswordWrap = document.getElementById('admin-password-wrap');
-    const adminPasswordInput = document.getElementById('admin_password');
-    const adminSecretWrap = document.getElementById('admin-secret-wrap');
-    const adminSecretInput = document.getElementById('admin_secret_code');
-    const submitButton = form ? form.querySelector('button[type="submit"]') : null;
-
-    function syncHiddenAdminMode() {
-        if (!form || !nameInput || !phoneWrap || !phoneInput || !messageWrap || !messageInput || !adminPasswordWrap || !adminPasswordInput || !adminSecretWrap || !adminSecretInput) {
-            return;
-        }
-
-        const triggerName = (form.dataset.adminTriggerName || 'admin').toLowerCase().trim();
-        const enteredName = (nameInput.value || '').toLowerCase().trim();
-        const isAdminMode = enteredName === triggerName;
-
-        phoneWrap.classList.toggle('hidden', isAdminMode);
-        messageWrap.classList.toggle('hidden', isAdminMode);
-        adminPasswordWrap.classList.toggle('hidden', !isAdminMode);
-        adminSecretWrap.classList.toggle('hidden', !isAdminMode);
-
-        phoneInput.required = !isAdminMode;
-        messageInput.required = !isAdminMode;
-        adminPasswordInput.required = isAdminMode;
-        adminSecretInput.required = isAdminMode;
-
-        if (submitButton) {
-            submitButton.textContent = isAdminMode ? 'Admin kirish' : 'Yuborish';
-        }
-    }
-
-    if (nameInput) {
-        nameInput.addEventListener('input', syncHiddenAdminMode);
-        nameInput.addEventListener('change', syncHiddenAdminMode);
-    }
-    syncHiddenAdminMode();
-
-    const items = document.querySelectorAll('.reveal');
-    const observer = new IntersectionObserver(function(entries) {
-        entries.forEach(function(entry) {
-            if (!entry.isIntersecting) {
-                return;
-            }
-            entry.target.classList.add('visible');
-            observer.unobserve(entry.target);
-        });
-    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
-
-    items.forEach(function(item) {
-        observer.observe(item);
-    });
-});
-</script>
-{% endblock %}
+{% block scripts %}{{ super() }}<script src="{{ url_for('static', filename='js/firebase-forms.js', v='20261013-1') }}" defer></script>{% endblock %}
