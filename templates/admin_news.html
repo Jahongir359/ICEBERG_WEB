@@ -11,7 +11,6 @@
 <section class="surface-card p-6 mb-8 interactive-panel">
     <h2 class="text-xl font-semibold text-[#0D2444] mb-4">Yangi Post Qo'shish</h2>
     <form action="{{ url_for('admin_news') }}" method="POST" enctype="multipart/form-data" class="space-y-4">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <input type="hidden" name="action" value="create_post">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
@@ -74,7 +73,6 @@
         </div>
 
         <form action="{{ url_for('admin_news') }}" method="POST" class="space-y-4 mb-5">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <input type="hidden" name="action" value="update_post">
             <input type="hidden" name="post_id" value="{{ post.id }}">
 
@@ -121,7 +119,6 @@
         </form>
 
         <form action="{{ url_for('admin_news') }}" method="POST" enctype="multipart/form-data" class="border border-slate-200 rounded-xl p-4 mb-4">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <input type="hidden" name="action" value="upload_media">
             <input type="hidden" name="post_id" value="{{ post.id }}">
             <label class="block text-sm font-semibold text-gray-700 mb-2">Media qo'shish (bir nechta fayl):</label>
@@ -143,7 +140,6 @@
                 <div class="p-3">
                     <p class="text-xs text-gray-500 break-all">{{ media.file_path }}</p>
                     <form action="{{ url_for('admin_news') }}" method="POST" onsubmit="return confirm('Media o\'chirilsinmi?');" class="mt-2">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                         <input type="hidden" name="action" value="delete_media">
                         <input type="hidden" name="media_id" value="{{ media.id }}">
                         <button type="submit" class="text-sm text-red-600 hover:text-red-800 font-semibold" data-no-loading="true">Mediani o'chirish</button>
@@ -155,7 +151,6 @@
         {% endif %}
 
         <form action="{{ url_for('admin_news') }}" method="POST" onsubmit="return confirm('Post va barcha media o\'chirilsinmi?');" class="text-right">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <input type="hidden" name="action" value="delete_post">
             <input type="hidden" name="post_id" value="{{ post.id }}">
             <button type="submit" class="px-4 py-2 rounded-lg bg-red-600 text-white font-semibold hover:bg-red-700" data-no-loading="true">Postni O'chirish</button>

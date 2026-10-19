@@ -1,23 +1,118 @@
-{% extends 'base.html' %}
-{% block title %}{{ 'News & events' if site_language == 'en' else 'Yangiliklar va tadbirlar' }} | ICEBERG{% endblock %}
-{% block meta_description %}<meta name="description" content="{{ 'Educational news, events, and announcements from ICEBERG in Namangan, Uzbekistan.' if site_language == 'en' else 'ICEBERG ta’lim yangiliklari, tadbirlar va e’lonlar. Namangan, O‘zbekiston.' }}">{% endblock %}
+{% extends "base.html" %}
+
+{% block title %}Yangiliklar va Eventlar | ICEBERG O'quv Markazi{% endblock %}
+
+{% block meta_description %}<meta name="description" content="ICEBERG O'quv Markazi yangiliklari va eventlari. O'quvchilar muvaffaqiyatlari, ta'lim yangiliklari, seminarlar va maxsus tadbirlar haqida bilib oling.">{% endblock %}
+
+{% block og_description %}<meta property="og:description" content="ICEBERG O'quv Markazi yangiliklari va eventlari. O'quvchilar muvaffaqiyatlari, seminarlar va maxsus tadbirlar haqida bilib oling.">{% endblock %}
+{% block twitter_description %}<meta name="twitter:description" content="ICEBERG O'quv Markazi yangiliklari va eventlari. O'quvchilar muvaffaqiyatlari, seminarlar va maxsus tadbirlar haqida bilib oling.">{% endblock %}
+
+{% block schema %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {"@type": "ListItem", "position": 1, "name": "Bosh sahifa", "item": "https://iceberglc.com/"},
+    {"@type": "ListItem", "position": 2, "name": "Yangiliklar", "item": "https://iceberglc.com/news"}
+  ]
+}
+</script>
+{% endblock %}
+
+{% block styles %}
+{{ super() }}
+<style>
+    .news-hero {
+        background:
+            linear-gradient(145deg, rgba(7, 20, 43, 0.84), rgba(16, 40, 76, 0.86)),
+            url('https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?q=80&w=2070&auto=format&fit=crop') center/cover;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<section class="editorial-hero"><div><h1>{{ 'News & events' if site_language == 'en' else 'Yangiliklar va tadbirlar' }}</h1><p>{{ 'Updates, educational events, and announcements from the center.' if site_language == 'en' else 'Markazdagi loyihalar, tadbirlar va e’lonlar shu sahifada.' }}</p></div></section>
-<section class="editorial-content">
-{% if site_language == 'en' and posts %}<p class="info-notice">Event reports are shown in their original language.</p>{% endif %}
-{% for post in posts %}
-<article class="editorial-card news-post" lang="{{ post.language | default('uz') }}">
-    <p class="news-date">{{ post.event_date or post.created_at[:10] }}</p>
-    <h2>{{ post.title }}</h2>
-    {% if post.excerpt %}<p>{{ post.excerpt }}</p>{% endif %}
-    <p class="news-body">{{ post.body }}</p>
-    {% if post.media_items %}<div class="editorial-grid mt-6">
-    {% for media in post.media_items %}<figure>
-        {% if media.media_type == 'image' %}<img src="{{ url_for('static', filename=media.file_path) }}" alt="{{ media.caption or post.title }}" loading="lazy" width="640" height="400">
-        {% else %}<video controls preload="metadata" aria-label="{{ media.caption or post.title }}"><source src="{{ url_for('static', filename=media.file_path) }}">{{ 'Your browser does not support video.' if site_language == 'en' else 'Brauzeringiz videoni qo‘llab-quvvatlamaydi.' }}</video>{% endif %}
-        {% if media.caption %}<figcaption>{{ media.caption }}</figcaption>{% endif %}
-    </figure>{% endfor %}</div>{% endif %}
-</article>
-{% else %}<article class="editorial-card"><h2>{{ 'No published updates yet' if site_language == 'en' else 'Hozircha e’lon qilingan yangiliklar yo‘q' }}</h2><p>{{ 'Ask admissions about current activities and upcoming events.' if site_language == 'en' else 'Joriy faoliyat va yaqin tadbirlar haqida qabul jamoasidan so‘rang.' }}</p><a href="{{ local_url('/contact') }}">{{ 'Contact admissions' if site_language == 'en' else 'Qabul bilan bog‘lanish' }} →</a></article>{% endfor %}
+<section class="page-hero">
+    <div class="page-hero-inner">
+        <div class="glass-hero-panel news-hero reveal">
+            <h1>Yangiliklar va Eventlar</h1>
+            <p>Markazdagi yangi loyihalar, tadbirlar va e'lonlar shu sahifada.</p>
+        </div>
+    </div>
 </section>
+
+<section class="section-shell">
+    <div class="page-grid">
+        {% if posts %}
+        <div class="space-y-5">
+            {% for post in posts %}
+            <article class="info-card">
+                <div class="flex flex-wrap items-center gap-2 mb-3">
+                    <span class="soft-pill {{ 'bg-blue-100 text-blue-700 border-blue-200' if post.post_type == 'news' else 'bg-amber-100 text-amber-700 border-amber-200' }}">
+                        {{ 'Yangilik' if post.post_type == 'news' else 'Event' }}
+                    </span>
+                    {% if post.event_date %}
+                    <span class="text-xs text-slate-500">{{ post.event_date }}</span>
+                    {% endif %}
+                    <span class="text-xs text-slate-400">{{ post.created_at[:10] }}</span>
+                </div>
+
+                <h2 class="section-title !text-3xl mb-2">{{ post.title }}</h2>
+                {% if post.excerpt %}
+                <p class="text-slate-600 text-lg mb-3">{{ post.excerpt }}</p>
+                {% endif %}
+                <p class="text-slate-700 whitespace-pre-line">{{ post.body }}</p>
+
+                {% if post.media_items %}
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-5">
+                    {% for media in post.media_items %}
+                    <div class="surface-card overflow-hidden">
+                        {% if media.media_type == 'image' %}
+                        <img src="{{ url_for('static', filename=media.file_path) }}" alt="{{ media.caption or post.title }}" class="w-full h-56 object-cover">
+                        {% else %}
+                        <video controls class="w-full h-56 object-cover bg-black">
+                            <source src="{{ url_for('static', filename=media.file_path) }}">
+                            Sizning brauzeringiz videoni qo'llab-quvvatlamaydi.
+                        </video>
+                        {% endif %}
+                        {% if media.caption %}
+                        <p class="text-sm text-slate-600 px-3 py-2">{{ media.caption }}</p>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </article>
+            {% endfor %}
+        </div>
+        {% else %}
+        <article class="info-card text-center">
+            <h3 class="section-title !text-3xl mb-2">Hozircha yangiliklar yo'q</h3>
+            <p>Tez orada bu yerda yangi postlar joylanadi.</p>
+        </article>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const items = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+            if (!entry.isIntersecting) {
+                return;
+            }
+            entry.target.classList.add('visible');
+            observer.unobserve(entry.target);
+        });
+    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+
+    items.forEach(function(item) {
+        observer.observe(item);
+    });
+});
+</script>
 {% endblock %}

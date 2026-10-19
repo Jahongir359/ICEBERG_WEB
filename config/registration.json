@@ -6,65 +6,23 @@
     "telegram_url": "https://t.me/iceberg_qabulxona"
   },
   "programs": [
-    {
-      "id": "ielts",
-      "name": "IELTS",
-      "active": true,
-      "name_en": "IELTS"
-    },
-    {
-      "id": "english",
-      "name": "CEFR / Ingliz tili",
-      "active": true,
-      "name_en": "CEFR / English"
-    },
-    {
-      "id": "sat",
-      "name": "SAT",
-      "active": true,
-      "name_en": "SAT"
-    },
-    {
-      "id": "mathematics",
-      "name": "Matematika",
-      "active": true,
-      "name_en": "Mathematics"
-    },
-    {
-      "id": "chemistry",
-      "name": "Kimyo",
-      "active": true,
-      "name_en": "Chemistry"
-    },
-    {
-      "id": "biology",
-      "name": "Biologiya",
-      "active": true,
-      "name_en": "Biology"
-    }
+    {"id": "ielts", "name": "IELTS", "active": true},
+    {"id": "english", "name": "CEFR / Ingliz tili", "active": true},
+    {"id": "sat", "name": "SAT", "active": true},
+    {"id": "mathematics", "name": "Matematika", "active": true},
+    {"id": "chemistry", "name": "Kimyo", "active": true},
+    {"id": "biology", "name": "Biologiya", "active": true}
   ],
   "branches": [
-    {
-      "id": "main",
-      "name": "Asosiy filial",
-      "active": true,
-      "name_en": "Main branch"
-    },
+    {"id": "main", "name": "Asosiy filial", "active": true},
     {
       "id": "gayrat",
       "name": "G'ayrat filiali",
       "active": true,
       "location": "Oilaviy poliklinika yonidagi binoning 2-qavati",
       "phone": "+998994576699",
-      "telegram_username": "Gayrat_qabulxona",
-      "name_en": "G’ayrat branch",
-      "location_en": "Second floor of the building beside the family polyclinic"
+      "telegram_username": "Gayrat_qabulxona"
     },
-    {
-      "id": "unknown",
-      "name": "Filialni bilmayman",
-      "active": true,
-      "name_en": "I do not know the branch"
-    }
+    {"id": "unknown", "name": "Filialni bilmayman", "active": true}
   ]
 }

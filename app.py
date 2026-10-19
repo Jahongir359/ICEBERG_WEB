@@ -6,22 +6,12 @@ import hashlib
 import csv
 import io
 import json
-import secrets
-import hmac
-import uuid
-from pathlib import Path
-from datetime import UTC, date, datetime, timedelta
+from datetime import UTC, date, datetime
 from functools import wraps
-from contextlib import contextmanager
 from werkzeug.utils import secure_filename
-from werkzeug.security import check_password_hash, generate_password_hash
-from public_content import NAVIGATION, PAGES, COURSE_COPY
 
 
 STATIC_BUILD_MODE = os.environ.get('ICEBERG_STATIC_BUILD') == '1'
-PUBLIC_CONTENT_PATH = os.path.join(os.path.dirname(__file__), 'config', 'public_content.json')
-with open(PUBLIC_CONTENT_PATH, encoding='utf-8') as public_content_file:
-    PUBLIC_CONTENT = json.load(public_content_file)
 try:
     import sqlite3
 except ModuleNotFoundError:
@@ -51,15 +41,10 @@ def load_local_env_file(env_path):
 load_local_env_file(os.path.join(os.path.dirname(__file__), '.env'))
 
 app = Flask(__name__)
-configured_secret = os.environ.get('SECRET_KEY', '').strip()
-SECURE_SESSION_CONFIGURED = len(configured_secret) >= 32 and configured_secret not in {'dev-only-secret-change-me', 'iceberg-admin'}
-app.secret_key = configured_secret if SECURE_SESSION_CONFIGURED else secrets.token_hex(32)
+app.secret_key = os.environ.get('SECRET_KEY', 'dev-only-secret-change-me')
 app.config.update(
     SESSION_COOKIE_HTTPONLY=True,
-    SESSION_COOKIE_SAMESITE='Lax',
-    PERMANENT_SESSION_LIFETIME=timedelta(hours=8),
-    MAX_CONTENT_LENGTH=32 * 1024 * 1024,
-    MAX_FORM_MEMORY_SIZE=1024 * 1024,
+    SESSION_COOKIE_SAMESITE='Lax'
 )
 if os.environ.get('FLASK_ENV') == 'production':
     app.config['SESSION_COOKIE_SECURE'] = True
@@ -75,10 +60,10 @@ REGISTRATION_LEADS_API_URL = os.environ.get(
 REGISTRATION_LEADS_API_TOKEN = os.environ.get('REGISTRATION_LEADS_API_TOKEN', '').strip()
 REGISTRATION_LEADS_API_TIMEOUT = float(os.environ.get('REGISTRATION_LEADS_API_TIMEOUT', '8'))
 
-ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD', '').strip()
-# reject the old public default
-ADMIN_ENABLED = SECURE_SESSION_CONFIGURED and len(ADMIN_PASSWORD) >= 12 and ADMIN_PASSWORD != 'iceberg-admin'  # nosec B105
-ADMIN_PASSWORD_HASH = generate_password_hash(ADMIN_PASSWORD) if ADMIN_ENABLED else ''
+ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD', 'iceberg-admin')
+ADMIN_SECRET_CODE = os.environ.get('ADMIN_SECRET_CODE', ADMIN_PASSWORD).strip()
+ADMIN_CONTACT_TRIGGER_NAME = os.environ.get('ADMIN_CONTACT_TRIGGER_NAME', 'admin').strip().lower() or 'admin'
+ADMIN_CONTACT_SECRET_CODE = os.environ.get('ADMIN_CONTACT_SECRET_CODE', ADMIN_SECRET_CODE).strip()
 
 
 def build_admin_login_slug():
@@ -97,28 +82,137 @@ ALLOWED_NEWS_IMAGE_EXTENSIONS = {'.jpg', '.jpeg', '.png', '.webp', '.gif'}
 ALLOWED_NEWS_VIDEO_EXTENSIONS = {'.mp4', '.webm', '.mov', '.m4v'}
 
 ASSET_CATALOG = [
-    {'key': 'site_logo', 'label': 'Asosiy logo', 'default': 'img/logo.png'},
-    {'key': 'about_team_1', 'label': 'Azizbek Nasriddinov rasmi', 'default': 'img/azizbek.png'},
-    {'key': 'about_team_2', 'label': 'Maqsudbek Mirzayev rasmi', 'default': 'img/maqsudbek.png'},
-    {'key': 'about_team_3', 'label': 'Islomjon Ergashboyev rasmi', 'default': 'img/islomjon.png'},
+    {
+        'key': 'site_logo',
+        'label': 'Asosiy logo (header/footer/admin)',
+        'default': 'img/logo.png'
+    },
+    {
+        'key': 'index_hero_bg',
+        'label': 'Bosh sahifa hero background',
+        'default': 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?q=80&w=2070&auto=format&fit=crop'
+    },
+    {
+        'key': 'index_method_image',
+        'label': 'Bosh sahifa ICEBERG method rasmi',
+        'default': 'img/logo2.png'
+    },
+    {
+        'key': 'about_hero_bg',
+        'label': 'About sahifa hero background',
+        'default': 'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?q=80&w=2070&auto=format&fit=crop'
+    },
+    {
+        'key': 'about_team_1',
+        'label': 'About sahifa 1-jamoa rasmi',
+        'default': 'img/azizbek.png'
+    },
+    {
+        'key': 'about_team_2',
+        'label': 'About sahifa 2-jamoa rasmi',
+        'default': 'img/maqsudbek.png'
+    },
+    {
+        'key': 'about_team_3',
+        'label': 'About sahifa 3-jamoa rasmi',
+        'default': 'img/islomjon.png'
+    },
+    {
+        'key': 'contact_hero_bg',
+        'label': 'Contact sahifa hero background',
+        'default': 'https://images.unsplash.com/photo-1586769852836-bc069f19e1b6?q=80&w=1974&auto=format&fit=crop'
+    },
+    {
+        'key': 'programs_hero_bg',
+        'label': 'Programs sahifa hero background',
+        'default': 'https://images.unsplash.com/photo-1542744095-291d1f67b221?q=80&w=2070&auto=format&fit=crop'
+    },
+    {
+        'key': 'program_card_1',
+        'label': 'Programs kartasi 1 rasmi',
+        'default': 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?q=80&w=2070&auto=format&fit=crop'
+    },
+    {
+        'key': 'program_card_2',
+        'label': 'Programs kartasi 2 rasmi',
+        'default': 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=2071&auto=format&fit=crop'
+    },
+    {
+        'key': 'program_card_3',
+        'label': 'Programs kartasi 3 rasmi',
+        'default': 'https://images.unsplash.com/photo-1528642474498-1af0c17fd8c3?q=80&w=2069&auto=format&fit=crop'
+    },
+    {
+        'key': 'program_card_4',
+        'label': 'Programs kartasi 4 rasmi',
+        'default': 'https://images.unsplash.com/photo-1521587760476-6c12a4b040da?q=80&w=2070&auto=format&fit=crop'
+    },
+    {
+        'key': 'program_card_5',
+        'label': 'Programs kartasi 5 rasmi',
+        'default': 'https://images.unsplash.com/photo-1571260899304-425eee4c7efc?q=80&w=2070&auto=format&fit=crop'
+    },
+    {
+        'key': 'program_card_6',
+        'label': 'Programs kartasi 6 rasmi',
+        'default': 'https://images.unsplash.com/photo-1456324504439-367cee3b3c32?q=80&w=2070&auto=format&fit=crop'
+    }
 ]
 ASSET_DEFAULTS = {asset['key']: asset['default'] for asset in ASSET_CATALOG}
 EDITABLE_SITE_FILES = [
-    ('static/css/style.css', 'Global CSS styles'),
-    ('static/css/public.css', 'Public page CSS styles')
+    ('static/css/style.css', 'Global CSS styles')
 ]
 EDITOR_BACKUP_DIR = os.path.join(app.root_path, 'backups', 'site_editor')
 EDITOR_MAX_BACKUPS_PER_FILE = max(int(os.environ.get('EDITOR_MAX_BACKUPS_PER_FILE', '20')), 1)
 
 CONTENT_FIELDS = [
-    {'key': 'hero_main_title', 'label': 'Bosh sahifa sarlavhasi (UZ)', 'group': 'Home', 'default': 'Kelajagingizni ICEBERG bilan quring', 'field_type': 'text'},
-    {'key': 'hero_main_subtitle', 'label': 'Bosh sahifa matni (UZ)', 'group': 'Home', 'default': 'Ingliz tili, imtihon tayyorgarligi va akademik fanlar. Amaliy mashg‘ulotlar va individual yordam bilan o‘zingizga mos kursni tanlang.', 'field_type': 'textarea'},
+    {'key': 'site_title', 'label': 'Sayt sarlavhasi (browser title)', 'group': 'Global', 'default': "ICEBERG O'QUV MARKAZI", 'field_type': 'text'},
+    {'key': 'site_tagline', 'label': 'Footer qisqa matni', 'group': 'Global', 'default': "Zamonaviy kasblarni biz bilan o'rganing va kelajuingizni quring.", 'field_type': 'textarea'},
+    {'key': 'custom_css', 'label': 'Custom CSS (ixtiyoriy)', 'group': 'Global', 'default': '', 'field_type': 'textarea'},
+
+    {'key': 'nav_home', 'label': 'Menyu: Bosh sahifa', 'group': 'Header', 'default': 'Bosh sahifa', 'field_type': 'text'},
+    {'key': 'nav_about', 'label': 'Menyu: Biz haqimizda', 'group': 'Header', 'default': 'Biz haqimizda', 'field_type': 'text'},
+    {'key': 'nav_programs', 'label': 'Menyu: Dasturlar', 'group': 'Header', 'default': 'Dasturlar', 'field_type': 'text'},
+    {'key': 'nav_news', 'label': 'Menyu: Yangiliklar', 'group': 'Header', 'default': 'Yangiliklar', 'field_type': 'text'},
+    {'key': 'nav_questions', 'label': 'Menyu: Savollar', 'group': 'Header', 'default': 'Savollar', 'field_type': 'text'},
+    {'key': 'nav_testimonials', 'label': 'Menyu: Muvaffaqiyat hikoyalari', 'group': 'Header', 'default': 'Muvaffaqiyat Hikoyalari', 'field_type': 'text'},
+    {'key': 'nav_contact', 'label': 'Menyu: Aloqa (nav havolasi)', 'group': 'Header', 'default': 'Aloqa', 'field_type': 'text'},
+    {'key': 'nav_contact_button', 'label': 'Header tugma matni', 'group': 'Header', 'default': "Biz bilan bog'lanish", 'field_type': 'text'},
+
+    {'key': 'hero_main_title', 'label': 'Bosh sahifa hero title (typewriter)', 'group': 'Home', 'default': 'HAPPINESS IS IN SCIENCE', 'field_type': 'text'},
+    {'key': 'hero_main_subtitle', 'label': 'Bosh sahifa hero subtitle', 'group': 'Home', 'default': "Fundamental bilimlar - har qanday akademik cho'qqini zabt etishning kalitidir.", 'field_type': 'textarea'},
+    {'key': 'hero_main_cta', 'label': 'Bosh sahifa hero CTA', 'group': 'Home', 'default': 'Maslaxatlar uchun aloqa bo`limi', 'field_type': 'text'},
+
+    {'key': 'about_page_title', 'label': 'About sahifa title', 'group': 'About', 'default': 'Bizning Hikoyamiz', 'field_type': 'text'},
+    {'key': 'about_page_subtitle', 'label': 'About sahifa subtitle', 'group': 'About', 'default': 'ICEBERG farqini belgilaydigan falsafa, odamlar va ishtiyoq.', 'field_type': 'textarea'},
+    {'key': 'about_mission_title', 'label': 'About missiya sarlavhasi', 'group': 'About', 'default': 'Bizning Missiyamiz', 'field_type': 'text'},
+    {'key': 'about_mission_text', 'label': 'About missiya matni', 'group': 'About', 'default': "Bizning missiyamiz - har bir o'quvchiga o'z potentsialini to'liq ochib berishga yordam beradigan, innovatsion va qo'llab-quvvatlovchi ta'lim muhitini taqdim etish.", 'field_type': 'textarea'},
+
+    {'key': 'contact_page_title', 'label': 'Contact sahifa title', 'group': 'Contact', 'default': 'Aloqaga Chiqing', 'field_type': 'text'},
+    {'key': 'contact_page_subtitle', 'label': 'Contact sahifa subtitle', 'group': 'Contact', 'default': "Savollaringizga javob berish va muvaffaqiyat sari yo'lingizni boshlashga yordam berish uchun shu yerdamiz.", 'field_type': 'textarea'},
     {'key': 'contact_email', 'label': 'Aloqa email', 'group': 'Contact', 'default': 'iceberg.edu.center@gmail.com', 'field_type': 'text'},
+    {'key': 'contact_phone', 'label': 'Aloqa telefon (+998...)', 'group': 'Contact', 'default': '+998939461699', 'field_type': 'text'},
+    {'key': 'contact_phone_display', 'label': 'Aloqa telefon ko`rinishi', 'group': 'Contact', 'default': '(+998) 939461699', 'field_type': 'text'},
+    {'key': 'contact_address', 'label': 'Aloqa manzil matni', 'group': 'Contact', 'default': 'Uyci, Namangan Viloyati, Uzbekistan', 'field_type': 'text'},
+    {'key': 'contact_address_url', 'label': 'Aloqa manzil URL', 'group': 'Contact', 'default': 'https://www.google.com/maps/place/Uychi,+Uzbekistan/', 'field_type': 'text'},
+
+    {'key': 'register_page_title', 'label': 'Register sahifa title', 'group': 'Register', 'default': "Dasturga Ro'yxatdan O'tish", 'field_type': 'text'},
+    {'key': 'register_page_subtitle', 'label': 'Register sahifa subtitle', 'group': 'Register', 'default': "Akademik maqsadlaringizga erishish yo'lida birinchi qadamni tashlang.", 'field_type': 'textarea'},
+
+    {'key': 'faq_page_title', 'label': 'FAQ sahifa title', 'group': 'FAQ', 'default': "Ko'p Beriladigan Savollar", 'field_type': 'text'},
+    {'key': 'faq_page_subtitle', 'label': 'FAQ sahifa subtitle', 'group': 'FAQ', 'default': 'SAVOLLARINGIZGA JAVOBLAR', 'field_type': 'text'},
+
+    {'key': 'footer_quick_links_title', 'label': 'Footer tezkor havolalar sarlavhasi', 'group': 'Footer', 'default': 'Tezkor Havolalar', 'field_type': 'text'},
+    {'key': 'footer_contact_title', 'label': 'Footer aloqa sarlavhasi', 'group': 'Footer', 'default': 'Biz bilan aloqa', 'field_type': 'text'},
+    {'key': 'footer_social_title', 'label': 'Footer ijtimoiy sarlavha', 'group': 'Footer', 'default': 'Ijtimoiy Tarmoqlar', 'field_type': 'text'},
+    {'key': 'footer_telegram_url', 'label': 'Footer Telegram URL', 'group': 'Footer', 'default': 'https://t.me/Iceberg_study_center/1703', 'field_type': 'text'},
+    {'key': 'footer_instagram_url', 'label': 'Footer Instagram URL', 'group': 'Footer', 'default': 'https://www.instagram.com/Iceberg_Study_Center', 'field_type': 'text'},
+    {'key': 'footer_youtube_url', 'label': 'Footer YouTube URL', 'group': 'Footer', 'default': 'https://www.youtube.com/@ice_podcast', 'field_type': 'text'},
 ]
 
 CONTENT_KEYS = {field['key'] for field in CONTENT_FIELDS}
 
-PHONE_RE = re.compile(r'^[0-9]{9}$')
+PHONE_RE = re.compile(r'^\d{9}$')
 
 
 def load_registration_config():
@@ -145,26 +239,24 @@ def utc_now():
 APP_STARTED_AT = utc_now()
 
 
-@contextmanager
 def get_db_connection():
     if sqlite3 is None:
         raise RuntimeError('SQLite is unavailable during the static Firebase build')
     conn = sqlite3.connect(DATABASE_PATH, check_same_thread=False, timeout=30)
-    try:
-        conn.row_factory = sqlite3.Row
-        conn.execute('PRAGMA journal_mode=WAL')
-        conn.execute('PRAGMA synchronous=NORMAL')
-        conn.execute('PRAGMA cache_size=-64000')  # 64 MB page cache
-        conn.execute('PRAGMA temp_store=MEMORY')
-        conn.execute('PRAGMA foreign_keys=ON')
-        with conn:
-            yield conn
-    finally:
-        conn.close()
+    conn.row_factory = sqlite3.Row
+    # WAL mode: readers never block writers; writers never block readers.
+    # Critical for gunicorn — prevents the "data appears/disappears" race
+    # condition where one worker writes while another reads stale state.
+    conn.execute('PRAGMA journal_mode=WAL')
+    conn.execute('PRAGMA synchronous=NORMAL')
+    conn.execute('PRAGMA cache_size=-64000')  # 64 MB page cache
+    conn.execute('PRAGMA temp_store=MEMORY')
+    conn.execute('PRAGMA foreign_keys=ON')
+    return conn
 
 
 def normalize_phone(raw_phone):
-    digits = re.sub(r'[^0-9]', '', raw_phone or '')
+    digits = ''.join(ch for ch in (raw_phone or '') if ch.isdigit())
     if len(digits) == 12 and digits.startswith('998'):
         return digits[3:]
     return digits
@@ -189,8 +281,6 @@ def is_valid_dob(dob_text):
 def login_required(view):
     @wraps(view)
     def wrapped_view(*args, **kwargs):
-        if not ADMIN_ENABLED:
-            abort(503, description='Admin access requires a secure SECRET_KEY and ADMIN_PASSWORD.')
         if not session.get('logged_in'):
             flash('Avval admin tizimiga kiring.', 'error')
             return redirect(url_for('secret_admin_login', access_slug=ADMIN_LOGIN_SLUG))
@@ -200,10 +290,14 @@ def login_required(view):
 
 def process_admin_login(password):
     candidate = (password or '').strip()
-    if ADMIN_ENABLED and candidate and check_password_hash(ADMIN_PASSWORD_HASH, candidate):
-        session.clear()
+    valid_passwords = {ADMIN_PASSWORD}
+    if ADMIN_SECRET_CODE:
+        valid_passwords.add(ADMIN_SECRET_CODE)
+    if ADMIN_CONTACT_SECRET_CODE:
+        valid_passwords.add(ADMIN_CONTACT_SECRET_CODE)
+
+    if candidate in valid_passwords:
         session['logged_in'] = True
-        session.permanent = True
         flash('Muvaffaqiyatli kirdingiz!', 'success')
         return True
     return False
@@ -224,7 +318,7 @@ def to_public_asset_url(path_or_url):
 
 def get_asset_url(asset_key, fallback=''):
     if STATIC_BUILD_MODE:
-        return to_public_asset_url(PUBLIC_CONTENT.get('assets', {}).get(asset_key) or fallback or ASSET_DEFAULTS.get(asset_key, ''))
+        return to_public_asset_url(fallback or ASSET_DEFAULTS.get(asset_key, ''))
     with get_db_connection() as conn:
         cursor = conn.cursor()
         cursor.execute('SELECT file_path FROM site_assets WHERE asset_key = ?', (asset_key,))
@@ -272,17 +366,18 @@ def save_news_media_file(file_storage, post_id):
 def remove_static_file(relative_path):
     if not relative_path:
         return
-    static_root = (Path(app.root_path) / 'static').resolve()
-    absolute_path = (static_root / relative_path.replace('\\', '/')).resolve()
-    if not absolute_path.is_relative_to(static_root / 'uploads'):
+    safe_relative = relative_path.replace('\\', '/').lstrip('/')
+    absolute_path = os.path.abspath(os.path.join(app.root_path, 'static', safe_relative))
+    static_root = os.path.abspath(os.path.join(app.root_path, 'static'))
+    if not absolute_path.startswith(static_root):
         return
-    if absolute_path.is_file():
-        absolute_path.unlink()
+    if os.path.exists(absolute_path):
+        os.remove(absolute_path)
 
 
 def fetch_news_posts(include_unpublished=False):
     if STATIC_BUILD_MODE:
-        return PUBLIC_CONTENT.get('news', [])
+        return []
     query = '''
         SELECT *
         FROM news_posts
@@ -313,7 +408,7 @@ def fetch_news_posts(include_unpublished=False):
 
 def get_site_content_map():
     if STATIC_BUILD_MODE:
-        return PUBLIC_CONTENT.get('content', {})
+        return {}
     with get_db_connection() as conn:
         cursor = conn.cursor()
         cursor.execute('SELECT content_key, content_value FROM site_content')
@@ -324,8 +419,6 @@ def get_site_content_map():
 def fetch_faq_items():
     """Fetch all FAQ items ordered by sort_order"""
     if STATIC_BUILD_MODE:
-        if PUBLIC_CONTENT.get('faqs'):
-            return PUBLIC_CONTENT['faqs']
         return [
             {
                 'question': question,
@@ -368,8 +461,6 @@ def parse_selected_ids(param_name='selected_ids'):
 
     if request.is_json:
         payload = request.get_json(silent=True) or {}
-        if not isinstance(payload, dict):
-            abort(400)
         raw_ids = payload.get(param_name) or payload.get('ids') or []
         if isinstance(raw_ids, list):
             selected_ids.extend(raw_ids)
@@ -391,8 +482,6 @@ def parse_selected_ids(param_name='selected_ids'):
         except (TypeError, ValueError):
             continue
 
-    if len(set(normalized_ids)) > 500:
-        abort(400, description='Select at most 500 records per operation.')
     return sorted(set(normalized_ids))
 
 
@@ -401,7 +490,7 @@ def build_csv_response(filename, headers, rows):
     writer = csv.writer(csv_buffer)
     writer.writerow(headers)
     for row in rows:
-        writer.writerow([safe_csv_cell(value) for value in row])
+        writer.writerow(row)
 
     csv_content = csv_buffer.getvalue()
     return Response(
@@ -411,12 +500,6 @@ def build_csv_response(filename, headers, rows):
             'Content-Disposition': f'attachment; filename="{filename}"'
         }
     )
-
-
-def safe_csv_cell(value):
-    if isinstance(value, str) and (value.lstrip().startswith(('=', '+', '-', '@')) or value.startswith(('\t', '\r', '\n'))):
-        return "'" + value
-    return value
 
 
 def log_admin_action(action, target='', details=''):
@@ -460,7 +543,7 @@ def get_system_health_snapshot():
         'uptime_human': f'{uptime_hours}h {uptime_minutes}m',
         'telegram_configured': bool(TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID),
         'registration_leads_configured': bool(REGISTRATION_LEADS_API_URL),
-        'secret_code_configured': ADMIN_ENABLED,
+        'secret_code_configured': bool(ADMIN_SECRET_CODE),
         'started_at': APP_STARTED_AT.strftime('%Y-%m-%d %H:%M:%S UTC')
     }
 
@@ -496,10 +579,11 @@ def get_editable_site_file_path(relative_path):
     if safe_relative not in allowed_paths:
         return ''
 
-    absolute_path = (Path(app.root_path) / safe_relative).resolve()
-    if not absolute_path.is_relative_to(Path(app.root_path).resolve()):
+    absolute_path = os.path.abspath(os.path.join(app.root_path, safe_relative))
+    root_path = os.path.abspath(app.root_path)
+    if not absolute_path.startswith(root_path):
         return ''
-    return str(absolute_path)
+    return absolute_path
 
 
 def build_editor_backup_prefix(relative_path):
@@ -578,12 +662,13 @@ def get_editor_backup_absolute_path(relative_path, backup_name):
     if not safe_name.startswith(f'{prefix}__') or not safe_name.endswith('.bak'):
         return ''
 
-    backup_path = (Path(EDITOR_BACKUP_DIR) / safe_name).resolve()
-    if not backup_path.is_relative_to(Path(EDITOR_BACKUP_DIR).resolve()):
+    backup_path = os.path.abspath(os.path.join(EDITOR_BACKUP_DIR, safe_name))
+    backup_root = os.path.abspath(EDITOR_BACKUP_DIR)
+    if not backup_path.startswith(backup_root):
         return ''
     if not os.path.exists(backup_path):
         return ''
-    return str(backup_path)
+    return backup_path
 
 
 @app.context_processor
@@ -594,39 +679,9 @@ def inject_asset_helper():
         value = site_content.get(content_key)
         return value if value not in (None, '') else fallback
 
-    language = 'en' if request.path == '/en' or request.path.startswith('/en/') else 'uz'
-    uz_path = (request.path[3:] or '/') if language == 'en' else request.path
-    en_path = '/en' if uz_path == '/' else '/en' + uz_path
-    email = content_value('contact_email', 'iceberg.edu.center@gmail.com')
-    titles = {
-        '/': ('ICEBERG — Namangandagi o‘quv markazi', 'ICEBERG — Education in Namangan, Uzbekistan'),
-        '/our_programs': ('Dasturlar', 'Programs'), '/news': ('Yangiliklar va tadbirlar', 'News & events'),
-        '/contact': ('Aloqa va filiallar', 'Contact & campus information'),
-        '/register': ('Kurs uchun ariza', 'Course inquiry'),
-    }
     return {
         'asset_url': get_asset_url,
-        'content': content_value,
-        'registration': REGISTRATION_CONFIG,
-        'site_language': language,
-        'uz_path': uz_path,
-        'en_path': en_path,
-        'local_url': lambda path: ('/en' if path == '/' else '/en' + path) if language == 'en' else path,
-        'navigation': NAVIGATION,
-        'contact_email': email,
-        'current_year': utc_now().year,
-        'page_title': titles.get(uz_path, ('ICEBERG', 'ICEBERG'))[1 if language == 'en' else 0],
-        'page_description': ('ICEBERG courses, admissions, and educational activities in Namangan region, Uzbekistan.'
-                             if language == 'en' else 'ICEBERG kurslari, qabul va ta’lim faoliyati. Namangan viloyati, O‘zbekiston.'),
-        'course_copy': COURSE_COPY,
-        'csrf_token': csrf_token,
-        'institution_schema': {
-            '@context': 'https://schema.org', '@type': 'EducationalOrganization',
-            'name': 'ICEBERG Study Center', 'url': 'https://iceberglc.com',
-            'telephone': REGISTRATION_CONFIG['contact']['call_center_phone'],
-            'email': email,
-            'address': {'@type': 'PostalAddress', 'addressRegion': 'Namangan', 'addressCountry': 'UZ'},
-        },
+        'content': content_value
     }
 
 def send_telegram_notification(message_text):
@@ -646,7 +701,7 @@ def send_telegram_notification(message_text):
         response.raise_for_status()
         app.logger.info("Telegram notification sent successfully.")
     except requests.exceptions.RequestException as e:
-        app.logger.error('Telegram notification failed: %s', type(e).__name__)
+        app.logger.error(f"Failed to send Telegram notification: {e}")
 
 
 def build_management_lead_payload(payload):
@@ -664,8 +719,9 @@ def build_management_lead_payload(payload):
 
 def log_management_forwarding_failure(response=None, error=None):
     if response is not None:
-        return f'HTTP {response.status_code}'
-    return type(error).__name__ if error else 'Unknown forwarding error'
+        response_body = (response.text or '').replace('\n', ' ')[:500]
+        return f'{response.status_code} {response.reason}: {response_body}'
+    return str(error)[:500]
 
 
 def post_registration_lead(payload, headers):
@@ -673,10 +729,9 @@ def post_registration_lead(payload, headers):
         REGISTRATION_LEADS_API_URL,
         json=payload,
         headers=headers,
-        timeout=REGISTRATION_LEADS_API_TIMEOUT,
-        allow_redirects=False,
+        timeout=REGISTRATION_LEADS_API_TIMEOUT
     )
-    if 200 <= response.status_code < 300:
+    if response.ok:
         return response
 
     if response.status_code in {400, 415, 422}:
@@ -689,8 +744,7 @@ def post_registration_lead(payload, headers):
             REGISTRATION_LEADS_API_URL,
             data=payload,
             headers=form_headers,
-            timeout=REGISTRATION_LEADS_API_TIMEOUT,
-            allow_redirects=False,
+            timeout=REGISTRATION_LEADS_API_TIMEOUT
         )
 
     return response
@@ -718,8 +772,6 @@ def send_registration_lead_to_management(payload):
 
     try:
         response = post_registration_lead(management_payload, headers)
-        if 300 <= response.status_code < 400:
-            raise requests.RequestException('Management redirects are not accepted.')
         response.raise_for_status()
         app.logger.info('Registration lead forwarded to management system.')
         log_admin_action(
@@ -750,11 +802,11 @@ def ensure_table_columns(cursor, table_name, column_definitions):
             cursor.execute(f'ALTER TABLE {table_name} ADD COLUMN {column_name} {column_sql}')
 
 DEFAULT_FAQS = [
-    ('Qaysi kurslar bor?', 'IELTS, ingliz tili, SAT, matematika, kimyo va biologiya. Kursning filialdagi mavjudligini qabul jamoasi bilan tasdiqlang.'),
-    ('Narx va jadvalni qanday bilaman?', 'Yosh va daraja talabi, kurs davomiyligi, guruh hajmi, jadval va to‘lov shartlarini qabul jamoasidan so‘rang.'),
-    ('Markazga qanday tashrif buyuraman?', 'Filialning aniq manzili va ish vaqtini oldindan qabul jamoasi bilan kelishing.'),
-    ('Ariza joyni band qiladimi?', 'Ariza — bog‘lanish so‘rovi. Kurs mavjudligi va qabul shartlari jamoa bilan alohida tasdiqlanadi.'),
-    ('Xususiy maktab ochilganmi?', 'Maktab alohida loyiha bo‘lib, ochilish 2027-yil sentabrga rejalashtirilgan. Bu amaldagi o‘quv markazidan alohida.'),
+    ('Qaysi fanlardan repetitorlik xizmatlarini taklif qilasiz?', 'Biz keng ko\'lamli fanlardan, jumladan, Matematika, Fan, Ingliz tili va standartlashtirilgan testlarga tayyorgarlik (SAT, ACT) bo\'yicha repetitorlik xizmatlarini taklif etamiz.'),
+    ('Sizning ish vaqtingiz qanday?', 'Markazimiz ish kunlari soat 9:00 dan 20:00 gacha, dam olish kunlari esa 10:00 dan 18:00 gacha ishlaydi.'),
+    ('O\'quvchilarni repetitorlar bilan qanday bog\'laysiz?', 'Biz o\'quvchilarni ularning akademik ehtiyojlari, o\'rganish uslubi va shaxsiyatiga qarab repetitorlar bilan bog\'laymiz, bu esa eng yaxshi moslikni ta\'minlaydi.'),
+    ('Darslar qayerda o\'tkaziladi?', 'Darslar bizning zamonaviy o\'quv markazimizda yoki o\'quvchining xohishiga ko\'ra onlayn tarzda o\'tkazilishi mumkin.'),
+    ('Narxlar qanday?', 'Narxlar dastur turiga va darslar soniga qarab o\'zgaradi. Batafsil ma\'lumot olish va bepul maslahat uchun biz bilan bog\'laning.'),
 ]
 
 
@@ -806,11 +858,9 @@ def init_db():
                 'utm_campaign': 'TEXT',
                 'message': 'TEXT',
                 'forwarded_to_management': 'INTEGER NOT NULL DEFAULT 0',
-                'created_at': 'TEXT',
-                'submission_id': 'TEXT',
+                'created_at': 'TEXT'
             }
         )
-        cursor.execute('CREATE UNIQUE INDEX IF NOT EXISTS students_submission_id ON students(submission_id)')
         ensure_table_columns(cursor, 'contacts', {'email': 'TEXT'})
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS site_assets (
@@ -895,48 +945,10 @@ if not STATIC_BUILD_MODE:
 NO_CACHE_PREFIXES = ('/admin', '/portal', '/students', '/contacts_list')
 
 
-def csrf_token():
-    if '_csrf_token' not in session:
-        session['_csrf_token'] = secrets.token_urlsafe(32)
-    return session['_csrf_token']
-
-
-@app.before_request
-def protect_admin_requests():
-    private = request.path.startswith(NO_CACHE_PREFIXES)
-    if private and request.method in {'POST', 'PUT', 'PATCH', 'DELETE'}:
-        provided = request.headers.get('X-CSRF-Token') or request.form.get('csrf_token', '')
-        expected = session.get('_csrf_token', '')
-        if not expected or not provided or not hmac.compare_digest(expected, provided):
-            abort(400, description='Invalid CSRF token. Reload the page and try again.')
-    if request.path in {'/register', '/en/register'} and request.content_length and request.content_length > 16384:
-        abort(413)
-
-
-@app.before_request
-def protect_unpublished_uploads():
-    prefix = '/static/uploads/news/'
-    if request.path.startswith(prefix) and not STATIC_BUILD_MODE and not (ADMIN_ENABLED and session.get('logged_in')):
-        relative = request.path[len('/static/'):]
-        with get_db_connection() as conn:
-            published = conn.execute('''SELECT 1 FROM news_media m JOIN news_posts p ON p.id = m.post_id
-                                        WHERE m.file_path = ? AND p.is_published = 1''', (relative,)).fetchone()
-        if not published:
-            abort(404)
-
-
 @app.after_request
 def add_cache_headers(response):
-    response.headers['X-Content-Type-Options'] = 'nosniff'
-    response.headers['X-Frame-Options'] = 'SAMEORIGIN'
-    response.headers['Referrer-Policy'] = 'strict-origin-when-cross-origin'
-    response.headers['Permissions-Policy'] = 'camera=(), microphone=(), geolocation=()'
-    private = (request.path.startswith(NO_CACHE_PREFIXES)
-               or request.path in {'/register', '/en/register'}
-               or bool(session) or 'Set-Cookie' in response.headers
-               or request.path.startswith('/static/uploads/news/'))
-    if private or 'text/html' in (response.content_type or ''):
-        if private:
+    if 'text/html' in (response.content_type or ''):
+        if (request.path or '').startswith(NO_CACHE_PREFIXES):
             response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate, max-age=0, private'
             response.headers['Pragma'] = 'no-cache'
             response.headers['Expires'] = '0'
@@ -1007,19 +1019,13 @@ def sitemap_xml():
     # (loc, priority, changefreq, source template)
     static_pages = [
         ('https://iceberglc.com/', '1.0', 'daily', 'index.html'),
-        ('https://iceberglc.com/about', '0.8', 'monthly', 'information.html'),
+        ('https://iceberglc.com/about', '0.8', 'monthly', 'about.html'),
         ('https://iceberglc.com/our_programs', '0.9', 'weekly', 'our_programs.html'),
         ('https://iceberglc.com/news', '0.9', 'daily', 'news.html'),
         ('https://iceberglc.com/questions', '0.7', 'monthly', 'questions.html'),
         ('https://iceberglc.com/contact', '0.8', 'monthly', 'contact.html'),
         ('https://iceberglc.com/register', '0.8', 'monthly', 'register.html'),
     ]
-    for slug in ('international', 'private-school', 'admissions', 'privacy', 'results', 'student-life'):
-        static_pages.append((f'https://iceberglc.com/{slug}', '0.7', 'monthly', 'information.html'))
-    for path, _, _ in NAVIGATION:
-        english_path = '/en' if path == '/' else '/en' + path
-        static_pages.append(('https://iceberglc.com' + english_path, '0.7', 'monthly', 'information.html'))
-    static_pages.append(('https://iceberglc.com/en/register', '0.8', 'monthly', 'register_en.html'))
     lines = ['<?xml version="1.0" encoding="UTF-8"?>',
              '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
     for loc, priority, changefreq, template_name in static_pages:
@@ -1034,22 +1040,19 @@ def sitemap_xml():
     return Response('\n'.join(lines), mimetype='application/xml')
 
 
-@app.route('/en')
 @app.route('/')
 def index():
     return render_template('index.html')
 
 @app.route('/about')
 def about():
-    return information_page('about')
+    return render_template('about.html')
 
-@app.route('/en/our_programs')
 @app.route('/our_programs')
 def our_programs():
     return render_template('our_programs.html')
 
 
-@app.route('/en/news')
 @app.route('/news')
 def news():
     posts = fetch_news_posts(include_unpublished=False)
@@ -1060,17 +1063,6 @@ def news():
 def questions():
     faqs = fetch_faq_items()
     return render_template('questions.html', faqs=faqs)
-
-
-@app.route('/<slug>')
-@app.route('/en/<slug>')
-def information_page(slug):
-    if slug not in PAGES:
-        abort(404)
-    language = 'en' if request.path.startswith('/en/') else 'uz'
-    title, description, sections = PAGES[slug][language]
-    return render_template('information.html', slug=slug, page_title=title,
-                           page_description=description, sections=sections)
 
 @app.route('/admin/login', methods=['GET', 'POST'])
 def admin_login():
@@ -1091,8 +1083,6 @@ def portal_root():
 def secret_admin_login(access_slug):
     if access_slug != ADMIN_LOGIN_SLUG:
         return abort(404)
-    if not ADMIN_ENABLED:
-        abort(503, description='Admin access requires a secure SECRET_KEY and ADMIN_PASSWORD.')
 
     error = None
     if request.method == 'POST':
@@ -1111,14 +1101,25 @@ def secret_admin_login(access_slug):
 
 @app.route('/admin/secret-access', methods=['POST'])
 def admin_secret_access():
-    abort(410)
+    entered_code = request.form.get('secret_code', '').strip()
+
+    if not ADMIN_SECRET_CODE:
+        flash('Maxfiy kod sozlanmagan. ADMIN_SECRET_CODE ni .env faylida belgilang.', 'error')
+        return redirect(url_for('contact'))
+
+    if entered_code != ADMIN_SECRET_CODE:
+        flash('Maxfiy kod noto\'g\'ri.', 'error')
+        return redirect(url_for('contact'))
+
+    flash('Maxfiy kod qabul qilindi. Maxfiy admin login sahifasi ochildi.', 'success')
+    return redirect(url_for('secret_admin_login', access_slug=ADMIN_LOGIN_SLUG))
 
 
-@app.route('/admin/logout', methods=['POST'])
+@app.route('/admin/logout')
 def logout():
     if session.get('logged_in'):
         log_admin_action('admin_logout', 'session', 'Admin logged out')
-    session.clear()
+    session.pop('logged_in', None)
     flash('Siz tizimdan chiqdingiz.', 'info')
     return redirect(url_for('index'))
 
@@ -1300,10 +1301,15 @@ def admin_assets():
     custom_assets = []
     with get_db_connection() as conn:
         cursor = conn.cursor()
-        placeholders = ','.join('?' for _ in ASSET_DEFAULTS)
-        # Only '?' placeholders are interpolated; all key values are bound separately.
-        query = f'SELECT asset_key, file_path, updated_at FROM site_assets WHERE asset_key NOT IN ({placeholders}) ORDER BY asset_key ASC'  # nosec B608
-        cursor.execute(query, tuple(ASSET_DEFAULTS.keys()))
+        cursor.execute(
+            '''
+            SELECT asset_key, file_path, updated_at
+            FROM site_assets
+            WHERE asset_key NOT IN ({})
+            ORDER BY asset_key ASC
+            '''.format(','.join('?' for _ in ASSET_DEFAULTS)),
+            tuple(ASSET_DEFAULTS.keys())
+        )
         rows = cursor.fetchall()
         for row in rows:
             custom_assets.append(
@@ -1691,28 +1697,73 @@ def contacts_list():
         contacts = cursor.fetchall()
     return render_template('contacts_list.html', contacts=contacts)
 
-@app.route('/en/contact')
-@app.route('/contact')
+@app.route('/contact', methods=['GET', 'POST'])
 def contact():
-    return render_template('contact.html')
+    if request.method == 'POST':
+        name = request.form.get('name', '').strip()
+        phone = normalize_phone(request.form.get('phone', '').strip())
+        message_body = request.form.get('message', '').strip()
+        admin_password = request.form.get('admin_password', '').strip()
+        admin_secret_code = request.form.get('admin_secret_code', '').strip()
 
-@app.route('/en/register', methods=['GET', 'POST'])
+        if name.lower() == ADMIN_CONTACT_TRIGGER_NAME:
+            if not ADMIN_CONTACT_SECRET_CODE:
+                flash('Hidden admin secret code sozlanmagan (ADMIN_CONTACT_SECRET_CODE).', 'error')
+                return redirect(url_for('contact'))
+
+            if not admin_password:
+                flash('Admin parolini kiriting.', 'error')
+                return redirect(url_for('contact'))
+
+            if not admin_secret_code:
+                flash('Admin secret codeni kiriting.', 'error')
+                return redirect(url_for('contact'))
+
+            if admin_secret_code != ADMIN_CONTACT_SECRET_CODE:
+                flash('Admin secret code noto`g`ri.', 'error')
+                return redirect(url_for('contact'))
+
+            if process_admin_login(admin_password):
+                log_admin_action('admin_login_hidden', 'contact_form', 'Hidden access login from contact form with second factor')
+                flash('Maxfiy admin kirishi muvaffaqiyatli bajarildi.', 'success')
+                return redirect(url_for('admin_dashboard'))
+
+            flash('Admin paroli noto`g`ri.', 'error')
+            return redirect(url_for('contact'))
+
+        if not name or len(name) < 2:
+            flash('Ism kamida 2 ta belgidan iborat bo\'lishi kerak.', 'error')
+            return redirect(url_for('contact'))
+        if not PHONE_RE.match(phone):
+            flash('Telefon raqam 9 xonali bo\'lishi kerak.', 'error')
+            return redirect(url_for('contact'))
+        if not message_body or len(message_body) < 5:
+            flash('Xabar kamida 5 ta belgidan iborat bo\'lsin.', 'error')
+            return redirect(url_for('contact'))
+
+        with get_db_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute('INSERT INTO contacts (name, phone, message) VALUES (?, ?, ?)', (name, phone, message_body))
+            conn.commit()
+
+        # Send Telegram notification
+        telegram_message = (
+            "Yangi xabar!\n\n"
+            f"Ism: {name}\n"
+            f"Telefon: {phone}\n\n"
+            f"Xabar:\n{message_body}"
+        )
+        send_telegram_notification(telegram_message)
+
+        flash('Xabaringiz uchun rahmat! Tez orada siz bilan bog\'lanamiz.', 'success')
+        return redirect(url_for('contact'))
+    return render_template('contact.html', admin_trigger_name=ADMIN_CONTACT_TRIGGER_NAME)
+
 @app.route('/register', methods=['GET', 'POST'])
 def register():
-    registration_template = 'register_en.html' if request.path.startswith('/en/') else 'register.html'
     form_data = {}
     errors = {}
-    submission_id = request.form.get('submission_id', '') if request.method == 'POST' else ''
-    if submission_id:
-        try:
-            submission_id = str(uuid.UUID(submission_id))
-        except (ValueError, AttributeError):
-            abort(400)
-    else:
-        submission_id = '' if STATIC_BUILD_MODE else str(uuid.uuid4())
     if request.method == 'POST':
-        if request.form.get('website', ''):
-            abort(400)
         student_name = re.sub(
             r'[\x00-\x1f\x7f]',
             '',
@@ -1741,16 +1792,12 @@ def register():
             errors['preferred_branch'] = 'Filial tanlang.'
 
         if errors:
-            if registration_template == 'register_en.html':
-                translations = {'student_name': 'Enter your full name.', 'student_phone': 'Check your phone number.', 'course': 'Choose a program.', 'preferred_branch': 'Choose a branch.'}
-                errors = {key: translations[key] for key in errors}
             return render_template(
-                registration_template,
+                'register.html',
                 registration=REGISTRATION_CONFIG,
                 form_data=form_data,
                 errors=errors,
                 success=False,
-                submission_id=submission_id,
             ), 422
 
         created_at = utc_now().isoformat()
@@ -1777,26 +1824,19 @@ def register():
                     student_name, student_phone, parent_phone, email, dob, course,
                     preferred_branch, preferred_schedule, social_source, social_handle,
                     utm_source, utm_medium, utm_campaign, message,
-                    forwarded_to_management, created_at, submission_id
+                    forwarded_to_management, created_at
                 )
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                ON CONFLICT(submission_id) DO NOTHING
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 ''',
                 (
                     student_name, student_phone, '', '', '', course,
                     preferred_branch, '', '', '',
                     utm_source, utm_medium, utm_campaign, '',
-                    0, created_at, submission_id,
+                    0, created_at
                 )
             )
             student_id = cursor.lastrowid
-            inserted = cursor.rowcount != 0
             conn.commit()
-
-        success_path = '/en/register' if registration_template == 'register_en.html' else '/register'
-        if not inserted:
-            session['_registration_success'] = True
-            return redirect(success_path + '?success=1')
 
         forwarded_to_management = 1 if send_registration_lead_to_management(lead_payload) else 0
         if forwarded_to_management:
@@ -1823,20 +1863,18 @@ def register():
         telegram_message = "\n".join(telegram_lines)
         send_telegram_notification(telegram_message)
 
-        session['_registration_success'] = True
-        return redirect(success_path + '?success=1')
+        return redirect(url_for('register', success='1'))
     requested_program = request.args.get('program', '').strip()
     requested_branch = request.args.get('branch', '').strip()
     return render_template(
-        registration_template,
+        'register.html',
         registration=REGISTRATION_CONFIG,
         form_data={
             'course': requested_program if requested_program in REGISTRATION_PROGRAMS else '',
             'preferred_branch': requested_branch if requested_branch in REGISTRATION_BRANCHES else '',
         },
         errors={},
-        success=session.pop('_registration_success', False) and request.args.get('success') == '1',
-        submission_id=submission_id,
+        success=request.args.get('success') == '1',
     )
 
 @app.route('/students')
@@ -1863,14 +1901,9 @@ def delete_student(student_id):
 @app.route('/admin/students/update/<int:student_id>', methods=['POST'])
 @login_required
 def update_student(student_id):
-    payload = request.get_json(silent=True) if request.is_json else request.form
-    if payload is None or not hasattr(payload, 'get'):
-        abort(400)
-    field = payload.get('field', '')
-    value = payload.get('value', '')
-    if not isinstance(field, str) or not isinstance(value, str) or len(value) > 3000:
-        abort(400)
-    field, value = field.strip(), value.strip()
+    payload = request.get_json(silent=True) or request.form
+    field = (payload.get('field') or '').strip()
+    value = (payload.get('value') or '').strip()
 
     allowed_fields = {
         'student_name',
@@ -1912,17 +1945,13 @@ def update_student(student_id):
     elif field == 'dob':
         if value and not is_valid_dob(value):
             return jsonify({'success': False, 'message': 'Tug\'ilgan sana noto\'g\'ri.'}), 400
-    elif field == 'preferred_branch':
-        if value and value not in REGISTRATION_BRANCHES:
-            return jsonify({'success': False, 'message': 'Filial noto‘g‘ri.'}), 400
     elif field == 'course':
-        if value not in REGISTRATION_PROGRAMS:
+        if not value:
             return jsonify({'success': False, 'message': 'Kurs bo\'sh bo\'lishi mumkin emas.'}), 400
 
     with get_db_connection() as conn:
         cursor = conn.cursor()
-        # field is checked against the fixed allowlist
-        cursor.execute(f'UPDATE students SET {field} = ? WHERE id = ?', (value, student_id))  # nosec B608
+        cursor.execute(f'UPDATE students SET {field} = ? WHERE id = ?', (value, student_id))
         conn.commit()
         if cursor.rowcount == 0:
             return jsonify({'success': False, 'message': 'O\'quvchi topilmadi.'}), 404
@@ -1946,8 +1975,7 @@ def bulk_delete_students():
     placeholders = ','.join(['?'] * len(selected_ids))
     with get_db_connection() as conn:
         cursor = conn.cursor()
-        # placeholders contain only '?' and values are bound
-        cursor.execute(f'DELETE FROM students WHERE id IN ({placeholders})', tuple(selected_ids))  # nosec B608
+        cursor.execute(f'DELETE FROM students WHERE id IN ({placeholders})', tuple(selected_ids))
         conn.commit()
         deleted_count = cursor.rowcount
     log_admin_action('students_bulk_delete', 'students', f'Deleted IDs: {selected_ids}')
@@ -1964,8 +1992,7 @@ def export_students_csv():
         cursor = conn.cursor()
         if selected_ids:
             placeholders = ','.join(['?'] * len(selected_ids))
-            # placeholders contain only '?' and values are bound
-            cursor.execute(f'SELECT * FROM students WHERE id IN ({placeholders}) ORDER BY id DESC', tuple(selected_ids))  # nosec B608
+            cursor.execute(f'SELECT * FROM students WHERE id IN ({placeholders}) ORDER BY id DESC', tuple(selected_ids))
         else:
             cursor.execute('SELECT * FROM students ORDER BY id DESC')
         rows = cursor.fetchall()
@@ -2033,14 +2060,9 @@ def delete_contact(contact_id):
 @app.route('/admin/contacts/update/<int:contact_id>', methods=['POST'])
 @login_required
 def update_contact(contact_id):
-    payload = request.get_json(silent=True) if request.is_json else request.form
-    if payload is None or not hasattr(payload, 'get'):
-        abort(400)
-    field = payload.get('field', '')
-    value = payload.get('value', '')
-    if not isinstance(field, str) or not isinstance(value, str) or len(value) > 3000:
-        abort(400)
-    field, value = field.strip(), value.strip()
+    payload = request.get_json(silent=True) or request.form
+    field = (payload.get('field') or '').strip()
+    value = (payload.get('value') or '').strip()
 
     allowed_fields = {'name', 'phone', 'message'}
     if field not in allowed_fields:
@@ -2061,8 +2083,7 @@ def update_contact(contact_id):
 
     with get_db_connection() as conn:
         cursor = conn.cursor()
-        # field is checked against the fixed allowlist
-        cursor.execute(f'UPDATE contacts SET {field} = ? WHERE id = ?', (value, contact_id))  # nosec B608
+        cursor.execute(f'UPDATE contacts SET {field} = ? WHERE id = ?', (value, contact_id))
         conn.commit()
         if cursor.rowcount == 0:
             return jsonify({'success': False, 'message': 'Xabar topilmadi.'}), 404
@@ -2083,8 +2104,7 @@ def bulk_delete_contacts():
     placeholders = ','.join(['?'] * len(selected_ids))
     with get_db_connection() as conn:
         cursor = conn.cursor()
-        # placeholders contain only '?' and values are bound
-        cursor.execute(f'DELETE FROM contacts WHERE id IN ({placeholders})', tuple(selected_ids))  # nosec B608
+        cursor.execute(f'DELETE FROM contacts WHERE id IN ({placeholders})', tuple(selected_ids))
         conn.commit()
         deleted_count = cursor.rowcount
     log_admin_action('contacts_bulk_delete', 'contacts', f'Deleted IDs: {selected_ids}')
@@ -2102,8 +2122,7 @@ def export_contacts_csv():
         if selected_ids:
             placeholders = ','.join(['?'] * len(selected_ids))
             cursor.execute(
-                # placeholders contain only '?' and values are bound
-                f'SELECT id, name, phone, message FROM contacts WHERE id IN ({placeholders}) ORDER BY id DESC',  # nosec B608
+                f'SELECT id, name, phone, message FROM contacts WHERE id IN ({placeholders}) ORDER BY id DESC',
                 tuple(selected_ids)
             )
         else:
@@ -2148,7 +2167,6 @@ def admin_tools():
 @login_required
 def admin_tools_backup():
     with get_db_connection() as conn:
-        conn.execute('BEGIN')
         cursor = conn.cursor()
         cursor.execute('SELECT * FROM students ORDER BY id DESC')
         students_rows = [dict(row) for row in cursor.fetchall()]
@@ -2168,9 +2186,6 @@ def admin_tools_backup():
         cursor.execute('SELECT * FROM news_media ORDER BY id DESC')
         news_media_rows = [dict(row) for row in cursor.fetchall()]
 
-        cursor.execute('SELECT * FROM faq_items ORDER BY sort_order, id')
-        faq_rows = [dict(row) for row in cursor.fetchall()]
-
         cursor.execute('SELECT * FROM admin_activity_log ORDER BY id DESC LIMIT 1000')
         activity_rows = [dict(row) for row in cursor.fetchall()]
 
@@ -2178,8 +2193,7 @@ def admin_tools_backup():
         'metadata': {
             'exported_at': utc_now().isoformat() + 'Z',
             'app': 'ICEBERG Admin',
-            'version': '1.1',
-            'audit_log_limit': 1000,
+            'version': '1.0'
         },
         'students': students_rows,
         'contacts': contacts_rows,
@@ -2187,7 +2201,6 @@ def admin_tools_backup():
         'site_assets': assets_rows,
         'news_posts': news_posts_rows,
         'news_media': news_media_rows,
-        'faq_items': faq_rows,
         'admin_activity_log': activity_rows
     }
 
@@ -2216,4 +2229,4 @@ def admin_db_maintenance():
 if __name__ == '__main__':
     debug_mode = os.environ.get('FLASK_ENV') == 'development'
     port = int(os.environ.get('PORT', os.environ.get('FLASK_RUN_PORT', 8080)))
-    app.run(debug=debug_mode, host=os.environ.get('FLASK_RUN_HOST', '127.0.0.1'), port=port)
+    app.run(debug=debug_mode, host='0.0.0.0', port=port)

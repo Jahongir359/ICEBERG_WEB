@@ -5,12 +5,11 @@
 
 {% block content %}
 <div class="mb-6 surface-card px-4 py-3 text-slate-700 interactive-panel">
-    Bu bo‘limda faol bosh sahifa matni va aloqa emailini o‘zgartiring. Boshqa sahifalar uchun Site Editor, dastur va filiallar uchun config/registration.json ishlatiladi.
+    Bu bo'lim orqali sayt matnlari, linklari va custom CSS ni kodga tegmasdan o'zgartirishingiz mumkin.
     <a href="{{ url_for('admin_editor') }}" class="ml-2 text-blue-700 font-semibold hover:text-blue-900">To'liq Site Editor</a>
 </div>
 
 <form action="{{ url_for('admin_content') }}" method="POST" class="space-y-8" id="content-editor-form">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     {% for group_name, fields in grouped_fields.items() %}
     <section class="surface-card p-6 interactive-panel">
         <h2 class="text-xl font-semibold text-[#0D2444] mb-5">{{ group_name }}</h2>
@@ -63,7 +62,6 @@
                 <p class="text-sm text-gray-600 break-all">{{ item.value }}</p>
             </div>
             <form action="{{ url_for('admin_content') }}" method="POST" onsubmit="return confirm('Ushbu custom maydon o\'chirilsinmi?');">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <input type="hidden" name="delete_key" value="{{ item.key }}">
                 <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700" data-no-loading="true">O'chirish</button>
             </form>

@@ -36,7 +36,6 @@
 
         {% if selected_file %}
         <form action="{{ url_for('admin_editor') }}" method="POST" class="space-y-4" id="site-editor-form">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <input type="hidden" name="file_path" value="{{ selected_file }}">
             <textarea id="editor_content" name="editor_content" rows="30" class="w-full rounded-xl border border-slate-300 bg-slate-950 text-slate-100 p-4 font-mono text-xs leading-5 focus:outline-none focus:ring-2 focus:ring-sky-500">{{ selected_content }}</textarea>
             <div class="flex justify-end">
@@ -54,7 +53,6 @@
             <div class="space-y-2 max-h-56 overflow-auto pr-1">
                 {% for backup in backups %}
                 <form action="{{ url_for('admin_editor_rollback') }}" method="POST" class="rounded-lg border border-slate-200 bg-white/70 p-3 flex items-center justify-between gap-2" onsubmit="return confirm('Shu backupga qaytishni tasdiqlaysizmi?');">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                     <input type="hidden" name="file_path" value="{{ selected_file }}">
                     <input type="hidden" name="backup_name" value="{{ backup.name }}">
                     <div>

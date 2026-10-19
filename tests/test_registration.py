@@ -4,7 +4,6 @@ import sqlite3
 import tempfile
 import unittest
 from unittest.mock import patch
-from contextlib import closing
 
 
 TEST_DATABASE = tempfile.NamedTemporaryFile(suffix='.db', delete=False)
@@ -63,7 +62,7 @@ class RegistrationRouteTests(unittest.TestCase):
             })
             self.assertEqual(response.status_code, 302)
             self.assertIn('/register?success=1', response.location)
-        with closing(sqlite3.connect(TEST_DATABASE.name)) as connection:
+        with sqlite3.connect(TEST_DATABASE.name) as connection:
             rows = connection.execute(
                 'SELECT student_phone, course, preferred_branch FROM students ORDER BY id DESC LIMIT 3'
             ).fetchall()
@@ -91,6 +90,8 @@ class RegistrationRouteTests(unittest.TestCase):
         result = build_firebase.make_form_static(
             rendered,
             '/register',
+            '998701060404',
+            'https://preview.pages.dev',
             'public-site-key',
         )
         self.assertIn('action="/api/register"', result)

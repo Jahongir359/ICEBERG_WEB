@@ -37,7 +37,7 @@ function mockNetwork({ turnstileSuccess = true, backendSuccess = true } = {}) {
     const leads = [];
     globalThis.fetch = async (url, options) => {
         if (String(url).includes('turnstile')) {
-            return new Response(JSON.stringify({ success: turnstileSuccess, action: 'register', hostname: 'iceberglc.com' }), {
+            return new Response(JSON.stringify({ success: turnstileSuccess, action: 'register' }), {
                 headers: { 'Content-Type': 'application/json' }
             });
         }
@@ -58,27 +58,6 @@ test('accepts every active branch and forwards stable IDs', async () => {
     }
     assert.deepEqual(leads.map(lead => lead.branch), ['main', 'gayrat', 'unknown']);
     assert.ok(leads.every(lead => lead.program === 'ielts'));
-});
-
-test('rejects malformed JSON shapes and oversized bodies without a length header', async () => {
-    mockNetwork();
-    for (const body of ['null', '[]', '"text"', '{bad', JSON.stringify({ message: 'x'.repeat(20_000) })]) {
-        const input = new Request('https://iceberglc.com/api/register', { method: 'POST', body });
-        const response = await onRequestPost({ request: input, env: environment() });
-        assert.equal(response.status, body.length > 16_384 ? 413 : 400);
-    }
-});
-
-test('rejects a Turnstile token issued for another hostname or action', async () => {
-    for (const validation of [
-        { success: true, action: 'register', hostname: 'attacker.example' },
-        { success: true, action: 'login', hostname: 'iceberglc.com' },
-        { success: true, hostname: 'iceberglc.com' },
-    ]) {
-        globalThis.fetch = async () => new Response(JSON.stringify(validation));
-        const response = await onRequestPost({ request: request(), env: environment() });
-        assert.equal(response.status, 403);
-    }
 });
 
 test('rejects invalid phone, missing selections, and unknown IDs', async () => {

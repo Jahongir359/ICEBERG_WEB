@@ -60,17 +60,17 @@
 {% endblock %}
 
 {% block content %}
-<section class="registration-page">
+<main class="registration-page">
     <div class="registration-wrap">
         <header class="registration-intro">
             <span class="registration-kicker">ICEBERG Study Center</span>
             <h1>ICEBERG'ga qo'shiling</h1>
             <p>O'zingizga mos dastur va filialni tanlang. Arizangizni yuboring — jamoamiz siz bilan bog'lanadi.</p>
-            <p class="registration-time">Ariza — bog‘lanish so‘rovi. Narx va dars shartlarini qabul jamoasi bilan tasdiqlang.</p>
+            <span class="registration-time"><span aria-hidden="true">✓</span> 30 soniyadan kam vaqt oladi</span>
         </header>
 
         <section class="registration-card" aria-label="Ro'yxatdan o'tish formasi">
-            <form action="{{ local_url('/register') }}" method="post" class="registration-form" data-registration-form data-telegram-url="{{ registration.contact.telegram_url }}" {% if success %}hidden{% endif %}>
+            <form action="{{ url_for('register') }}" method="post" class="registration-form" data-registration-form data-telegram-url="{{ registration.contact.telegram_url }}" {% if success %}hidden{% endif %}>
                 <div class="registration-field">
                     <label for="student_name">Ism va familiya</label>
                     <input class="registration-control" type="text" id="student_name" name="student_name" value="{{ form_data.get('student_name', '') }}" autocomplete="name" minlength="2" maxlength="100" required aria-describedby="student_name_error"{% if errors.get('student_name') %} aria-invalid="true"{% endif %}>
@@ -105,12 +105,10 @@
                 </div>
 
                 <input type="hidden" name="utm_source" value="{{ request.args.get('utm_source', '') }}">
-                <input type="hidden" name="submission_id" value="{{ submission_id }}">
                 <input type="hidden" name="utm_medium" value="{{ request.args.get('utm_medium', '') }}">
                 <input type="hidden" name="utm_campaign" value="{{ request.args.get('utm_campaign', '') }}">
-                <p class="registration-privacy">Voyaga yetmagan o‘quvchi uchun ota-ona yoki vasiy bilan maslahatlashib yuboring.</p>
                 <button type="submit" class="registration-submit">RO'YXATDAN O'TISH</button>
-                <p class="registration-privacy">Ma’lumotlaringiz arizangiz bo‘yicha bog‘lanish uchun ishlatiladi. <a href="{{ local_url('/privacy') }}">Maxfiylik haqida</a></p>
+                <p class="registration-privacy">Ma'lumotlaringiz faqat arizangiz bo'yicha bog'lanish uchun ishlatiladi.</p>
                 <p class="registration-status" data-form-status role="status" aria-live="polite"></p>
             </form>
 
@@ -120,15 +118,14 @@
                 <p>Rahmat! ICEBERG jamoasi tez orada siz bilan bog'lanadi.</p>
                 <div class="registration-success-actions">
                     <a class="registration-telegram" href="{{ registration.contact.telegram_url }}" target="_blank" rel="noopener noreferrer">Telegram orqali yozish</a>
-                    <a class="registration-home" href="{{ local_url('/') }}">Bosh sahifaga qaytish</a>
+                    <a class="registration-home" href="{{ url_for('index') }}">Bosh sahifaga qaytish</a>
                 </div>
             </div>
         </section>
 
         <p class="registration-alternative">Savolingiz bormi? <a href="tel:{{ registration.contact.call_center_phone }}">{{ registration.contact.call_center_display }}</a></p>
-        <noscript><p class="info-notice">JavaScript o‘chiq bo‘lsa, <a href="{{ registration.contact.telegram_url }}">qabul jamoasiga Telegram orqali yozing</a> yoki yuqoridagi raqamga qo‘ng‘iroq qiling.</p></noscript>
     </div>
-</section>
+</main>
 {% endblock %}
 
 {% block scripts %}
