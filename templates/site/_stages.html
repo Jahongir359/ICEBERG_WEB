@@ -1,0 +1,32 @@
+{% from "site/_macros.html" import fact %}
+{%- set stage_copy = {
+    'primary': {
+        'name': "Boshlang'ich maktab", 'fallback': '1–4',
+        'text': "O'qish, hisob va qiziqish. Har bir bolani yaxshi biladigan sinf rahbari va har kuni ingliz tili.",
+        'points': ["Savodxonlik va kitobxonlik", "Matematik fikrlash", "Ingliz tili har kuni"]
+    },
+    'middle': {
+        'name': "O'rta maktab", 'fallback': '5–9',
+        'text': "Fan o'qituvchilari, loyiha haftalari va olimpiada to'garaklari qiziqishni haqiqiy mahoratga aylantiradi.",
+        'points': ["Fan o'qituvchilari", "Loyiha haftalari", "Olimpiada to'garaklari"]
+    },
+    'high': {
+        'name': "Yuqori sinflar", 'fallback': '10–11',
+        'text': "Universitetga tayyorgarlik, IELTS va SAT yo'nalishlari hamda qayerga topshirish bo'yicha shaxsiy maslahat.",
+        'points': ["Universitetga tayyorgarlik", "IELTS va SAT yo'nalishlari", "Shaxsiy maslahatchi"]
+    }
+} -%}
+<div class="grid grid-3">
+    {% for stage in school.stages %}{% set copy = stage_copy[stage.id] %}
+    <article class="card stage lift rv{% if loop.index0 %} d{{ loop.index0 }}{% endif %}" id="{{ stage.id }}">
+        <div class="stage-top">
+            <div class="stage-grades">{{ fact(stage.grades, copy.fallback) }}<small>sinflar</small></div>
+        </div>
+        <div class="stage-body">
+            <h3 class="h3">{{ copy.name }}</h3>
+            <p>{{ copy.text }}</p>
+            <ul>{% for point in copy.points %}<li>{{ point }}</li>{% endfor %}</ul>
+        </div>
+    </article>
+    {% endfor %}
+</div>

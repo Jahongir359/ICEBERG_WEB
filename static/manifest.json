@@ -1,25 +1,25 @@
 {
-  "name": "ICEBERG O'quv Markazi",
-  "short_name": "ICEBERG",
-  "description": "IELTS, SAT tayyorgarlik, akademik repetitorlik va mentorlik dasturlari. Namangan, O'zbekiston.",
+  "name": "Iceberg School",
+  "short_name": "Iceberg",
+  "description": "Iceberg School — 1–11-sinflar uchun xususiy maktab va Iceberg Courses o'quv markazi.",
   "start_url": "/",
   "display": "standalone",
   "orientation": "portrait",
-  "theme_color": "#0d2a50",
-  "background_color": "#ffffff",
+  "theme_color": "#4C0909",
+  "background_color": "#FBF7F6",
   "lang": "uz",
   "icons": [
     {
       "src": "/static/android-chrome-192x192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
       "src": "/static/android-chrome-512x512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     }
   ]
 }

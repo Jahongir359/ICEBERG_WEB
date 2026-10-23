@@ -158,7 +158,7 @@ the ERP's Registration leads screen when both of these Cloudflare Pages secrets 
 
 The copy is best-effort: an ERP error is logged and never fails the application. Repeated
 submissions that Sheets reports as duplicates are not sent again (Apps Script receiver
-version `2026-10-23.1` or later). Fill `erp_branch_name` for each branch in
+version `2026-10-23.2` or later). Fill `erp_branch_name` for each branch in
 `config/registration.json` with the exact ERP branch name so branch admins can see the leads.
 
 ## Deploy (Railway - Recommended)

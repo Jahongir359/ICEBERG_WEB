@@ -1,0 +1,27 @@
+{% extends "site/base.html" %}
+{% from "site/_macros.html" import icon %}
+{% block title %}Arizangiz qabul qilindi — Iceberg School{% endblock %}
+{% block description %}Iceberg School qabul bo'limi arizangizni oldi va tez orada siz bilan bog'lanadi.{% endblock %}
+{% block head %}<meta name="robots" content="noindex">{% endblock %}
+{% block body_class %}{% endblock %}
+{% block content %}
+<section class="sec">
+    <div class="wrap" style="max-width:720px">
+        <div class="form-card success">
+            <span class="success-mark">{{ icon('check') }}</span>
+            <h1 class="h2">Rahmat! Arizangiz qabul qilindi</h1>
+            <p class="lead">Qabul bo'limi tez orada siz bilan bog'lanib, maktabga tashrif vaqtini kelishib oladi.</p>
+            <ol class="feature-list" style="text-align:left;margin-top:12px">
+                <li><span class="icon-tile soft">{{ icon('phone') }}</span><div><strong>Qo'ng'iroq</strong><span>Farzandingiz haqida qisqa suhbat.</span></div></li>
+                <li><span class="icon-tile soft">{{ icon('calendar') }}</span><div><strong>Tashrif</strong><span>Maktabni ko'rish va jonli dars.</span></div></li>
+                <li><span class="icon-tile soft">{{ icon('check') }}</span><div><strong>Taklif</strong><span>Suhbatdan so'ng joy tasdiqlanadi.</span></div></li>
+            </ol>
+            <div class="hero-cta" style="justify-content:center;margin-top:12px">
+                <a class="btn btn-primary" href="{{ url_for('index') }}">Bosh sahifaga qaytish</a>
+                <a class="btn btn-outline" href="{{ url_for('programs') }}">Ta'lim dasturlari</a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+{% block dock %}{% endblock %}

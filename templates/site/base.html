@@ -1,0 +1,173 @@
+{% from "site/_macros.html" import icon %}
+{%- set site_url = 'https://iceberglc.com' -%}
+{%- set active = request.endpoint or '' -%}
+<!DOCTYPE html>
+<html lang="uz" data-brand="school">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>{% block title %}Iceberg School — xususiy maktab, 1–11-sinflar{% endblock %}</title>
+    <meta name="description" content="{% block description %}Iceberg School — 1–11-sinflar uchun xususiy maktab. Kuchli akademik bilim, tarbiya va kitobxonlik madaniyati. Iceberg Courses: IELTS, CEFR, SAT va fan kurslari.{% endblock %}">
+    <meta name="robots" content="index, follow, max-image-preview:large">
+    <link rel="canonical" href="{{ site_url }}{{ request.path }}">
+
+    <link rel="icon" href="/favicon.ico" sizes="any">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='favicon-32x32.png') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='favicon-16x16.png') }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='apple-touch-icon.png') }}">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#4C0909">
+
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ site_url }}{{ request.path }}">
+    <meta property="og:site_name" content="Iceberg School">
+    <meta property="og:title" content="{{ self.title() }}">
+    <meta property="og:description" content="{{ self.description() }}">
+    <meta property="og:image" content="{{ site_url }}/static/school/img/og-image.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:locale" content="uz_UZ">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ self.title() }}">
+    <meta name="twitter:description" content="{{ self.description() }}">
+    <meta name="twitter:image" content="{{ site_url }}/static/school/img/og-image.png">
+
+    {%- set school_ld = {
+        '@context': 'https://schema.org',
+        '@type': 'School',
+        'name': 'Iceberg School',
+        'url': site_url + '/',
+        'logo': site_url + '/static/school/img/logo-v-maroon.png',
+        'image': site_url + '/static/school/img/og-image.png',
+        'description': 'Iceberg School — 1–11-sinflar uchun xususiy maktab.',
+        'subOrganization': {
+            '@type': 'EducationalOrganization',
+            'name': "Iceberg Courses — ICEBERG o'quv markazi",
+            'alternateName': ["ICEBERG O'quv Markazi", 'ICEBERG Study Center'],
+            'url': site_url + '/courses',
+            'telephone': registration.contact.call_center_phone,
+            'address': {'@type': 'PostalAddress', 'addressLocality': 'Uychi', 'addressRegion': 'Namangan', 'addressCountry': 'UZ'}
+        }
+    } -%}
+    {%- if school.phone %}{% set _ = school_ld.update({'telephone': school.phone}) %}{% endif -%}
+    {%- if school.address %}{% set _ = school_ld.update({'address': {'@type': 'PostalAddress', 'streetAddress': school.address, 'addressLocality': school.city, 'addressCountry': 'UZ'}}) %}{% endif -%}
+    {%- set same_as = [] -%}
+    {%- for link in (school.instagram_url, school.telegram_url) if link %}{% set _ = same_as.append(link) %}{% endfor -%}
+    {%- if same_as %}{% set _ = school_ld.update({'sameAs': same_as}) %}{% endif %}
+    <script type="application/ld+json">{{ school_ld | tojson }}</script>
+    {% block schema %}{% endblock %}
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+    <link rel="stylesheet" href="{{ url_for('static', filename='brand/tokens.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/site.css', v='20261023-1') }}">
+    {% block head %}{% endblock %}
+</head>
+<body class="{% block body_class %}has-dock{% endblock %}">
+    <a class="skip-link" href="#main">Asosiy qismga o'tish</a>
+    <div id="google_translate_element"></div>
+
+    <header class="hdr" data-header>
+        <div class="wrap hdr-row">
+            <a class="hdr-logo" href="{{ url_for('index') }}" aria-label="Iceberg School — bosh sahifa">
+                <img src="{{ url_for('static', filename='school/img/logo-h-maroon.png') }}" alt="Iceberg School" width="128" height="38">
+            </a>
+            <nav class="nav" aria-label="Asosiy menyu">
+                {% for endpoint, label in site_nav %}
+                <a href="{{ url_for(endpoint) }}"{% if active == endpoint or (endpoint == 'courses' and active == 'register') %} aria-current="page"{% endif %}>{{ label }}</a>
+                {% endfor %}
+            </nav>
+            <div class="hdr-actions">
+                <label class="lang">
+                    <span class="sr-only">Til</span>
+                    <select data-lang-select aria-label="Tilni tanlash">
+                        <option value="uz">UZ</option>
+                        <option value="ru">RU</option>
+                        <option value="en">EN</option>
+                    </select>
+                </label>
+                <a class="btn btn-outline hdr-portal" href="{{ school.portal_url }}">Portal</a>
+                <a class="btn btn-primary hdr-portal" href="{{ url_for('admissions') }}#ariza">Ariza topshirish</a>
+                <button class="menu-btn" type="button" data-menu-button aria-controls="site-menu" aria-expanded="false" aria-label="Menyuni ochish" data-label-open="Menyuni ochish" data-label-close="Menyuni yopish">
+                    {{ icon('menu') }}{{ icon('close') }}
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <div class="sheet" id="site-menu">
+        <nav aria-label="Mobil menyu">
+            <a href="{{ url_for('index') }}"{% if active == 'index' %} aria-current="page"{% endif %}>Bosh sahifa</a>
+            {% for endpoint, label in site_nav %}
+            <a href="{{ url_for(endpoint) }}"{% if active == endpoint %} aria-current="page"{% endif %}>{{ label }}</a>
+            {% endfor %}
+        </nav>
+        <div class="sheet-actions">
+            <a class="btn btn-light" href="{{ url_for('admissions') }}#ariza">Maktabga ariza topshirish</a>
+            <a class="btn btn-ghost" href="{{ school.portal_url }}">Portalga kirish</a>
+        </div>
+    </div>
+
+    <main id="main">
+        {% block content %}{% endblock %}
+    </main>
+
+    {% block dock %}
+    <div class="dock" data-dock>
+        <a class="btn btn-primary" href="{{ url_for('admissions') }}#ariza">Maktabga ariza</a>
+        <a class="btn btn-outline" href="{{ url_for('register') }}">Kursga yozilish</a>
+    </div>
+    {% endblock %}
+
+    <footer class="ftr">
+        <div class="wrap ftr-grid">
+            <div class="ftr-brand">
+                <img src="{{ url_for('static', filename='school/img/logo-h-white.png') }}" alt="Iceberg School" width="168" height="51" loading="lazy">
+                <p>Ko'rinib turgani — faqat cho'qqi. Biz uning ostidagi poydevorni quramiz.</p>
+                <span class="ftr-family">Iceberg oilasi · <a href="{{ url_for('courses') }}">Iceberg Courses</a></span>
+            </div>
+            <div>
+                <h3>Maktab</h3>
+                <ul>
+                    <li><a href="{{ url_for('about') }}">Maktab haqida</a></li>
+                    <li><a href="{{ url_for('programs') }}">Ta'lim dasturlari</a></li>
+                    <li><a href="{{ url_for('admissions') }}">Qabul</a></li>
+                    <li><a href="{{ url_for('news') }}">Yangiliklar</a></li>
+                    <li><a href="{{ school.portal_url }}">Portalga kirish</a></li>
+                </ul>
+            </div>
+            <div>
+                <h3>Iceberg Courses</h3>
+                <ul>
+                    <li><a href="{{ url_for('courses') }}">Barcha kurslar</a></li>
+                    <li><a href="{{ url_for('courses') }}#ielts">IELTS va CEFR</a></li>
+                    <li><a href="{{ url_for('courses') }}#sat">SAT</a></li>
+                    <li><a href="{{ url_for('register') }}">Kursga yozilish</a></li>
+                    <li><a href="{{ url_for('courses') }}#savollar">Savollar</a></li>
+                </ul>
+            </div>
+            <div>
+                <h3>Aloqa</h3>
+                <ul>
+                    <li><a href="tel:{{ registration.contact.call_center_phone }}">{{ registration.contact.call_center_display }}</a></li>
+                    <li><a href="mailto:{{ content('contact_email', 'iceberg.edu.center@gmail.com') }}">{{ content('contact_email', 'iceberg.edu.center@gmail.com') }}</a></li>
+                    <li><a href="{{ url_for('contact') }}">Manzil va filiallar</a></li>
+                </ul>
+                <div class="socials" style="margin-top:16px">
+                    <a href="{{ school.telegram_url or registration.contact.telegram_url }}" aria-label="Telegram" rel="noopener">{{ icon('telegram') }}</a>
+                    <a href="{{ school.instagram_url or 'https://www.instagram.com/Iceberg_Study_Center' }}" aria-label="Instagram" rel="noopener">{{ icon('instagram') }}</a>
+                    <a href="https://www.youtube.com/@ice_podcast" aria-label="YouTube" rel="noopener">{{ icon('youtube') }}</a>
+                </div>
+            </div>
+        </div>
+        <div class="wrap ftr-bottom">
+            <span>© {{ current_year }} Iceberg School · Iceberg Courses</span>
+            <span>O'zbekiston</span>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/site.js', v='20261023-1') }}" defer></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

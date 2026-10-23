@@ -249,3 +249,87 @@ test('uses waitUntil so the visitor does not wait for the ERP', async () => {
     assert.equal(pending.length, 1);
     await Promise.all(pending);
 });
+
+function schoolRequest(overrides = {}) {
+    return new Request('https://iceberglc.com/api/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'CF-Connecting-IP': '203.0.113.10' },
+        body: JSON.stringify({
+            form_type: 'school-enquiry',
+            submission_id: '22345678-1234-4234-8234-123456789012',
+            parent_name: 'Dilnoza Karimova',
+            parent_phone: '90 123 45 67',
+            child_name: 'Aziz',
+            child_birth_date: '2019-04-02',
+            grade: '1',
+            language: 'uz',
+            message: 'Sport bilan shug\'ullanadi',
+            consent: true,
+            turnstile_token: 'valid-token',
+            ...overrides
+        })
+    });
+}
+
+test('stores a school enquiry in Sheets with its own fields', async () => {
+    const calls = mockNetworkWithErp();
+    const env = environment();
+    const response = await onRequestPost({ request: schoolRequest(), env });
+    assert.equal(response.status, 201);
+    const stored = calls.sheets[0];
+    assert.equal(stored.form_type, 'school-enquiry');
+    assert.equal(stored.student_name, 'Dilnoza Karimova');
+    assert.equal(stored.student_phone, '+998901234567');
+    assert.equal(stored.program, 'grade-1');
+    assert.equal(stored.branch, 'school');
+    assert.equal(stored.child_name, 'Aziz');
+    assert.equal(stored.language, 'uz');
+    assert.equal(calls.erp.length, 0);
+});
+
+test('forwards a school enquiry to the ERP as a school-website lead', async () => {
+    const calls = mockNetworkWithErp();
+    const env = erpEnvironment();
+    env.SCHOOL_BRANCH_NAME = 'Iceberg School Namangan';
+    const response = await onRequestPost({ request: schoolRequest({ grade: '7' }), env });
+    assert.equal(response.status, 201);
+    assert.equal(calls.erp.length, 1);
+    const body = calls.erp[0].body;
+    assert.equal(body.source, 'school-website');
+    assert.equal(body.program, 'Grade 7');
+    assert.equal(body.branch, 'Iceberg School Namangan');
+    assert.equal(body.full_name, 'Dilnoza Karimova');
+    assert.match(body.message, /Farzand: Aziz · Tug'ilgan sana: 2019-04-02 · Til: O'zbek/);
+});
+
+test('uses Iceberg School as the default ERP branch for enquiries', async () => {
+    const calls = mockNetworkWithErp();
+    await onRequestPost({ request: schoolRequest(), env: erpEnvironment() });
+    assert.equal(calls.erp[0].body.branch, 'Iceberg School');
+});
+
+test('rejects invalid school enquiries before Turnstile and storage', async () => {
+    const calls = mockNetworkWithErp();
+    for (const override of [
+        { parent_name: 'A' },
+        { parent_phone: '123' },
+        { grade: '12' },
+        { grade: '' },
+        { language: 'fr' },
+        { child_birth_date: '2019-02-30' },
+        { child_birth_date: '2999-01-01' },
+        { consent: false },
+        { consent: 'yes' }
+    ]) {
+        const response = await onRequestPost({ request: schoolRequest(override), env: environment() });
+        assert.equal(response.status, 422, JSON.stringify(override));
+    }
+    assert.equal(calls.sheets.length, 0);
+});
+
+test('a filled honeypot on the school form stores nothing', async () => {
+    const calls = mockNetworkWithErp();
+    const response = await onRequestPost({ request: schoolRequest({ website: 'spam' }), env: environment() });
+    assert.equal(response.status, 200);
+    assert.equal(calls.sheets.length, 0);
+});

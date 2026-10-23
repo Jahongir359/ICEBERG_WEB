@@ -15,22 +15,25 @@ from xml.etree import ElementTree
 
 ROOT = Path(__file__).resolve().parents[1]
 PUBLIC = ROOT / "public"
-HTML_FILES = sorted(PUBLIC.glob("*.html"))
+HTML_FILES = sorted(PUBLIC.rglob("*.html"))
 EXPECTED_PAGES = {
     "/": "index.html",
     "/about": "about.html",
-    "/our_programs": "our_programs.html",
+    "/programs": "programs.html",
+    "/admissions": "admissions.html",
+    "/courses": "courses.html",
     "/news": "news.html",
-    "/questions": "questions.html",
     "/contact": "contact.html",
     "/register": "register.html",
 }
+EXPECTED_REDIRECTS = ("/our_programs /courses 301", "/questions /courses#savollar 301")
 IGNORED_SCHEMES = {"data", "mailto", "tel", "javascript"}
 PRIVATE_MARKERS = (
     "admin_password",
     "admin_secret_code",
     "data-admin-trigger-name",
-    "app.iceberglc.com",
+    "registration-leads",
+    "REGISTRATION_LEADS_API_TOKEN",
 )
 
 
@@ -126,7 +129,7 @@ def check() -> None:
                     f"{relative_page}: form action must be an absolute HTTPS URL: {action!r}"
                 )
 
-        if page.name == "register.html":
+        if page.name in ("register.html", "admissions.html") and page.parent == PUBLIC:
             if 'action="/api/register"' not in text:
                 errors.append(f"{relative_page}: registration form must submit same-origin")
             if not re.search(r'data-turnstile-sitekey="[^\"]+"', text):
@@ -173,6 +176,14 @@ def check() -> None:
                 errors.append(f"sitemap.xml: missing route {route}")
     except (OSError, ElementTree.ParseError) as error:
         errors.append(f"sitemap.xml: {error}")
+
+    redirects_path = PUBLIC / "_redirects"
+    redirects = redirects_path.read_text(encoding="utf-8") if redirects_path.is_file() else ""
+    for rule in EXPECTED_REDIRECTS:
+        if rule not in redirects.splitlines():
+            errors.append(f"_redirects: missing {rule!r}")
+    if not (PUBLIC / "admissions" / "thanks.html").is_file():
+        errors.append("missing generated page: public/admissions/thanks.html")
 
     robots = (PUBLIC / "robots.txt").read_text(encoding="utf-8")
     if not re.search(r"^Sitemap:\s+https://", robots, flags=re.MULTILINE):

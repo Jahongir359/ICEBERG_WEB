@@ -65,6 +65,94 @@ function erpBranchName(branch, options) {
     return options.erpBranchNames.get(branch) || branch;
 }
 
+const SCHOOL_GRADES = new Set(["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11"]);
+const SCHOOL_LANGUAGES = { uz: "O'zbek", ru: "Rus", en: "Ingliz" };
+
+function localUzPhone(value) {
+    let digits = cleanText(value, 30).replace(/\D/g, "");
+    if (digits.length === 12 && digits.startsWith("998")) {
+        digits = digits.slice(3);
+    }
+    return digits;
+}
+
+function validBirthDate(value) {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
+    const date = new Date(`${value}T00:00:00Z`);
+    return !Number.isNaN(date.getTime()) && date.toISOString().slice(0, 10) === value && date <= new Date();
+}
+
+// Iceberg School admissions enquiry: returns the Sheets fields or an error message.
+function schoolEnquiryFields(input) {
+    const parentName = cleanText(input.parent_name, 100);
+    const phone = localUzPhone(input.parent_phone);
+    const grade = cleanText(input.grade, 2);
+    const language = cleanText(input.language, 2);
+    const childBirthDate = cleanText(input.child_birth_date, 10);
+    if (parentName.length < 2 || !/^\d{9}$/.test(phone)) {
+        return { error: "Ism va telefon raqamingizni tekshiring." };
+    }
+    if (!SCHOOL_GRADES.has(grade)) {
+        return { error: "Sinfni tanlang." };
+    }
+    if (language && !SCHOOL_LANGUAGES[language]) {
+        return { error: "Tilni qayta tanlang." };
+    }
+    if (childBirthDate && !validBirthDate(childBirthDate)) {
+        return { error: "Tug'ilgan sanani tekshiring." };
+    }
+    if (input.consent !== true) {
+        return { error: "Bog'lanishimizga rozilik bering." };
+    }
+    return {
+        fields: {
+            form_type: "school-enquiry",
+            student_name: parentName,
+            student_phone: `+998${phone}`,
+            program: `grade-${grade}`,
+            branch: "school",
+            child_name: cleanText(input.child_name, 100),
+            child_birth_date: childBirthDate,
+            language,
+            message: cleanText(input.message, 1000)
+        }
+    };
+}
+
+function schoolEnquiryMessage(lead) {
+    const details = [`Farzand: ${lead.child_name || "-"}`];
+    if (lead.child_birth_date) details.push(`Tug'ilgan sana: ${lead.child_birth_date}`);
+    if (lead.language) details.push(`Til: ${SCHOOL_LANGUAGES[lead.language]}`);
+    return details.join(" · ") + (lead.message ? `\n${lead.message}` : "");
+}
+
+function erpLeadPayload(lead, options, env) {
+    const shared = {
+        full_name: lead.student_name,
+        phone: lead.student_phone,
+        submission_id: lead.id,
+        utm_source: lead.utm_source,
+        utm_medium: lead.utm_medium,
+        utm_campaign: lead.utm_campaign,
+        referrer: lead.page_url || lead.referrer
+    };
+    if (lead.form_type === "school-enquiry") {
+        return {
+            ...shared,
+            program: `Grade ${lead.program.replace("grade-", "")}`,
+            branch: cleanText(env.SCHOOL_BRANCH_NAME, 100) || "Iceberg School",
+            source: "school-website",
+            message: schoolEnquiryMessage(lead)
+        };
+    }
+    return {
+        ...shared,
+        program: options.programNames.get(lead.program) || lead.program,
+        branch: erpBranchName(lead.branch, options),
+        source: "website"
+    };
+}
+
 // Best-effort copy of a stored lead into the ERP's Registration leads screen.
 // Google Sheets stays the primary store, so failures are logged, never shown.
 async function forwardLeadToErp(lead, options, env, reference) {
@@ -83,18 +171,7 @@ async function forwardLeadToErp(lead, options, env, reference) {
                 "Accept": "application/json",
                 "Authorization": `Bearer ${env.REGISTRATION_LEADS_API_TOKEN}`
             },
-            body: JSON.stringify({
-                full_name: lead.student_name,
-                phone: lead.student_phone,
-                program: options.programNames.get(lead.program) || lead.program,
-                branch: erpBranchName(lead.branch, options),
-                source: "website",
-                submission_id: lead.id,
-                utm_source: lead.utm_source,
-                utm_medium: lead.utm_medium,
-                utm_campaign: lead.utm_campaign,
-                referrer: lead.page_url || lead.referrer
-            }),
+            body: JSON.stringify(erpLeadPayload(lead, options, env)),
             redirect: "manual",
             signal: AbortSignal.timeout(8000)
         });
@@ -158,29 +235,41 @@ export async function onRequestPost(context) {
         return jsonResponse({ ok: true });
     }
 
-    const studentName = cleanText(input.student_name, 100);
-    let localPhone = cleanText(input.student_phone, 30).replace(/\D/g, "");
-    if (localPhone.length === 12 && localPhone.startsWith("998")) {
-        localPhone = localPhone.slice(3);
-    }
-    const program = cleanText(input.program, 60);
-    const branch = cleanText(input.branch, 60);
-    if (studentName.length < 2 || !/^\d{9}$/.test(localPhone)) {
-        return jsonResponse(
-            { ok: false, message: "Ism va telefon raqamingizni tekshiring." },
-            422
-        );
-    }
+    let leadFields;
+    let options = null;
+    if (input.form_type === "school-enquiry") {
+        const enquiry = schoolEnquiryFields(input);
+        if (enquiry.error) {
+            return jsonResponse({ ok: false, message: enquiry.error }, 422);
+        }
+        leadFields = enquiry.fields;
+    } else {
+        const studentName = cleanText(input.student_name, 100);
+        const localPhone = localUzPhone(input.student_phone);
+        const program = cleanText(input.program, 60);
+        const branch = cleanText(input.branch, 60);
+        if (studentName.length < 2 || !/^\d{9}$/.test(localPhone)) {
+            return jsonResponse(
+                { ok: false, message: "Ism va telefon raqamingizni tekshiring." },
+                422
+            );
+        }
 
-    let options;
-    try {
-        options = await loadRegistrationOptions(env);
-    } catch (error) {
-        console.error("Registration configuration failed", error.message);
-        return jsonResponse({ ok: false, message: "Ro'yxatdan o'tish xizmati vaqtincha ishlamayapti." }, 503);
-    }
-    if (!options.programs.has(program) || !options.branches.has(branch)) {
-        return jsonResponse({ ok: false, message: "Dastur va filialni qayta tanlang." }, 422);
+        try {
+            options = await loadRegistrationOptions(env);
+        } catch (error) {
+            console.error("Registration configuration failed", error.message);
+            return jsonResponse({ ok: false, message: "Ro'yxatdan o'tish xizmati vaqtincha ishlamayapti." }, 503);
+        }
+        if (!options.programs.has(program) || !options.branches.has(branch)) {
+            return jsonResponse({ ok: false, message: "Dastur va filialni qayta tanlang." }, 422);
+        }
+        leadFields = {
+            student_name: studentName,
+            student_phone: `+998${localPhone}`,
+            program,
+            branch
+        };
     }
 
     let turnstile;
@@ -215,10 +304,7 @@ export async function onRequestPost(context) {
             ? cleanText(input.submission_id, 64)
             : crypto.randomUUID(),
         submitted_at: new Date().toISOString(),
-        student_name: studentName,
-        student_phone: `+998${localPhone}`,
-        program,
-        branch,
+        ...leadFields,
         utm_source: cleanText(input.utm_source, 100),
         utm_medium: cleanText(input.utm_medium, 100),
         utm_campaign: cleanText(input.utm_campaign, 150),

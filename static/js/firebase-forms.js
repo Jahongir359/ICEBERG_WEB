@@ -49,7 +49,7 @@
             status.setAttribute("data-form-status", "");
             status.setAttribute("role", "status");
             status.setAttribute("aria-live", "polite");
-            status.className = "mt-3 text-sm font-semibold";
+            status.className = "form-status";
             form.appendChild(status);
         }
         return status;
@@ -146,7 +146,7 @@
 
             showRegistrationSuccess(form);
         } catch (error) {
-            status.className = "mt-3 text-sm font-semibold text-red-700";
+            status.className = "form-status";
             var rawMessage = error && error.message ? error.message : "";
             status.textContent = /failed to fetch|networkerror|load failed/i.test(rawMessage)
                 ? "Internet aloqasini tekshiring va qayta urinib ko'ring."
@@ -160,6 +160,111 @@
                 button.textContent = originalLabel;
             }
             form.dataset.submitting = "false";
+        }
+    }
+
+    var SCHOOL_GRADES = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11"];
+
+    function validateSchoolEnquiry(form) {
+        var name = fieldValue(form, "parent_name");
+        var phone = normalizeUzPhone(fieldValue(form, "parent_phone"));
+        var grade = fieldValue(form, "grade");
+        var consent = form.elements.namedItem("consent");
+        var checks = {
+            parent_name: name.length >= 2 ? "" : "Ism va familiyangizni kiriting.",
+            parent_phone: /^\d{9}$/.test(phone) ? "" : "Telefon raqamingizni tekshiring.",
+            grade: SCHOOL_GRADES.indexOf(grade) !== -1 ? "" : "Sinfni tanlang.",
+            consent: consent && consent.checked ? "" : "Bog'lanishimizga rozilik bering."
+        };
+        var valid = true;
+        Object.keys(checks).forEach(function (key) {
+            setFieldError(form, key, checks[key]);
+            if (checks[key]) valid = false;
+        });
+        return valid;
+    }
+
+    async function submitSchoolEnquiry(form) {
+        if (form.dataset.submitting === "true") return;
+        var button = form.querySelector('button[type="submit"]');
+        var status = statusElement(form);
+        var originalLabel = button ? button.innerHTML : "";
+        var submissionId = form.dataset.submissionId || crypto.randomUUID();
+        form.dataset.submissionId = submissionId;
+        var payload = {
+            form_type: "school-enquiry",
+            submission_id: submissionId,
+            parent_name: fieldValue(form, "parent_name"),
+            parent_phone: normalizeUzPhone(fieldValue(form, "parent_phone")),
+            child_name: fieldValue(form, "child_name"),
+            child_birth_date: fieldValue(form, "child_birth_date"),
+            grade: fieldValue(form, "grade"),
+            language: fieldValue(form, "language"),
+            message: fieldValue(form, "message"),
+            consent: true,
+            utm_source: fieldValue(form, "utm_source"),
+            utm_medium: fieldValue(form, "utm_medium"),
+            utm_campaign: fieldValue(form, "utm_campaign"),
+            turnstile_token: fieldValue(form, "cf-turnstile-response"),
+            website: fieldValue(form, "website"),
+            page_url: window.location.href,
+            referrer: document.referrer
+        };
+        status.textContent = "";
+        form.dataset.submitting = "true";
+        if (button) {
+            button.disabled = true;
+            button.textContent = "Yuborilmoqda...";
+        }
+        try {
+            var response = await fetch(form.action, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+            });
+            var result = await response.json().catch(function () { return {}; });
+            if (!response.ok || !result.ok) {
+                throw new Error(result.message || "Arizani yuborib bo'lmadi.");
+            }
+            window.location.assign("/admissions/thanks");
+            return;
+        } catch (error) {
+            var rawMessage = error && error.message ? error.message : "";
+            status.textContent = /failed to fetch|networkerror|load failed/i.test(rawMessage)
+                ? "Internet aloqasini tekshiring va qayta urinib ko'ring."
+                : (rawMessage || "Xatolik yuz berdi. Qayta urinib ko'ring.");
+        }
+        if (window.turnstile) {
+            window.turnstile.reset();
+        }
+        if (button) {
+            button.disabled = false;
+            button.innerHTML = originalLabel;
+        }
+        form.dataset.submitting = "false";
+    }
+
+    function configureSchoolForm(form) {
+        var phone = form.elements.namedItem("parent_phone");
+        if (phone) {
+            phone.value = formatUzPhoneInput(phone.value);
+            phone.addEventListener("input", function () {
+                phone.value = formatUzPhoneInput(phone.value);
+                setFieldError(form, "parent_phone", "");
+            });
+        }
+        ["parent_name", "grade", "consent"].forEach(function (name) {
+            var field = form.elements.namedItem(name);
+            if (field) field.addEventListener("change", function () { setFieldError(form, name, ""); });
+        });
+        if (!form.hasAttribute("data-static-lead-form")) {
+            form.addEventListener("submit", function (event) {
+                if (!validateSchoolEnquiry(form)) {
+                    event.preventDefault();
+                    var firstInvalid = form.querySelector('[aria-invalid="true"]');
+                    if (firstInvalid) firstInvalid.focus();
+                }
+            });
         }
     }
 
@@ -206,8 +311,10 @@
 
     document.addEventListener("DOMContentLoaded", function () {
         document.querySelectorAll("form[data-registration-form]").forEach(configureRegistration);
+        document.querySelectorAll("form[data-school-form]").forEach(configureSchoolForm);
         document.querySelectorAll("form[data-static-lead-form]").forEach(function (form) {
-            if (form.getAttribute("data-static-lead-form") === "register") {
+            var leadKind = form.getAttribute("data-static-lead-form");
+            if (leadKind === "register") {
                 loadTurnstile(form);
 
                 var honeypot = document.createElement("input");
@@ -218,15 +325,26 @@
                 honeypot.setAttribute("aria-hidden", "true");
                 honeypot.style.cssText = "position:absolute;left:-10000px;width:1px;height:1px;overflow:hidden";
                 form.appendChild(honeypot);
+            } else if (leadKind === "school-enquiry") {
+                loadTurnstile(form);
             }
 
             form.addEventListener("submit", function (event) {
                 event.preventDefault();
-                if (!form.reportValidity()) {
+                if (form.getAttribute("data-static-lead-form") !== "school-enquiry" && !form.reportValidity()) {
                     return;
                 }
 
                 var kind = form.getAttribute("data-static-lead-form");
+                if (kind === "school-enquiry") {
+                    if (!validateSchoolEnquiry(form)) {
+                        var firstSchoolInvalid = form.querySelector('[aria-invalid="true"]');
+                        if (firstSchoolInvalid) firstSchoolInvalid.focus();
+                        return;
+                    }
+                    submitSchoolEnquiry(form);
+                    return;
+                }
                 if (kind === "register") {
                     if (!validateRegistration(form)) {
                         var firstInvalid = form.querySelector('[aria-invalid="true"]');

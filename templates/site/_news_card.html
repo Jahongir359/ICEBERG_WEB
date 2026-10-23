@@ -1,0 +1,17 @@
+<article class="card news-card lift rv">
+    {% set media = (post.media_items or [])|first %}
+    {% if media %}
+    <div class="media">
+        {% if media.media_type == 'image' %}
+        <img src="{{ url_for('static', filename=media.file_path) }}" alt="{{ media.caption or post.title }}" loading="lazy">
+        {% else %}
+        <video controls preload="metadata"><source src="{{ url_for('static', filename=media.file_path) }}"></video>
+        {% endif %}
+    </div>
+    {% endif %}
+    <div class="body">
+        <span class="type">{{ 'Tadbir' if post.post_type == 'event' else 'Yangilik' }}{% if post.event_date %} · <time datetime="{{ post.event_date }}">{{ post.event_date }}</time>{% endif %}</span>
+        <h3 class="h3">{{ post.title }}</h3>
+        {% if post.excerpt %}<p>{{ post.excerpt }}</p>{% endif %}
+    </div>
+</article>

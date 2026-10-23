@@ -1,0 +1,50 @@
+{
+  "$comment": "Iceberg School facts shown on the public site. Leave a value empty until it is confirmed: the page then shows a visible [placeholder] and leaves it out of search data. Never guess. Stage grades follow the standard Uzbek school structure (1–4, 5–9, 10–11); change them if the school differs.",
+  "name": "Iceberg School",
+  "academic_year": "",
+  "grades": "1–11",
+  "stages": [
+    {
+      "id": "primary",
+      "grades": "1–4"
+    },
+    {
+      "id": "middle",
+      "grades": "5–9"
+    },
+    {
+      "id": "high",
+      "grades": "10–11"
+    }
+  ],
+  "phone": "",
+  "phone_display": "",
+  "address": "",
+  "city": "",
+  "hours": "",
+  "response_time": "",
+  "teaching_languages": "",
+  "transport_and_meals": "",
+  "email": "",
+  "telegram_url": "",
+  "instagram_url": "",
+  "map_url": "",
+  "max_class_size": "",
+  "tuition": [
+    {
+      "stage": "primary",
+      "price": ""
+    },
+    {
+      "stage": "middle",
+      "price": ""
+    },
+    {
+      "stage": "high",
+      "price": ""
+    }
+  ],
+  "tuition_note": "",
+  "portal_url": "https://app.iceberglc.com/login/?brand=school",
+  "app_url": "https://app.iceberglc.com/download/"
+}

@@ -1,0 +1,94 @@
+{% extends "site/base.html" %}
+{% from "site/_macros.html" import icon %}
+{% block title %}Kursga yozilish — Iceberg Courses | ICEBERG o'quv markazi{% endblock %}
+{% block description %}ICEBERG o'quv markazi (Iceberg Courses) kurslariga onlayn ariza: IELTS, CEFR, SAT, matematika, kimyo va biologiya. 30 soniyadan kam vaqt oladi.{% endblock %}
+{% block content %}
+<section class="page-hero">
+    <div class="wrap">
+        <nav class="crumbs" aria-label="Sahifa yo'li"><a href="{{ url_for('index') }}">Bosh sahifa</a><span aria-hidden="true">/</span><a href="{{ url_for('courses') }}">Kurslar</a><span aria-hidden="true">/</span><span>Yozilish</span></nav>
+        <span class="kicker">Iceberg Courses</span>
+        <h1>ICEBERG'ga qo'shiling</h1>
+        <p class="lead">O'zingizga mos dastur va filialni tanlang. Arizangizni yuboring — jamoamiz siz bilan bog'lanadi. <strong>30 soniyadan kam vaqt oladi.</strong></p>
+    </div>
+</section>
+
+<section class="sec-tight">
+    <div class="wrap split">
+        <div class="form-card rv" aria-label="Ro'yxatdan o'tish formasi">
+            <form action="{{ url_for('register') }}" method="post" class="registration-form" data-registration-form data-telegram-url="{{ registration.contact.telegram_url }}" {% if success %}hidden{% endif %}>
+                <div class="fields">
+                    <div class="field">
+                        <label for="student_name">Ism va familiya</label>
+                        <input class="control" type="text" id="student_name" name="student_name" value="{{ form_data.get('student_name', '') }}" autocomplete="name" minlength="2" maxlength="100" required aria-describedby="student_name_error"{% if errors.get('student_name') %} aria-invalid="true"{% endif %}>
+                        <p class="err" id="student_name_error" data-error-for="student_name">{{ errors.get('student_name', '') }}</p>
+                    </div>
+                    <div class="field">
+                        <label for="student_phone">Telefon raqami</label>
+                        <div class="phone-input">
+                            <span class="prefix" aria-hidden="true">+998</span>
+                            <input class="control" type="tel" id="student_phone" name="student_phone" value="{{ form_data.get('student_phone', '') }}" placeholder="90 123 45 67" inputmode="tel" autocomplete="tel-national" maxlength="16" required aria-describedby="student_phone_error"{% if errors.get('student_phone') %} aria-invalid="true"{% endif %}>
+                        </div>
+                        <p class="err" id="student_phone_error" data-error-for="student_phone">{{ errors.get('student_phone', '') }}</p>
+                    </div>
+                    <div class="fields two">
+                        <div class="field">
+                            <label for="course">Dastur</label>
+                            <select class="control" id="course" name="course" required aria-describedby="course_error"{% if errors.get('course') %} aria-invalid="true"{% endif %}>
+                                <option value="">Dastur tanlang</option>
+                                {% for program in registration.programs %}<option value="{{ program.id }}"{% if form_data.get('course') == program.id %} selected{% endif %}>{{ program.name }}</option>{% endfor %}
+                            </select>
+                            <p class="err" id="course_error" data-error-for="course">{{ errors.get('course', '') }}</p>
+                        </div>
+                        <div class="field">
+                            <label for="preferred_branch">Filial</label>
+                            <select class="control" id="preferred_branch" name="preferred_branch" required aria-describedby="preferred_branch_error"{% if errors.get('preferred_branch') %} aria-invalid="true"{% endif %}>
+                                <option value="">Filial tanlang</option>
+                                {% for branch in registration.branches %}<option value="{{ branch.id }}"{% if form_data.get('preferred_branch') == branch.id %} selected{% endif %}>{{ branch.name }}</option>{% endfor %}
+                            </select>
+                            <p class="err" id="preferred_branch_error" data-error-for="preferred_branch">{{ errors.get('preferred_branch', '') }}</p>
+                        </div>
+                    </div>
+                </div>
+                <input type="hidden" name="utm_source" value="{{ request.args.get('utm_source', '') }}">
+                <input type="hidden" name="utm_medium" value="{{ request.args.get('utm_medium', '') }}">
+                <input type="hidden" name="utm_campaign" value="{{ request.args.get('utm_campaign', '') }}">
+                <div style="display:grid;gap:12px;margin-top:20px">
+                    <button type="submit" class="btn btn-primary btn-block">Ro'yxatdan o'tish {{ icon('arrow') }}</button>
+                    <p class="form-status" data-form-status role="status" aria-live="polite"></p>
+                    <p class="form-note">Ma'lumotlaringiz faqat arizangiz bo'yicha bog'lanish uchun ishlatiladi.</p>
+                </div>
+            </form>
+
+            <div class="success" data-registration-success {% if not success %}hidden{% endif %} tabindex="-1">
+                <span class="success-mark">{{ icon('check') }}</span>
+                <h2 class="h2" style="font-size:1.8rem">Arizangiz qabul qilindi!</h2>
+                <p class="lead">Rahmat! ICEBERG jamoasi tez orada siz bilan bog'lanadi.</p>
+                <div class="hero-cta" style="justify-content:center">
+                    <a class="btn btn-primary" href="{{ registration.contact.telegram_url }}" target="_blank" rel="noopener noreferrer">{{ icon('telegram') }} Telegram orqali yozish</a>
+                    <a class="btn btn-outline" href="{{ url_for('index') }}">Bosh sahifaga qaytish</a>
+                </div>
+            </div>
+        </div>
+        <aside class="sticky">
+            <div class="panel-maroon rv">
+                <img class="crest" src="{{ url_for('static', filename='school/img/crest-white.png') }}" alt="" width="54" height="64" loading="lazy">
+                <h2 class="h3">Savolingiz bormi?</h2>
+                <div class="contact-list">
+                    <a href="tel:{{ registration.contact.call_center_phone }}" style="color:#fff"><span class="icon-tile soft">{{ icon('phone') }}</span><span>{{ registration.contact.call_center_display }}<small style="color:var(--brand-on-primary-soft)">Qo'ng'iroq qiling</small></span></a>
+                    <a href="{{ registration.contact.telegram_url }}" rel="noopener" style="color:#fff"><span class="icon-tile soft">{{ icon('telegram') }}</span><span>@{{ registration.contact.telegram_username }}<small style="color:var(--brand-on-primary-soft)">Telegram</small></span></a>
+                </div>
+            </div>
+            <div class="panel-tint rv d1">
+                <h2 class="h3">Maktabga qabulmi?</h2>
+                <p>1–11-sinflarga qabul uchun Iceberg School qabul formasidan foydalaning.</p>
+                <a class="link-arrow" href="{{ url_for('admissions') }}#ariza">Maktabga ariza</a>
+            </div>
+        </aside>
+    </div>
+</section>
+{% endblock %}
+{% block dock %}{% endblock %}
+{% block body_class %}{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/firebase-forms.js', v='20261023-1') }}" defer></script>
+{% endblock %}
