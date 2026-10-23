@@ -25,7 +25,7 @@
 <style>
     .news-hero {
         background:
-            linear-gradient(145deg, rgba(7, 20, 43, 0.84), rgba(16, 40, 76, 0.86)),
+            linear-gradient(145deg, rgb(var(--brand-primary-deep-rgb) / 0.84), rgb(var(--brand-primary-rgb) / 0.86)),
             url('https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?q=80&w=2070&auto=format&fit=crop') center/cover;
     }
 </style>
@@ -48,7 +48,7 @@
             {% for post in posts %}
             <article class="info-card">
                 <div class="flex flex-wrap items-center gap-2 mb-3">
-                    <span class="soft-pill {{ 'bg-blue-100 text-blue-700 border-blue-200' if post.post_type == 'news' else 'bg-amber-100 text-amber-700 border-amber-200' }}">
+                    <span class="soft-pill {{ 'bg-brand-tint text-brand-hover border-brand-border' if post.post_type == 'news' else 'bg-amber-100 text-amber-700 border-amber-200' }}">
                         {{ 'Yangilik' if post.post_type == 'news' else 'Event' }}
                     </span>
                     {% if post.event_date %}

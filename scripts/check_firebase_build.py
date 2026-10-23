@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import json
 import re
+import subprocess
 import sys
 from html.parser import HTMLParser
 from pathlib import Path
@@ -103,6 +104,10 @@ def check() -> None:
         for marker in PRIVATE_MARKERS:
             if marker in text:
                 errors.append(f"{relative_page}: contains private marker {marker}")
+        if "cdn.tailwindcss.com" in text:
+            errors.append(f"{relative_page}: uses the Tailwind CDN; run npm run build:css instead")
+        if page.name != "404.html" and not re.search(r'<html[^>]+data-brand="(center|school)"', text):
+            errors.append(f"{relative_page}: missing html data-brand attribute")
 
         for attribute, reference in parser.references:
             target = resolve_local_reference(reference)
@@ -182,6 +187,16 @@ def check() -> None:
     ):
         if required_header not in headers:
             errors.append(f"_headers: missing {required_header}")
+
+    for required_asset in ("static/brand/tokens.css", "static/css/tailwind.css"):
+        if not (PUBLIC / required_asset).is_file():
+            errors.append(f"missing {required_asset}")
+    tokens_check = subprocess.run(
+        [sys.executable, str(ROOT / "scripts" / "build_brand_tokens.py"), "--check"],
+        capture_output=True, text=True,
+    )
+    if tokens_check.returncode:
+        errors.append(tokens_check.stdout.strip() or "static/brand/tokens.css check failed")
 
     if errors:
         print("\n".join(f"ERROR: {error}" for error in errors), file=sys.stderr)
