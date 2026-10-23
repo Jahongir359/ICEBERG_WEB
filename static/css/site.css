@@ -480,6 +480,32 @@ select.control { appearance: none; -webkit-appearance: none; padding-right: 2.4r
 .course .meta { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
 .course .meta span { font-size: .78rem; font-weight: 700; color: var(--muted); background: var(--brand-bg); border: 1px solid var(--line); padding: .2rem .55rem; border-radius: 999px; }
 
+/* Leader's welcome */
+.leader { display: grid; gap: 32px; align-items: center; }
+@media (min-width: 900px) { .leader { grid-template-columns: .9fr 1.1fr; gap: 64px; } }
+.leader-photo { position: relative; margin: 0; width: min(100%, 460px); justify-self: center; }
+.leader-photo::before {
+    content: ""; position: absolute; inset: 14px -14px -14px 14px; border-radius: calc(var(--brand-radius-card) + 6px);
+    border: 2px solid rgb(var(--brand-gold-rgb) / .55); z-index: 0;
+}
+.leader-photo img:first-child {
+    position: relative; z-index: 1; width: 100%; height: auto; aspect-ratio: 900 / 775; object-fit: cover; object-position: center top;
+    border-radius: calc(var(--brand-radius-card) + 6px); box-shadow: var(--shadow-lift);
+}
+.leader-crest {
+    position: absolute; z-index: 2; left: -12px; bottom: 22px; width: 64px; height: auto; padding: 12px;
+    border-radius: 18px; background: var(--brand-primary); box-shadow: 0 0 0 4px #fff, 0 14px 28px rgb(var(--brand-primary-deep-rgb) / .3);
+}
+.leader-text { display: grid; gap: 18px; }
+.leader blockquote { margin: 0; position: relative; padding-top: 34px; }
+.leader blockquote::before {
+    content: "\201C"; position: absolute; top: -18px; left: -4px; font-family: var(--brand-font-display); font-size: 6rem; line-height: 1; color: var(--brand-gold);
+}
+.leader blockquote p { font-family: var(--brand-font-display); font-weight: 500; font-size: clamp(1.35rem, 4.4vw, 1.9rem); line-height: 1.35; color: var(--brand-primary); font-variation-settings: "SOFT" 100; }
+.leader-sign { display: grid; gap: 2px; padding-left: 16px; border-left: 3px solid var(--brand-gold); }
+.leader-sign strong { font-size: 1.05rem; }
+.leader-sign span { color: var(--muted); font-size: .92rem; }
+
 /* People */
 .person { align-items: center; text-align: center; }
 .person img { width: 112px; height: 112px; border-radius: 999px; object-fit: cover; box-shadow: 0 0 0 5px #fff, 0 0 0 7px rgb(var(--brand-gold-rgb) / .6), 0 16px 30px rgb(108 60 20 / .18); }
