@@ -1,8 +1,11 @@
 {% from "site/_macros.html" import icon %}
-<div class="art-crest rv d2" aria-hidden="true">
-    <span class="ring r1"></span><span class="ring r2"></span><span class="glow"></span>
-    <span class="medal"><img src="{{ url_for('static', filename='school/img/crest-white.png') }}" alt="" width="360" height="424"></span>
-    <span class="orb o1"><span class="icon-tile">{{ icon('mountain') }}</span>Yuqoriga intil</span>
-    <span class="orb o2"><span class="icon-tile">{{ icon('child') }}</span>Har tomonlama o's</span>
-    <span class="orb o3"><span class="icon-tile">{{ icon('book') }}</span>Chuqur o'qi</span>
+{# The school's key visual, shown whole (never cropped), with the crest's three symbols floating at its edges. #}
+<div class="hero-poster rv d2">
+    <span class="hero-poster-glow" aria-hidden="true"></span>
+    <figure class="hero-poster-frame">
+        <img src="{{ url_for('static', filename='school/img/poster.jpg') }}" alt="Iceberg Maktabi — {{ school.leader.name or 'maktab rahbari' }}" width="1095" height="1437" fetchpriority="high">
+    </figure>
+    <span class="orb o1" aria-hidden="true"><span class="icon-tile">{{ icon('mountain') }}</span>Yuqoriga intil</span>
+    <span class="orb o2" aria-hidden="true"><span class="icon-tile">{{ icon('child') }}</span>Har tomonlama o's</span>
+    <span class="orb o3" aria-hidden="true"><span class="icon-tile">{{ icon('book') }}</span>Chuqur o'qi</span>
 </div>
