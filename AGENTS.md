@@ -75,7 +75,8 @@ All of them must pass before a commit. There is no CI workflow in this repo yet.
 - **This repo owns the website's design.** `static/brand/tokens.json` (colours, fonts, radii) is the
   source for `tokens.css`; `static/school/img/` holds the School logos and photos. The core maroon/teal
   brand colours and the logo originals are shared with the ERP (`College-ERP/docs/brand/iceberg-school/`)
-  — if a core colour or logo changes, update both repos. Gold/cream/paper and Fraunces are website-only.
+  — if a core colour or logo changes, update both repos. Cream/paper are website-only; the School **gold** (`#C9973F` highlight) and **Fraunces** (School display
+  headings) are also used by the School app (College-ERP `docs/plans/ICEBERG_SCHOOL_APP_PLAN.md` section 6).
 - Pages and components use only `var(--brand-*)` (or `rgb(var(--brand-*-rgb) / a)`) — no new hex
   values in templates or page CSS.
 - `templates/site/base.html` is the one public layout; new pages extend it and reuse `.card`, `.btn`,
