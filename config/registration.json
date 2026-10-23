@@ -14,11 +14,12 @@
     {"id": "biology", "name": "Biologiya", "active": true}
   ],
   "branches": [
-    {"id": "main", "name": "Asosiy filial", "active": true},
+    {"id": "main", "name": "Asosiy filial", "active": true, "erp_branch_name": ""},
     {
       "id": "gayrat",
       "name": "G'ayrat filiali",
       "active": true,
+      "erp_branch_name": "",
       "location": "Oilaviy poliklinika yonidagi binoning 2-qavati",
       "phone": "+998994576699",
       "telegram_username": "Gayrat_qabulxona"

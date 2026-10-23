@@ -14,7 +14,7 @@ const HEADERS = [
   'Status',
   'Staff Notes'
 ];
-const RECEIVER_VERSION = '2026-08-08.1';
+const RECEIVER_VERSION = '2026-10-23.1';
 
 function jsonResult_(body) {
   return ContentService
@@ -123,6 +123,7 @@ function doPost(e) {
       return jsonResult_({ ok: false, error: 'missing_required_fields' });
     }
 
+    let existing = null;
     const lock = LockService.getScriptLock();
     lock.waitLock(10000);
     try {
@@ -137,7 +138,7 @@ function doPost(e) {
         throw new Error('ID column is missing');
       }
 
-      const existing = sheet
+      existing = sheet
         .getRange(1, idColumn, sheet.getLastRow(), 1)
         .createTextFinder(String(data.id))
         .matchEntireCell(true)
@@ -177,7 +178,7 @@ function doPost(e) {
       lock.releaseLock();
     }
 
-    return jsonResult_({ ok: true, id: String(data.id), version: RECEIVER_VERSION });
+    return jsonResult_({ ok: true, id: String(data.id), duplicate: Boolean(existing), version: RECEIVER_VERSION });
   } catch (error) {
     console.error(error);
     return jsonResult_({ ok: false, error: 'internal_error' });

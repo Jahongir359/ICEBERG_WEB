@@ -127,3 +127,125 @@ test('repeated client submission ID remains idempotent downstream', async () => 
     assert.equal(leads.length, 2);
     assert.equal(leads[0].id, leads[1].id);
 });
+
+const ERP_URL = 'https://app.iceberglc.com/public/registration-leads/';
+
+function erpEnvironment(branchNames = {}) {
+    const env = environment();
+    const config = structuredClone(registration);
+    for (const branch of config.branches) {
+        branch.erp_branch_name = branchNames[branch.id] || '';
+    }
+    env.ASSETS = {
+        fetch: async () => new Response(JSON.stringify(config), {
+            headers: { 'Content-Type': 'application/json' }
+        })
+    };
+    env.REGISTRATION_LEADS_API_URL = ERP_URL;
+    env.REGISTRATION_LEADS_API_TOKEN = 'erp-token';
+    return env;
+}
+
+function mockNetworkWithErp({ duplicate = false, erpStatus = 201, erpThrows = false } = {}) {
+    const calls = { sheets: [], erp: [] };
+    globalThis.fetch = async (url, options) => {
+        if (String(url).includes('turnstile')) {
+            return new Response(JSON.stringify({ success: true, action: 'register' }));
+        }
+        if (String(url) === ERP_URL) {
+            calls.erp.push({ headers: options.headers, body: JSON.parse(options.body) });
+            if (erpThrows) {
+                throw new TypeError('network down');
+            }
+            return new Response(JSON.stringify({ status: 'ok', lead_id: 1 }), { status: erpStatus });
+        }
+        calls.sheets.push(JSON.parse(options.body));
+        return new Response(JSON.stringify({ ok: true, duplicate }));
+    };
+    return calls;
+}
+
+test('does not contact the ERP unless both ERP secrets are set', async () => {
+    const calls = mockNetworkWithErp();
+    const env = erpEnvironment();
+    delete env.REGISTRATION_LEADS_API_TOKEN;
+    const response = await onRequestPost({ request: request(), env });
+    assert.equal(response.status, 201);
+    assert.equal(calls.sheets.length, 1);
+    assert.equal(calls.erp.length, 0);
+});
+
+test('forwards a stored lead to the ERP with the configured branch name', async () => {
+    const calls = mockNetworkWithErp();
+    const response = await onRequestPost({
+        request: request({ branch: 'gayrat', utm_source: 'instagram' }),
+        env: erpEnvironment({ gayrat: "G'ayrat" })
+    });
+    assert.equal(response.status, 201);
+    assert.equal(calls.erp.length, 1);
+    assert.equal(calls.erp[0].headers.Authorization, 'Bearer erp-token');
+    assert.deepEqual(
+        {
+            full_name: calls.erp[0].body.full_name,
+            phone: calls.erp[0].body.phone,
+            program: calls.erp[0].body.program,
+            branch: calls.erp[0].body.branch,
+            source: calls.erp[0].body.source,
+            utm_source: calls.erp[0].body.utm_source
+        },
+        {
+            full_name: 'Ali Valiyev',
+            phone: '+998901234567',
+            program: 'IELTS',
+            branch: "G'ayrat",
+            source: 'website',
+            utm_source: 'instagram'
+        }
+    );
+    assert.equal(JSON.stringify(calls.sheets[0]).includes('erp-token'), false);
+});
+
+test('falls back to the branch ID without a mapping and sends unknown as empty', async () => {
+    const calls = mockNetworkWithErp();
+    for (const branch of ['main', 'unknown']) {
+        await onRequestPost({ request: request({ branch }), env: erpEnvironment() });
+    }
+    assert.deepEqual(calls.erp.map(call => call.body.branch), ['main', '']);
+});
+
+test('skips the ERP for a submission Sheets already stored', async () => {
+    const calls = mockNetworkWithErp({ duplicate: true });
+    const response = await onRequestPost({ request: request(), env: erpEnvironment() });
+    assert.equal(response.status, 201);
+    assert.equal(calls.erp.length, 0);
+});
+
+test('an ERP failure never fails the stored application', async () => {
+    for (const failure of [{ erpStatus: 401 }, { erpStatus: 503 }, { erpThrows: true }]) {
+        mockNetworkWithErp(failure);
+        const response = await onRequestPost({ request: request(), env: erpEnvironment() });
+        assert.equal(response.status, 201);
+    }
+});
+
+test('rejects a non-HTTPS ERP URL without sending the token', async () => {
+    const calls = mockNetworkWithErp();
+    const env = erpEnvironment();
+    env.REGISTRATION_LEADS_API_URL = 'http://app.iceberglc.com/public/registration-leads/';
+    const response = await onRequestPost({ request: request(), env });
+    assert.equal(response.status, 201);
+    assert.equal(calls.erp.length, 0);
+});
+
+test('uses waitUntil so the visitor does not wait for the ERP', async () => {
+    mockNetworkWithErp();
+    const pending = [];
+    const response = await onRequestPost({
+        request: request(),
+        env: erpEnvironment(),
+        waitUntil: promise => pending.push(promise)
+    });
+    assert.equal(response.status, 201);
+    assert.equal(pending.length, 1);
+    await Promise.all(pending);
+});
