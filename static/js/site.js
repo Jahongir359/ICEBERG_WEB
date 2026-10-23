@@ -92,6 +92,45 @@
             });
         }
 
+        // Split marked headlines into words so they can rise in one after another.
+        var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        document.querySelectorAll("[data-split]").forEach(function (heading) {
+            if (reduceMotion) {
+                heading.classList.add("in");
+                return;
+            }
+            var index = 0;
+            (function wrap(node) {
+                Array.prototype.slice.call(node.childNodes).forEach(function (child) {
+                    if (child.nodeType === 3) {
+                        var fragment = document.createDocumentFragment();
+                        child.textContent.split(/(\s+)/).forEach(function (part) {
+                            if (!part) return;
+                            if (/^\s+$/.test(part)) {
+                                fragment.appendChild(document.createTextNode(part));
+                                return;
+                            }
+                            var outer = document.createElement("span");
+                            var inner = document.createElement("span");
+                            outer.className = "w";
+                            inner.textContent = part;
+                            inner.style.transitionDelay = (0.08 + index * 0.06) + "s";
+                            index += 1;
+                            outer.appendChild(inner);
+                            fragment.appendChild(outer);
+                        });
+                        child.parentNode.replaceChild(fragment, child);
+                    } else if (child.nodeType === 1) {
+                        wrap(child);
+                    }
+                });
+            }(heading));
+            heading.setAttribute("aria-label", heading.textContent.replace(/\s+/g, " ").trim());
+            requestAnimationFrame(function () {
+                requestAnimationFrame(function () { heading.classList.add("in"); });
+            });
+        });
+
         // Reveal sections as they scroll into view.
         var items = document.querySelectorAll(".rv");
         if ("IntersectionObserver" in window && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {

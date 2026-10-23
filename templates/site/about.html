@@ -1,5 +1,5 @@
 {% extends "site/base.html" %}
-{% from "site/_macros.html" import icon, fact %}
+{% from "site/_macros.html" import icon, fact, curve %}
 {% block title %}Maktab haqida — Iceberg School va Iceberg oilasi{% endblock %}
 {% block description %}Iceberg School haqida: gerbimiz ma'nosi, qadriyatlarimiz va Iceberg oilasi — xususiy maktab hamda ICEBERG o'quv markazi (Iceberg Courses).{% endblock %}
 {% block content %}
@@ -10,6 +10,7 @@
         <h1>Aysberg kabi: eng muhimi — ko'rinmas qismida</h1>
         <p class="lead">Baholar, sertifikatlar va g'alabalar — bu cho'qqi. Ularni ushlab turadigan narsa esa suv ostida: odatlar, xarakter va chuqur bilim. Iceberg School shu poydevorni quradi.</p>
     </div>
+    {{ curve('white') }}
 </section>
 
 <section class="sec sec-white">

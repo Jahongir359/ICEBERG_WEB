@@ -1,5 +1,5 @@
 {% extends "site/base.html" %}
-{% from "site/_macros.html" import icon, fact %}
+{% from "site/_macros.html" import icon, fact, curve %}
 {% block title %}Aloqa — Iceberg School va Iceberg Courses{% endblock %}
 {% block description %}Iceberg School qabul bo'limi va Iceberg Courses (ICEBERG o'quv markazi) bilan bog'lanish: telefon, Telegram, manzil va filiallar.{% endblock %}
 {% block content %}
@@ -10,6 +10,7 @@
         <h1>Biz bilan bog'laning</h1>
         <p class="lead">Savollaringizga javob berish va farzandingiz uchun to'g'ri yo'lni tanlashga yordam berish uchun shu yerdamiz.</p>
     </div>
+    {{ curve('cream') }}
 </section>
 <section class="sec">
     <div class="wrap grid grid-2">

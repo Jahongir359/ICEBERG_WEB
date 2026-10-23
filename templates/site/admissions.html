@@ -1,5 +1,5 @@
 {% extends "site/base.html" %}
-{% from "site/_macros.html" import icon, fact %}
+{% from "site/_macros.html" import icon, fact, curve %}
 
 {% block title %}Qabul — Iceberg School | 1–11-sinflarga ariza{% endblock %}
 {% block description %}Iceberg School'ga qabul: to'rt oddiy qadam, ariza formasi, o'qish narxi va ko'p beriladigan savollar. 1–11-sinflar uchun xususiy maktab.{% endblock %}
@@ -12,6 +12,7 @@
         <h1>Iceberg'ga qo'shilish — to'rt oddiy qadam</h1>
         <p class="lead">Joy bo'lsa, oilalarni yil davomida qabul qilamiz. Ko'pchilik yangi o'quvchilar sentabrda boshlaydi — farzandingiz haqida yozing, qolganida biz yo'l ko'rsatamiz.</p>
     </div>
+    {{ curve('white') }}
 </section>
 
 <section class="sec-tight sec-white">

@@ -2,6 +2,7 @@
 
 :root {
     --brand-font: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --brand-font-display: 'Fraunces', Georgia, 'Times New Roman', serif;
     --brand-radius-chip: 10px;
     --brand-radius-input: 13px;
     --brand-radius-auth-card: 22px;
@@ -54,6 +55,11 @@ html[data-brand="school"] {
     --brand-text: #1F1515;
     --brand-muted: #5A4747;
     --brand-footer-bg: #2E0505;
+    --brand-gold: #C9973F;
+    --brand-gold-ink: #8A5A12;
+    --brand-gold-soft: #E9C77E;
+    --brand-cream: #FBF6EE;
+    --brand-paper: #F5ECDF;
     --brand-primary-rgb: 76 9 9;
     --brand-primary-hover-rgb: 122 31 31;
     --brand-primary-deep-rgb: 46 5 5;
@@ -61,4 +67,6 @@ html[data-brand="school"] {
     --brand-accent-rgb: 76 9 9;
     --brand-bg-rgb: 251 247 246;
     --brand-text-rgb: 31 21 21;
+    --brand-gold-rgb: 201 151 63;
+    --brand-cream-rgb: 251 246 238;
 }

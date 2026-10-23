@@ -75,7 +75,11 @@ All of them must pass before a commit. There is no CI workflow in this repo yet.
   `brand-*` classes) — no new hex values in templates or page CSS.
 - `templates/site/base.html` is the one public layout; new pages extend it and reuse `.card`, `.btn`,
   `.sec`, `.page-hero`, `.form-card`, `.faq` from `site.css` rather than adding page CSS.
-- Font: Inter on every page.
+- Fonts: Fraunces (warm serif, `--brand-font-display`) for headings, Inter (`--brand-font`) for body,
+  buttons, labels and kickers. Colours: maroon + gold on cream/paper (`--brand-gold*`, `--brand-cream`,
+  `--brand-paper`); gold as text only in its `-ink` shade on light grounds.
+- Motion: `.rv` reveal on scroll, `[data-split]` word rise, card lift with gold rule, marquee, page
+  view transitions — all off under `prefers-reduced-motion`.
 - Test every change at 390 px first (no horizontal scroll, dock not covering content), then desktop.
 
 ## Content rules

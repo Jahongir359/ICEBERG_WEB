@@ -1,5 +1,5 @@
 {% extends "site/base.html" %}
-{% from "site/_macros.html" import icon, fact %}
+{% from "site/_macros.html" import icon, fact, curve %}
 
 {% block title %}Iceberg School — xususiy maktab, 1–11-sinflar | Iceberg Courses{% endblock %}
 
@@ -8,14 +8,14 @@
     <div class="wrap hero-grid">
         <div>
             <span class="hero-badge rv">
-                <img src="{{ url_for('static', filename='school/img/crest-white.png') }}" alt="" width="26" height="31">
+                <img src="{{ url_for('static', filename='school/img/crest-maroon.png') }}" alt="" width="24" height="29">
                 Xususiy maktab · {{ school.grades }}-sinflar
             </span>
-            <h1 class="rv d1">Ko'rinib turgani&nbsp;— <span class="soft">faqat cho'qqi.</span> Biz poydevorni quramiz.</h1>
+            <h1 class="words" data-split>Ko'rinib turgani&nbsp;— <span class="soft swash">faqat cho'qqi.</span> Biz poydevorni quramiz.</h1>
             <p class="lead rv d2">Kuchli natijalar yuzadan emas, chuqurlikdan boshlanadi: xarakter, qiziquvchanlik va umrbod kitob o'qish odati. Iceberg School'da har bir bola ismi bilan taniladi va chuqurroq o'rganishga o'rgatiladi.</p>
             <div class="hero-cta rv d3">
-                <a class="btn btn-light" href="{{ url_for('admissions') }}#ariza">Ariza topshirish {{ icon('arrow') }}</a>
-                <a class="btn btn-ghost" href="{{ url_for('programs') }}">Ta'lim dasturlari</a>
+                <a class="btn btn-primary" href="{{ url_for('admissions') }}#ariza">Ariza topshirish {{ icon('arrow') }}</a>
+                <a class="btn btn-outline" href="{{ url_for('programs') }}">Ta'lim dasturlari</a>
             </div>
             <div class="hero-meta rv d3">
                 <span>{{ icon('cap') }} {{ school.grades }}-sinflar</span>
@@ -26,6 +26,7 @@
 
         {% include "site/_hero_art.html" %}
     </div>
+    {{ curve('white') }}
 </section>
 
 <section class="sec sec-white">
@@ -127,6 +128,30 @@
 
 <section class="sec">
     <div class="wrap">
+        <div class="sec-head center rv">
+            <span class="kicker">Jamoa</span>
+            <h2 class="h2">Sizni kutib oladigan insonlar</h2>
+            <p class="lead">Iceberg jamoasi — farzandingizning har bir qadamini biladigan ustozlar va murabbiylar.</p>
+        </div>
+        <div class="grid grid-3">
+            {% for person in [
+                ('about_team_1', 'img/team/azizbek.jpg', 'Azizbek Nasriddinov', 'Markaz direktori'),
+                ('about_team_2', 'img/team/maqsudbek.jpg', 'Maqsudbek Mirzayev', "Ingliz tili bo'yicha mutaxassis"),
+                ('about_team_3', 'img/team/islomjon.jpg', 'Islomjon Ergashboyev', 'Asosiy tizim boshqaruvchisi')
+            ] %}
+            <article class="card person lift rv{% if loop.index0 %} d{{ loop.index0 }}{% endif %}">
+                <img src="{{ asset_url(person[0], person[1]) }}" alt="{{ person[2] }}" width="112" height="112" loading="lazy">
+                <h3 class="h3">{{ person[2] }}</h3>
+                <p class="role">{{ person[3] }}</p>
+            </article>
+            {% endfor %}
+        </div>
+        <p class="rv" style="margin-top:24px;text-align:center"><a class="link-arrow" href="{{ url_for('about') }}">Biz haqimizda</a></p>
+    </div>
+</section>
+
+<section class="sec sec-white">
+    <div class="wrap">
         <div class="courses-band rv">
             <div>
                 <span class="kicker">Iceberg Courses · o'quv markazi</span>
@@ -137,15 +162,21 @@
                     <a class="btn btn-ghost" href="{{ url_for('register') }}">Kursga yozilish</a>
                 </div>
             </div>
-            <div class="chips">
-                {% for program in registration.programs %}<span class="chip">{{ program.name }}</span>{% endfor %}
+            <div aria-label="Kurslar">
+                {% for row in range(2) %}
+                <div class="marquee"{% if row %} aria-hidden="true"{% endif %}>
+                    <div class="marquee-track">
+                        {% for copy in range(2) %}{% for program in (registration.programs if not row else registration.programs|reverse) %}<span class="chip"{% if copy %} aria-hidden="true"{% endif %}>{{ program.name }}</span>{% endfor %}{% endfor %}
+                    </div>
+                </div>
+                {% endfor %}
             </div>
         </div>
     </div>
 </section>
 
 {% if posts %}
-<section class="sec sec-white">
+<section class="sec">
     <div class="wrap">
         <div class="sec-head rv">
             <span class="kicker">Yangiliklar</span>

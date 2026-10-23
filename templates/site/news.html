@@ -1,5 +1,5 @@
 {% extends "site/base.html" %}
-{% from "site/_macros.html" import icon %}
+{% from "site/_macros.html" import icon, curve %}
 {% block title %}Yangiliklar va tadbirlar — Iceberg School{% endblock %}
 {% block description %}Iceberg School va Iceberg Courses yangiliklari, tadbirlar va ochiq eshiklar kunlari.{% endblock %}
 {% block content %}
@@ -10,6 +10,7 @@
         <h1>Maktab hayotidan</h1>
         <p class="lead">Tadbirlar, ochiq eshiklar kunlari va o'quvchilarimiz yutuqlari.</p>
     </div>
+    {{ curve('cream') }}
 </section>
 <section class="sec">
     <div class="wrap">

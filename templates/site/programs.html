@@ -1,5 +1,5 @@
 {% extends "site/base.html" %}
-{% from "site/_macros.html" import icon, fact %}
+{% from "site/_macros.html" import icon, fact, curve %}
 {% block title %}Ta'lim dasturlari — Iceberg School | Boshlang'ich, o'rta va yuqori sinflar{% endblock %}
 {% block description %}Iceberg School ta'lim bosqichlari: boshlang'ich (1–4), o'rta (5–9) va yuqori sinflar (10–11). Akademik poydevor, tarbiya va universitetga tayyorgarlik.{% endblock %}
 {% block content %}
@@ -16,8 +16,8 @@
             <svg viewBox="0 0 460 360">
                 <defs>
                     <linearGradient id="climbfill" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0" stop-color="#ffffff" stop-opacity=".2"/>
-                        <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+                        <stop offset="0" stop-color="var(--brand-gold)" stop-opacity=".28"/>
+                        <stop offset="1" stop-color="var(--brand-gold)" stop-opacity="0"/>
                     </linearGradient>
                 </defs>
                 <circle class="star" cx="60" cy="50" r="2.4"/>
@@ -31,19 +31,20 @@
                 {% set points = [(71, 268), (113, 205), (154, 142)] %}
                 {% for stage in school.stages %}{% set point = points[loop.index0] %}
                 <g class="stop" style="animation-delay:{{ 1.4 + loop.index0 * 0.35 }}s">
-                    <circle cx="{{ point[0] }}" cy="{{ point[1] }}" r="9" fill="#fff"/>
-                    <circle cx="{{ point[0] }}" cy="{{ point[1] }}" r="4" fill="var(--brand-primary)"/>
+                    <circle cx="{{ point[0] }}" cy="{{ point[1] }}" r="10" fill="var(--brand-primary)"/>
+                    <circle cx="{{ point[0] }}" cy="{{ point[1] }}" r="4" fill="var(--brand-gold-soft)"/>
                     <text x="{{ point[0] - 16 }}" y="{{ point[1] + 5 }}" text-anchor="end">{{ stage.grades or '' }}</text>
                 </g>
                 {% endfor %}
                 <g class="stop" style="animation-delay:2.5s">
-                    <path d="M195 80V34" stroke="#fff" stroke-width="2.4"/>
-                    <path d="M195 34h36l-8 10 8 10h-36Z" fill="var(--brand-on-primary-soft)"/>
+                    <path d="M195 80V34" stroke="var(--brand-primary)" stroke-width="2.6"/>
+                    <path d="M195 34h36l-8 10 8 10h-36Z" fill="var(--brand-gold)"/>
                     <text x="240" y="50">Universitet</text>
                 </g>
             </svg>
         </div>
     </div>
+    {{ curve('cream') }}
 </section>
 
 <section class="sec">
