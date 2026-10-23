@@ -1,7 +1,8 @@
 # Iceberg School Website — Decision and Build Plan
 
-> **Copy.** The source of truth is `College-ERP/docs/plans/ICEBERG_SCHOOL_WEBSITE_PLAN.md`; links to
-> other ERP plan files below resolve in that repo. Update the ERP copy first, then copy it here.
+> **This repo (`ICEBERG_WEB`) owns this plan and the website's design.** The ERP side of the Iceberg
+> School brand (portal, app, lead endpoint) is planned in College-ERP's
+> [`ICEBERG_SCHOOL_BRAND_PLAN.md`](https://github.com/Jahongir359/College-ERP/blob/main/docs/plans/ICEBERG_SCHOOL_BRAND_PLAN.md).
 
 Document date: 2026-10-23 (revised the same day — see section 1)
 Status: **Decided — build the School pages inside the existing iceberglc.com website codebase, and
@@ -9,13 +10,12 @@ move that site onto the shared Iceberg design system (owner OK'd changing its de
 Codebase found: **`Jahongir359/ICEBERG_WEB`** (Flask templates rendered to static HTML on Cloudflare
 Pages). Phase 4b started there on 2026-10-23 — see section 2.1 and the checklist.**
 Owner: Jahongir
-Related: [`ICEBERG_SCHOOL_BRAND_PLAN.md`](ICEBERG_SCHOOL_BRAND_PLAN.md) (ERP side, Phases 1–6). This
+Related: [`ICEBERG_SCHOOL_BRAND_PLAN.md`](https://github.com/Jahongir359/College-ERP/blob/main/docs/plans/ICEBERG_SCHOOL_BRAND_PLAN.md) (ERP side, Phases 1–6). This
 document defines **Phase 4** and replaces that plan's section 8 (Django-hosted site — not built).
 Design reference (canvas, private to the owner): https://claude.ai/artifact/9KE5AjoJ59UQJu22Z656gB
 
-Written so any AI agent or developer can execute it without prior context. When work starts in the
-website repo, copy [`ICEBERG_WEBSITE_AGENTS.md`](ICEBERG_WEBSITE_AGENTS.md) into it as its `AGENTS.md`
-(and this plan into its `docs/`) — that file is the website agent's short guide and points back here.
+Written so any AI agent or developer can execute it without prior context. The short guide for agents
+in this repo is [`AGENTS.md`](../../AGENTS.md); it points back here.
 
 ---
 
