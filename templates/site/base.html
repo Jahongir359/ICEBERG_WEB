@@ -79,9 +79,9 @@
                 {% endfor %}
             </nav>
             <div class="hdr-actions">
-                <label class="lang">
+                <label class="lang notranslate" translate="no">
                     <span class="sr-only">Til</span>
-                    <select data-lang-select aria-label="Tilni tanlash">
+                    <select class="notranslate" translate="no" data-lang-select aria-label="Tilni tanlash">
                         <option value="uz">UZ</option>
                         <option value="ru">RU</option>
                         <option value="en">EN</option>
@@ -125,7 +125,7 @@
             <div class="ftr-brand">
                 <img src="{{ url_for('static', filename='school/img/logo-h-white.png') }}" alt="Iceberg School" width="168" height="51" loading="lazy">
                 <p>Ko'rinib turgani — faqat cho'qqi. Biz uning ostidagi poydevorni quramiz.</p>
-                <span class="ftr-family">Iceberg oilasi · <a href="{{ url_for('courses') }}">Iceberg Courses</a></span>
+                <span class="ftr-family">Iceberg oilasi · <a href="{{ url_for('courses') }}" translate="no">Iceberg Courses</a></span>
             </div>
             <div>
                 <h3>Maktab</h3>
