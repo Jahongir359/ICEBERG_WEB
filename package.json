@@ -3,10 +3,6 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test:registration": "node --test tests/test_cloudflare_registration.mjs tests/test_google_apps_script.mjs",
-    "build:css": "tailwindcss -c tailwind.config.cjs -i static/css/src/tailwind.css -o static/css/tailwind.css --minify"
-  },
-  "devDependencies": {
-    "tailwindcss": "3.4.17"
+    "test:registration": "node --test tests/test_cloudflare_registration.mjs tests/test_google_apps_script.mjs"
   }
 }

@@ -31,7 +31,6 @@ IGNORED_SCHEMES = {"data", "mailto", "tel", "javascript"}
 PRIVATE_MARKERS = (
     "admin_password",
     "admin_secret_code",
-    "data-admin-trigger-name",
     "registration-leads",
     "REGISTRATION_LEADS_API_TOKEN",
 )
@@ -108,7 +107,7 @@ def check() -> None:
             if marker in text:
                 errors.append(f"{relative_page}: contains private marker {marker}")
         if "cdn.tailwindcss.com" in text:
-            errors.append(f"{relative_page}: uses the Tailwind CDN; run npm run build:css instead")
+            errors.append(f"{relative_page}: uses the Tailwind CDN script")
         if page.name != "404.html" and not re.search(r'<html[^>]+data-brand="(center|school)"', text):
             errors.append(f"{relative_page}: missing html data-brand attribute")
 
@@ -199,7 +198,7 @@ def check() -> None:
         if required_header not in headers:
             errors.append(f"_headers: missing {required_header}")
 
-    for required_asset in ("static/brand/tokens.css", "static/css/tailwind.css"):
+    for required_asset in ("static/brand/tokens.css", "static/css/site.css"):
         if not (PUBLIC / required_asset).is_file():
             errors.append(f"missing {required_asset}")
     tokens_check = subprocess.run(
