@@ -1,0 +1,51 @@
+{% extends "site/base.html" %}
+{% from "site/_macros.html" import icon, curve %}
+{# Shown instead of the portal and app links while the new Iceberg portal and app are being built.
+   Uzbek and English side by side; when the ERP is back, point school.portal_url / app_url at it again. #}
+{% block title %}Tez orada: yangi portal va ilova · Coming soon — Iceberg School{% endblock %}
+{% block description %}Iceberg portali va mobil ilovasi yangilanmoqda. We're working on the new Iceberg portal and mobile app — stay tuned.{% endblock %}
+{% block head %}<meta name="robots" content="noindex">{% endblock %}
+{% block content %}
+<section class="page-hero">
+    <div class="wrap">
+        <span class="kicker">Tez orada · <span lang="en">Coming soon</span></span>
+        <h1>Yangi imkoniyatlar ustida ishlayapmiz</h1>
+        <p class="lead">Iceberg portali va mobil ilovasi yangilanmoqda: davomat, uy vazifalari, to'lovlar va o'qituvchilar bilan yozishmalar — barchasi bir joyda. Kuzatib boring, tez orada ishga tushiramiz!</p>
+        <div lang="en" class="coming-en">
+            <p class="coming-en-title">We're working on new features</p>
+            <p>The Iceberg portal and mobile app are being upgraded: attendance, homework, payments and messages with teachers — all in one place. Stay tuned, we'll launch soon!</p>
+        </div>
+    </div>
+    {{ curve('white') }}
+</section>
+
+<section class="sec sec-white">
+    <div class="wrap">
+        <div class="sec-head center rv">
+            <span class="kicker">Nimalar keladi · <span lang="en">What's coming</span></span>
+            <h2 class="h2">Ota-onalar, o'quvchilar va o'qituvchilar uchun</h2>
+            <p class="lead" lang="en">For parents, students and teachers</p>
+        </div>
+        <div class="grid grid-4">
+            <article class="card rv"><span class="icon-tile">{{ icon('calendar') }}</span><h3 class="h3">Davomat</h3><p>Farzandingiz maktabga kelgani darhol ko'rinadi.</p><p lang="en" class="coming-en-note">Attendance as soon as your child arrives.</p></article>
+            <article class="card rv"><span class="icon-tile">{{ icon('book') }}</span><h3 class="h3">Uy vazifalari</h3><p>Vazifalar va muddatlar bir ro'yxatda.</p><p lang="en" class="coming-en-note">Homework and due dates in one list.</p></article>
+            <article class="card rv"><span class="icon-tile">{{ icon('wallet') }}</span><h3 class="h3">To'lovlar</h3><p>Hisob-fakturalar va to'lov tarixi.</p><p lang="en" class="coming-en-note">Invoices and payment history.</p></article>
+            <article class="card rv"><span class="icon-tile">{{ icon('chat') }}</span><h3 class="h3">Xabarlar</h3><p>O'qituvchilar bilan to'g'ridan-to'g'ri yozishma.</p><p lang="en" class="coming-en-note">Message teachers directly.</p></article>
+        </div>
+    </div>
+</section>
+
+<section class="sec">
+    <div class="wrap" style="max-width:720px">
+        <div class="panel-tint rv" style="text-align:center;justify-items:center">
+            <h2 class="h3">Hozircha savollaringiz bo'lsa — biz bilan bog'laning</h2>
+            <p lang="en" class="coming-en-note">Questions in the meantime? Get in touch.</p>
+            <div class="hero-cta" style="justify-content:center;margin-top:6px">
+                <a class="btn btn-primary" href="tel:{{ registration.contact.call_center_phone }}">{{ icon('phone') }} {{ registration.contact.call_center_display }}</a>
+                <a class="btn btn-outline" href="{{ school.telegram_url or registration.contact.telegram_url }}" rel="noopener">{{ icon('telegram') }} Telegram</a>
+            </div>
+            <p style="margin-top:10px"><a class="link-arrow" href="{{ url_for('index') }}">Bosh sahifa · <span lang="en">Home</span></a></p>
+        </div>
+    </div>
+</section>
+{% endblock %}

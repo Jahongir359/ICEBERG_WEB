@@ -1112,6 +1112,11 @@ def admissions():
 def admissions_thanks():
     return render_template('site/thanks.html')
 
+@app.route('/ilova')
+def coming_soon():
+    # Portal and app links point here while the new portal and app are built (config/school.json).
+    return render_template('site/coming_soon.html')
+
 @app.route('/admin/login', methods=['GET', 'POST'])
 def admin_login():
     return redirect(url_for('secret_admin_login', access_slug=ADMIN_LOGIN_SLUG))

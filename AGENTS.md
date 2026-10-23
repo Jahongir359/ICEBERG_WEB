@@ -19,6 +19,7 @@ The whole site uses `<html data-brand="school">`.
 | `/admissions`, `/admissions/thanks` | `admissions.html` (School enquiry form), `thanks.html` |
 | `/courses`, `/register` | `courses.html` (ICEBERG o'quv markazi), `register.html` (course registration) |
 | `/news`, `/contact` | `news.html`, `contact.html` |
+| `/ilova` | `coming_soon.html` (temporary target of the Portal/app links; noindex, not in the sitemap) |
 | `/our_programs`, `/questions` | 301 → `/courses`, `/courses#savollar` (Flask routes + generated `_redirects`) |
 
 Shared pieces: `site/base.html` (header, mobile menu, dock, footer, JSON-LD), `site/_macros.html`
@@ -29,6 +30,10 @@ script: `static/js/site.js`; forms: `static/js/firebase-forms.js`. The Flask adm
 The staff/student portal is a separate app — the ERP at `app.iceberglc.com` (repo `College-ERP`).
 This site only links to it (`https://app.iceberglc.com/login/?brand=school`) and sends enquiries to
 it from the server.
+**Temporarily** (since 2026-10-23, while the portal and app are rebuilt and the ERP is offline) the
+Portal and "Ilovani yuklab olish" links point to `/ilova`, a noindex "coming soon" page in Uzbek and
+English (`templates/site/coming_soon.html`). When the ERP is back, set `portal_url` and `app_url` in
+`config/school.json` to the ERP again (`https://app.iceberglc.com/login/?brand=school`, `/download/`).
 
 ## Active initiative
 

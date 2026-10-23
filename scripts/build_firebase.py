@@ -18,6 +18,7 @@ PUBLIC_ROUTES = {
     "/programs": "programs.html",
     "/admissions": "admissions.html",
     "/admissions/thanks": "admissions/thanks.html",
+    "/ilova": "ilova.html",
     "/courses": "courses.html",
     "/news": "news.html",
     "/contact": "contact.html",
