@@ -6,16 +6,6 @@
         return field && typeof field.value === "string" ? field.value.trim() : "";
     }
 
-    function contactMessage(form) {
-        return [
-            "ICEBERG saytidan yangi xabar",
-            "",
-            "Ism: " + fieldValue(form, "name"),
-            "Telefon: +998" + fieldValue(form, "phone"),
-            "Xabar: " + fieldValue(form, "message")
-        ].join("\n");
-    }
-
     function loadTurnstile(form) {
         var siteKey = form.getAttribute("data-turnstile-sitekey");
         if (!siteKey) {
@@ -331,12 +321,10 @@
 
             form.addEventListener("submit", function (event) {
                 event.preventDefault();
-                if (form.getAttribute("data-static-lead-form") !== "school-enquiry" && !form.reportValidity()) {
+                if (leadKind === "register" && !form.reportValidity()) {
                     return;
                 }
-
-                var kind = form.getAttribute("data-static-lead-form");
-                if (kind === "school-enquiry") {
+                if (leadKind === "school-enquiry") {
                     if (!validateSchoolEnquiry(form)) {
                         var firstSchoolInvalid = form.querySelector('[aria-invalid="true"]');
                         if (firstSchoolInvalid) firstSchoolInvalid.focus();
@@ -345,20 +333,14 @@
                     submitSchoolEnquiry(form);
                     return;
                 }
-                if (kind === "register") {
+                if (leadKind === "register") {
                     if (!validateRegistration(form)) {
                         var firstInvalid = form.querySelector('[aria-invalid="true"]');
                         if (firstInvalid) firstInvalid.focus();
                         return;
                     }
                     submitRegistration(form);
-                    return;
                 }
-                var message = contactMessage(form);
-                var number = new URL(form.action).pathname.replace(/\D/g, "");
-                window.location.assign(
-                    "https://wa.me/" + number + "?text=" + encodeURIComponent(message)
-                );
             });
         });
     });

@@ -23,8 +23,8 @@ The whole site uses `<html data-brand="school">`.
 
 Shared pieces: `site/base.html` (header, mobile menu, dock, footer, JSON-LD), `site/_macros.html`
 (`icon()`, `fact()`), `_stages.html`, `_cta.html`, `_news_card.html`. Styles: `static/css/site.css`;
-script: `static/js/site.js`; forms: `static/js/firebase-forms.js`. `templates/base.html` with
-`style.css`/`tailwind.css` now only serves the Flask admin login.
+script: `static/js/site.js`; forms: `static/js/firebase-forms.js`. The Flask admin login also uses
+`site/base.html`; the other admin pages use `admin_base.html` (Tailwind from its CDN, admin only).
 
 The staff/student portal is a separate app — the ERP at `app.iceberglc.com` (repo `College-ERP`).
 This site only links to it (`https://app.iceberglc.com/login/?brand=school`) and sends enquiries to
@@ -41,8 +41,8 @@ checks (section 9) and deploy. Tick the checklist there and add a dated line to 
 |---|---|
 | Framework / language | Flask (`app.py`, one file) + Jinja templates, SQLite; Python 3.13 |
 | Hosting / deploy | **Live site: Cloudflare Pages** (project `iceberg-web`, `wrangler.toml`). The build (`scripts/build_cloudflare.sh`) runs `scripts/build_firebase.py`, which renders the Flask templates to static HTML in `public/` (git-ignored), then `scripts/check_firebase_build.py` validates it. `firebase.json`, `railway.json`, `render.yaml`, `Procfile` are older/alternative hosts for the Flask app — which one (if any) is live must be confirmed with the owner (`PROJECT_REVIEW.md`). |
-| Templates / pages folder | `templates/` (`base.html` layout; public pages `index.html`, `about.html`, `our_programs.html`, `news.html`, `questions.html`, `contact.html`, `register.html`; admin pages `admin_*.html`, `students.html`, `contacts_list.html`) |
-| Static files | `static/` → served at `/static/` (`static/css/style.css`, `static/js/firebase-forms.js`, `static/img/`) |
+| Templates | `templates/site/` (public site, see the table above); `templates/admin_*.html`, `students.html`, `contacts_list.html` (Flask admin) |
+| Static files | `static/` → `/static/`: `css/site.css`, `js/site.js`, `js/firebase-forms.js`, `brand/` (tokens), `school/img/` (logos, poster, OG image), `img/team/` |
 | Lead handler (`POST /api/register`) | `functions/api/register.js` (Cloudflare Pages Function): Turnstile check → Google Sheets via Apps Script (`google-apps-script/Code.gs`) → best-effort copy to the ERP when its secrets are set. The Flask `/register` route in `app.py` is the server-rendered equivalent (SQLite + Telegram + ERP). |
 | Programs / branches | `config/registration.json` (published as `/registration-options.json`; each branch's `erp_branch_name` must equal the ERP branch name) |
 | School facts | `config/school.json` — phone, address, hours, year, tuition, links. Empty = visible `[placeholder]`, left out of JSON-LD |
@@ -57,12 +57,11 @@ python -m unittest discover -s tests -v          # Flask tests
 npm run test:registration                        # Pages Function + Apps Script tests (Node 22)
 python scripts/build_firebase.py && python scripts/check_firebase_build.py   # static build + checks
 node --check functions/api/register.js
-npm install && npm run build:css                 # after changing Tailwind classes in templates/JS
 python scripts/build_brand_tokens.py             # after editing static/brand/tokens.json
 ```
 
-`static/css/tailwind.css` and `static/brand/tokens.css` are generated but committed, because the
-Cloudflare build runs Python only. Rebuild and commit them with the change that needs them.
+`static/brand/tokens.css` is generated but committed, because the Cloudflare build runs Python only.
+Regenerate and commit it with any `tokens.json` change.
 
 All of them must pass before a commit. There is no CI workflow in this repo yet.
 
@@ -72,8 +71,8 @@ All of them must pass before a commit. There is no CI workflow in this repo yet.
   source for `tokens.css`; `static/school/img/` holds the School logos and photos. The core maroon/teal
   brand colours and the logo originals are shared with the ERP (`College-ERP/docs/brand/iceberg-school/`)
   — if a core colour or logo changes, update both repos. Gold/cream/paper and Fraunces are website-only.
-- Pages and components use only `var(--brand-*)` (or `rgb(var(--brand-*-rgb) / a)`, or Tailwind
-  `brand-*` classes) — no new hex values in templates or page CSS.
+- Pages and components use only `var(--brand-*)` (or `rgb(var(--brand-*-rgb) / a)`) — no new hex
+  values in templates or page CSS.
 - `templates/site/base.html` is the one public layout; new pages extend it and reuse `.card`, `.btn`,
   `.sec`, `.page-hero`, `.form-card`, `.faq` from `site.css` rather than adding page CSS.
 - Fonts: Fraunces (warm serif, `--brand-font-display`) for headings, Inter (`--brand-font`) for body,

@@ -4,7 +4,6 @@
 from __future__ import annotations
 
 import os
-import re
 import shutil
 import sys
 import tomllib
@@ -42,30 +41,17 @@ def load_wrangler_vars() -> dict[str, str]:
     }
 
 
-def make_form_static(
-    html: str,
-    route: str,
-    whatsapp_number: str,
-    site_url: str,
-    turnstile_site_key: str,
-) -> str:
+def make_form_static(html: str, route: str, turnstile_site_key: str) -> str:
+    """Point a Flask form at the Cloudflare /api/register function."""
     local_action = f'action="{route}" method="post"'
-    if route in ("/register", "/admissions"):
-        turnstile_attribute = (
-            f' data-turnstile-sitekey="{turnstile_site_key}"'
-            if turnstile_site_key
-            else ""
-        )
-        form_kind = "register" if route == "/register" else "school-enquiry"
-        static_action = (
-            'action="/api/register" method="post" '
-            f'data-static-lead-form="{form_kind}"{turnstile_attribute}'
-        )
-    else:
-        static_action = (
-            f'action="https://wa.me/{whatsapp_number}" method="get" '
-            f'data-static-lead-form="{route.lstrip("/")}"'
-        )
+    turnstile_attribute = (
+        f' data-turnstile-sitekey="{turnstile_site_key}"' if turnstile_site_key else ""
+    )
+    form_kind = "register" if route == "/register" else "school-enquiry"
+    static_action = (
+        'action="/api/register" method="post" '
+        f'data-static-lead-form="{form_kind}"{turnstile_attribute}'
+    )
     return html.replace(local_action, static_action)
 
 
@@ -83,16 +69,11 @@ def build() -> None:
         "PUBLIC_SITE_URL",
         wrangler_vars.get("PUBLIC_SITE_URL", "https://iceberglc.com"),
     ).rstrip("/")
-    whatsapp_number = re.sub(
-        r"\D", "", os.environ.get("PUBLIC_WHATSAPP_NUMBER", "998939461699")
-    )
     turnstile_site_key = (
         os.environ.get("PUBLIC_TURNSTILE_SITE_KEY", "").strip()
         or os.environ.get("TURNSTILE_SITE_KEY", "").strip()
         or wrangler_vars.get("PUBLIC_TURNSTILE_SITE_KEY", "").strip()
     )
-    if not whatsapp_number:
-        raise RuntimeError("PUBLIC_WHATSAPP_NUMBER must contain a phone number")
 
     if OUTPUT.exists():
         shutil.rmtree(OUTPUT)
@@ -111,30 +92,8 @@ def build() -> None:
             raise RuntimeError(f"GET {route} returned HTTP {response.status_code}")
 
         html = response.get_data(as_text=True)
-        html = make_form_static(
-            html, "/contact", whatsapp_number, site_url, turnstile_site_key
-        )
-        html = make_form_static(
-            html, "/register", whatsapp_number, site_url, turnstile_site_key
-        )
-        html = make_form_static(
-            html, "/admissions", whatsapp_number, site_url, turnstile_site_key
-        )
-        # The Flask-only hidden admin login must not be exposed on the static site.
-        html = re.sub(r'\sdata-admin-trigger-name="[^"]*"', "", html)
-        html = re.sub(
-            r'\s*<div id="admin-(?:password|secret)-wrap".*?</div>',
-            "",
-            html,
-            flags=re.DOTALL,
-        )
-        html = re.sub(
-            r"\s*const form = document\.getElementById\('contactForm'\);"
-            r".*?\s*syncHiddenAdminMode\(\);",
-            "",
-            html,
-            flags=re.DOTALL,
-        )
+        for form_route in ("/register", "/admissions"):
+            html = make_form_static(html, form_route, turnstile_site_key)
         if "data-static-lead-form" in html and "/static/js/firebase-forms.js" not in html:
             html = html.replace(
                 "</body>",

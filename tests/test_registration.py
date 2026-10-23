@@ -102,13 +102,7 @@ class RegistrationRouteTests(unittest.TestCase):
         from scripts import build_firebase
 
         rendered = '<form action="/register" method="post"></form>'
-        result = build_firebase.make_form_static(
-            rendered,
-            '/register',
-            '998701060404',
-            'https://preview.pages.dev',
-            'public-site-key',
-        )
+        result = build_firebase.make_form_static(rendered, '/register', 'public-site-key')
         self.assertIn('action="/api/register"', result)
         self.assertNotIn('preview.pages.dev/api/register', result)
 

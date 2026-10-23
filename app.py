@@ -2,7 +2,6 @@ from flask import Flask, render_template, request, redirect, url_for, session, f
 import requests
 import os
 import re
-import hashlib
 import csv
 import io
 import json
@@ -62,8 +61,6 @@ REGISTRATION_LEADS_API_TIMEOUT = float(os.environ.get('REGISTRATION_LEADS_API_TI
 
 ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD', 'iceberg-admin')
 ADMIN_SECRET_CODE = os.environ.get('ADMIN_SECRET_CODE', ADMIN_PASSWORD).strip()
-ADMIN_CONTACT_TRIGGER_NAME = os.environ.get('ADMIN_CONTACT_TRIGGER_NAME', 'admin').strip().lower() or 'admin'
-ADMIN_CONTACT_SECRET_CODE = os.environ.get('ADMIN_CONTACT_SECRET_CODE', ADMIN_SECRET_CODE).strip()
 
 
 def build_admin_login_slug():
@@ -82,132 +79,22 @@ ALLOWED_NEWS_IMAGE_EXTENSIONS = {'.jpg', '.jpeg', '.png', '.webp', '.gif'}
 ALLOWED_NEWS_VIDEO_EXTENSIONS = {'.mp4', '.webm', '.mov', '.m4v'}
 
 ASSET_CATALOG = [
-    {
-        'key': 'site_logo',
-        'label': 'Asosiy logo (header/footer/admin)',
-        'default': 'img/logo.png'
-    },
-    {
-        'key': 'index_hero_bg',
-        'label': 'Bosh sahifa hero background',
-        'default': 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?q=80&w=2070&auto=format&fit=crop'
-    },
-    {
-        'key': 'index_method_image',
-        'label': 'Bosh sahifa ICEBERG method rasmi',
-        'default': 'img/logo2.png'
-    },
-    {
-        'key': 'about_hero_bg',
-        'label': 'About sahifa hero background',
-        'default': 'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?q=80&w=2070&auto=format&fit=crop'
-    },
-    {
-        'key': 'about_team_1',
-        'label': 'About sahifa 1-jamoa rasmi',
-        'default': 'img/azizbek.png'
-    },
-    {
-        'key': 'about_team_2',
-        'label': 'About sahifa 2-jamoa rasmi',
-        'default': 'img/maqsudbek.png'
-    },
-    {
-        'key': 'about_team_3',
-        'label': 'About sahifa 3-jamoa rasmi',
-        'default': 'img/islomjon.png'
-    },
-    {
-        'key': 'contact_hero_bg',
-        'label': 'Contact sahifa hero background',
-        'default': 'https://images.unsplash.com/photo-1586769852836-bc069f19e1b6?q=80&w=1974&auto=format&fit=crop'
-    },
-    {
-        'key': 'programs_hero_bg',
-        'label': 'Programs sahifa hero background',
-        'default': 'https://images.unsplash.com/photo-1542744095-291d1f67b221?q=80&w=2070&auto=format&fit=crop'
-    },
-    {
-        'key': 'program_card_1',
-        'label': 'Programs kartasi 1 rasmi',
-        'default': 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?q=80&w=2070&auto=format&fit=crop'
-    },
-    {
-        'key': 'program_card_2',
-        'label': 'Programs kartasi 2 rasmi',
-        'default': 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=2071&auto=format&fit=crop'
-    },
-    {
-        'key': 'program_card_3',
-        'label': 'Programs kartasi 3 rasmi',
-        'default': 'https://images.unsplash.com/photo-1528642474498-1af0c17fd8c3?q=80&w=2069&auto=format&fit=crop'
-    },
-    {
-        'key': 'program_card_4',
-        'label': 'Programs kartasi 4 rasmi',
-        'default': 'https://images.unsplash.com/photo-1521587760476-6c12a4b040da?q=80&w=2070&auto=format&fit=crop'
-    },
-    {
-        'key': 'program_card_5',
-        'label': 'Programs kartasi 5 rasmi',
-        'default': 'https://images.unsplash.com/photo-1571260899304-425eee4c7efc?q=80&w=2070&auto=format&fit=crop'
-    },
-    {
-        'key': 'program_card_6',
-        'label': 'Programs kartasi 6 rasmi',
-        'default': 'https://images.unsplash.com/photo-1456324504439-367cee3b3c32?q=80&w=2070&auto=format&fit=crop'
-    }
+    {'key': 'site_logo', 'label': 'Admin paneli logosi', 'default': 'img/logo.png'},
+    {'key': 'about_team_1', 'label': 'Jamoa: Azizbek Nasriddinov rasmi', 'default': 'img/team/azizbek.jpg'},
+    {'key': 'about_team_2', 'label': 'Jamoa: Maqsudbek Mirzayev rasmi', 'default': 'img/team/maqsudbek.jpg'},
+    {'key': 'about_team_3', 'label': 'Jamoa: Islomjon Ergashboyev rasmi', 'default': 'img/team/islomjon.jpg'},
 ]
 ASSET_DEFAULTS = {asset['key']: asset['default'] for asset in ASSET_CATALOG}
 EDITABLE_SITE_FILES = [
-    ('static/css/style.css', 'Global CSS styles')
+    ('static/css/site.css', 'Public site styles')
 ]
 EDITOR_BACKUP_DIR = os.path.join(app.root_path, 'backups', 'site_editor')
 EDITOR_MAX_BACKUPS_PER_FILE = max(int(os.environ.get('EDITOR_MAX_BACKUPS_PER_FILE', '20')), 1)
 
 CONTENT_FIELDS = [
-    {'key': 'site_title', 'label': 'Sayt sarlavhasi (browser title)', 'group': 'Global', 'default': "ICEBERG O'QUV MARKAZI", 'field_type': 'text'},
-    {'key': 'site_tagline', 'label': 'Footer qisqa matni', 'group': 'Global', 'default': "Zamonaviy kasblarni biz bilan o'rganing va kelajuingizni quring.", 'field_type': 'textarea'},
-    {'key': 'custom_css', 'label': 'Custom CSS (ixtiyoriy)', 'group': 'Global', 'default': '', 'field_type': 'textarea'},
-
-    {'key': 'nav_home', 'label': 'Menyu: Bosh sahifa', 'group': 'Header', 'default': 'Bosh sahifa', 'field_type': 'text'},
-    {'key': 'nav_about', 'label': 'Menyu: Biz haqimizda', 'group': 'Header', 'default': 'Biz haqimizda', 'field_type': 'text'},
-    {'key': 'nav_programs', 'label': 'Menyu: Dasturlar', 'group': 'Header', 'default': 'Dasturlar', 'field_type': 'text'},
-    {'key': 'nav_news', 'label': 'Menyu: Yangiliklar', 'group': 'Header', 'default': 'Yangiliklar', 'field_type': 'text'},
-    {'key': 'nav_questions', 'label': 'Menyu: Savollar', 'group': 'Header', 'default': 'Savollar', 'field_type': 'text'},
-    {'key': 'nav_testimonials', 'label': 'Menyu: Muvaffaqiyat hikoyalari', 'group': 'Header', 'default': 'Muvaffaqiyat Hikoyalari', 'field_type': 'text'},
-    {'key': 'nav_contact', 'label': 'Menyu: Aloqa (nav havolasi)', 'group': 'Header', 'default': 'Aloqa', 'field_type': 'text'},
-    {'key': 'nav_contact_button', 'label': 'Header tugma matni', 'group': 'Header', 'default': "Biz bilan bog'lanish", 'field_type': 'text'},
-
-    {'key': 'hero_main_title', 'label': 'Bosh sahifa hero title (typewriter)', 'group': 'Home', 'default': 'HAPPINESS IS IN SCIENCE', 'field_type': 'text'},
-    {'key': 'hero_main_subtitle', 'label': 'Bosh sahifa hero subtitle', 'group': 'Home', 'default': "Fundamental bilimlar - har qanday akademik cho'qqini zabt etishning kalitidir.", 'field_type': 'textarea'},
-    {'key': 'hero_main_cta', 'label': 'Bosh sahifa hero CTA', 'group': 'Home', 'default': 'Maslaxatlar uchun aloqa bo`limi', 'field_type': 'text'},
-
-    {'key': 'about_page_title', 'label': 'About sahifa title', 'group': 'About', 'default': 'Bizning Hikoyamiz', 'field_type': 'text'},
-    {'key': 'about_page_subtitle', 'label': 'About sahifa subtitle', 'group': 'About', 'default': 'ICEBERG farqini belgilaydigan falsafa, odamlar va ishtiyoq.', 'field_type': 'textarea'},
-    {'key': 'about_mission_title', 'label': 'About missiya sarlavhasi', 'group': 'About', 'default': 'Bizning Missiyamiz', 'field_type': 'text'},
-    {'key': 'about_mission_text', 'label': 'About missiya matni', 'group': 'About', 'default': "Bizning missiyamiz - har bir o'quvchiga o'z potentsialini to'liq ochib berishga yordam beradigan, innovatsion va qo'llab-quvvatlovchi ta'lim muhitini taqdim etish.", 'field_type': 'textarea'},
-
-    {'key': 'contact_page_title', 'label': 'Contact sahifa title', 'group': 'Contact', 'default': 'Aloqaga Chiqing', 'field_type': 'text'},
-    {'key': 'contact_page_subtitle', 'label': 'Contact sahifa subtitle', 'group': 'Contact', 'default': "Savollaringizga javob berish va muvaffaqiyat sari yo'lingizni boshlashga yordam berish uchun shu yerdamiz.", 'field_type': 'textarea'},
     {'key': 'contact_email', 'label': 'Aloqa email', 'group': 'Contact', 'default': 'iceberg.edu.center@gmail.com', 'field_type': 'text'},
-    {'key': 'contact_phone', 'label': 'Aloqa telefon (+998...)', 'group': 'Contact', 'default': '+998939461699', 'field_type': 'text'},
-    {'key': 'contact_phone_display', 'label': 'Aloqa telefon ko`rinishi', 'group': 'Contact', 'default': '(+998) 939461699', 'field_type': 'text'},
-    {'key': 'contact_address', 'label': 'Aloqa manzil matni', 'group': 'Contact', 'default': 'Uyci, Namangan Viloyati, Uzbekistan', 'field_type': 'text'},
-    {'key': 'contact_address_url', 'label': 'Aloqa manzil URL', 'group': 'Contact', 'default': 'https://www.google.com/maps/place/Uychi,+Uzbekistan/', 'field_type': 'text'},
-
-    {'key': 'register_page_title', 'label': 'Register sahifa title', 'group': 'Register', 'default': "Dasturga Ro'yxatdan O'tish", 'field_type': 'text'},
-    {'key': 'register_page_subtitle', 'label': 'Register sahifa subtitle', 'group': 'Register', 'default': "Akademik maqsadlaringizga erishish yo'lida birinchi qadamni tashlang.", 'field_type': 'textarea'},
-
-    {'key': 'faq_page_title', 'label': 'FAQ sahifa title', 'group': 'FAQ', 'default': "Ko'p Beriladigan Savollar", 'field_type': 'text'},
-    {'key': 'faq_page_subtitle', 'label': 'FAQ sahifa subtitle', 'group': 'FAQ', 'default': 'SAVOLLARINGIZGA JAVOBLAR', 'field_type': 'text'},
-
-    {'key': 'footer_quick_links_title', 'label': 'Footer tezkor havolalar sarlavhasi', 'group': 'Footer', 'default': 'Tezkor Havolalar', 'field_type': 'text'},
-    {'key': 'footer_contact_title', 'label': 'Footer aloqa sarlavhasi', 'group': 'Footer', 'default': 'Biz bilan aloqa', 'field_type': 'text'},
-    {'key': 'footer_social_title', 'label': 'Footer ijtimoiy sarlavha', 'group': 'Footer', 'default': 'Ijtimoiy Tarmoqlar', 'field_type': 'text'},
-    {'key': 'footer_telegram_url', 'label': 'Footer Telegram URL', 'group': 'Footer', 'default': 'https://t.me/Iceberg_study_center/1703', 'field_type': 'text'},
-    {'key': 'footer_instagram_url', 'label': 'Footer Instagram URL', 'group': 'Footer', 'default': 'https://www.instagram.com/Iceberg_Study_Center', 'field_type': 'text'},
-    {'key': 'footer_youtube_url', 'label': 'Footer YouTube URL', 'group': 'Footer', 'default': 'https://www.youtube.com/@ice_podcast', 'field_type': 'text'},
+    {'key': 'contact_address', 'label': 'Iceberg Courses manzili', 'group': 'Contact', 'default': 'Uychi, Namangan viloyati', 'field_type': 'text'},
+    {'key': 'contact_address_url', 'label': 'Manzil xarita havolasi', 'group': 'Contact', 'default': 'https://www.google.com/maps/place/Uychi,+Uzbekistan/', 'field_type': 'text'},
 ]
 
 CONTENT_KEYS = {field['key'] for field in CONTENT_FIELDS}
@@ -302,8 +189,6 @@ def process_admin_login(password):
     valid_passwords = {ADMIN_PASSWORD}
     if ADMIN_SECRET_CODE:
         valid_passwords.add(ADMIN_SECRET_CODE)
-    if ADMIN_CONTACT_SECRET_CODE:
-        valid_passwords.add(ADMIN_CONTACT_SECRET_CODE)
 
     if candidate in valid_passwords:
         session['logged_in'] = True
@@ -1260,22 +1145,6 @@ def secret_admin_login(access_slug):
         error=error,
         admin_login_url=url_for('secret_admin_login', access_slug=ADMIN_LOGIN_SLUG)
     )
-
-
-@app.route('/admin/secret-access', methods=['POST'])
-def admin_secret_access():
-    entered_code = request.form.get('secret_code', '').strip()
-
-    if not ADMIN_SECRET_CODE:
-        flash('Maxfiy kod sozlanmagan. ADMIN_SECRET_CODE ni .env faylida belgilang.', 'error')
-        return redirect(url_for('contact'))
-
-    if entered_code != ADMIN_SECRET_CODE:
-        flash('Maxfiy kod noto\'g\'ri.', 'error')
-        return redirect(url_for('contact'))
-
-    flash('Maxfiy kod qabul qilindi. Maxfiy admin login sahifasi ochildi.', 'success')
-    return redirect(url_for('secret_admin_login', access_slug=ADMIN_LOGIN_SLUG))
 
 
 @app.route('/admin/logout')
