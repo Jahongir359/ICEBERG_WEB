@@ -210,17 +210,29 @@ body.has-dock { padding-bottom: 76px; }
 @media (min-width: 560px) { .hero-cta { display: flex; flex-wrap: wrap; } }
 @media (min-width: 960px) { .hero-grid { grid-template-columns: 1.08fr .92fr; gap: 48px; } }
 
-/* The iceberg: the small tip above the water is what people see; the larger mass is what the school builds. */
-.berg { position: relative; width: min(100%, 460px); margin-inline: auto; aspect-ratio: 460 / 500; }
-.berg svg { width: 100%; height: 100%; overflow: visible; }
-.berg .tip { animation: bob 7s ease-in-out infinite; transform-origin: 230px 190px; }
-.berg .deep { animation: bob 7s ease-in-out infinite reverse; transform-origin: 230px 330px; }
-.berg .wave { animation: wave 9s linear infinite; }
-.berg-label { position: absolute; left: 50%; transform: translateX(-50%); padding: .3rem .7rem; border-radius: 999px; font-size: .74rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; white-space: nowrap; }
-.berg-label.top { top: 6%; background: #fff; color: var(--brand-primary); box-shadow: 0 8px 20px rgb(0 0 0 / .2); }
-.berg-label.bottom { bottom: 8%; background: rgb(255 255 255 / .1); color: var(--brand-on-primary-soft); border: 1px solid rgb(255 255 255 / .2); }
-@keyframes bob { 50% { transform: translateY(-6px); } }
-@keyframes wave { to { transform: translateX(-120px); } }
+/* Hero art: the crest with slow orbits and the three crest symbols. */
+.art-crest { position: relative; width: min(100%, 440px); aspect-ratio: 1; margin-inline: auto; display: grid; place-items: center; }
+.art-crest .ring { position: absolute; border-radius: 50%; border: 1.5px dashed rgb(255 255 255 / .2); animation: spin 70s linear infinite; }
+.art-crest .r1 { inset: 2%; }
+.art-crest .r2 { inset: 15%; border-style: solid; border-color: rgb(255 255 255 / .1); animation-direction: reverse; animation-duration: 50s; }
+.art-crest .r3 { inset: 28%; border-color: rgb(var(--brand-on-primary-soft-rgb) / .3); animation-duration: 35s; }
+.art-crest .glow { position: absolute; inset: 22%; border-radius: 50%; background: radial-gradient(circle, rgb(var(--brand-on-primary-soft-rgb) / .35), transparent 68%); filter: blur(8px); animation: pulse 5s ease-in-out infinite; }
+.art-crest .crest { position: relative; width: 38%; height: auto; filter: drop-shadow(0 18px 40px rgb(0 0 0 / .45)); animation: float 6s ease-in-out infinite; }
+.art-crest .orb {
+    position: absolute; display: inline-flex; align-items: center; gap: .5rem;
+    padding: .35rem .85rem .35rem .35rem; border-radius: 999px; background: #fff; color: var(--brand-primary);
+    font-weight: 800; font-size: .8rem; white-space: nowrap; box-shadow: 0 14px 30px rgb(0 0 0 / .3);
+    animation: float 6s ease-in-out infinite;
+}
+.art-crest .orb .icon-tile { width: 32px; height: 32px; border-radius: 999px; box-shadow: none; }
+.art-crest .orb .icon-tile svg { width: 19px; height: 19px; }
+.art-crest .o1 { top: 5%; left: 0; animation-delay: -1s; }
+.art-crest .o2 { top: 17%; right: 0; animation-delay: -3s; }
+.art-crest .o3 { bottom: 5%; left: 0; right: 0; margin-inline: auto; width: max-content; animation-delay: -5s; }
+@media (min-width: 560px) { .art-crest .orb { font-size: .86rem; } .art-crest .o2 { top: 22%; right: -4%; } }
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes float { 50% { translate: 0 -10px; } }
+@keyframes pulse { 50% { opacity: .6; transform: scale(1.06); } }
 
 /* Page heroes for inner pages */
 .page-hero { position: relative; overflow: hidden; isolation: isolate; color: #fff; background: linear-gradient(165deg, var(--brand-primary) 0%, var(--brand-primary-deep) 100%); }

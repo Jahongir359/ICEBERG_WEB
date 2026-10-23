@@ -24,36 +24,7 @@
             </div>
         </div>
 
-        <div class="berg rv d2" aria-hidden="true">
-            <svg viewBox="0 0 460 500">
-                <defs>
-                    <radialGradient id="water" cx=".5" cy="0" r=".75">
-                        <stop offset="0" stop-color="#ffffff" stop-opacity=".12"/>
-                        <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
-                    </radialGradient>
-                    <linearGradient id="tipfill" x1="0" y1="0" x2="1" y2="1">
-                        <stop offset="0" stop-color="#ffffff"/>
-                        <stop offset="1" stop-color="var(--brand-on-primary-soft)"/>
-                    </linearGradient>
-                    <clipPath id="below"><rect x="0" y="200" width="460" height="300"/></clipPath>
-                </defs>
-                <ellipse cx="230" cy="200" rx="300" ry="300" fill="url(#water)" clip-path="url(#below)"/>
-                <g class="deep">
-                    <path d="M92 200h276l42 92-82 140-98 50-112-62-63-122Z" fill="#ffffff" fill-opacity=".07" stroke="var(--brand-on-primary-soft)" stroke-opacity=".55" stroke-width="1.6" stroke-linejoin="round"/>
-                    <path d="M230 200v280M92 200l138 132 138-132M55 298l175 34 180-40M118 420l112-88 110 100" fill="none" stroke="var(--brand-on-primary-soft)" stroke-opacity=".28" stroke-width="1.2"/>
-                </g>
-                <g class="tip">
-                    <path d="M148 200 204 98l26-38 32 52 28-26 42 114Z" fill="url(#tipfill)"/>
-                    <path d="M230 60 214 200M204 98l38 58 20-44M262 112l-20 44 48 44M290 86l-28 26M204 98l-34 102" fill="none" stroke="var(--brand-primary)" stroke-width="2" stroke-linejoin="round"/>
-                </g>
-                <g class="wave">
-                    <path d="M-20 200q30-8 60 0t60 0 60 0 60 0 60 0 60 0 60 0 60 0 60 0 60 0" fill="none" stroke="#ffffff" stroke-opacity=".7" stroke-width="2.2"/>
-                    <path d="M-20 214q30-6 60 0t60 0 60 0 60 0 60 0 60 0 60 0 60 0 60 0 60 0" fill="none" stroke="#ffffff" stroke-opacity=".22" stroke-width="1.5"/>
-                </g>
-            </svg>
-            <span class="berg-label top">Ko'rinadigan natija</span>
-            <span class="berg-label bottom">Ko'rinmas poydevor</span>
-        </div>
+        {% include "site/_hero_art.html" %}
     </div>
 </section>
 
