@@ -1,7 +1,8 @@
 # AGENTS.md — guide for AI agents working on the iceberglc.com website
 
 Read this first, then [`docs/plans/ICEBERG_SCHOOL_WEBSITE_PLAN.md`](docs/plans/ICEBERG_SCHOOL_WEBSITE_PLAN.md).
-The plan's source of truth is the ERP repo (`College-ERP/docs/plans/`); this copy is for reference.
+This repo owns the website: its plan, design tokens, logos copies, pages and lead handler. The ERP
+(`College-ERP`) only receives leads and hosts the portal.
 Before a security or backend change, also read [`PROJECT_REVIEW.md`](PROJECT_REVIEW.md) (open findings
 after the PR #22 rollback).
 
@@ -57,7 +58,7 @@ npm run test:registration                        # Pages Function + Apps Script 
 python scripts/build_firebase.py && python scripts/check_firebase_build.py   # static build + checks
 node --check functions/api/register.js
 npm install && npm run build:css                 # after changing Tailwind classes in templates/JS
-python scripts/build_brand_tokens.py             # after copying a new static/brand/tokens.json
+python scripts/build_brand_tokens.py             # after editing static/brand/tokens.json
 ```
 
 `static/css/tailwind.css` and `static/brand/tokens.css` are generated but committed, because the
@@ -67,10 +68,10 @@ All of them must pass before a commit. There is no CI workflow in this repo yet.
 
 ## Brand rules
 
-- **Brand files are copies.** Source of truth is the ERP repo: `docs/brand/iceberg-school/tokens.json`
-  (colours/font/radii for both brands) and `docs/brand/iceberg-school/web/*.png` (School logos). Here
-  they live in `/static/brand/tokens.json`, `/static/brand/tokens.css` (generated) and
-  `/static/school/img/`. To change a colour, change `tokens.json` in the ERP repo first, then copy.
+- **This repo owns the website's design.** `static/brand/tokens.json` (colours, fonts, radii) is the
+  source for `tokens.css`; `static/school/img/` holds the School logos and photos. The core maroon/teal
+  brand colours and the logo originals are shared with the ERP (`College-ERP/docs/brand/iceberg-school/`)
+  — if a core colour or logo changes, update both repos. Gold/cream/paper and Fraunces are website-only.
 - Pages and components use only `var(--brand-*)` (or `rgb(var(--brand-*-rgb) / a)`, or Tailwind
   `brand-*` classes) — no new hex values in templates or page CSS.
 - `templates/site/base.html` is the one public layout; new pages extend it and reuse `.card`, `.btn`,
