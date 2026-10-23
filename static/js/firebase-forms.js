@@ -45,6 +45,20 @@
         return status;
     }
 
+    // crypto.randomUUID is missing on older phones (iOS before 15.4); the server accepts any hex id.
+    function newSubmissionId() {
+        if (window.crypto && typeof window.crypto.randomUUID === "function") {
+            return window.crypto.randomUUID();
+        }
+        var bytes = new Uint8Array(16);
+        window.crypto.getRandomValues(bytes);
+        var id = "";
+        for (var i = 0; i < bytes.length; i += 1) {
+            id += ("0" + bytes[i].toString(16)).slice(-2);
+        }
+        return id;
+    }
+
     function normalizeUzPhone(value) {
         var digits = String(value || "").replace(/\D/g, "");
         if (digits.length === 12 && digits.indexOf("998") === 0) {
@@ -99,7 +113,7 @@
         var button = form.querySelector('button[type="submit"]');
         var status = statusElement(form);
         var originalLabel = button ? button.textContent : "";
-        var submissionId = form.dataset.submissionId || crypto.randomUUID();
+        var submissionId = form.dataset.submissionId || newSubmissionId();
         form.dataset.submissionId = submissionId;
         var payload = {
             submission_id: submissionId,
@@ -179,7 +193,7 @@
         var button = form.querySelector('button[type="submit"]');
         var status = statusElement(form);
         var originalLabel = button ? button.innerHTML : "";
-        var submissionId = form.dataset.submissionId || crypto.randomUUID();
+        var submissionId = form.dataset.submissionId || newSubmissionId();
         form.dataset.submissionId = submissionId;
         var payload = {
             form_type: "school-enquiry",

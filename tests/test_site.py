@@ -91,6 +91,15 @@ class SitePageTests(unittest.TestCase):
         self.assertIn('<label class="lang notranslate" translate="no">', html)
         self.assertIn('<select class="notranslate" translate="no" data-lang-select', html)
 
+    def test_light_page_heroes_use_dark_buttons(self):
+        # btn-light and btn-ghost are white; on the cream page hero they would be unreadable.
+        for path in ('/about', '/programs', '/admissions', '/courses', '/news', '/contact', '/register'):
+            with self.subTest(path=path):
+                html = self.client.get(path).get_data(as_text=True)
+                hero = html.split('<section class="page-hero', 1)[1].split('</section>', 1)[0]
+                self.assertNotIn('btn-light', hero)
+                self.assertNotIn('btn-ghost', hero)
+
     def test_courses_page_lists_registration_programs(self):
         html = self.client.get('/courses').get_data(as_text=True)
         for program in app_module.REGISTRATION_CONFIG['programs']:
