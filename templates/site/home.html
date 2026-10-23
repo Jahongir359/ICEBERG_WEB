@@ -4,15 +4,15 @@
 {% block title %}Iceberg School — xususiy maktab, 1–11-sinflar | Iceberg Courses{% endblock %}
 
 {% block content %}
-<section class="hero" data-hero>
+<section class="hero" data-hero data-scrub="exit">
     <div class="wrap hero-grid">
-        <div>
+        <div class="hero-copy">
             <span class="hero-badge rv">
                 <img src="{{ url_for('static', filename='school/img/crest-maroon.png') }}" alt="" width="24" height="29">
                 Xususiy maktab · {{ school.grades }}-sinflar
             </span>
             <h1 class="words" data-split>Ko'rinib turgani&nbsp;— <span class="soft swash">faqat cho'qqi.</span> Biz poydevorni quramiz.</h1>
-            <p class="lead rv d2">Kuchli natijalar yuzadan emas, chuqurlikdan boshlanadi: xarakter, qiziquvchanlik va umrbod kitob o'qish odati. Iceberg School'da har bir bola ismi bilan taniladi va chuqurroq o'rganishga o'rgatiladi.</p>
+            <p class="lead rv d2">1–11-sinflar uchun xususiy maktab: kuchli akademik bilim, tarbiya va kitobxonlik madaniyati.</p>
             <div class="hero-cta rv d3">
                 <a class="btn btn-primary" href="{{ url_for('admissions') }}#ariza">Ariza topshirish {{ icon('arrow') }}</a>
                 <a class="btn btn-outline" href="{{ url_for('programs') }}">Ta'lim dasturlari</a>
@@ -29,6 +29,12 @@
     {{ curve('white') }}
 </section>
 
+<section class="statement" data-scrub="text">
+    <div class="wrap">
+        <span class="kicker rv">Bizning yondashuv</span>
+        <p class="statement-text" data-words>Kuchli natijalar yuzadan emas, chuqurlikdan boshlanadi: xarakter, qiziquvchanlik va umrbod kitob o'qish odati. Iceberg School'da har bir bola ismi bilan taniladi va chuqurroq o'rganishga o'rgatiladi.</p>
+    </div>
+</section>
 
 <section class="sec sec-white">
     <div class="wrap">
@@ -72,7 +78,7 @@
     </div>
 </section>
 
-<section class="sec sec-white">
+<section class="sec sec-white app-sec">
     <div class="wrap app-grid">
         <div class="rv">
             <div class="sec-head" style="margin-bottom:24px">
@@ -87,7 +93,7 @@
             </ul>
             <p style="margin-top:28px"><a class="btn btn-primary" href="{{ school.app_url }}">Ilovani yuklab olish {{ icon('arrow') }}</a></p>
         </div>
-        <div class="rv d2" aria-hidden="true">
+        <div class="phone-stage" aria-hidden="true" data-scrub="enter">
             <div class="phone">
                 <div class="phone-screen">
                     <div class="phone-head">
@@ -121,6 +127,7 @@
                             <div class="row"><div><div class="big">Noyabr to'lovi</div><div class="muted">Hisob-faktura</div></div><span class="ok">To'lash</span></div>
                         </div>
                     </div>
+                    <div class="phone-tabs"><span class="on">Asosiy</span><span>Jadval</span><span>Xabarlar</span><span>Profil</span></div>
                 </div>
             </div>
         </div>
@@ -128,30 +135,6 @@
 </section>
 
 <section class="sec">
-    <div class="wrap">
-        <div class="sec-head center rv">
-            <span class="kicker">Jamoa</span>
-            <h2 class="h2">Sizni kutib oladigan insonlar</h2>
-            <p class="lead">Iceberg jamoasi — farzandingizning har bir qadamini biladigan ustozlar va murabbiylar.</p>
-        </div>
-        <div class="grid grid-3">
-            {% for person in [
-                ('about_team_1', 'img/team/azizbek.jpg', 'Azizbek Nasriddinov', 'Markaz direktori'),
-                ('about_team_2', 'img/team/maqsudbek.jpg', 'Maqsudbek Mirzayev', "Ingliz tili bo'yicha mutaxassis"),
-                ('about_team_3', 'img/team/islomjon.jpg', 'Islomjon Ergashboyev', 'Asosiy tizim boshqaruvchisi')
-            ] %}
-            <article class="card person lift rv{% if loop.index0 %} d{{ loop.index0 }}{% endif %}">
-                <img src="{{ asset_url(person[0], person[1]) }}" alt="{{ person[2] }}" width="112" height="112" loading="lazy">
-                <h3 class="h3">{{ person[2] }}</h3>
-                <p class="role">{{ person[3] }}</p>
-            </article>
-            {% endfor %}
-        </div>
-        <p class="rv" style="margin-top:24px;text-align:center"><a class="link-arrow" href="{{ url_for('about') }}">Biz haqimizda</a></p>
-    </div>
-</section>
-
-<section class="sec sec-white">
     <div class="wrap">
         <div class="courses-band rv">
             <div>
