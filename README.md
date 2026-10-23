@@ -148,6 +148,19 @@ Admin login URL format:
 
 If you want to change the login password later, update `ADMIN_PASSWORD` in `.env` and restart the app.
 
+### Copying Cloudflare registrations into the ERP
+
+After Google Sheets stores an application, `functions/api/register.js` also posts it to
+the ERP's Registration leads screen when both of these Cloudflare Pages secrets are set:
+
+- `REGISTRATION_LEADS_API_URL` — `https://app.iceberglc.com/public/registration-leads/`
+- `REGISTRATION_LEADS_API_TOKEN` — the same value as the ERP's `REGISTRATION_LEADS_API_TOKEN`
+
+The copy is best-effort: an ERP error is logged and never fails the application. Repeated
+submissions that Sheets reports as duplicates are not sent again (Apps Script receiver
+version `2026-10-23.1` or later). Fill `erp_branch_name` for each branch in
+`config/registration.json` with the exact ERP branch name so branch admins can see the leads.
+
 ## Deploy (Railway - Recommended)
 
 This repository is pre-configured for Railway with:

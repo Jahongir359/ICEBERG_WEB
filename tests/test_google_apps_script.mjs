@@ -156,8 +156,12 @@ test('doPost stores one idempotent row with stable program and branch IDs', () =
         properties: { SHEET_ID: 'sheet-id', WEBHOOK_SECRET: 'shared-secret' }
     });
     context.setup();
-    assert.equal(result(context.doPost(validLead())).ok, true);
-    assert.equal(result(context.doPost(validLead())).ok, true);
+    const first = result(context.doPost(validLead()));
+    const repeat = result(context.doPost(validLead()));
+    assert.equal(first.ok, true);
+    assert.equal(first.duplicate, false);
+    assert.equal(repeat.ok, true);
+    assert.equal(repeat.duplicate, true);
     const sheet = spreadsheet.getSheetByName('Registrations');
     assert.equal(sheet.rows.length, 2);
     const headers = sheet.rows[0];

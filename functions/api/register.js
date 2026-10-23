@@ -38,10 +38,72 @@ async function loadRegistrationOptions(env) {
         throw new Error("Registration options could not be loaded");
     }
     const config = await response.json();
+    const programs = (config.programs || []).filter(item => item.active);
+    const branches = (config.branches || []).filter(item => item.active);
     return {
-        programs: new Set((config.programs || []).filter(item => item.active).map(item => item.id)),
-        branches: new Set((config.branches || []).filter(item => item.active).map(item => item.id))
+        programs: new Set(programs.map(item => item.id)),
+        branches: new Set(branches.map(item => item.id)),
+        programNames: new Map(programs.map(item => [item.id, item.name || item.id])),
+        // The ERP shows a lead to a branch admin only when its branch text equals
+        // that admin's ERP branch name, so send the configured ERP name when set.
+        erpBranchNames: new Map(branches.map(item => [item.id, cleanText(item.erp_branch_name, 100)]))
     };
+}
+
+function validErpLeadsUrl(value) {
+    try {
+        return new URL(value).protocol === "https:";
+    } catch (_error) {
+        return false;
+    }
+}
+
+function erpBranchName(branch, options) {
+    if (branch === "unknown") {
+        return "";
+    }
+    return options.erpBranchNames.get(branch) || branch;
+}
+
+// Best-effort copy of a stored lead into the ERP's Registration leads screen.
+// Google Sheets stays the primary store, so failures are logged, never shown.
+async function forwardLeadToErp(lead, options, env, reference) {
+    if (!env.REGISTRATION_LEADS_API_URL || !env.REGISTRATION_LEADS_API_TOKEN) {
+        return;
+    }
+    if (!validErpLeadsUrl(env.REGISTRATION_LEADS_API_URL)) {
+        console.error("ERP lead forwarding URL is invalid", reference);
+        return;
+    }
+    try {
+        const response = await fetch(env.REGISTRATION_LEADS_API_URL, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+                "Authorization": `Bearer ${env.REGISTRATION_LEADS_API_TOKEN}`
+            },
+            body: JSON.stringify({
+                full_name: lead.student_name,
+                phone: lead.student_phone,
+                program: options.programNames.get(lead.program) || lead.program,
+                branch: erpBranchName(lead.branch, options),
+                source: "website",
+                submission_id: lead.id,
+                utm_source: lead.utm_source,
+                utm_medium: lead.utm_medium,
+                utm_campaign: lead.utm_campaign,
+                referrer: lead.page_url || lead.referrer
+            }),
+            redirect: "manual",
+            signal: AbortSignal.timeout(8000)
+        });
+        if (response.status < 200 || response.status >= 300) {
+            console.error("ERP lead forwarding rejected", reference, response.status);
+        }
+    } catch (error) {
+        console.error("ERP lead forwarding failed", reference, error.name);
+    }
 }
 
 async function validateTurnstile(token, request, secret) {
@@ -66,6 +128,7 @@ async function validateTurnstile(token, request, secret) {
 
 export async function onRequestPost(context) {
     const { request, env } = context;
+    let storedResult;
     const reference = requestReference(request);
     if (!validGoogleScriptUrl(env.GOOGLE_SCRIPT_URL) || !env.GOOGLE_SCRIPT_SECRET) {
         console.error("Registration storage is not configured", reference);
@@ -180,6 +243,7 @@ export async function onRequestPost(context) {
         if (!response.ok || !result.ok) {
             throw new Error(`receiver_rejected:${cleanText(result.error, 80) || response.status}`);
         }
+        storedResult = result;
     } catch (error) {
         console.error("Registration forwarding failed", reference, error.message);
         return jsonResponse(
@@ -190,6 +254,16 @@ export async function onRequestPost(context) {
             },
             502
         );
+    }
+
+    // A repeated submission ID was already stored (and forwarded) the first time.
+    if (storedResult.duplicate !== true) {
+        const forwarding = forwardLeadToErp(lead, options, env, reference);
+        if (typeof context.waitUntil === "function") {
+            context.waitUntil(forwarding);
+        } else {
+            await forwarding;
+        }
     }
 
     return jsonResponse({ ok: true, id: lead.id }, 201);

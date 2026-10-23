@@ -69,6 +69,21 @@ class RegistrationRouteTests(unittest.TestCase):
         self.assertEqual({row[2] for row in rows}, {'main', 'gayrat', 'unknown'})
         self.assertTrue(all(row[0] == '901234567' and row[1] == 'ielts' for row in rows))
 
+    @patch.object(app_module, 'send_telegram_notification')
+    @patch.object(app_module, 'send_registration_lead_to_management', return_value=True)
+    def test_management_lead_uses_configured_erp_branch_name(self, forward, _telegram):
+        mapped = dict(app_module.REGISTRATION_BRANCHES['gayrat'], erp_branch_name="G'ayrat")
+        with patch.dict(app_module.REGISTRATION_BRANCHES, {'gayrat': mapped}):
+            for branch in ('gayrat', 'main', 'unknown'):
+                self.client.post('/register', data={
+                    'student_name': 'Ali Valiyev',
+                    'student_phone': '901234567',
+                    'course': 'ielts',
+                    'preferred_branch': branch,
+                })
+        sent = [call.args[0]['branch'] for call in forward.call_args_list]
+        self.assertEqual(sent, ["G'ayrat", 'main', ''])
+
     def test_unknown_ids_are_rejected(self):
         response = self.client.post('/register', data={
             'student_name': 'Ali Valiyev',

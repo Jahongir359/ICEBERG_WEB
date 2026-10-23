@@ -232,6 +232,15 @@ REGISTRATION_PROGRAMS = {item['id']: item for item in REGISTRATION_CONFIG['progr
 REGISTRATION_BRANCHES = {item['id']: item for item in REGISTRATION_CONFIG['branches']}
 
 
+def erp_branch_name(branch_id):
+    # The ERP shows a lead to a branch admin only when its branch text equals
+    # that admin's ERP branch name, so send the configured ERP name when set.
+    if branch_id == 'unknown':
+        return ''
+    branch = REGISTRATION_BRANCHES.get(branch_id, {})
+    return (branch.get('erp_branch_name') or '').strip() or branch_id
+
+
 def utc_now():
     return datetime.now(UTC).replace(tzinfo=None)
 
@@ -1805,7 +1814,7 @@ def register():
             'full_name': student_name,
             'phone': format_uz_phone(student_phone),
             'course': course,
-            'branch': preferred_branch,
+            'branch': erp_branch_name(preferred_branch),
             'source': 'website',
             'submitted_at': created_at
         }
