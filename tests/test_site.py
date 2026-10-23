@@ -86,6 +86,11 @@ class SitePageTests(unittest.TestCase):
         self.assertIn('<span class="ph">[NARX]</span>', html)
         self.assertIn('<span class="ph">[TELEFON]</span>', html)
 
+    def test_language_switcher_is_not_machine_translated(self):
+        html = self.client.get('/').get_data(as_text=True)
+        self.assertIn('<label class="lang notranslate" translate="no">', html)
+        self.assertIn('<select class="notranslate" translate="no" data-lang-select', html)
+
     def test_courses_page_lists_registration_programs(self):
         html = self.client.get('/courses').get_data(as_text=True)
         for program in app_module.REGISTRATION_CONFIG['programs']:
