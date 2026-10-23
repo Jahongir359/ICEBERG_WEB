@@ -51,6 +51,6 @@
     }
   ],
   "tuition_note": "",
-  "portal_url": "https://app.iceberglc.com/login/?brand=school",
-  "app_url": "https://app.iceberglc.com/download/"
+  "portal_url": "/ilova",
+  "app_url": "/ilova"
 }

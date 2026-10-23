@@ -274,6 +274,10 @@ body.has-dock .ftr-bottom { padding-bottom: calc(22px + 72px + env(safe-area-ins
 .page-hero h1 { font-size: clamp(2.3rem, 8.4vw, 3.9rem); max-width: 900px; color: var(--brand-primary); }
 .page-hero .lead { max-width: 640px; }
 .page-hero.no-watermark::after { display: none; }
+/* Coming-soon page: the English version sits under the Uzbek text as a quieter second voice. */
+.coming-en { display: grid; gap: 6px; max-width: 640px; margin-top: 6px; padding: 14px 18px; border-left: 3px solid var(--brand-gold); border-radius: 0 14px 14px 0; background: rgb(255 255 255 / .6); color: var(--muted); }
+.coming-en-title { font-family: var(--brand-font-display); font-size: 1.25rem; font-weight: 600; color: var(--brand-primary); }
+.coming-en-note { font-size: .9rem; font-style: italic; color: var(--muted); }
 .page-hero-split { align-items: center; }
 @media (min-width: 900px) { .page-hero-split { grid-template-columns: 1.1fr .9fr; gap: 40px; } }
 .page-hero-text { display: grid; gap: 14px; }

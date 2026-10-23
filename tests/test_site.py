@@ -100,6 +100,19 @@ class SitePageTests(unittest.TestCase):
                 self.assertNotIn('btn-light', hero)
                 self.assertNotIn('btn-ghost', hero)
 
+    def test_coming_soon_page_in_uzbek_and_english(self):
+        response = self.client.get('/ilova')
+        self.assertEqual(response.status_code, 200)
+        html = response.get_data(as_text=True)
+        self.assertIn('Yangi imkoniyatlar ustida ishlayapmiz', html)
+        self.assertIn("We're working on new features", html)
+        self.assertIn('<meta name="robots" content="noindex">', html)
+
+    def test_portal_and_app_links_follow_school_config(self):
+        html = self.client.get('/').get_data(as_text=True)
+        self.assertIn(f'href="{app_module.SCHOOL_CONFIG["portal_url"]}">Portal</a>', html)
+        self.assertIn(f'href="{app_module.SCHOOL_CONFIG["app_url"]}"', html)
+
     def test_courses_page_lists_registration_programs(self):
         html = self.client.get('/courses').get_data(as_text=True)
         for program in app_module.REGISTRATION_CONFIG['programs']:

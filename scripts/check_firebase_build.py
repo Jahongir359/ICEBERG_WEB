@@ -74,6 +74,10 @@ def resolve_local_reference(reference: str) -> Path | None:
         return PUBLIC / EXPECTED_PAGES[path]
     if path.endswith(".html") and path.removesuffix(".html") in EXPECTED_PAGES:
         return PUBLIC / path.lstrip("/")
+    # Cloudflare Pages serves /name from name.html (pages kept out of the sitemap, e.g. /ilova).
+    html_twin = PUBLIC / (path.strip("/") + ".html")
+    if path != "/" and html_twin.is_file():
+        return html_twin
     return PUBLIC / path.lstrip("/")
 
 
@@ -183,6 +187,8 @@ def check() -> None:
             errors.append(f"_redirects: missing {rule!r}")
     if not (PUBLIC / "admissions" / "thanks.html").is_file():
         errors.append("missing generated page: public/admissions/thanks.html")
+    if not (PUBLIC / "ilova.html").is_file():
+        errors.append("missing generated page: public/ilova.html")
 
     robots = (PUBLIC / "robots.txt").read_text(encoding="utf-8")
     if not re.search(r"^Sitemap:\s+https://", robots, flags=re.MULTILINE):
