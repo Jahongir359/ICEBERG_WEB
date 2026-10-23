@@ -3,12 +3,46 @@
 {% block title %}Ta'lim dasturlari — Iceberg School | Boshlang'ich, o'rta va yuqori sinflar{% endblock %}
 {% block description %}Iceberg School ta'lim bosqichlari: boshlang'ich (1–4), o'rta (5–9) va yuqori sinflar (10–11). Akademik poydevor, tarbiya va universitetga tayyorgarlik.{% endblock %}
 {% block content %}
-<section class="page-hero">
-    <div class="wrap">
-        <nav class="crumbs" aria-label="Sahifa yo'li"><a href="{{ url_for('index') }}">Bosh sahifa</a><span aria-hidden="true">/</span><span>Ta'lim dasturlari</span></nav>
-        <span class="kicker">Ta'lim dasturlari</span>
-        <h1>Birinchi harflardan universitetgacha</h1>
-        <p class="lead">Uch bosqich — bir maqsad: har bir bola o'z cho'qqisiga chiqishi uchun mustahkam poydevor.</p>
+<section class="page-hero no-watermark">
+    <div class="wrap page-hero-split">
+        <div class="page-hero-text">
+            <nav class="crumbs" aria-label="Sahifa yo'li"><a href="{{ url_for('index') }}">Bosh sahifa</a><span aria-hidden="true">/</span><span>Ta'lim dasturlari</span></nav>
+            <span class="kicker">Ta'lim dasturlari</span>
+            <h1>Birinchi harflardan universitetgacha</h1>
+            <p class="lead">Uch bosqich — bir maqsad: har bir bola o'z cho'qqisiga chiqishi uchun mustahkam poydevor.</p>
+        </div>
+        {# The crest's mountain draws itself; the three school stages are the way up. #}
+        <div class="art-climb" aria-hidden="true">
+            <svg viewBox="0 0 460 360">
+                <defs>
+                    <linearGradient id="climbfill" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0" stop-color="#ffffff" stop-opacity=".2"/>
+                        <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+                    </linearGradient>
+                </defs>
+                <circle class="star" cx="60" cy="50" r="2.4"/>
+                <circle class="star" cx="390" cy="36" r="2" style="animation-delay:-1s"/>
+                <circle class="star" cx="330" cy="104" r="1.6" style="animation-delay:-2s"/>
+                <circle class="star" cx="420" cy="160" r="2" style="animation-delay:-1.6s"/>
+                <path class="fill" d="M30 330 195 80l50 75 50-65 140 240Z"/>
+                <path class="draw" pathLength="1" d="M30 330 195 80l50 75 50-65 140 240Z"/>
+                <path class="draw facet" pathLength="1" d="M195 80l25 135 25-60m50-65-25 125-50-60M100 330l95-115m155 115-55-115"/>
+                <path class="ground" pathLength="1" d="M0 330h460"/>
+                {% set points = [(71, 268), (113, 205), (154, 142)] %}
+                {% for stage in school.stages %}{% set point = points[loop.index0] %}
+                <g class="stop" style="animation-delay:{{ 1.4 + loop.index0 * 0.35 }}s">
+                    <circle cx="{{ point[0] }}" cy="{{ point[1] }}" r="9" fill="#fff"/>
+                    <circle cx="{{ point[0] }}" cy="{{ point[1] }}" r="4" fill="var(--brand-primary)"/>
+                    <text x="{{ point[0] - 16 }}" y="{{ point[1] + 5 }}" text-anchor="end">{{ stage.grades or '' }}</text>
+                </g>
+                {% endfor %}
+                <g class="stop" style="animation-delay:2.5s">
+                    <path d="M195 80V34" stroke="#fff" stroke-width="2.4"/>
+                    <path d="M195 34h36l-8 10 8 10h-36Z" fill="var(--brand-on-primary-soft)"/>
+                    <text x="240" y="50">Universitet</text>
+                </g>
+            </svg>
+        </div>
     </div>
 </section>
 

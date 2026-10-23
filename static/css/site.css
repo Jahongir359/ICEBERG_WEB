@@ -244,6 +244,26 @@ body.has-dock { padding-bottom: 76px; }
 .page-hero h1 { font-size: clamp(2.2rem, 8vw, 3.8rem); letter-spacing: -0.03em; max-width: 900px; }
 .page-hero .lead { color: rgb(255 255 255 / .82); max-width: 640px; }
 .page-hero .kicker { color: var(--brand-on-primary-soft); }
+.page-hero.no-watermark::after { display: none; }
+.page-hero-split { align-items: center; }
+@media (min-width: 900px) { .page-hero-split { grid-template-columns: 1.1fr .9fr; gap: 40px; } }
+.page-hero-text { display: grid; gap: 14px; }
+
+/* Programs hero: the crest's mountain draws itself, with the school stages as the way up. */
+.art-climb { width: min(100%, 440px); margin-inline: auto; }
+.art-climb svg { width: 100%; height: auto; overflow: visible; }
+.art-climb .draw { fill: none; stroke: #fff; stroke-width: 2.4; stroke-linejoin: round; stroke-linecap: round; stroke-dasharray: 1; stroke-dashoffset: 1; animation: draw 2.2s cubic-bezier(.6, 0, .2, 1) forwards; }
+.art-climb .facet { stroke: var(--brand-on-primary-soft); stroke-width: 1.4; opacity: .75; animation-delay: .8s; }
+.art-climb .fill { fill: url(#climbfill); opacity: 0; animation: fade-in 1.2s 1.4s ease forwards; }
+.art-climb .ground { fill: none; stroke: rgb(255 255 255 / .35); stroke-width: 1.5; stroke-dasharray: 1; stroke-dashoffset: 1; animation: draw 1.4s ease forwards; }
+.art-climb .star { fill: #fff; animation: twinkle 3s ease-in-out infinite; }
+.art-climb .stop { opacity: 0; animation: pop-in .5s ease forwards; }
+.art-climb text { fill: #fff; font: 800 17px var(--brand-font); letter-spacing: -.01em; }
+@keyframes draw { to { stroke-dashoffset: 0; } }
+@keyframes fade-in { to { opacity: 1; } }
+@keyframes pop-in { from { opacity: 0; translate: 0 6px; } to { opacity: 1; translate: 0 0; } }
+@keyframes twinkle { 50% { opacity: .15; } }
+@media (prefers-reduced-motion: reduce) { .art-climb .draw, .art-climb .ground { stroke-dashoffset: 0; } .art-climb .fill, .art-climb .stop { opacity: 1; } }
 .crumbs { display: flex; gap: .4rem; font-size: .85rem; color: rgb(255 255 255 / .7); }
 .crumbs a { color: rgb(255 255 255 / .85); text-decoration: none; }
 
