@@ -11,7 +11,7 @@ The public website for two brands on one domain:
 
 | Brand | URLs | `data-brand` | Look |
 |---|---|---|---|
-| **ICEBERG Learning Center** (language/exam courses, Namangan) | `iceberglc.com/`, `/about`, `/our_programs`, `/news`, `/questions`, `/contact`, `/register` | `center` | palette per plan 4.0.1 |
+| **ICEBERG Learning Center** (language/exam courses, Namangan) | `iceberglc.com/`, `/about`, `/our_programs`, `/news`, `/questions`, `/contact`, `/register` | `center` | teal `#06343A` + lime `#DFFF2F` (owner, 2026-10-23) |
 | **Iceberg School** (private school) — *not built yet* | `iceberglc.com/school`, `/school/about`, `/school/programs`, `/school/admissions`, `/school/admissions/thanks`, `/school/contact`, `/school/news` | `school` | maroon `#4C0909`, crest logo |
 
 The staff/student portal is a separate app — the ERP at `app.iceberglc.com` (repo `College-ERP`).
@@ -44,7 +44,12 @@ python -m unittest discover -s tests -v          # Flask tests
 npm run test:registration                        # Pages Function + Apps Script tests (Node 22)
 python scripts/build_firebase.py && python scripts/check_firebase_build.py   # static build + checks
 node --check functions/api/register.js
+npm install && npm run build:css                 # after changing Tailwind classes in templates/JS
+python scripts/build_brand_tokens.py             # after copying a new static/brand/tokens.json
 ```
+
+`static/css/tailwind.css` and `static/brand/tokens.css` are generated but committed, because the
+Cloudflare build runs Python only. Rebuild and commit them with the change that needs them.
 
 All of them must pass before a commit. There is no CI workflow in this repo yet.
 
@@ -52,9 +57,10 @@ All of them must pass before a commit. There is no CI workflow in this repo yet.
 
 - **Brand files are copies.** Source of truth is the ERP repo: `docs/brand/iceberg-school/tokens.json`
   (colours/font/radii for both brands) and `docs/brand/iceberg-school/web/*.png` (School logos). Here
-  they will live in `/static/brand/tokens.json`, `/static/brand/tokens.css` (generated) and
+  they live in `/static/brand/tokens.json`, `/static/brand/tokens.css` (generated) and
   `/static/school/img/`. To change a colour, change `tokens.json` in the ERP repo first, then copy.
-- Pages and components use only `var(--brand-*)` — no hex values in templates or page CSS.
+- Pages and components use only `var(--brand-*)` (or `rgb(var(--brand-*-rgb) / a)`, or Tailwind
+  `brand-*` classes) — no new hex values in templates or page CSS.
 - One shared base layout takes a `brand` (name, logos, nav, footer, theme-color, JSON-LD, Portal URL)
   and sets `<html data-brand="…">`. LC and School pages differ only in content and brand.
 - Font: Inter on every page.
