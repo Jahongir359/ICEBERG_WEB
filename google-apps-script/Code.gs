@@ -12,9 +12,14 @@ const HEADERS = [
   'Page URL',
   'Referrer',
   'Status',
-  'Staff Notes'
+  'Staff Notes',
+  'Form Type',
+  'Child Name',
+  'Child Birth Date',
+  'Language',
+  'Message'
 ];
-const RECEIVER_VERSION = '2026-10-23.1';
+const RECEIVER_VERSION = '2026-10-23.2';
 
 function jsonResult_(body) {
   return ContentService
@@ -163,7 +168,12 @@ function doPost(e) {
           'Page URL': safeCell_(data.page_url),
           'Referrer': safeCell_(data.referrer),
           'Status': 'New',
-          'Staff Notes': ''
+          'Staff Notes': '',
+          'Form Type': safeCell_(data.form_type || 'course-registration'),
+          'Child Name': safeCell_(data.child_name),
+          'Child Birth Date': safeCell_(data.child_birth_date),
+          'Language': safeCell_(data.language),
+          'Message': safeCell_(data.message)
         };
         sheet.appendRow(headers.map(header => (
           Object.prototype.hasOwnProperty.call(valuesByHeader, header)

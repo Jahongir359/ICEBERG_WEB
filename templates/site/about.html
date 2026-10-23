@@ -1,0 +1,99 @@
+{% extends "site/base.html" %}
+{% from "site/_macros.html" import icon, fact, curve %}
+{% block title %}Maktab haqida — Iceberg School va Iceberg oilasi{% endblock %}
+{% block description %}Iceberg School haqida: gerbimiz ma'nosi, qadriyatlarimiz va Iceberg oilasi — xususiy maktab hamda ICEBERG o'quv markazi (Iceberg Courses).{% endblock %}
+{% block content %}
+<section class="page-hero">
+    <div class="wrap">
+        <nav class="crumbs" aria-label="Sahifa yo'li"><a href="{{ url_for('index') }}">Bosh sahifa</a><span aria-hidden="true">/</span><span>Maktab haqida</span></nav>
+        <span class="kicker">Maktab haqida</span>
+        <h1>Aysberg kabi: eng muhimi — ko'rinmas qismida</h1>
+        <p class="lead">Baholar, sertifikatlar va g'alabalar — bu cho'qqi. Ularni ushlab turadigan narsa esa suv ostida: odatlar, xarakter va chuqur bilim. Iceberg School shu poydevorni quradi.</p>
+    </div>
+    {{ curve('white') }}
+</section>
+
+<section class="sec sec-white">
+    <div class="wrap app-grid">
+        <div class="rv" style="display:grid;place-items:center">
+            <img src="{{ url_for('static', filename='school/img/logo-v-maroon.png') }}" alt="Iceberg School gerbi" width="300" height="350" style="width:min(300px,70vw);height:auto" loading="lazy">
+        </div>
+        <div class="rv d1">
+            <div class="sec-head" style="margin-bottom:20px">
+                <span class="kicker">Gerbimiz</span>
+                <h2 class="h2">Bir qalqon — uch ma'no</h2>
+                <p class="lead">Gerbning yuqori qismida — aysberg cho'qqisi, pastida — o'sayotgan bola va ochiq kitob.</p>
+            </div>
+            <ul class="feature-list">
+                <li><span class="icon-tile">{{ icon('mountain') }}</span><div><strong>Cho'qqi — yuqoriga intilish</strong><span>Yuqori maqsad va chuqur akademik bilim.</span></div></li>
+                <li><span class="icon-tile">{{ icon('child') }}</span><div><strong>Bola — har tomonlama o'sish</strong><span>Sog'lom, mehribon va o'ziga ishongan inson.</span></div></li>
+                <li><span class="icon-tile">{{ icon('book') }}</span><div><strong>Kitob — chuqur o'qish</strong><span>Barcha bilimning asosi bo'lgan kitobxonlik.</span></div></li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+{% with leader_bg = 'sec-tint' %}{% include "site/_leader.html" %}{% endwith %}
+
+<section class="sec">
+    <div class="wrap">
+        <div class="sec-head center rv">
+            <span class="kicker">Qadriyatlarimiz</span>
+            <h2 class="h2">Har kuni amal qiladigan tamoyillar</h2>
+        </div>
+        <div class="grid grid-3">
+            <article class="card rv"><span class="icon-tile soft">{{ icon('users') }}</span><h3 class="h3">O'quvchiga e'tibor</h3><p>Har bir qarorimiz bolaning rivoji va ishonchiga xizmat qiladi.</p></article>
+            <article class="card rv d1"><span class="icon-tile soft">{{ icon('chart') }}</span><h3 class="h3">Innovatsiya</h3><p>Ta'limdagi yangi texnologiya va yondashuvlarni amaliy natijaga aylantiramiz.</p></article>
+            <article class="card rv d2"><span class="icon-tile soft">{{ icon('chat') }}</span><h3 class="h3">Hamjamiyat</h3><p>O'zaro qo'llab-quvvatlash va ilhomga asoslangan sog'lom muhit — o'quvchi, ustoz va oila birga.</p></article>
+        </div>
+    </div>
+</section>
+
+<section class="sec sec-white">
+    <div class="wrap">
+        <div class="sec-head rv">
+            <span class="kicker">Iceberg oilasi</span>
+            <h2 class="h2">Bitta oila — ikki yo'nalish</h2>
+            <p class="lead">Iceberg School va ICEBERG o'quv markazi — bir oila: kunlik maktab va kurslar bir brend ostida.</p>
+        </div>
+        <div class="grid grid-2">
+            <a class="card rv" href="{{ url_for('programs') }}">
+                <img src="{{ url_for('static', filename='school/img/logo-h-maroon.png') }}" alt="Iceberg School" width="180" height="53" style="width:180px;height:auto" loading="lazy">
+                <h3 class="h3">Xususiy maktab · {{ school.grades }}-sinflar</h3>
+                <p>To'liq kunlik ta'lim, tarbiya va universitetga tayyorgarlik.</p>
+                <span class="link-arrow">Ta'lim dasturlari</span>
+            </a>
+            <a class="card rv d1" href="{{ url_for('courses') }}">
+                <span class="icon-tile">{{ icon('cap') }}</span>
+                <h3 class="h3">Iceberg Courses · o'quv markazi</h3>
+                <p>IELTS, CEFR, SAT va fan kurslari — maktab o'quvchilari va kattalar uchun.</p>
+                <span class="link-arrow">Kurslar</span>
+            </a>
+        </div>
+    </div>
+</section>
+
+<section class="sec">
+    <div class="wrap">
+        <div class="sec-head center rv">
+            <span class="kicker">Jamoa</span>
+            <h2 class="h2">Iceberg jamoasi bilan tanishing</h2>
+        </div>
+        <div class="grid grid-3">
+            {% for person in [
+                ('about_team_1', 'img/team/azizbek.jpg', 'Azizbek Nasriddinov', 'Markaz direktori'),
+                ('about_team_2', 'img/team/maqsudbek.jpg', 'Maqsudbek Mirzayev', "Ingliz tili bo'yicha mutaxassis"),
+                ('about_team_3', 'img/team/islomjon.jpg', 'Islomjon Ergashboyev', 'Asosiy tizim boshqaruvchisi')
+            ] %}
+            <article class="card person rv{% if loop.index0 %} d{{ loop.index0 }}{% endif %}">
+                <img src="{{ asset_url(person[0], person[1]) }}" alt="{{ person[2] }}" width="104" height="104" loading="lazy">
+                <h3 class="h3">{{ person[2] }}</h3>
+                <p class="role">{{ person[3] }}</p>
+            </article>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+{% include "site/_cta.html" %}
+{% endblock %}

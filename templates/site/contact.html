@@ -1,0 +1,49 @@
+{% extends "site/base.html" %}
+{% from "site/_macros.html" import icon, fact, curve %}
+{% block title %}Aloqa — Iceberg School va Iceberg Courses{% endblock %}
+{% block description %}Iceberg School qabul bo'limi va Iceberg Courses (ICEBERG o'quv markazi) bilan bog'lanish: telefon, Telegram, manzil va filiallar.{% endblock %}
+{% block content %}
+<section class="page-hero">
+    <div class="wrap">
+        <nav class="crumbs" aria-label="Sahifa yo'li"><a href="{{ url_for('index') }}">Bosh sahifa</a><span aria-hidden="true">/</span><span>Aloqa</span></nav>
+        <span class="kicker">Aloqa</span>
+        <h1>Biz bilan bog'laning</h1>
+        <p class="lead">Savollaringizga javob berish va farzandingiz uchun to'g'ri yo'lni tanlashga yordam berish uchun shu yerdamiz.</p>
+    </div>
+    {{ curve('cream') }}
+</section>
+<section class="sec">
+    <div class="wrap grid grid-2">
+        <article class="card rv">
+            <img src="{{ url_for('static', filename='school/img/logo-h-maroon.png') }}" alt="Iceberg School" width="170" height="50" style="width:170px;height:auto" loading="lazy">
+            <h2 class="h3">Iceberg School qabul bo'limi</h2>
+            <div class="contact-list">
+                {% if school.phone %}<a href="tel:{{ school.phone }}"><span class="icon-tile">{{ icon('phone') }}</span><span>{{ school.phone_display or school.phone }}<small>Telefon</small></span></a>
+                {% else %}<div><span class="icon-tile">{{ icon('phone') }}</span><span>{{ fact('', 'TELEFON') }}<small>Telefon</small></span></div>{% endif %}
+                <div><span class="icon-tile">{{ icon('pin') }}</span><span>{{ fact(school.address, 'MANZIL') }}<small>{{ school.city or 'Manzil' }}</small></span></div>
+                <div><span class="icon-tile">{{ icon('clock') }}</span><span>{{ fact(school.hours, 'ISH VAQTI') }}<small>Ish vaqti</small></span></div>
+                {% if school.email %}<a href="mailto:{{ school.email }}"><span class="icon-tile">{{ icon('mail') }}</span><span>{{ school.email }}<small>Email</small></span></a>{% endif %}
+                {% if school.telegram_url %}<a href="{{ school.telegram_url }}" rel="noopener"><span class="icon-tile">{{ icon('telegram') }}</span><span>Telegram<small>Yozish</small></span></a>{% endif %}
+            </div>
+            <div class="hero-cta" style="margin-top:8px">
+                <a class="btn btn-primary" href="{{ url_for('admissions') }}#ariza">Ariza topshirish</a>
+                {% if school.map_url %}<a class="btn btn-outline" href="{{ school.map_url }}" rel="noopener">{{ icon('pin') }} Xaritada</a>{% endif %}
+            </div>
+        </article>
+        <article class="card rv d1">
+            <span class="icon-tile">{{ icon('cap') }}</span>
+            <h2 class="h3">Iceberg Courses · ICEBERG o'quv markazi</h2>
+            <div class="contact-list">
+                <a href="tel:{{ registration.contact.call_center_phone }}"><span class="icon-tile">{{ icon('phone') }}</span><span>{{ registration.contact.call_center_display }}<small>Qabul bo'limi</small></span></a>
+                <a href="{{ registration.contact.telegram_url }}" rel="noopener"><span class="icon-tile">{{ icon('telegram') }}</span><span>@{{ registration.contact.telegram_username }}<small>Telegram</small></span></a>
+                <a href="mailto:{{ content('contact_email', 'iceberg.edu.center@gmail.com') }}"><span class="icon-tile">{{ icon('mail') }}</span><span>{{ content('contact_email', 'iceberg.edu.center@gmail.com') }}<small>Email</small></span></a>
+                <a href="{{ content('contact_address_url', 'https://www.google.com/maps/place/Uychi,+Uzbekistan/') }}" rel="noopener"><span class="icon-tile">{{ icon('pin') }}</span><span>{{ content('contact_address', 'Uychi, Namangan viloyati') }}<small>Asosiy filial</small></span></a>
+            </div>
+            <div class="hero-cta" style="margin-top:8px">
+                <a class="btn btn-primary" href="{{ url_for('register') }}">Kursga yozilish</a>
+                <a class="btn btn-outline" href="{{ url_for('courses') }}#filiallar">Filiallar</a>
+            </div>
+        </article>
+    </div>
+</section>
+{% endblock %}

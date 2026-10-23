@@ -1,0 +1,85 @@
+{% extends "site/base.html" %}
+{% from "site/_macros.html" import icon, fact, curve %}
+{% block title %}Ta'lim dasturlari — Iceberg School | Boshlang'ich, o'rta va yuqori sinflar{% endblock %}
+{% block description %}Iceberg School ta'lim bosqichlari: boshlang'ich (1–4), o'rta (5–9) va yuqori sinflar (10–11). Akademik poydevor, tarbiya va universitetga tayyorgarlik.{% endblock %}
+{% block content %}
+<section class="page-hero no-watermark">
+    <div class="wrap page-hero-split">
+        <div class="page-hero-text">
+            <nav class="crumbs" aria-label="Sahifa yo'li"><a href="{{ url_for('index') }}">Bosh sahifa</a><span aria-hidden="true">/</span><span>Ta'lim dasturlari</span></nav>
+            <span class="kicker">Ta'lim dasturlari</span>
+            <h1>Birinchi harflardan universitetgacha</h1>
+            <p class="lead">Uch bosqich — bir maqsad: har bir bola o'z cho'qqisiga chiqishi uchun mustahkam poydevor.</p>
+        </div>
+        {# The crest's mountain draws itself; the three school stages are the way up. #}
+        <div class="art-climb" aria-hidden="true">
+            <svg viewBox="0 0 460 360">
+                <defs>
+                    <linearGradient id="climbfill" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0" stop-color="var(--brand-gold)" stop-opacity=".28"/>
+                        <stop offset="1" stop-color="var(--brand-gold)" stop-opacity="0"/>
+                    </linearGradient>
+                </defs>
+                <circle class="star" cx="60" cy="50" r="2.4"/>
+                <circle class="star" cx="390" cy="36" r="2" style="animation-delay:-1s"/>
+                <circle class="star" cx="330" cy="104" r="1.6" style="animation-delay:-2s"/>
+                <circle class="star" cx="420" cy="160" r="2" style="animation-delay:-1.6s"/>
+                <path class="fill" d="M30 330 195 80l50 75 50-65 140 240Z"/>
+                <path class="draw" pathLength="1" d="M30 330 195 80l50 75 50-65 140 240Z"/>
+                <path class="draw facet" pathLength="1" d="M195 80l25 135 25-60m50-65-25 125-50-60M100 330l95-115m155 115-55-115"/>
+                <path class="ground" pathLength="1" d="M0 330h460"/>
+                {% set points = [(71, 268), (113, 205), (154, 142)] %}
+                {% for stage in school.stages %}{% set point = points[loop.index0] %}
+                <g class="stop" style="animation-delay:{{ 1.4 + loop.index0 * 0.35 }}s">
+                    <circle cx="{{ point[0] }}" cy="{{ point[1] }}" r="10" fill="var(--brand-primary)"/>
+                    <circle cx="{{ point[0] }}" cy="{{ point[1] }}" r="4" fill="var(--brand-gold-soft)"/>
+                    <text x="{{ point[0] - 16 }}" y="{{ point[1] + 5 }}" text-anchor="end">{{ stage.grades or '' }}</text>
+                </g>
+                {% endfor %}
+                <g class="stop" style="animation-delay:2.5s">
+                    <path d="M195 80V34" stroke="var(--brand-primary)" stroke-width="2.6"/>
+                    <path d="M195 34h36l-8 10 8 10h-36Z" fill="var(--brand-gold)"/>
+                    <text x="240" y="50">Universitet</text>
+                </g>
+            </svg>
+        </div>
+    </div>
+    {{ curve('cream') }}
+</section>
+
+<section class="sec">
+    <div class="wrap">
+        {% include "site/_stages.html" %}
+    </div>
+</section>
+
+<section class="sec sec-white">
+    <div class="wrap">
+        <div class="sec-head center rv">
+            <span class="kicker">Har bir bosqichda</span>
+            <h2 class="h2">Darsdan tashqari ham o'sish</h2>
+        </div>
+        <div class="grid grid-4">
+            <article class="card rv"><span class="icon-tile soft">{{ icon('book') }}</span><h3 class="h3">Kitobxonlik</h3><p>Har kuni o'qish — fikrlash, nutq va yozuvning asosi.</p></article>
+            <article class="card rv d1"><span class="icon-tile soft">{{ icon('globe') }}</span><h3 class="h3">Ingliz tili</h3><p>Boshlang'ich sinfdan boshlab muntazam ingliz tili.</p></article>
+            <article class="card rv d2"><span class="icon-tile soft">{{ icon('child') }}</span><h3 class="h3">Sport va san'at</h3><p>To'garaklar bolaning qiziqishi va xarakterini rivojlantiradi.</p></article>
+            <article class="card rv d3"><span class="icon-tile soft">{{ icon('chart') }}</span><h3 class="h3">Shaffof natija</h3><p>Ota-onalar ilovada baho, davomat va vazifalarni ko'radi.</p></article>
+        </div>
+    </div>
+</section>
+
+<section class="sec">
+    <div class="wrap">
+        <div class="courses-band rv">
+            <div>
+                <span class="kicker">Yuqori sinflar uchun</span>
+                <h2 class="h2" style="margin-top:12px">IELTS va SAT — Iceberg Courses bilan</h2>
+                <p style="margin-top:14px">Xalqaro imtihonlarga tayyorgarlik Iceberg oilasidagi o'quv markazi bilan birga: tajribali o'qituvchilar, mock testlar va shaxsiy reja.</p>
+            </div>
+            <div class="hero-cta"><a class="btn btn-light" href="{{ url_for('courses') }}">Kurslar haqida {{ icon('arrow') }}</a></div>
+        </div>
+    </div>
+</section>
+
+{% include "site/_cta.html" %}
+{% endblock %}

@@ -1,0 +1,195 @@
+{% extends "site/base.html" %}
+{% from "site/_macros.html" import icon, fact, curve %}
+
+{% block title %}Iceberg School — xususiy maktab, 1–11-sinflar | Iceberg Courses{% endblock %}
+
+{% block content %}
+<section class="hero" data-hero>
+    <div class="wrap hero-grid">
+        <div>
+            <span class="hero-badge rv">
+                <img src="{{ url_for('static', filename='school/img/crest-maroon.png') }}" alt="" width="24" height="29">
+                Xususiy maktab · {{ school.grades }}-sinflar
+            </span>
+            <h1 class="words" data-split>Ko'rinib turgani&nbsp;— <span class="soft swash">faqat cho'qqi.</span> Biz poydevorni quramiz.</h1>
+            <p class="lead rv d2">Kuchli natijalar yuzadan emas, chuqurlikdan boshlanadi: xarakter, qiziquvchanlik va umrbod kitob o'qish odati. Iceberg School'da har bir bola ismi bilan taniladi va chuqurroq o'rganishga o'rgatiladi.</p>
+            <div class="hero-cta rv d3">
+                <a class="btn btn-primary" href="{{ url_for('admissions') }}#ariza">Ariza topshirish {{ icon('arrow') }}</a>
+                <a class="btn btn-outline" href="{{ url_for('programs') }}">Ta'lim dasturlari</a>
+            </div>
+            <div class="hero-meta rv d3">
+                <span>{{ icon('cap') }} {{ school.grades }}-sinflar</span>
+                <span>{{ icon('users') }} Boshlang'ichdan bitiruvgacha</span>
+                <span>{{ icon('chat') }} Ota-onalar uchun ilova</span>
+            </div>
+        </div>
+
+        {% include "site/_hero_art.html" %}
+    </div>
+    {{ curve('white') }}
+</section>
+
+
+<section class="sec sec-white">
+    <div class="wrap">
+        <div class="sec-head center rv">
+            <span class="kicker">Gerbimizdagi uch ma'no</span>
+            <h2 class="h2">Uchta g'oyaga qurilgan maktab</h2>
+            <p class="lead">Iceberg School gerbidagi har bir maydon bitta tamoyilni anglatadi — va har kuni darsda, tanaffusda va kitob javonida ko'rinadi.</p>
+        </div>
+        <div class="grid grid-3">
+            <article class="card pillar lift rv">
+                <span class="num" aria-hidden="true">01</span>
+                <span class="icon-tile">{{ icon('mountain') }}</span>
+                <h3 class="h3">Yuqoriga intil</h3>
+                <p>Chuqur akademik ta'lim: birinchi harflardan universitetga kirishgacha aniq yo'l.</p>
+            </article>
+            <article class="card pillar lift rv d1">
+                <span class="num" aria-hidden="true">02</span>
+                <span class="icon-tile">{{ icon('child') }}</span>
+                <h3 class="h3">Har tomonlama o's</h3>
+                <p>Sport, san'at va tarbiya darslar bilan yonma-yon — bolalar o'ziga ishongan, mehribon va tayyor bo'lib ulg'ayadi.</p>
+            </article>
+            <article class="card pillar lift rv d2">
+                <span class="num" aria-hidden="true">03</span>
+                <span class="icon-tile">{{ icon('book') }}</span>
+                <h3 class="h3">Chuqur o'qi</h3>
+                <p>Har kungi kitobxonlik madaniyati — qolgan barcha bilim shu poydevorga quriladi.</p>
+            </article>
+        </div>
+    </div>
+</section>
+
+<section class="sec sec-tint">
+    <div class="wrap">
+        <div class="sec-head rv">
+            <span class="kicker">Ta'lim bosqichlari</span>
+            <h2 class="h2">Birinchi sinfdan bitiruvgacha</h2>
+            <p class="lead">Uch bosqich, bitta yo'l: har bir bosqich keyingisiga mustahkam poydevor bo'ladi.</p>
+        </div>
+        {% include "site/_stages.html" %}
+        <p class="rv" style="margin-top:24px"><a class="link-arrow" href="{{ url_for('programs') }}">To'liq o'quv dasturi</a></p>
+    </div>
+</section>
+
+<section class="sec sec-white">
+    <div class="wrap app-grid">
+        <div class="rv">
+            <div class="sec-head" style="margin-bottom:24px">
+                <span class="kicker">Ota-onalar uchun</span>
+                <h2 class="h2">Maktab hayoti — cho'ntagingizda</h2>
+                <p class="lead">Iceberg ilovasida davomat dars boshlanishi bilan, baholar va uy vazifalari o'qituvchi joylashi bilan ko'rinadi, to'lovlar esa bir necha bosishda.</p>
+            </div>
+            <ul class="feature-list">
+                <li><span class="icon-tile soft">{{ icon('calendar') }}</span><div><strong>Jonli davomat</strong><span>Kelish vaqti va kechikishlar darhol ko'rinadi.</span></div></li>
+                <li><span class="icon-tile soft">{{ icon('chart') }}</span><div><strong>Baholar va uy vazifalari</strong><span>O'qituvchi xabarlari bilan bir joyda.</span></div></li>
+                <li><span class="icon-tile soft">{{ icon('wallet') }}</span><div><strong>Hisob va to'lovlar</strong><span>Kvitansiyalar va to'lov tarixi.</span></div></li>
+            </ul>
+            <p style="margin-top:28px"><a class="btn btn-primary" href="{{ school.app_url }}">Ilovani yuklab olish {{ icon('arrow') }}</a></p>
+        </div>
+        <div class="rv d2" aria-hidden="true">
+            <div class="phone">
+                <div class="phone-screen">
+                    <div class="phone-head">
+                        <div class="phone-brand">
+                            <img src="{{ url_for('static', filename='school/img/crest-white.png') }}" alt="">
+                            <div><b>ICEBERG</b><small>School</small></div>
+                        </div>
+                        <div>
+                            <div class="phone-sub">7-B sinf · Payshanba</div>
+                            <div class="phone-hi">Xayrli tong, Aziz</div>
+                        </div>
+                    </div>
+                    <div class="phone-body">
+                        <div class="phone-card">
+                            <div class="row"><span class="tag">Davomat</span><span class="ok">Keldi 08:12</span></div>
+                            <div class="big">Fizika · 10:40</div>
+                            <div class="muted">214-xona</div>
+                        </div>
+                        <div class="phone-grid">
+                            <span><i>A+</i>Baholar</span>
+                            <span><i>UV</i>Vazifa</span>
+                            <span><i>Kt</i>Kitob</span>
+                            <span><i>★</i>Yutuq</span>
+                        </div>
+                        <div class="phone-card">
+                            <div class="row"><span class="tag">Matematika</span><span class="big">5 / 5</span></div>
+                            <div class="phone-bar"><i></i></div>
+                            <div class="muted">Uy vazifasi: ertaga</div>
+                        </div>
+                        <div class="phone-card">
+                            <div class="row"><div><div class="big">Noyabr to'lovi</div><div class="muted">Hisob-faktura</div></div><span class="ok">To'lash</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="sec">
+    <div class="wrap">
+        <div class="sec-head center rv">
+            <span class="kicker">Jamoa</span>
+            <h2 class="h2">Sizni kutib oladigan insonlar</h2>
+            <p class="lead">Iceberg jamoasi — farzandingizning har bir qadamini biladigan ustozlar va murabbiylar.</p>
+        </div>
+        <div class="grid grid-3">
+            {% for person in [
+                ('about_team_1', 'img/team/azizbek.jpg', 'Azizbek Nasriddinov', 'Markaz direktori'),
+                ('about_team_2', 'img/team/maqsudbek.jpg', 'Maqsudbek Mirzayev', "Ingliz tili bo'yicha mutaxassis"),
+                ('about_team_3', 'img/team/islomjon.jpg', 'Islomjon Ergashboyev', 'Asosiy tizim boshqaruvchisi')
+            ] %}
+            <article class="card person lift rv{% if loop.index0 %} d{{ loop.index0 }}{% endif %}">
+                <img src="{{ asset_url(person[0], person[1]) }}" alt="{{ person[2] }}" width="112" height="112" loading="lazy">
+                <h3 class="h3">{{ person[2] }}</h3>
+                <p class="role">{{ person[3] }}</p>
+            </article>
+            {% endfor %}
+        </div>
+        <p class="rv" style="margin-top:24px;text-align:center"><a class="link-arrow" href="{{ url_for('about') }}">Biz haqimizda</a></p>
+    </div>
+</section>
+
+<section class="sec sec-white">
+    <div class="wrap">
+        <div class="courses-band rv">
+            <div>
+                <span class="kicker">Iceberg Courses · o'quv markazi</span>
+                <h2 class="h2" style="margin-top:12px">Til va imtihon kurslari ham shu yerda</h2>
+                <p style="margin-top:14px">ICEBERG o'quv markazi endi Iceberg oilasining bir qismi: IELTS, CEFR va SAT tayyorgarlik hamda fan kurslari — maktab o'quvchilari va boshqalar uchun.</p>
+                <div class="hero-cta" style="margin-top:22px">
+                    <a class="btn btn-light" href="{{ url_for('courses') }}">Kurslarni ko'rish {{ icon('arrow') }}</a>
+                    <a class="btn btn-ghost" href="{{ url_for('register') }}">Kursga yozilish</a>
+                </div>
+            </div>
+            <div aria-label="Kurslar">
+                {% for row in range(2) %}
+                <div class="marquee"{% if row %} aria-hidden="true"{% endif %}>
+                    <div class="marquee-track">
+                        {% for copy in range(2) %}{% for program in (registration.programs if not row else registration.programs|reverse) %}<span class="chip"{% if copy %} aria-hidden="true"{% endif %}>{{ program.name }}</span>{% endfor %}{% endfor %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</section>
+
+{% if posts %}
+<section class="sec">
+    <div class="wrap">
+        <div class="sec-head rv">
+            <span class="kicker">Yangiliklar</span>
+            <h2 class="h2">Maktab hayotidan</h2>
+        </div>
+        <div class="grid grid-3">
+            {% for post in posts[:3] %}{% include "site/_news_card.html" %}{% endfor %}
+        </div>
+        <p style="margin-top:24px"><a class="link-arrow" href="{{ url_for('news') }}">Barcha yangiliklar</a></p>
+    </div>
+</section>
+{% endif %}
+
+{% include "site/_cta.html" %}
+{% endblock %}

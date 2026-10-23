@@ -680,6 +680,20 @@ def get_editor_backup_absolute_path(relative_path, backup_name):
     return backup_path
 
 
+SCHOOL_CONFIG_PATH = os.path.join(app.root_path, 'config', 'school.json')
+with open(SCHOOL_CONFIG_PATH, 'r', encoding='utf-8') as school_config_file:
+    SCHOOL_CONFIG = json.load(school_config_file)
+
+SITE_NAV = [
+    ('about', "Maktab haqida"),
+    ('programs', "Ta'lim dasturlari"),
+    ('admissions', 'Qabul'),
+    ('courses', 'Kurslar'),
+    ('news', 'Yangiliklar'),
+    ('contact', 'Aloqa'),
+]
+
+
 @app.context_processor
 def inject_asset_helper():
     site_content = get_site_content_map()
@@ -690,7 +704,11 @@ def inject_asset_helper():
 
     return {
         'asset_url': get_asset_url,
-        'content': content_value
+        'content': content_value,
+        'school': SCHOOL_CONFIG,
+        'site_nav': SITE_NAV,
+        'registration': REGISTRATION_CONFIG,
+        'current_year': utc_now().year,
     }
 
 def send_telegram_notification(message_text):
@@ -1027,13 +1045,14 @@ def sitemap_xml():
 
     # (loc, priority, changefreq, source template)
     static_pages = [
-        ('https://iceberglc.com/', '1.0', 'daily', 'index.html'),
-        ('https://iceberglc.com/about', '0.8', 'monthly', 'about.html'),
-        ('https://iceberglc.com/our_programs', '0.9', 'weekly', 'our_programs.html'),
-        ('https://iceberglc.com/news', '0.9', 'daily', 'news.html'),
-        ('https://iceberglc.com/questions', '0.7', 'monthly', 'questions.html'),
-        ('https://iceberglc.com/contact', '0.8', 'monthly', 'contact.html'),
-        ('https://iceberglc.com/register', '0.8', 'monthly', 'register.html'),
+        ('https://iceberglc.com/', '1.0', 'weekly', 'site/home.html'),
+        ('https://iceberglc.com/admissions', '0.9', 'weekly', 'site/admissions.html'),
+        ('https://iceberglc.com/programs', '0.8', 'monthly', 'site/programs.html'),
+        ('https://iceberglc.com/about', '0.8', 'monthly', 'site/about.html'),
+        ('https://iceberglc.com/courses', '0.9', 'weekly', 'site/courses.html'),
+        ('https://iceberglc.com/register', '0.8', 'monthly', 'site/register.html'),
+        ('https://iceberglc.com/news', '0.7', 'weekly', 'site/news.html'),
+        ('https://iceberglc.com/contact', '0.7', 'monthly', 'site/contact.html'),
     ]
     lines = ['<?xml version="1.0" encoding="UTF-8"?>',
              '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
@@ -1051,27 +1070,162 @@ def sitemap_xml():
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    posts = fetch_news_posts(include_unpublished=False)
+    return render_template('site/home.html', posts=posts)
+
 
 @app.route('/about')
 def about():
-    return render_template('about.html')
+    return render_template('site/about.html')
 
-@app.route('/our_programs')
-def our_programs():
-    return render_template('our_programs.html')
+
+@app.route('/programs')
+def programs():
+    return render_template('site/programs.html')
+
+
+@app.route('/courses')
+def courses():
+    faqs = fetch_faq_items()
+    return render_template('site/courses.html', faqs=faqs)
 
 
 @app.route('/news')
 def news():
     posts = fetch_news_posts(include_unpublished=False)
-    return render_template('news.html', posts=posts)
+    return render_template('site/news.html', posts=posts)
+
+
+# Former Learning Center URLs keep working for search results and shared links.
+@app.route('/our_programs')
+def our_programs():
+    return redirect(url_for('courses'), code=301)
 
 
 @app.route('/questions')
 def questions():
-    faqs = fetch_faq_items()
-    return render_template('questions.html', faqs=faqs)
+    return redirect(url_for('courses') + '#savollar', code=301)
+
+
+SCHOOL_GRADES = [str(number) for number in range(1, 12)]
+SCHOOL_LANGUAGES = {'uz': "O'zbek", 'ru': 'Rus', 'en': 'Ingliz'}
+SCHOOL_BRANCH_NAME = os.environ.get('SCHOOL_BRANCH_NAME', 'Iceberg School').strip() or 'Iceberg School'
+
+
+def clean_text(value, max_length):
+    return re.sub(r'[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]', '', (value or '').strip())[:max_length]
+
+
+def validate_school_enquiry(form):
+    data = {
+        'parent_name': clean_text(form.get('parent_name'), 100),
+        'parent_phone': normalize_phone(form.get('parent_phone', '')),
+        'child_name': clean_text(form.get('child_name'), 100),
+        'child_birth_date': clean_text(form.get('child_birth_date'), 10),
+        'grade': clean_text(form.get('grade'), 2),
+        'language': clean_text(form.get('language'), 2),
+        'message': clean_text(form.get('message'), 1000),
+        'consent': form.get('consent') in ('1', 'on', 'yes', 'true'),
+    }
+    errors = {}
+    if len(data['parent_name']) < 2:
+        errors['parent_name'] = 'Ism va familiyangizni kiriting.'
+    if not PHONE_RE.match(data['parent_phone']):
+        errors['parent_phone'] = 'Telefon raqamingizni tekshiring.'
+    if data['grade'] not in SCHOOL_GRADES:
+        errors['grade'] = 'Sinfni tanlang.'
+    if data['language'] and data['language'] not in SCHOOL_LANGUAGES:
+        errors['language'] = 'Tilni tanlang.'
+    if data['child_birth_date'] and not is_valid_dob(data['child_birth_date']):
+        errors['child_birth_date'] = "Sanani tekshiring."
+    if not data['consent']:
+        errors['consent'] = "Bog'lanishimizga rozilik bering."
+    return data, errors
+
+
+def school_enquiry_message(data):
+    details = [f"Farzand: {data['child_name'] or '-'}"]
+    if data['child_birth_date']:
+        details.append(f"Tug'ilgan sana: {data['child_birth_date']}")
+    if data['language']:
+        details.append(f"Til: {SCHOOL_LANGUAGES[data['language']]}")
+    message = ' · '.join(details)
+    if data['message']:
+        message += '\n' + data['message']
+    return message
+
+
+@app.route('/admissions', methods=['GET', 'POST'])
+def admissions():
+    form_data, errors = {}, {}
+    if request.method == 'POST':
+        if request.form.get('website', ''):
+            return redirect(url_for('admissions_thanks'))
+        form_data, errors = validate_school_enquiry(request.form)
+        if not errors:
+            message = school_enquiry_message(form_data)
+            created_at = utc_now().isoformat()
+            with get_db_connection() as conn:
+                cursor = conn.cursor()
+                cursor.execute(
+                    '''
+                    INSERT INTO students (
+                        student_name, student_phone, parent_phone, email, dob, course,
+                        preferred_branch, preferred_schedule, social_source, social_handle,
+                        utm_source, utm_medium, utm_campaign, message,
+                        forwarded_to_management, created_at
+                    )
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    ''',
+                    (
+                        form_data['parent_name'], form_data['parent_phone'], form_data['parent_phone'], '',
+                        form_data['child_birth_date'], f"school-grade-{form_data['grade']}",
+                        'school', '', 'school-website', '',
+                        clean_text(request.form.get('utm_source'), 100),
+                        clean_text(request.form.get('utm_medium'), 100),
+                        clean_text(request.form.get('utm_campaign'), 150),
+                        message, 0, created_at,
+                    )
+                )
+                student_id = cursor.lastrowid
+                conn.commit()
+
+            lead_payload = {
+                'full_name': form_data['parent_name'],
+                'phone': format_uz_phone(form_data['parent_phone']),
+                'program': f"Grade {form_data['grade']}",
+                'branch': SCHOOL_BRANCH_NAME,
+                'source': 'school-website',
+                'message': message,
+                'submitted_at': created_at,
+            }
+            if send_registration_lead_to_management(lead_payload):
+                with get_db_connection() as conn:
+                    conn.execute('UPDATE students SET forwarded_to_management = 1 WHERE id = ?', (student_id,))
+                    conn.commit()
+
+            send_telegram_notification('\n'.join([
+                'Iceberg School: yangi qabul arizasi',
+                '',
+                f"Ota-ona: {form_data['parent_name']}",
+                f"Telefon: {format_uz_phone(form_data['parent_phone'])}",
+                f"Sinf: {form_data['grade']}",
+                message,
+            ]))
+            return redirect(url_for('admissions_thanks'))
+
+    return render_template(
+        'site/admissions.html',
+        form_data=form_data,
+        errors=errors,
+        grades=SCHOOL_GRADES,
+        languages=SCHOOL_LANGUAGES,
+    ), (422 if errors else 200)
+
+
+@app.route('/admissions/thanks')
+def admissions_thanks():
+    return render_template('site/thanks.html')
 
 @app.route('/admin/login', methods=['GET', 'POST'])
 def admin_login():
@@ -1706,67 +1860,9 @@ def contacts_list():
         contacts = cursor.fetchall()
     return render_template('contacts_list.html', contacts=contacts)
 
-@app.route('/contact', methods=['GET', 'POST'])
+@app.route('/contact')
 def contact():
-    if request.method == 'POST':
-        name = request.form.get('name', '').strip()
-        phone = normalize_phone(request.form.get('phone', '').strip())
-        message_body = request.form.get('message', '').strip()
-        admin_password = request.form.get('admin_password', '').strip()
-        admin_secret_code = request.form.get('admin_secret_code', '').strip()
-
-        if name.lower() == ADMIN_CONTACT_TRIGGER_NAME:
-            if not ADMIN_CONTACT_SECRET_CODE:
-                flash('Hidden admin secret code sozlanmagan (ADMIN_CONTACT_SECRET_CODE).', 'error')
-                return redirect(url_for('contact'))
-
-            if not admin_password:
-                flash('Admin parolini kiriting.', 'error')
-                return redirect(url_for('contact'))
-
-            if not admin_secret_code:
-                flash('Admin secret codeni kiriting.', 'error')
-                return redirect(url_for('contact'))
-
-            if admin_secret_code != ADMIN_CONTACT_SECRET_CODE:
-                flash('Admin secret code noto`g`ri.', 'error')
-                return redirect(url_for('contact'))
-
-            if process_admin_login(admin_password):
-                log_admin_action('admin_login_hidden', 'contact_form', 'Hidden access login from contact form with second factor')
-                flash('Maxfiy admin kirishi muvaffaqiyatli bajarildi.', 'success')
-                return redirect(url_for('admin_dashboard'))
-
-            flash('Admin paroli noto`g`ri.', 'error')
-            return redirect(url_for('contact'))
-
-        if not name or len(name) < 2:
-            flash('Ism kamida 2 ta belgidan iborat bo\'lishi kerak.', 'error')
-            return redirect(url_for('contact'))
-        if not PHONE_RE.match(phone):
-            flash('Telefon raqam 9 xonali bo\'lishi kerak.', 'error')
-            return redirect(url_for('contact'))
-        if not message_body or len(message_body) < 5:
-            flash('Xabar kamida 5 ta belgidan iborat bo\'lsin.', 'error')
-            return redirect(url_for('contact'))
-
-        with get_db_connection() as conn:
-            cursor = conn.cursor()
-            cursor.execute('INSERT INTO contacts (name, phone, message) VALUES (?, ?, ?)', (name, phone, message_body))
-            conn.commit()
-
-        # Send Telegram notification
-        telegram_message = (
-            "Yangi xabar!\n\n"
-            f"Ism: {name}\n"
-            f"Telefon: {phone}\n\n"
-            f"Xabar:\n{message_body}"
-        )
-        send_telegram_notification(telegram_message)
-
-        flash('Xabaringiz uchun rahmat! Tez orada siz bilan bog\'lanamiz.', 'success')
-        return redirect(url_for('contact'))
-    return render_template('contact.html', admin_trigger_name=ADMIN_CONTACT_TRIGGER_NAME)
+    return render_template('site/contact.html')
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -1802,7 +1898,7 @@ def register():
 
         if errors:
             return render_template(
-                'register.html',
+                'site/register.html',
                 registration=REGISTRATION_CONFIG,
                 form_data=form_data,
                 errors=errors,
@@ -1876,7 +1972,7 @@ def register():
     requested_program = request.args.get('program', '').strip()
     requested_branch = request.args.get('branch', '').strip()
     return render_template(
-        'register.html',
+        'site/register.html',
         registration=REGISTRATION_CONFIG,
         form_data={
             'course': requested_program if requested_program in REGISTRATION_PROGRAMS else '',

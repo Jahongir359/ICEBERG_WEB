@@ -14,7 +14,7 @@ TOKENS_JSON = ROOT / 'static' / 'brand' / 'tokens.json'
 TOKENS_CSS = ROOT / 'static' / 'brand' / 'tokens.css'
 
 # Colours that page CSS also needs as "R G B" channels for rgb(... / alpha).
-RGB_CHANNELS = ('primary', 'primaryHover', 'primaryDeep', 'onPrimarySoft', 'accent', 'bg', 'text')
+RGB_CHANNELS = ('primary', 'primaryHover', 'primaryDeep', 'onPrimarySoft', 'accent', 'bg', 'text', 'gold', 'cream')
 
 
 def kebab(name):
@@ -39,6 +39,9 @@ def brand_block(selector, colours):
 
 def render(tokens):
     shared = [':root {', f"    --brand-font: '{tokens['font']['family']}', system-ui, -apple-system, 'Segoe UI', sans-serif;"]
+    display = tokens['font'].get('display')
+    if display:
+        shared.append(f"    --brand-font-display: '{display['family']}', Georgia, 'Times New Roman', serif;")
     for name, value in tokens['radius'].items():
         shared.append(f'    --brand-radius-{kebab(name)}: {value}px;')
     for name, value in tokens['semantic'].items():

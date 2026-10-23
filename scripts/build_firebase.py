@@ -16,12 +16,19 @@ OUTPUT = ROOT / "public"
 PUBLIC_ROUTES = {
     "/": "index.html",
     "/about": "about.html",
-    "/our_programs": "our_programs.html",
+    "/programs": "programs.html",
+    "/admissions": "admissions.html",
+    "/admissions/thanks": "admissions/thanks.html",
+    "/courses": "courses.html",
     "/news": "news.html",
-    "/questions": "questions.html",
     "/contact": "contact.html",
     "/register": "register.html",
 }
+# Former Learning Center URLs, kept working with permanent redirects.
+REDIRECTS = (
+    ("/our_programs", "/courses"),
+    ("/questions", "/courses#savollar"),
+)
 ROOT_ASSETS = ("/favicon.ico", "/manifest.json", "/robots.txt", "/sitemap.xml")
 
 
@@ -43,15 +50,16 @@ def make_form_static(
     turnstile_site_key: str,
 ) -> str:
     local_action = f'action="{route}" method="post"'
-    if route == "/register":
+    if route in ("/register", "/admissions"):
         turnstile_attribute = (
             f' data-turnstile-sitekey="{turnstile_site_key}"'
             if turnstile_site_key
             else ""
         )
+        form_kind = "register" if route == "/register" else "school-enquiry"
         static_action = (
             'action="/api/register" method="post" '
-            f'data-static-lead-form="register"{turnstile_attribute}'
+            f'data-static-lead-form="{form_kind}"{turnstile_attribute}'
         )
     else:
         static_action = (
@@ -109,6 +117,9 @@ def build() -> None:
         html = make_form_static(
             html, "/register", whatsapp_number, site_url, turnstile_site_key
         )
+        html = make_form_static(
+            html, "/admissions", whatsapp_number, site_url, turnstile_site_key
+        )
         # The Flask-only hidden admin login must not be exposed on the static site.
         html = re.sub(r'\sdata-admin-trigger-name="[^"]*"', "", html)
         html = re.sub(
@@ -129,7 +140,13 @@ def build() -> None:
                 "</body>",
                 '<script src="/static/js/firebase-forms.js" defer></script>\n</body>',
             )
+        (OUTPUT / filename).parent.mkdir(parents=True, exist_ok=True)
         (OUTPUT / filename).write_text(html, encoding="utf-8")
+
+    (OUTPUT / "_redirects").write_text(
+        "".join(f"{source} {target} 301\n" for source, target in REDIRECTS),
+        encoding="utf-8",
+    )
 
     for route in ROOT_ASSETS:
         response = client.get(route, base_url=site_url)
@@ -145,16 +162,18 @@ def build() -> None:
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="robots" content="noindex">
-  <title>Sahifa topilmadi | ICEBERG</title>
+  <meta name="theme-color" content="#4C0909">
+  <title>Sahifa topilmadi | Iceberg School</title>
+  <link rel="icon" href="/favicon.ico" sizes="any">
   <style>
-    body{margin:0;min-height:100vh;display:grid;place-items:center;background:#f4f8fc;
-    color:#10284c;font:16px system-ui,sans-serif;text-align:center}
-    main{padding:2rem}h1{font-size:clamp(4rem,15vw,8rem);margin:0;color:#3ba3ff}
-    a{display:inline-block;margin-top:1rem;padding:.8rem 1.2rem;border-radius:999px;
-    background:#10284c;color:white;text-decoration:none;font-weight:700}
+    body{margin:0;min-height:100vh;display:grid;place-items:center;padding:24px;box-sizing:border-box;
+    background:linear-gradient(165deg,#4C0909,#2E0505);color:#fff;font:16px/1.6 Inter,system-ui,sans-serif;text-align:center}
+    img{width:84px;height:auto;margin:0 auto 12px}h1{font-size:clamp(4rem,18vw,7rem);margin:0;line-height:1;letter-spacing:-.04em}
+    p{color:#F2D9D6;margin:.5rem 0 1.5rem}a{display:inline-block;padding:.85rem 1.4rem;border-radius:13px;background:#fff;
+    color:#4C0909;text-decoration:none;font-weight:800}
   </style>
 </head>
-<body><main><h1>404</h1><h2>Sahifa topilmadi</h2>
+<body><main><img src="/static/school/img/crest-white.png" alt="Iceberg School"><h1>404</h1>
 <p>Siz izlagan sahifa ko'chirilgan yoki mavjud emas.</p>
 <a href="/">Bosh sahifaga qaytish</a></main></body>
 </html>
@@ -163,8 +182,7 @@ def build() -> None:
     )
 
     print(f"Built {len(PUBLIC_ROUTES)} pages and static assets in {OUTPUT}")
-    print(f"Static contact form opens WhatsApp for +{whatsapp_number}")
-    print("Static registration form submits to /api/register")
+    print("Static registration and admissions forms submit to /api/register")
     if not turnstile_site_key:
         print(
             "WARNING: Turnstile site key is missing; set PUBLIC_TURNSTILE_SITE_KEY "

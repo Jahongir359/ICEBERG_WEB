@@ -7,21 +7,32 @@ after the PR #22 rollback).
 
 ## What this site is
 
-The public website for two brands on one domain:
+**iceberglc.com is the Iceberg School website** (private school, grades 1–11, maroon crest), with the
+former Learning Center as its **Iceberg Courses** section (owner decision 2026-10-23, plan section 0).
+The whole site uses `<html data-brand="school">`.
 
-| Brand | URLs | `data-brand` | Look |
-|---|---|---|---|
-| **ICEBERG Learning Center** (language/exam courses, Namangan) | `iceberglc.com/`, `/about`, `/our_programs`, `/news`, `/questions`, `/contact`, `/register` | `center` | teal `#06343A` + lime `#DFFF2F` (owner, 2026-10-23) |
-| **Iceberg School** (private school) — *not built yet* | `iceberglc.com/school`, `/school/about`, `/school/programs`, `/school/admissions`, `/school/admissions/thanks`, `/school/contact`, `/school/news` | `school` | maroon `#4C0909`, crest logo |
+| URL | Template (`templates/site/`) |
+|---|---|
+| `/` | `home.html` |
+| `/about`, `/programs` | `about.html`, `programs.html` |
+| `/admissions`, `/admissions/thanks` | `admissions.html` (School enquiry form), `thanks.html` |
+| `/courses`, `/register` | `courses.html` (ICEBERG o'quv markazi), `register.html` (course registration) |
+| `/news`, `/contact` | `news.html`, `contact.html` |
+| `/our_programs`, `/questions` | 301 → `/courses`, `/courses#savollar` (Flask routes + generated `_redirects`) |
+
+Shared pieces: `site/base.html` (header, mobile menu, dock, footer, JSON-LD), `site/_macros.html`
+(`icon()`, `fact()`), `_stages.html`, `_cta.html`, `_news_card.html`. Styles: `static/css/site.css`;
+script: `static/js/site.js`; forms: `static/js/firebase-forms.js`. `templates/base.html` with
+`style.css`/`tailwind.css` now only serves the Flask admin login.
 
 The staff/student portal is a separate app — the ERP at `app.iceberglc.com` (repo `College-ERP`).
-This site only links to it (`https://app.iceberglc.com/login/?brand=school` from School pages) and
-sends enquiries to it from the server.
+This site only links to it (`https://app.iceberglc.com/login/?brand=school`) and sends enquiries to
+it from the server.
 
 ## Active initiative
 
-Move the site onto the shared Iceberg design system and add the School pages — plan section 10,
-phases **4b → 4e**. Tick the checklist there and add a dated line to its progress notes each session.
+Plan section 10, phases **4c → 4e**: owner fills `config/school.json`, reviews copy, then launch
+checks (section 9) and deploy. Tick the checklist there and add a dated line to its progress notes.
 
 ## Stack and layout
 
@@ -33,7 +44,8 @@ phases **4b → 4e**. Tick the checklist there and add a dated line to its progr
 | Static files | `static/` → served at `/static/` (`static/css/style.css`, `static/js/firebase-forms.js`, `static/img/`) |
 | Lead handler (`POST /api/register`) | `functions/api/register.js` (Cloudflare Pages Function): Turnstile check → Google Sheets via Apps Script (`google-apps-script/Code.gs`) → best-effort copy to the ERP when its secrets are set. The Flask `/register` route in `app.py` is the server-rendered equivalent (SQLite + Telegram + ERP). |
 | Programs / branches | `config/registration.json` (published as `/registration-options.json`; each branch's `erp_branch_name` must equal the ERP branch name) |
-| Secrets live in | Cloudflare Pages → Settings → Variables and Secrets (encrypted): `TURNSTILE_SECRET_KEY`, `GOOGLE_SCRIPT_URL`, `GOOGLE_SCRIPT_SECRET`, `REGISTRATION_LEADS_API_URL`, `REGISTRATION_LEADS_API_TOKEN`. Public values are `[vars]` in `wrangler.toml`. Flask hosts use env vars (`.env.example`). Never in the repo. |
+| School facts | `config/school.json` — phone, address, hours, year, tuition, links. Empty = visible `[placeholder]`, left out of JSON-LD |
+| Secrets live in | Cloudflare Pages → Settings → Variables and Secrets (encrypted): `TURNSTILE_SECRET_KEY`, `GOOGLE_SCRIPT_URL`, `GOOGLE_SCRIPT_SECRET`, `REGISTRATION_LEADS_API_URL`, `REGISTRATION_LEADS_API_TOKEN`; optional variable `SCHOOL_BRANCH_NAME`. Public values are `[vars]` in `wrangler.toml`. Flask hosts use env vars (`.env.example`). Never in the repo. |
 
 ## Commands
 
@@ -61,11 +73,14 @@ All of them must pass before a commit. There is no CI workflow in this repo yet.
   `/static/school/img/`. To change a colour, change `tokens.json` in the ERP repo first, then copy.
 - Pages and components use only `var(--brand-*)` (or `rgb(var(--brand-*-rgb) / a)`, or Tailwind
   `brand-*` classes) — no new hex values in templates or page CSS.
-- One shared base layout takes a `brand` (name, logos, nav, footer, theme-color, JSON-LD, Portal URL)
-  and sets `<html data-brand="…">`. LC and School pages differ only in content and brand.
-- Font: Inter on every page.
-- No automatic redirects between brands; each links to the other (LC → "Iceberg School",
-  School → "Part of the Iceberg family · Iceberg Learning Center").
+- `templates/site/base.html` is the one public layout; new pages extend it and reuse `.card`, `.btn`,
+  `.sec`, `.page-hero`, `.form-card`, `.faq` from `site.css` rather than adding page CSS.
+- Fonts: Fraunces (warm serif, `--brand-font-display`) for headings, Inter (`--brand-font`) for body,
+  buttons, labels and kickers. Colours: maroon + gold on cream/paper (`--brand-gold*`, `--brand-cream`,
+  `--brand-paper`); gold as text only in its `-ink` shade on light grounds.
+- Motion: `.rv` reveal on scroll, `[data-split]` word rise, card lift with gold rule, marquee, page
+  view transitions — all off under `prefers-reduced-motion`.
+- Test every change at 390 px first (no horizontal scroll, dock not covering content), then desktop.
 
 ## Content rules
 
@@ -89,15 +104,16 @@ All of them must pass before a commit. There is no CI workflow in this repo yet.
 - Branch codes from the LC form (`main`, `gayrat`) are mapped to the **exact ERP branch names**
   through `erp_branch_name` in `config/registration.json`; `unknown` → empty. Until those names are
   filled in, the code is sent and only ERP super admins see the leads.
-- School enquiries: `form_type=school-enquiry`, mapped as in plan section 6, `source="school-website"`,
-  `branch=$SCHOOL_BRANCH_NAME`. Keep Turnstile, honeypot, UTM fields and the Telegram fallback.
+- School enquiries (`/admissions`): `form_type=school-enquiry`, Sheets `program=grade-N`,
+  `branch=school`; ERP `source="school-website"`, `program="Grade N"`, `branch=$SCHOOL_BRANCH_NAME`
+  (default "Iceberg School"). Keep Turnstile, honeypot, consent and UTM fields.
 
 ## Working conventions
 
 - Small, focused changes; match the surrounding code style; don't reformat untouched files.
   PR #22 was reverted because it mixed a redesign with security and hosting changes — keep those
   in separate PRs.
-- Screenshot every LC page before and after the re-skin (desktop and 390 px) and show the owner.
+- Screenshot changed pages at 390 px and desktop and show the owner.
 - Before a release, run plan section 9 (Lighthouse, Rich Results, end-to-end enquiry into the ERP).
 - Commit messages: `type(scope): summary` — e.g. `feat(school): add admissions page`,
   `fix(leads): map branch codes to ERP names`, `style(brand): generate tokens.css`.

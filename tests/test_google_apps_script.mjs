@@ -146,7 +146,8 @@ test('setup creates the registrations sheet and complete header row', () => {
     assert.deepEqual(Array.from(sheet.rows[0]), [
         'ID', 'Submitted At', 'Student Name', 'Phone', 'Program ID', 'Branch ID',
         'UTM Source', 'UTM Medium', 'UTM Campaign', 'Page URL', 'Referrer',
-        'Status', 'Staff Notes'
+        'Status', 'Staff Notes', 'Form Type', 'Child Name', 'Child Birth Date',
+        'Language', 'Message'
     ]);
     assert.equal(result(context.doGet()).sheet_ready, true);
 });
@@ -203,4 +204,29 @@ test('receiver reports configuration and authorization failures without writing'
     const response = result(configured.context.doPost(validLead({ secret: 'wrong-secret' })));
     assert.equal(response.error, 'unauthorized');
     assert.equal(configured.spreadsheet.getSheetByName('Registrations'), null);
+});
+
+test('doPost stores school enquiry details in their own columns', () => {
+    const { context, spreadsheet } = loadReceiver({
+        properties: { SHEET_ID: 'sheet-id', WEBHOOK_SECRET: 'shared-secret' }
+    });
+    context.setup();
+    const response = result(context.doPost(validLead({
+        form_type: 'school-enquiry',
+        program: 'grade-7',
+        branch: 'school',
+        child_name: 'Aziz',
+        child_birth_date: '2019-04-02',
+        language: 'uz',
+        message: '=HYPERLINK("bad")'
+    })));
+    assert.equal(response.ok, true);
+    const sheet = spreadsheet.getSheetByName('Registrations');
+    const headers = sheet.rows[0];
+    const stored = Object.fromEntries(headers.map((header, index) => [header, sheet.rows[1][index]]));
+    assert.equal(stored['Form Type'], 'school-enquiry');
+    assert.equal(stored['Program ID'], 'grade-7');
+    assert.equal(stored['Child Name'], 'Aziz');
+    assert.equal(stored.Language, 'uz');
+    assert.match(stored.Message, /^'/);
 });
