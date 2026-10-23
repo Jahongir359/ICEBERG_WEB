@@ -24,36 +24,36 @@
     .registration-page { padding: 2rem 0 4rem; }
     .registration-wrap { width: min(560px, calc(100% - 1.25rem)); margin: 0 auto; }
     .registration-intro { text-align: center; margin-bottom: 1.25rem; }
-    .registration-kicker { display: inline-flex; padding: .4rem .75rem; border: 1px solid rgba(59,163,255,.25); border-radius: 999px; background: rgba(59,163,255,.1); color: var(--ink-700); font-size: .78rem; font-weight: 700; }
-    .registration-intro h1 { margin-top: .75rem; font-family: 'Fraunces', serif; color: var(--ink-900); font-size: clamp(2rem, 9vw, 3rem); line-height: 1.08; }
+    .registration-kicker { display: inline-flex; padding: .4rem .75rem; border: 1px solid rgb(var(--brand-primary-hover-rgb) / .25); border-radius: 999px; background: rgb(var(--brand-primary-hover-rgb) / .1); color: var(--ink-700); font-size: .78rem; font-weight: 700; }
+    .registration-intro h1 { margin-top: .75rem; font-family: var(--brand-font); font-weight: 800; letter-spacing: -0.02em; color: var(--ink-900); font-size: clamp(2rem, 9vw, 3rem); line-height: 1.08; }
     .registration-intro p { margin: .65rem auto 0; max-width: 470px; color: var(--text-soft); line-height: 1.6; }
     .registration-time { display: inline-flex; align-items: center; gap: .4rem; margin-top: .65rem; color: var(--ink-700); font-size: .82rem; font-weight: 700; }
-    .registration-card { padding: clamp(1.15rem, 5vw, 1.75rem); border: 1px solid rgba(16,40,76,.12); border-radius: 24px; background: rgba(255,255,255,.94); box-shadow: 0 22px 55px rgba(7,20,43,.12); }
+    .registration-card { padding: clamp(1.15rem, 5vw, 1.75rem); border: 1px solid rgb(var(--brand-primary-rgb) / .12); border-radius: 24px; background: rgba(255,255,255,.94); box-shadow: 0 22px 55px rgb(var(--brand-primary-deep-rgb) / .12); }
     .registration-form { display: grid; gap: 1rem; }
     .registration-field label { display: block; margin-bottom: .42rem; color: var(--ink-800); font-size: .88rem; font-weight: 700; }
-    .registration-control { width: 100%; min-height: 52px; padding: .8rem .9rem; border: 1px solid #cbd9e8; border-radius: 13px; background: #fff; color: var(--ink-900); font: inherit; font-size: 1rem; transition: border-color .18s, box-shadow .18s; }
-    .registration-control:focus { outline: 0; border-color: #2878c7; box-shadow: 0 0 0 4px rgba(59,163,255,.16); }
+    .registration-control { width: 100%; min-height: 52px; padding: .8rem .9rem; border: 1px solid var(--brand-border); border-radius: 13px; background: #fff; color: var(--ink-900); font: inherit; font-size: 1rem; transition: border-color .18s, box-shadow .18s; }
+    .registration-control:focus { outline: 0; border-color: var(--brand-primary-hover); box-shadow: 0 0 0 4px rgb(var(--brand-primary-hover-rgb) / .16); }
     .registration-control[aria-invalid="true"] { border-color: #c83f4d; }
     .registration-phone { display: grid; grid-template-columns: auto 1fr; }
-    .registration-phone-prefix { display: flex; align-items: center; min-height: 52px; padding: 0 .8rem; border: 1px solid #cbd9e8; border-right: 0; border-radius: 13px 0 0 13px; background: #f4f8fc; color: var(--ink-700); font-weight: 700; }
+    .registration-phone-prefix { display: flex; align-items: center; min-height: 52px; padding: 0 .8rem; border: 1px solid var(--brand-border); border-right: 0; border-radius: 13px 0 0 13px; background: var(--brand-input-bg); color: var(--ink-700); font-weight: 700; }
     .registration-phone .registration-control { border-radius: 0 13px 13px 0; min-width: 0; }
     .registration-error { margin-top: .35rem; color: #a52232; font-size: .82rem; font-weight: 600; }
-    .registration-submit { width: 100%; min-height: 54px; margin-top: .15rem; border: 0; border-radius: 14px; color: #fff; background: linear-gradient(95deg,#0d2a50,#2163a5); box-shadow: 0 12px 28px rgba(16,40,76,.25); font: inherit; font-weight: 800; letter-spacing: .02em; cursor: pointer; }
-    .registration-submit:hover { background: linear-gradient(95deg,#102f58,#2873bb); }
-    .registration-submit:focus-visible { outline: 3px solid #79bfff; outline-offset: 3px; }
+    .registration-submit { width: 100%; min-height: 54px; margin-top: .15rem; border: 0; border-radius: 14px; color: #fff; background: linear-gradient(95deg,var(--brand-primary),var(--brand-primary-hover)); box-shadow: 0 12px 28px rgb(var(--brand-primary-rgb) / .25); font: inherit; font-weight: 800; letter-spacing: .02em; cursor: pointer; }
+    .registration-submit:hover { background: linear-gradient(95deg,var(--brand-primary),var(--brand-primary-hover)); }
+    .registration-submit:focus-visible { outline: 3px solid var(--brand-on-primary-soft); outline-offset: 3px; }
     .registration-submit:disabled { cursor: wait; opacity: .72; }
-    .registration-privacy { text-align: center; color: #65758b; font-size: .78rem; }
+    .registration-privacy { text-align: center; color: var(--brand-muted); font-size: .78rem; }
     .registration-status { min-height: 1.25rem; color: #a52232; font-size: .86rem; font-weight: 650; text-align: center; }
     .registration-alternative { margin-top: 1rem; text-align: center; color: var(--text-soft); font-size: .86rem; }
     .registration-alternative a { color: var(--ink-700); font-weight: 750; text-decoration: none; }
     .registration-success { text-align: center; padding: .6rem 0; }
     .registration-success-icon { font-size: 2.7rem; line-height: 1; }
-    .registration-success h2 { margin-top: .8rem; font-family: 'Fraunces', serif; color: var(--ink-900); font-size: 1.8rem; }
+    .registration-success h2 { margin-top: .8rem; font-family: var(--brand-font); font-weight: 800; letter-spacing: -0.02em; color: var(--ink-900); font-size: 1.8rem; }
     .registration-success p { margin-top: .55rem; color: var(--text-soft); line-height: 1.6; }
     .registration-success-actions { display: grid; gap: .7rem; margin-top: 1.25rem; }
     .registration-success-actions a { min-height: 50px; display: inline-flex; align-items: center; justify-content: center; border-radius: 13px; text-decoration: none; font-weight: 750; }
-    .registration-telegram { background: #2163a5; color: #fff; }
-    .registration-home { border: 1px solid #cbd9e8; color: var(--ink-700); background: #fff; }
+    .registration-telegram { background: var(--brand-primary-hover); color: #fff; }
+    .registration-home { border: 1px solid var(--brand-border); color: var(--ink-700); background: #fff; }
     .registration-form[hidden], .registration-success[hidden] { display: none; }
     @media (min-width: 768px) { .registration-page { padding-top: 3rem; } }
 </style>
