@@ -42,7 +42,7 @@
             <h2 class="h2">Farzandingiz o'qiydigan joy</h2>
             <p class="lead">Maktab binosi, ovqatlanish zali va oshxona — tashrif chog'ida hammasini o'z ko'zingiz bilan ko'rishingiz mumkin.</p>
         </div>
-        <div class="campus">
+        <div class="campus" role="region" aria-label="Maktab rasmlari" tabindex="0">
             {% for file, caption, w, h in [
                 ('building', 'Maktab binosi', 947, 1184),
                 ('dining-hall', 'Ovqatlanish zali', 1000, 1250),
@@ -51,7 +51,7 @@
             <figure class="campus-photo rv{% if loop.index0 %} d{{ loop.index0 }}{% endif %}{% if loop.first %} campus-main{% endif %}">
                 <img src="{{ url_for('static', filename='school/img/' ~ file ~ '.jpg') }}"
                      srcset="{{ url_for('static', filename='school/img/' ~ file ~ '-640.jpg') }} 640w, {{ url_for('static', filename='school/img/' ~ file ~ '.jpg') }} {{ w }}w"
-                     sizes="(min-width: 900px) {{ '640px' if loop.first else '420px' }}, 100vw" alt="Iceberg School — {{ caption }}" width="{{ w }}" height="{{ h }}" loading="lazy">
+                     sizes="(min-width: 900px) 380px, 84vw" alt="Iceberg School — {{ caption }}" width="{{ w }}" height="{{ h }}" loading="lazy">
                 <figcaption>{{ caption }}</figcaption>
             </figure>
             {% endfor %}
