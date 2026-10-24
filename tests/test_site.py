@@ -140,8 +140,9 @@ class SitePageTests(unittest.TestCase):
         news = self.client.get('/news').get_data(as_text=True)
         self.assertIn('news-card lift rv featured', news)
         self.assertIn(post['title'], news)
-        for paragraph in post['body']:
-            self.assertIn(paragraph.replace("'", '&#39;'), news)
+        self.assertIn(f'<a class="media poster" href="/static/{post["image"]}"', news)
+        self.assertIn('Kattalashtirish', news)
+        self.assertEqual(self.client.get(f'/static/{post["image"]}').status_code, 200)
         self.assertIn(post['excerpt'], self.client.get('/').get_data(as_text=True))
         with patch.object(app_module, 'STATIC_BUILD_MODE', True):
             self.assertIn(post['title'], self.client.get('/news').get_data(as_text=True))
