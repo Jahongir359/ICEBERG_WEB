@@ -48,10 +48,10 @@ checks (section 9) and deploy. Tick the checklist there and add a dated line to 
 | Hosting / deploy | **Live site: Cloudflare Pages** (project `iceberg-web`, `wrangler.toml`). The build (`scripts/build_cloudflare.sh`) runs `scripts/build_firebase.py`, which renders the Flask templates to static HTML in `public/` (git-ignored), then `scripts/check_firebase_build.py` validates it. `firebase.json`, `railway.json`, `render.yaml`, `Procfile` are older/alternative hosts for the Flask app — which one (if any) is live must be confirmed with the owner (`PROJECT_REVIEW.md`). |
 | Templates | `templates/site/` (public site, see the table above); `templates/admin_*.html`, `students.html`, `contacts_list.html` (Flask admin) |
 | Static files | `static/` → `/static/`: `css/site.css`, `js/site.js`, `js/firebase-forms.js`, `brand/` (tokens), `school/img/` (logos, poster, OG image), `img/team/` |
-| Lead handler (`POST /api/register`) | `functions/api/register.js` (Cloudflare Pages Function): Turnstile check → Google Sheets via Apps Script (`google-apps-script/Code.gs`) → best-effort copy to the ERP when its secrets are set. The Flask `/register` route in `app.py` is the server-rendered equivalent (SQLite + Telegram + ERP). |
+| Lead handler (`POST /api/register`) | `functions/api/register.js` (Cloudflare Pages Function): Turnstile check → Google Sheets via Apps Script (`google-apps-script/Code.gs`) → best-effort copy to the ERP and a detailed message to the support Telegram chat (bot `sendMessage`, server side — the visitor never opens Telegram), each only when its secrets are set. The Flask `/register` route in `app.py` is the server-rendered equivalent (SQLite + Telegram + ERP). |
 | Programs / branches | `config/registration.json` (published as `/registration-options.json`; each branch's `erp_branch_name` must equal the ERP branch name) |
 | School facts | `config/school.json` — phone, address, hours, year, tuition, links. Empty = visible `[placeholder]`, left out of JSON-LD |
-| Secrets live in | Cloudflare Pages → Settings → Variables and Secrets (encrypted): `TURNSTILE_SECRET_KEY`, `GOOGLE_SCRIPT_URL`, `GOOGLE_SCRIPT_SECRET`, `REGISTRATION_LEADS_API_URL`, `REGISTRATION_LEADS_API_TOKEN`; optional variable `SCHOOL_BRANCH_NAME`. Public values are `[vars]` in `wrangler.toml`. Flask hosts use env vars (`.env.example`). Never in the repo. |
+| Secrets live in | Cloudflare Pages → Settings → Variables and Secrets (encrypted): `TURNSTILE_SECRET_KEY`, `GOOGLE_SCRIPT_URL`, `GOOGLE_SCRIPT_SECRET`, `REGISTRATION_LEADS_API_URL`, `REGISTRATION_LEADS_API_TOKEN`, `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`; optional variable `SCHOOL_BRANCH_NAME`. Public values are `[vars]` in `wrangler.toml`. Flask hosts use env vars (`.env.example`). Never in the repo. |
 
 ## Commands
 
@@ -105,8 +105,8 @@ All of them must pass before a commit. There is no CI workflow in this repo yet.
 - Browser posts only to this site's `/api/register`. Only the server handler calls the ERP
   (`POST https://app.iceberglc.com/public/registration-leads/`, `Authorization: Bearer
   $REGISTRATION_LEADS_API_TOKEN`). Never call the ERP or expose the token from browser JavaScript.
-- Google Sheets stays the primary store; the ERP copy is best-effort and must never fail an
-  application that Sheets stored.
+- Google Sheets stays the primary store; the ERP copy and the Telegram message are best-effort and
+  must never fail an application that Sheets stored. The bot token stays server side like the ERP token.
 - Branch codes from the LC form (`main`, `gayrat`) are mapped to the **exact ERP branch names**
   through `erp_branch_name` in `config/registration.json`; `unknown` → empty. Until those names are
   filled in, the code is sent and only ERP super admins see the leads.

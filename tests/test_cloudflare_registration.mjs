@@ -333,3 +333,80 @@ test('a filled honeypot on the school form stores nothing', async () => {
     assert.equal(response.status, 200);
     assert.equal(calls.sheets.length, 0);
 });
+
+function mockNetworkWithTelegram({ duplicate = false, telegramStatus = 200, telegramThrows = false } = {}) {
+    const calls = { sheets: [], telegram: [] };
+    globalThis.fetch = async (url, options) => {
+        if (String(url).includes('turnstile')) {
+            return new Response(JSON.stringify({ success: true, action: 'register' }));
+        }
+        if (String(url).startsWith('https://api.telegram.org/')) {
+            calls.telegram.push({ url: String(url), body: JSON.parse(options.body) });
+            if (telegramThrows) {
+                throw new TypeError('network down');
+            }
+            return new Response(JSON.stringify({ ok: telegramStatus === 200 }), { status: telegramStatus });
+        }
+        calls.sheets.push(JSON.parse(options.body));
+        return new Response(JSON.stringify({ ok: true, duplicate }));
+    };
+    return calls;
+}
+
+function telegramEnvironment() {
+    return { ...environment(), TELEGRAM_BOT_TOKEN: '123:bot-token', TELEGRAM_CHAT_ID: '-1001234' };
+}
+
+test('sends a course registration to the support Telegram chat with all details', async () => {
+    const calls = mockNetworkWithTelegram();
+    const response = await onRequestPost({
+        request: request({ branch: 'gayrat', utm_source: 'instagram', page_url: 'https://iceberglc.com/register' }),
+        env: telegramEnvironment()
+    });
+    assert.equal(response.status, 201);
+    assert.equal(calls.telegram.length, 1);
+    assert.equal(calls.telegram[0].url, 'https://api.telegram.org/bot123:bot-token/sendMessage');
+    assert.equal(calls.telegram[0].body.chat_id, '-1001234');
+    const text = calls.telegram[0].body.text;
+    for (const line of ['Iceberg Courses', 'Ism: Ali Valiyev', 'Telefon: +998901234567', 'Dastur: IELTS',
+        "Filial: G'ayrat filiali", 'Sahifa: https://iceberglc.com/register', 'UTM: instagram']) {
+        assert.ok(text.includes(line), line);
+    }
+    assert.equal(JSON.stringify(calls.sheets[0]).includes('bot-token'), false);
+});
+
+test('sends a school enquiry with the child details and question', async () => {
+    const calls = mockNetworkWithTelegram();
+    const response = await onRequestPost({ request: schoolRequest({ grade: '7' }), env: telegramEnvironment() });
+    assert.equal(response.status, 201);
+    const text = calls.telegram[0].body.text;
+    for (const line of ['Iceberg School', 'Ota-ona: Dilnoza Karimova', 'Telefon: +998901234567', 'Sinf: 7',
+        'Farzand: Aziz', "Tug'ilgan sana: 2019-04-02", "Til: O'zbek", "Xabar: Sport bilan shug'ullanadi"]) {
+        assert.ok(text.includes(line), line);
+    }
+});
+
+test('skips Telegram without both secrets, for duplicates and for rejected forms', async () => {
+    let calls = mockNetworkWithTelegram();
+    const env = telegramEnvironment();
+    delete env.TELEGRAM_CHAT_ID;
+    await onRequestPost({ request: request(), env });
+    assert.equal(calls.telegram.length, 0);
+
+    calls = mockNetworkWithTelegram({ duplicate: true });
+    await onRequestPost({ request: request(), env: telegramEnvironment() });
+    assert.equal(calls.telegram.length, 0);
+
+    calls = mockNetworkWithTelegram();
+    await onRequestPost({ request: request({ student_phone: '123' }), env: telegramEnvironment() });
+    await onRequestPost({ request: request({ website: 'spam' }), env: telegramEnvironment() });
+    assert.equal(calls.telegram.length, 0);
+});
+
+test('a Telegram failure never fails the stored application', async () => {
+    for (const failure of [{ telegramStatus: 400 }, { telegramStatus: 502 }, { telegramThrows: true }]) {
+        mockNetworkWithTelegram(failure);
+        const response = await onRequestPost({ request: request(), env: telegramEnvironment() });
+        assert.equal(response.status, 201);
+    }
+});
