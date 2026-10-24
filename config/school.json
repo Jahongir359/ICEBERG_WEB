@@ -28,7 +28,11 @@
   "phone": "",
   "phone_display": "",
   "address": "",
-  "city": "",
+  "city": "Uychi",
+  "region": "Namangan viloyati",
+  "latitude": "41.030491",
+  "longitude": "71.864775",
+  "location_note": "Pin from the owner's Apple Maps link (2026-10-24); no street address yet.",
   "hours": "",
   "response_time": "",
   "teaching_languages": "",
@@ -36,7 +40,9 @@
   "email": "",
   "telegram_url": "",
   "instagram_url": "",
-  "map_url": "",
+  "map_url": "https://www.google.com/maps/search/?api=1&query=41.030491,71.864775",
+  "map_yandex_url": "https://yandex.uz/maps/?pt=71.864775,41.030491&z=17&l=map",
+  "map_apple_url": "https://maps.apple/p/uxFeLK7xZcNYsK",
   "max_class_size": "",
   "tuition": [
     {

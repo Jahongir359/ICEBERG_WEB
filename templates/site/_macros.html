@@ -52,6 +52,17 @@
 {%- endmacro %}
 
 {# Soft curved edge at the bottom of a hero; `to` is the colour of the section below. #}
+{# Map buttons for the school pin (config/school.json); renders nothing until map_url is set. #}
+{% macro map_links(school) -%}
+{%- if school.map_url %}
+<div class="map-links">
+    <a class="btn btn-outline" href="{{ school.map_url }}" target="_blank" rel="noopener">{{ icon('pin') }} Google Maps</a>
+    {% if school.map_yandex_url %}<a class="btn btn-outline" href="{{ school.map_yandex_url }}" target="_blank" rel="noopener">{{ icon('pin') }} Yandex Maps</a>{% endif %}
+    {% if school.map_apple_url %}<a class="btn btn-outline" href="{{ school.map_apple_url }}" target="_blank" rel="noopener">{{ icon('pin') }} Apple Maps</a>{% endif %}
+</div>
+{%- endif %}
+{%- endmacro %}
+
 {% macro curve(to='white') -%}
 <svg class="curve to-{{ to }}" viewBox="0 0 1440 64" preserveAspectRatio="none" aria-hidden="true"><path d="M0 64h1440V20C1210 60 960 66 720 44S240 2 0 30Z" fill="currentColor"/></svg>
 {%- endmacro %}

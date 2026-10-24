@@ -1,4 +1,4 @@
-{% from "site/_macros.html" import icon %}
+{% from "site/_macros.html" import icon, map_links %}
 <article class="card news-card lift rv{% if featured %} featured{% endif %}{% if post.image_poster %} has-poster{% endif %}">
     {% set media = (post.media_items or [])|first %}
     {% if media and post.image_poster and featured %}
@@ -21,5 +21,7 @@
         {% if featured %}<h2 class="h2">{{ post.title }}</h2>{% else %}<h3 class="h3">{{ post.title }}</h3>{% endif %}
         {% if featured and post.body %}{% for paragraph in post.body %}<p>{{ paragraph }}</p>{% endfor %}
         {% elif post.excerpt %}<p>{{ post.excerpt }}</p>{% endif %}
+        {% if featured and post.location %}<p class="news-where">{{ icon('pin') }} {{ post.location }}</p>{% endif %}
+        {% if featured and post.show_map %}{{ map_links(school) }}{% endif %}
     </div>
 </article>

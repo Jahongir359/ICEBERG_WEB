@@ -54,6 +54,8 @@
         }
     } -%}
     {%- if school.phone %}{% set _ = school_ld.update({'telephone': school.phone}) %}{% endif -%}
+    {%- if school.city %}{% set _ = school_ld.update({'address': {'@type': 'PostalAddress', 'addressLocality': school.city, 'addressRegion': 'Namangan', 'addressCountry': 'UZ'}}) %}{% endif -%}
+    {%- if school.latitude and school.longitude %}{% set _ = school_ld.update({'geo': {'@type': 'GeoCoordinates', 'latitude': school.latitude | float, 'longitude': school.longitude | float}, 'hasMap': school.map_url}) %}{% endif -%}
     {%- if school.address %}{% set _ = school_ld.update({'address': {'@type': 'PostalAddress', 'streetAddress': school.address, 'addressLocality': school.city, 'addressCountry': 'UZ'}}) %}{% endif -%}
     {%- set same_as = [] -%}
     {%- for link in (school.instagram_url, school.telegram_url) if link %}{% set _ = same_as.append(link) %}{% endfor -%}
@@ -65,7 +67,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT@9..144,500..700,50..100&family=Inter:wght@400;500;600;700;800&display=swap">
     <link rel="stylesheet" href="{{ url_for('static', filename='brand/tokens.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/site.css', v='20261024-9') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/site.css', v='20261024-10') }}">
     {% block head %}{% endblock %}
 </head>
 <body class="{% block body_class %}has-dock{% endblock %}">

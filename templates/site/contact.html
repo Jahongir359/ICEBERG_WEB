@@ -1,5 +1,5 @@
 {% extends "site/base.html" %}
-{% from "site/_macros.html" import icon, fact, curve %}
+{% from "site/_macros.html" import icon, fact, curve, map_links %}
 {% block title %}Aloqa — Iceberg School va Iceberg Courses{% endblock %}
 {% block description %}Iceberg School qabul bo'limi va Iceberg Courses (ICEBERG o'quv markazi) bilan bog'lanish: telefon, Telegram, manzil va filiallar.{% endblock %}
 {% block content %}
@@ -20,14 +20,15 @@
             <div class="contact-list">
                 {% if school.phone %}<a href="tel:{{ school.phone }}"><span class="icon-tile">{{ icon('phone') }}</span><span>{{ school.phone_display or school.phone }}<small>Telefon</small></span></a>
                 {% else %}<div><span class="icon-tile">{{ icon('phone') }}</span><span>{{ fact('', 'TELEFON') }}<small>Telefon</small></span></div>{% endif %}
-                <div><span class="icon-tile">{{ icon('pin') }}</span><span>{{ fact(school.address, 'MANZIL') }}<small>{{ school.city or 'Manzil' }}</small></span></div>
+                {% if school.address or not school.map_url %}<div><span class="icon-tile">{{ icon('pin') }}</span><span>{{ fact(school.address, 'MANZIL') }}<small>{{ school.city or 'Manzil' }}</small></span></div>
+                {% else %}<a href="{{ school.map_url }}" target="_blank" rel="noopener"><span class="icon-tile">{{ icon('pin') }}</span><span>{{ school.city }}, {{ school.region }}<small>Manzil · xaritada ochish</small></span></a>{% endif %}
                 <div><span class="icon-tile">{{ icon('clock') }}</span><span>{{ fact(school.hours, 'ISH VAQTI') }}<small>Ish vaqti</small></span></div>
                 {% if school.email %}<a href="mailto:{{ school.email }}"><span class="icon-tile">{{ icon('mail') }}</span><span>{{ school.email }}<small>Email</small></span></a>{% endif %}
                 {% if school.telegram_url %}<a href="{{ school.telegram_url }}" rel="noopener"><span class="icon-tile">{{ icon('telegram') }}</span><span>Telegram<small>Yozish</small></span></a>{% endif %}
             </div>
+            {{ map_links(school) }}
             <div class="hero-cta" style="margin-top:8px">
                 <a class="btn btn-primary" href="{{ url_for('admissions') }}#ariza">Ariza topshirish</a>
-                {% if school.map_url %}<a class="btn btn-outline" href="{{ school.map_url }}" rel="noopener">{{ icon('pin') }} Xaritada</a>{% endif %}
             </div>
         </article>
         <article class="card rv d1">
