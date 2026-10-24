@@ -992,6 +992,41 @@ def questions():
     return redirect(url_for('courses') + '#savollar', code=301)
 
 
+# Every old public URL that search engines still list -> its page today. One list feeds both the
+# Flask routes below and the Cloudflare `_redirects` file (scripts/build_firebase.py); specific
+# rules come before the `/*` catch-alls. The /en pages redirect with 302 because real English
+# pages will live under /en/ (plan 4.0 step 4): remove those rules when they launch.
+LEGACY_REDIRECTS = (
+    ('/our_programs', '/courses', 301),
+    ('/questions', '/courses#savollar', 301),
+    ('/our_programs.html', '/courses', 301),
+    ('/questions.html', '/courses#savollar', 301),
+    ('/programs/sat', '/courses#sat', 301),
+    ('/programs/ielts', '/courses#ielts', 301),
+    ('/programs/*', '/programs', 301),
+    ('/faq', '/courses#savollar', 301),
+    ('/contacts', '/contact', 301),
+    ('/news/*', '/news', 301),
+    ('/en/register', '/register', 302),
+    ('/en/our_programs', '/courses', 302),
+    ('/en/news', '/news', 302),
+    ('/en/contact', '/contact', 302),
+    ('/en', '/', 302),
+    ('/en/*', '/', 302),
+)
+
+
+def _legacy_redirect(target, code):
+    return lambda **_: redirect(target, code=code)
+
+
+for _index, (_source, _target, _code) in enumerate(LEGACY_REDIRECTS):
+    if _source in ('/our_programs', '/questions'):
+        continue  # named routes above
+    _rule = _source[:-2] + '/<path:_rest>' if _source.endswith('/*') else _source
+    app.add_url_rule(_rule, f'legacy_redirect_{_index}', _legacy_redirect(_target, _code))
+
+
 SCHOOL_GRADES = [str(number) for number in range(1, 12)]
 SCHOOL_LANGUAGES = {'uz': "O'zbek", 'ru': 'Rus', 'en': 'Ingliz'}
 SCHOOL_BRANCH_NAME = os.environ.get('SCHOOL_BRANCH_NAME', 'Iceberg School').strip() or 'Iceberg School'

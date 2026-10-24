@@ -24,11 +24,6 @@ PUBLIC_ROUTES = {
     "/contact": "contact.html",
     "/register": "register.html",
 }
-# Former Learning Center URLs, kept working with permanent redirects.
-REDIRECTS = (
-    ("/our_programs", "/courses"),
-    ("/questions", "/courses#savollar"),
-)
 ROOT_ASSETS = ("/favicon.ico", "/manifest.json", "/robots.txt", "/sitemap.xml")
 
 
@@ -103,8 +98,10 @@ def build() -> None:
         (OUTPUT / filename).parent.mkdir(parents=True, exist_ok=True)
         (OUTPUT / filename).write_text(html, encoding="utf-8")
 
+    from app import LEGACY_REDIRECTS  # pylint: disable=import-outside-toplevel
+
     (OUTPUT / "_redirects").write_text(
-        "".join(f"{source} {target} 301\n" for source, target in REDIRECTS),
+        "".join(f"{source} {target} {code}\n" for source, target, code in LEGACY_REDIRECTS),
         encoding="utf-8",
     )
 

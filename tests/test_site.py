@@ -120,6 +120,22 @@ class SitePageTests(unittest.TestCase):
             self.assertIn(f'/register?program={program["id"]}', html)
         self.assertIn('id="savollar"', html)
 
+    def test_every_legacy_url_redirects_to_a_live_page(self):
+        for source, target, code in app_module.LEGACY_REDIRECTS:
+            path = source.replace('/*', '/old-page/2024')
+            with self.subTest(path=path):
+                response = self.client.get(path)
+                self.assertEqual(response.status_code, code)
+                self.assertTrue(response.location.endswith(target))
+                landing = self.client.get(target.split('#')[0])
+                self.assertEqual(landing.status_code, 200)
+
+    def test_legacy_redirects_never_cover_private_admin_paths(self):
+        private = ('/admin', '/portal', '/students', '/contacts_list')
+        for source, _target, _code in app_module.LEGACY_REDIRECTS:
+            with self.subTest(source=source):
+                self.assertFalse(source.startswith(private))
+
     def test_former_learning_center_urls_redirect_permanently(self):
         for old, new in (('/our_programs', '/courses'), ('/questions', '/courses#savollar')):
             with self.subTest(old=old):

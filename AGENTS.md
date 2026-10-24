@@ -20,7 +20,7 @@ The whole site uses `<html data-brand="school">`.
 | `/courses`, `/register` | `courses.html` (ICEBERG o'quv markazi), `register.html` (course registration) |
 | `/news`, `/contact` | `news.html`, `contact.html` |
 | `/ilova` | `coming_soon.html` (temporary target of the Portal/app links; noindex, not in the sitemap) |
-| `/our_programs`, `/questions` | 301 → `/courses`, `/courses#savollar` (Flask routes + generated `_redirects`) |
+| Old URLs still in search results (`/our_programs`, `/questions`, `/programs/sat`, `/faq`, `/contacts`, `/news/…`, `/en/…`) | Redirect to today's page — one list, `LEGACY_REDIRECTS` in `app.py`, feeds the Flask routes and the generated `_redirects`. `/en/…` uses 302 until real English pages exist under `/en/` (then remove those rules) |
 
 Shared pieces: `site/base.html` (header, mobile menu, dock, footer, JSON-LD), `site/_macros.html`
 (`icon()`, `fact()`), `_stages.html`, `_cta.html`, `_news_card.html`. Styles: `static/css/site.css`;
