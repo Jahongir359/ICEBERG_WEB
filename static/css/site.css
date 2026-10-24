@@ -527,6 +527,18 @@ select.control { appearance: none; -webkit-appearance: none; padding-right: 2.4r
 .leader-sign strong { font-size: 1.05rem; }
 .leader-sign span { color: var(--muted); font-size: .92rem; }
 
+/* Team group photo (About): wide frame that trims ceiling and floor, keeping every face in view. */
+.team-photo { position: relative; margin: 0 auto clamp(28px, 5vw, 48px); max-width: 960px; }
+.team-photo::before {
+    content: ""; position: absolute; inset: 14px -14px -14px 14px; border-radius: calc(var(--brand-radius-card) + 6px);
+    border: 2px solid rgb(var(--brand-gold-rgb) / .55);
+}
+.team-photo img {
+    position: relative; width: 100%; height: auto; aspect-ratio: 3 / 2; object-fit: cover; object-position: 50% 62%;
+    border-radius: calc(var(--brand-radius-card) + 6px); box-shadow: var(--shadow-lift);
+}
+@media (max-width: 559px) { .team-photo::before { inset: 10px -8px -10px 8px; } }
+
 /* People */
 .person { align-items: center; text-align: center; }
 .person img { width: 112px; height: 112px; border-radius: 999px; object-fit: cover; box-shadow: 0 0 0 5px #fff, 0 0 0 7px rgb(var(--brand-gold-rgb) / .6), 0 16px 30px rgb(108 60 20 / .18); }
