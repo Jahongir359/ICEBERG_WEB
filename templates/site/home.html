@@ -3,6 +3,17 @@
 
 {% block title %}Iceberg School — xususiy maktab, 1–11-sinflar | Iceberg Courses{% endblock %}
 
+{% block schema %}
+    {#- Google's site name in search results (home page only). #}
+    <script type="application/ld+json">{{ {
+        '@context': 'https://schema.org',
+        '@type': 'WebSite',
+        'name': 'Iceberg School',
+        'alternateName': ['Iceberg', 'iceberglc.com'],
+        'url': site_url + '/'
+    } | tojson }}</script>
+{% endblock %}
+
 {% block content %}
 <section class="hero" data-hero data-scrub="exit">
     <div class="wrap hero-grid">

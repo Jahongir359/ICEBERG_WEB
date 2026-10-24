@@ -123,6 +123,18 @@ class SitePageTests(unittest.TestCase):
         for name in ('playground', 'building', 'courtyard', 'football', 'rest-room', 'dining-hall', 'kitchen'):
             self.assertIn(f'/static/school/img/{name}.jpg', about)
 
+    def test_search_results_use_the_school_crest_and_name(self):
+        html = self.client.get('/').get_data(as_text=True)
+        for href in ('/static/favicon-48x48.png', '/static/android-chrome-192x192.png'):
+            self.assertIn(f'href="{href}"', html)
+            self.assertEqual(self.client.get(href).status_code, 200)
+        blocks = [json.loads(block) for block in re.findall(r'<script type="application/ld\+json">(.*?)</script>', html, re.S)]
+        website = [block for block in blocks if block['@type'] == 'WebSite']
+        self.assertEqual(website[0]['name'], 'Iceberg School')
+        self.assertEqual(website[0]['url'], 'https://iceberglc.com/')
+        about = self.client.get('/about').get_data(as_text=True)
+        self.assertNotIn('"WebSite"', about)
+
     def test_courses_page_lists_registration_programs(self):
         html = self.client.get('/courses').get_data(as_text=True)
         for program in app_module.REGISTRATION_CONFIG['programs']:
