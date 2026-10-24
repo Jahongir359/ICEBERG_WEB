@@ -26,7 +26,15 @@ EXPECTED_PAGES = {
     "/contact": "contact.html",
     "/register": "register.html",
 }
-EXPECTED_REDIRECTS = ("/our_programs /courses 301", "/questions /courses#savollar 301")
+EXPECTED_REDIRECTS = (
+    "/our_programs /courses 301",
+    "/questions /courses#savollar 301",
+    "/programs/sat /courses#sat 301",
+    "/faq /courses#savollar 301",
+    "/contacts /contact 301",
+    "/news/* /news 301",
+    "/en/* / 302",
+)
 IGNORED_SCHEMES = {"data", "mailto", "tel", "javascript"}
 PRIVATE_MARKERS = (
     "admin_password",
