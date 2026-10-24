@@ -1,9 +1,16 @@
-<article class="card news-card lift rv{% if featured %} featured{% endif %}">
+{% from "site/_macros.html" import icon %}
+<article class="card news-card lift rv{% if featured %} featured{% endif %}{% if post.image_poster %} has-poster{% endif %}">
     {% set media = (post.media_items or [])|first %}
-    {% if media %}
-    <div class="media">
+    {% if media and post.image_poster and featured %}
+    {#- Posters carry their own text: show them whole, never cropped, and link the full-size file. #}
+    <a class="media poster" href="{{ url_for('static', filename=media.file_path) }}" target="_blank" rel="noopener">
+        <img src="{{ url_for('static', filename=media.file_path) }}"{% if post.image_small %} srcset="{{ url_for('static', filename=post.image_small) }} 720w, {{ url_for('static', filename=media.file_path) }} {{ post.image_width }}w" sizes="(min-width: 900px) 560px, 100vw"{% endif %} width="{{ post.image_width }}" height="{{ post.image_height }}" alt="{{ media.caption or post.title }}">
+        <span class="poster-zoom">{{ icon('arrow') }} Kattalashtirish</span>
+    </a>
+    {% elif media %}
+    <div class="media{% if post.image_poster %} poster-teaser{% endif %}">
         {% if media.media_type == 'image' %}
-        <img src="{{ url_for('static', filename=media.file_path) }}" alt="{{ media.caption or post.title }}" loading="lazy">
+        <img src="{{ url_for('static', filename=post.image_small or media.file_path) }}" alt="{{ media.caption or post.title }}" loading="lazy">
         {% else %}
         <video controls preload="metadata"><source src="{{ url_for('static', filename=media.file_path) }}"></video>
         {% endif %}
