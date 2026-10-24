@@ -35,6 +35,31 @@
 
 {% with leader_bg = 'sec-tint' %}{% include "site/_leader.html" %}{% endwith %}
 
+<section class="sec sec-white">
+    <div class="wrap">
+        <div class="sec-head rv">
+            <span class="kicker">Maktabimiz</span>
+            <h2 class="h2">Farzandingiz o'qiydigan joy</h2>
+            <p class="lead">Maktab binosi, ovqatlanish zali va oshxona — tashrif chog'ida hammasini o'z ko'zingiz bilan ko'rishingiz mumkin.</p>
+        </div>
+        <div class="campus">
+            {% for file, caption, w, h in [
+                ('building', 'Maktab binosi', 947, 1184),
+                ('dining-hall', 'Ovqatlanish zali', 1000, 1250),
+                ('kitchen', 'Oshxona', 1000, 1333)
+            ] %}
+            <figure class="campus-photo rv{% if loop.index0 %} d{{ loop.index0 }}{% endif %}{% if loop.first %} campus-main{% endif %}">
+                <img src="{{ url_for('static', filename='school/img/' ~ file ~ '.jpg') }}"
+                     srcset="{{ url_for('static', filename='school/img/' ~ file ~ '-640.jpg') }} 640w, {{ url_for('static', filename='school/img/' ~ file ~ '.jpg') }} {{ w }}w"
+                     sizes="(min-width: 900px) {{ '640px' if loop.first else '420px' }}, 100vw" alt="Iceberg School — {{ caption }}" width="{{ w }}" height="{{ h }}" loading="lazy">
+                <figcaption>{{ caption }}</figcaption>
+            </figure>
+            {% endfor %}
+        </div>
+        <p class="rv" style="margin-top:22px"><a class="link-arrow" href="{{ url_for('admissions') }}#ariza">Maktabga tashrifga yoziling</a></p>
+    </div>
+</section>
+
 <section class="sec">
     <div class="wrap">
         <div class="sec-head center rv">
@@ -52,7 +77,7 @@
 <section class="sec sec-white">
     <div class="wrap">
         <div class="sec-head rv">
-            <span class="kicker">Iceberg oilasi</span>
+            <span class="kicker">Iceberg oilasi{% if school.founded %} · {{ school.founded }}-yildan beri{% endif %}</span>
             <h2 class="h2">Bitta oila — ikki yo'nalish</h2>
             <p class="lead">Iceberg School va ICEBERG o'quv markazi — bir oila: kunlik maktab va kurslar bir brend ostida.</p>
         </div>

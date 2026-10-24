@@ -113,6 +113,15 @@ class SitePageTests(unittest.TestCase):
         self.assertIn(f'href="{app_module.SCHOOL_CONFIG["portal_url"]}">Portal</a>', html)
         self.assertIn(f'href="{app_module.SCHOOL_CONFIG["app_url"]}"', html)
 
+    def test_founding_year_and_campus_photos(self):
+        year = app_module.SCHOOL_CONFIG['founded']
+        home = self.client.get('/').get_data(as_text=True)
+        about = self.client.get('/about').get_data(as_text=True)
+        self.assertIn(f'{year}-yildan beri', home)
+        self.assertIn(f'{year}-yildan beri', about)
+        for name in ('building', 'dining-hall', 'kitchen'):
+            self.assertIn(f'/static/school/img/{name}.jpg', about)
+
     def test_courses_page_lists_registration_programs(self):
         html = self.client.get('/courses').get_data(as_text=True)
         for program in app_module.REGISTRATION_CONFIG['programs']:
