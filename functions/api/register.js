@@ -44,6 +44,7 @@ async function loadRegistrationOptions(env) {
         programs: new Set(programs.map(item => item.id)),
         branches: new Set(branches.map(item => item.id)),
         programNames: new Map(programs.map(item => [item.id, item.name || item.id])),
+        branchNames: new Map(branches.map(item => [item.id, item.name || item.id])),
         // The ERP shows a lead to a branch admin only when its branch text equals
         // that admin's ERP branch name, so send the configured ERP name when set.
         erpBranchNames: new Map(branches.map(item => [item.id, cleanText(item.erp_branch_name, 100)]))
@@ -180,6 +181,63 @@ async function forwardLeadToErp(lead, options, env, reference) {
         }
     } catch (error) {
         console.error("ERP lead forwarding failed", reference, error.name);
+    }
+}
+
+function telegramLeadText(lead, options) {
+    const lines = [];
+    if (lead.form_type === "school-enquiry") {
+        lines.push(
+            "🏫 Iceberg School — yangi so'rov",
+            "",
+            `Ota-ona: ${lead.student_name}`,
+            `Telefon: ${lead.student_phone}`,
+            `Sinf: ${lead.program.replace("grade-", "")}`
+        );
+        if (lead.child_name) lines.push(`Farzand: ${lead.child_name}`);
+        if (lead.child_birth_date) lines.push(`Tug'ilgan sana: ${lead.child_birth_date}`);
+        if (lead.language) lines.push(`Til: ${SCHOOL_LANGUAGES[lead.language]}`);
+        if (lead.message) lines.push("", `Xabar: ${lead.message}`);
+    } else {
+        lines.push(
+            "📝 Iceberg Courses — yangi ariza",
+            "",
+            `Ism: ${lead.student_name}`,
+            `Telefon: ${lead.student_phone}`,
+            `Dastur: ${options.programNames.get(lead.program) || lead.program}`,
+            `Filial: ${options.branchNames.get(lead.branch) || lead.branch}`
+        );
+    }
+    const utm = [lead.utm_source, lead.utm_medium, lead.utm_campaign].filter(Boolean).join(" / ");
+    lines.push("");
+    if (lead.page_url) lines.push(`Sahifa: ${lead.page_url}`);
+    if (utm) lines.push(`UTM: ${utm}`);
+    lines.push(`Vaqt: ${lead.submitted_at}`, `ID: ${lead.id}`);
+    return lines.join("\n");
+}
+
+// Best-effort message to the support Telegram chat, sent by the server through the
+// bot, so the visitor never has to open Telegram. Sheets stays the primary store.
+async function notifyTelegram(lead, options, env, reference) {
+    if (!env.TELEGRAM_BOT_TOKEN || !env.TELEGRAM_CHAT_ID) {
+        return;
+    }
+    try {
+        const response = await fetch(`https://api.telegram.org/bot${env.TELEGRAM_BOT_TOKEN}/sendMessage`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                chat_id: env.TELEGRAM_CHAT_ID,
+                text: telegramLeadText(lead, options),
+                disable_web_page_preview: true
+            }),
+            signal: AbortSignal.timeout(8000)
+        });
+        if (!response.ok) {
+            console.error("Telegram notification rejected", reference, response.status);
+        }
+    } catch (error) {
+        console.error("Telegram notification failed", reference, error.name);
     }
 }
 
@@ -344,7 +402,10 @@ export async function onRequestPost(context) {
 
     // A repeated submission ID was already stored (and forwarded) the first time.
     if (storedResult.duplicate !== true) {
-        const forwarding = forwardLeadToErp(lead, options, env, reference);
+        const forwarding = Promise.all([
+            forwardLeadToErp(lead, options, env, reference),
+            notifyTelegram(lead, options, env, reference)
+        ]);
         if (typeof context.waitUntil === "function") {
             context.waitUntil(forwarding);
         } else {
