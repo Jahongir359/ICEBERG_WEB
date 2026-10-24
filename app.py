@@ -269,9 +269,21 @@ def remove_static_file(relative_path):
         os.remove(absolute_path)
 
 
+def site_news_posts():
+    """Posts from config/news.json, shaped like database posts for the news templates."""
+    with open(os.path.join(app.root_path, 'config', 'news.json'), 'r', encoding='utf-8') as news_file:
+        posts = json.load(news_file)['posts']
+    for post in posts:
+        post['media_items'] = (
+            [{'media_type': 'image', 'file_path': post['image'], 'caption': post.get('image_alt', '')}]
+            if post.get('image') else []
+        )
+    return posts
+
+
 def fetch_news_posts(include_unpublished=False):
     if STATIC_BUILD_MODE:
-        return []
+        return site_news_posts()
     query = '''
         SELECT *
         FROM news_posts
@@ -297,6 +309,10 @@ def fetch_news_posts(include_unpublished=False):
     for post in posts:
         post['media_items'] = media_by_post.get(post['id'], [])
 
+    if include_unpublished:
+        return posts  # The admin list edits database posts only.
+    posts = site_news_posts() + posts
+    posts.sort(key=lambda post: post.get('event_date') or post.get('created_at') or '', reverse=True)
     return posts
 
 

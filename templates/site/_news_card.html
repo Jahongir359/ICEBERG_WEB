@@ -1,4 +1,4 @@
-<article class="card news-card lift rv">
+<article class="card news-card lift rv{% if featured %} featured{% endif %}">
     {% set media = (post.media_items or [])|first %}
     {% if media %}
     <div class="media">
@@ -10,8 +10,9 @@
     </div>
     {% endif %}
     <div class="body">
-        <span class="type">{{ 'Tadbir' if post.post_type == 'event' else 'Yangilik' }}{% if post.event_date %} · <time datetime="{{ post.event_date }}">{{ post.event_date }}</time>{% endif %}</span>
-        <h3 class="h3">{{ post.title }}</h3>
-        {% if post.excerpt %}<p>{{ post.excerpt }}</p>{% endif %}
+        <span class="type">{{ 'Tadbir' if post.post_type == 'event' else 'Yangilik' }}{% if post.event_date %} · <time datetime="{{ post.event_date }}{% if post.event_time %}T{{ post.event_time }}{% endif %}">{{ post.event_label or post.event_date }}</time>{% endif %}</span>
+        {% if featured %}<h2 class="h2">{{ post.title }}</h2>{% else %}<h3 class="h3">{{ post.title }}</h3>{% endif %}
+        {% if featured and post.body %}{% for paragraph in post.body %}<p>{{ paragraph }}</p>{% endfor %}
+        {% elif post.excerpt %}<p>{{ post.excerpt }}</p>{% endif %}
     </div>
 </article>
