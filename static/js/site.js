@@ -251,6 +251,108 @@
             update();
         });
 
+        // Photo rows with data-autoscroll: every few seconds glide slowly to the next photo, and from
+        // the last one back to the first. Pauses while the visitor touches, hovers, focuses or uses the
+        // arrows (resuming a few seconds later), while the row is off screen or the tab is hidden, and
+        // never runs under reduced motion.
+        document.querySelectorAll("[data-autoscroll]").forEach(function (row) {
+            if (reduceMotion) return;
+            var DELAY = 3500;
+            var GLIDE = 1400;
+            var RESUME = 6000;
+            var timer = null;
+            var visible = false;
+            var heldUntil = 0;
+            var gliding = false;
+
+            function easeInOut(t) { return t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2; }
+
+            function glideTo(target) {
+                var start = row.scrollLeft;
+                var distance = target - start;
+                var began = null;
+                gliding = true;
+                row.style.scrollSnapType = "none";
+                row.style.scrollBehavior = "auto";
+                function frame(now) {
+                    if (began === null) began = now;
+                    var t = Math.min((now - began) / GLIDE, 1);
+                    row.scrollLeft = start + distance * easeInOut(t);
+                    if (t < 1 && gliding) {
+                        requestAnimationFrame(frame);
+                    } else {
+                        gliding = false;
+                        row.style.scrollSnapType = "";
+                        row.style.scrollBehavior = "";
+                    }
+                }
+                requestAnimationFrame(frame);
+            }
+
+            function next() {
+                var items = Array.prototype.slice.call(row.children);
+                var max = row.scrollWidth - row.clientWidth;
+                if (!items.length || max <= 2) return;
+                if (row.scrollLeft >= max - 2) {
+                    glideTo(0);
+                    return;
+                }
+                var origin = row.getBoundingClientRect().left + parseFloat(getComputedStyle(row).scrollPaddingLeft || 0);
+                for (var i = 0; i < items.length; i += 1) {
+                    var offset = items[i].getBoundingClientRect().left - origin;
+                    if (offset > 4) {
+                        glideTo(Math.min(row.scrollLeft + offset, max));
+                        return;
+                    }
+                }
+                glideTo(max);
+            }
+
+            function schedule() {
+                clearTimeout(timer);
+                timer = null;
+                if (!visible || document.hidden) return;
+                var wait = Math.max(DELAY, heldUntil - Date.now());
+                timer = setTimeout(function () {
+                    if (Date.now() < heldUntil) {
+                        schedule();
+                        return;
+                    }
+                    next();
+                    schedule();
+                }, wait);
+            }
+
+            function hold() {
+                gliding = false;
+                heldUntil = Date.now() + RESUME;
+                schedule();
+            }
+
+            ["pointerdown", "touchstart", "wheel", "keydown", "focusin"].forEach(function (type) {
+                row.addEventListener(type, hold, { passive: true });
+            });
+            row.addEventListener("pointerenter", function (event) {
+                if (event.pointerType === "mouse") hold();
+            });
+            row.addEventListener("pointermove", function (event) {
+                if (event.pointerType === "mouse") heldUntil = Date.now() + RESUME;
+            }, { passive: true });
+            document.querySelectorAll('[data-scroll-prev="' + row.id + '"], [data-scroll-next="' + row.id + '"]').forEach(function (button) {
+                button.addEventListener("click", hold);
+            });
+            document.addEventListener("visibilitychange", schedule);
+            if ("IntersectionObserver" in window) {
+                new IntersectionObserver(function (entries) {
+                    visible = entries[0].isIntersecting;
+                    schedule();
+                }, { threshold: 0.4 }).observe(row);
+            } else {
+                visible = true;
+                schedule();
+            }
+        });
+
         // Pointer effects on devices with a mouse: the hero poster tilts, cards catch a soft light.
         if (!reduceMotion && window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
             var poster = document.querySelector(".hero-poster");
