@@ -553,8 +553,8 @@ select.control { appearance: none; -webkit-appearance: none; padding-right: 2.4r
 .campus-photo:hover img { transform: scale(1.03); }
 .campus-main img { object-position: 50% 22%; }
 .campus-photo figcaption {
-    position: absolute; left: 14px; bottom: 14px; padding: .4rem .85rem; border-radius: 999px;
-    background: rgb(255 255 255 / .92); color: var(--brand-primary); font-size: .85rem; font-weight: 700;
+    position: absolute; left: 14px; right: 14px; bottom: 14px; width: fit-content; padding: .4rem .85rem; border-radius: 14px;
+    background: rgb(255 255 255 / .92); color: var(--brand-primary); font-size: .85rem; font-weight: 700; line-height: 1.35;
     box-shadow: 0 6px 16px rgb(var(--brand-primary-deep-rgb) / .15);
 }
 @media (min-width: 900px) {
