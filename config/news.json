@@ -14,7 +14,9 @@
       "image_small": "school/img/news/open-day-2026-10-25-720.jpg",
       "image_width": 1055,
       "image_height": 1349,
-      "image_poster": true
+      "image_poster": true,
+      "location": "Iceberg School, Uychi",
+      "show_map": true
     }
   ]
 }

@@ -148,6 +148,18 @@ class SitePageTests(unittest.TestCase):
             self.assertIn(post['title'], self.client.get('/news').get_data(as_text=True))
         self.assertTrue(all(isinstance(item['id'], int) for item in app_module.fetch_news_posts(include_unpublished=True)))
 
+    def test_school_location_from_the_owner_pin(self):
+        school = app_module.SCHOOL_CONFIG
+        contact = self.client.get('/contact').get_data(as_text=True)
+        news = self.client.get('/news').get_data(as_text=True)
+        for html in (contact, news):
+            self.assertIn(f'href="{school["map_url"]}"', html.replace('&amp;', '&'))
+            self.assertIn('Yandex Maps', html)
+        self.assertNotIn('[MANZIL]', contact)
+        data = json.loads(re.search(r'<script type="application/ld\+json">(.*?)</script>', contact, re.S).group(1))
+        self.assertEqual(data['geo']['latitude'], float(school['latitude']))
+        self.assertEqual(data['address']['addressLocality'], 'Uychi')
+
     def test_courses_page_lists_registration_programs(self):
         html = self.client.get('/courses').get_data(as_text=True)
         for program in app_module.REGISTRATION_CONFIG['programs']:
