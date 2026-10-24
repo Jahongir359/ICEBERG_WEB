@@ -135,6 +135,18 @@ class SitePageTests(unittest.TestCase):
         about = self.client.get('/about').get_data(as_text=True)
         self.assertNotIn('"WebSite"', about)
 
+    def test_news_from_config_reaches_the_static_site(self):
+        post = json.load(open('config/news.json', encoding='utf-8'))['posts'][0]
+        news = self.client.get('/news').get_data(as_text=True)
+        self.assertIn('news-card lift rv featured', news)
+        self.assertIn(post['title'], news)
+        for paragraph in post['body']:
+            self.assertIn(paragraph.replace("'", '&#39;'), news)
+        self.assertIn(post['excerpt'], self.client.get('/').get_data(as_text=True))
+        with patch.object(app_module, 'STATIC_BUILD_MODE', True):
+            self.assertIn(post['title'], self.client.get('/news').get_data(as_text=True))
+        self.assertTrue(all(isinstance(item['id'], int) for item in app_module.fetch_news_posts(include_unpublished=True)))
+
     def test_courses_page_lists_registration_programs(self):
         html = self.client.get('/courses').get_data(as_text=True)
         for program in app_module.REGISTRATION_CONFIG['programs']:

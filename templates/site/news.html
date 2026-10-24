@@ -15,9 +15,12 @@
 <section class="sec">
     <div class="wrap">
         {% if posts %}
-        <div class="grid grid-3">
-            {% for post in posts %}{% include "site/_news_card.html" %}{% endfor %}
+        {% with post = posts[0], featured = true %}{% include "site/_news_card.html" %}{% endwith %}
+        {% if posts[1:] %}
+        <div class="grid grid-3 news-more">
+            {% for post in posts[1:] %}{% include "site/_news_card.html" %}{% endfor %}
         </div>
+        {% endif %}
         {% else %}
         <div class="empty rv">
             <img src="{{ url_for('static', filename='school/img/crest-maroon.png') }}" alt="" width="64" height="76" loading="lazy">

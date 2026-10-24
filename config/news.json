@@ -1,0 +1,22 @@
+{
+  "$comment": "News and events shown on /news and the home page of the static site (the live site has no database, so admin-panel posts do not reach it). Newest first by date. Only confirmed facts. image is a path under static/; body is a list of paragraphs.",
+  "posts": [
+    {
+      "id": "ochiq-eshiklar-kuni-2026-10-25",
+      "post_type": "event",
+      "title": "Birinchi rasmiy ochiq eshiklar kuni",
+      "event_date": "2026-10-25",
+      "event_time": "10:00",
+      "event_label": "25-oktabr, 10:00",
+      "excerpt": "ICEBERG xususiy maktabi barcha ota-onalar va mehmonlarni birinchi rasmiy ochiq eshiklar kuniga taklif etadi.",
+      "body": [
+        "Hurmatli ota-onalar va aziz mehmonlar!",
+        "ICEBERG xususiy maktabi 25-oktabr kuni soat 10:00 da bo'ladigan birinchi rasmiy ochiq eshiklar kuniga barchangizni chin dildan taklif etadi. Tashrif buyurib, aziz mehmonlarimiz bo'lishingiz va bizni benihoya xursand qilishingizga ishonamiz.",
+        "Zero, farzandlarimiz kelajagiga befarq bo'lmagan insonlar bilan hamkorlik bizni doimo xushnud etadi.",
+        "Hurmat bilan, ICEBERG jamoasi"
+      ],
+      "image": "school/img/building.jpg",
+      "image_alt": "Iceberg School binosi"
+    }
+  ]
+}
