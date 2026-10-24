@@ -79,6 +79,11 @@
             <span class="kicker">Jamoa</span>
             <h2 class="h2">Iceberg jamoasi bilan tanishing</h2>
         </div>
+        <figure class="team-photo rv">
+            <img src="{{ url_for('static', filename='school/img/team.jpg') }}"
+                 srcset="{{ url_for('static', filename='school/img/team-800.jpg') }} 800w, {{ url_for('static', filename='school/img/team.jpg') }} 1254w"
+                 sizes="(min-width: 1000px) 960px, 100vw" alt="Iceberg jamoasi" width="1254" height="1254" loading="lazy">
+        </figure>
         <div class="grid grid-3">
             {% for person in [
                 ('about_team_1', 'img/team/azizbek.jpg', 'Azizbek Nasriddinov', 'Markaz direktori'),
