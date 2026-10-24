@@ -61,7 +61,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT@9..144,500..700,50..100&family=Inter:wght@400;500;600;700;800&display=swap">
     <link rel="stylesheet" href="{{ url_for('static', filename='brand/tokens.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/site.css', v='20261024-4') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/site.css', v='20261024-5') }}">
     {% block head %}{% endblock %}
 </head>
 <body class="{% block body_class %}has-dock{% endblock %}">
@@ -162,7 +162,7 @@
             </div>
         </div>
         <div class="wrap ftr-bottom">
-            <span>© {{ current_year }} Iceberg School · Iceberg Courses</span>
+            <span>© {{ current_year }} Iceberg School · Iceberg Courses{% if school.founded %} · {{ school.founded }}-yildan beri{% endif %}</span>
             <span>O'zbekiston</span>
         </div>
     </footer>
