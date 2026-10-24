@@ -45,6 +45,7 @@
             'name': "Iceberg Courses — ICEBERG o'quv markazi",
             'alternateName': ["ICEBERG O'quv Markazi", 'ICEBERG Study Center'],
             'url': site_url + '/courses',
+            'foundingDate': school.founded,
             'telephone': registration.contact.call_center_phone,
             'address': {'@type': 'PostalAddress', 'addressLocality': 'Uychi', 'addressRegion': 'Namangan', 'addressCountry': 'UZ'}
         }
@@ -162,7 +163,7 @@
             </div>
         </div>
         <div class="wrap ftr-bottom">
-            <span>© {{ current_year }} Iceberg School · Iceberg Courses{% if school.founded %} · {{ school.founded }}-yildan beri{% endif %}</span>
+            <span>© {{ current_year }} Iceberg School · Iceberg Courses{% if school.founded %} · Iceberg — {{ school.founded }}-yildan beri{% endif %}</span>
             <span>O'zbekiston</span>
         </div>
     </footer>

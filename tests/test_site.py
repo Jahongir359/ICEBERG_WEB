@@ -117,7 +117,8 @@ class SitePageTests(unittest.TestCase):
         year = app_module.SCHOOL_CONFIG['founded']
         home = self.client.get('/').get_data(as_text=True)
         about = self.client.get('/about').get_data(as_text=True)
-        self.assertIn(f'{year}-yildan beri', home)
+        self.assertIn(f'Iceberg — {year}-yildan beri', home)
+        self.assertIn(f'"foundingDate": "{year}"', home)
         self.assertIn(f'{year}-yildan beri', about)
         for name in ('playground', 'building', 'courtyard', 'football', 'rest-room', 'dining-hall', 'kitchen'):
             self.assertIn(f'/static/school/img/{name}.jpg', about)
