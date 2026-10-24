@@ -37,21 +37,31 @@
 
 <section class="sec sec-white">
     <div class="wrap">
-        <div class="sec-head rv">
-            <span class="kicker">Maktabimiz</span>
-            <h2 class="h2">Farzandingiz o'qiydigan joy</h2>
-            <p class="lead">Maktab binosi, ovqatlanish zali va oshxona — tashrif chog'ida hammasini o'z ko'zingiz bilan ko'rishingiz mumkin.</p>
+        <div class="campus-head">
+            <div class="sec-head rv">
+                <span class="kicker">Maktabimiz</span>
+                <h2 class="h2">Farzandingiz o'qiydigan joy</h2>
+                <p class="lead">Maktab binosi, hovli, futbol maydoni, dam olish xonasi va oshxona — tashrif chog'ida hammasini o'z ko'zingiz bilan ko'rishingiz mumkin.</p>
+            </div>
+            <div class="campus-nav" aria-hidden="true">
+                <button class="campus-btn" type="button" data-scroll-prev="campus" tabindex="-1">{{ icon('arrow') }}</button>
+                <button class="campus-btn" type="button" data-scroll-next="campus" tabindex="-1">{{ icon('arrow') }}</button>
+            </div>
         </div>
-        <div class="campus" role="region" aria-label="Maktab rasmlari" tabindex="0">
+        <div class="campus" id="campus" role="region" aria-label="Maktab rasmlari" tabindex="0">
             {% for file, caption, w, h in [
+                ('playground', "O'yin maydonchasi", 1000, 750),
                 ('building', 'Maktab binosi', 947, 1184),
+                ('courtyard', 'Maktab hovlisi', 1000, 750),
+                ('football', 'Futbol maydoni', 1000, 750),
+                ('rest-room', 'Dam olish xonasi', 1000, 750),
                 ('dining-hall', 'Ovqatlanish zali', 1000, 1250),
                 ('kitchen', 'Oshxona', 1000, 1333)
             ] %}
-            <figure class="campus-photo rv{% if loop.index0 %} d{{ loop.index0 }}{% endif %}{% if loop.first %} campus-main{% endif %}">
+            <figure class="campus-photo rv{% if 0 < loop.index0 < 3 %} d{{ loop.index0 }}{% endif %}{% if file == 'building' %} campus-main{% endif %}">
                 <img src="{{ url_for('static', filename='school/img/' ~ file ~ '.jpg') }}"
                      srcset="{{ url_for('static', filename='school/img/' ~ file ~ '-640.jpg') }} 640w, {{ url_for('static', filename='school/img/' ~ file ~ '.jpg') }} {{ w }}w"
-                     sizes="(min-width: 900px) 380px, 84vw" alt="Iceberg School — {{ caption }}" width="{{ w }}" height="{{ h }}" loading="lazy">
+                     sizes="(min-width: 900px) 380px, 80vw" alt="Iceberg School — {{ caption }}" width="{{ w }}" height="{{ h }}" loading="lazy">
                 <figcaption>{{ caption }}</figcaption>
             </figure>
             {% endfor %}

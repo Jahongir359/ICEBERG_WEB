@@ -527,28 +527,42 @@ select.control { appearance: none; -webkit-appearance: none; padding-right: 2.4r
 .leader-sign strong { font-size: 1.05rem; }
 .leader-sign span { color: var(--muted); font-size: .92rem; }
 
-/* Campus photos (About): three side by side on wide screens; on phones a swipeable row that
-   bleeds to the screen edges, with the next photo peeking in. */
+/* Campus photos (About): a swipeable row on every screen. Phones show one photo with the next
+   peeking in; wide screens show three at a time with arrow buttons (site.js). Square frames suit the
+   mix of portrait and landscape photos. */
+.campus-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; }
+.campus-nav { display: none; gap: 10px; flex: none; margin-bottom: clamp(28px, 5vw, 48px); }
+.campus-btn {
+    display: grid; place-items: center; width: 48px; height: 48px; border-radius: 999px; cursor: pointer;
+    border: 1.5px solid var(--line); background: var(--surface); color: var(--brand-primary);
+    transition: background-color .2s, border-color .2s, opacity .2s, transform .2s var(--ease);
+}
+.campus-btn svg { width: 20px; height: 20px; }
+.campus-btn[data-scroll-prev] svg { transform: rotate(180deg); }
+.campus-btn:hover:not(:disabled) { border-color: var(--brand-primary); transform: translateY(-1px); }
+.campus-btn:disabled { opacity: .35; cursor: default; }
 .campus {
     display: flex; gap: 12px; overflow-x: auto; overscroll-behavior-x: contain;
     scroll-snap-type: x mandatory; scroll-padding-inline: var(--gutter); scrollbar-width: none;
-    margin-inline: calc(var(--gutter) * -1); padding: 4px var(--gutter) 12px;
+    margin-inline: calc(var(--gutter) * -1); padding: 4px var(--gutter) 12px; scroll-behavior: smooth;
 }
 .campus::-webkit-scrollbar { display: none; }
-.campus > .campus-photo { flex: 0 0 84%; scroll-snap-align: start; }
+.campus > .campus-photo { flex: 0 0 80%; scroll-snap-align: start; }
 .campus-photo { position: relative; margin: 0; overflow: hidden; border-radius: var(--brand-radius-card); box-shadow: var(--shadow-card); background: var(--brand-paper); }
-.campus-photo img { width: 100%; height: 100%; aspect-ratio: 4 / 5; object-fit: cover; transition: transform .8s var(--out); }
+.campus-photo img { width: 100%; height: 100%; aspect-ratio: 1; object-fit: cover; transition: transform .8s var(--out); }
 .campus-photo:hover img { transform: scale(1.03); }
-.campus-main img { object-position: 50% 18%; }
+.campus-main img { object-position: 50% 22%; }
 .campus-photo figcaption {
     position: absolute; left: 14px; bottom: 14px; padding: .4rem .85rem; border-radius: 999px;
     background: rgb(255 255 255 / .92); color: var(--brand-primary); font-size: .85rem; font-weight: 700;
     box-shadow: 0 6px 16px rgb(var(--brand-primary-deep-rgb) / .15);
 }
 @media (min-width: 900px) {
-    .campus { display: grid; overflow: visible; margin-inline: 0; padding: 0; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
-    .campus > .campus-photo { flex: none; }
+    .campus-nav { display: flex; }
+    .campus { gap: 20px; margin-inline: 0; padding-inline: 0; scroll-padding-inline: 0; }
+    .campus > .campus-photo { flex-basis: calc((100% - 40px) / 3); }
 }
+@media (prefers-reduced-motion: reduce) { .campus { scroll-behavior: auto; } }
 
 /* Team group photo (About): wide frame that trims ceiling and floor, keeping every face in view. */
 .team-photo { position: relative; margin: 0 auto clamp(28px, 5vw, 48px); max-width: 960px; }
