@@ -119,7 +119,7 @@ class SitePageTests(unittest.TestCase):
         about = self.client.get('/about').get_data(as_text=True)
         self.assertIn(f'{year}-yildan beri', home)
         self.assertIn(f'{year}-yildan beri', about)
-        for name in ('building', 'dining-hall', 'kitchen'):
+        for name in ('playground', 'building', 'courtyard', 'football', 'rest-room', 'dining-hall', 'kitchen'):
             self.assertIn(f'/static/school/img/{name}.jpg', about)
 
     def test_courses_page_lists_registration_programs(self):

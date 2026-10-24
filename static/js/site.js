@@ -234,6 +234,23 @@
             scrub();
         }
 
+        // Photo rows: arrow buttons scroll one screenful and grey out at the ends.
+        document.querySelectorAll("[data-scroll-prev], [data-scroll-next]").forEach(function (button) {
+            var row = document.getElementById(button.getAttribute("data-scroll-prev") || button.getAttribute("data-scroll-next"));
+            if (!row) return;
+            var step = button.hasAttribute("data-scroll-prev") ? -1 : 1;
+            function update() {
+                var max = row.scrollWidth - row.clientWidth - 2;
+                button.disabled = step < 0 ? row.scrollLeft <= 2 : row.scrollLeft >= max;
+            }
+            button.addEventListener("click", function () {
+                row.scrollBy({ left: step * row.clientWidth, behavior: reduceMotion ? "auto" : "smooth" });
+            });
+            row.addEventListener("scroll", update, { passive: true });
+            window.addEventListener("resize", update);
+            update();
+        });
+
         // Pointer effects on devices with a mouse: the hero poster tilts, cards catch a soft light.
         if (!reduceMotion && window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
             var poster = document.querySelector(".hero-poster");
