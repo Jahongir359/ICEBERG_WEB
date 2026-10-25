@@ -4,6 +4,8 @@ const JSON_HEADERS = {
     "X-Content-Type-Options": "nosniff"
 };
 
+const MAX_BODY_BYTES = 16_384;
+
 function jsonResponse(body, status = 200) {
     return new Response(JSON.stringify(body), { status, headers: JSON_HEADERS });
 }
@@ -253,7 +255,7 @@ async function validateTurnstile(token, request, secret) {
 
     const response = await fetch(
         "https://challenges.cloudflare.com/turnstile/v0/siteverify",
-        { method: "POST", body }
+        { method: "POST", body, signal: AbortSignal.timeout(8000) }
     );
     if (!response.ok) {
         return { success: false };
@@ -277,15 +279,22 @@ export async function onRequestPost(context) {
         );
     }
 
-    const contentLength = Number(request.headers.get("Content-Length") || 0);
-    if (contentLength > 16_384) {
+    // The header can be missing or wrong, so the real body size is checked too.
+    if (Number(request.headers.get("Content-Length") || 0) > MAX_BODY_BYTES) {
+        return jsonResponse({ ok: false, message: "So'rov juda katta." }, 413);
+    }
+    const rawBody = await request.text();
+    if (new TextEncoder().encode(rawBody).length > MAX_BODY_BYTES) {
         return jsonResponse({ ok: false, message: "So'rov juda katta." }, 413);
     }
 
     let input;
     try {
-        input = await request.json();
+        input = JSON.parse(rawBody);
     } catch (_error) {
+        return jsonResponse({ ok: false, message: "Noto'g'ri so'rov." }, 400);
+    }
+    if (!input || typeof input !== "object" || Array.isArray(input)) {
         return jsonResponse({ ok: false, message: "Noto'g'ri so'rov." }, 400);
     }
 
@@ -349,7 +358,9 @@ export async function onRequestPost(context) {
             503
         );
     }
-    if (!turnstile.success || (turnstile.action && turnstile.action !== "register")) {
+    // The token must come from this site's form: right widget action, same hostname as this request.
+    if (!turnstile.success || turnstile.action !== "register"
+        || turnstile.hostname !== new URL(request.url).hostname) {
         return jsonResponse(
             { ok: false, message: "Xavfsizlik tekshiruvidan qayta o'ting." },
             403
@@ -375,7 +386,8 @@ export async function onRequestPost(context) {
             method: "POST",
             headers: { "Content-Type": "text/plain;charset=UTF-8" },
             body: JSON.stringify(lead),
-            redirect: "follow"
+            redirect: "follow",
+            signal: AbortSignal.timeout(20000)
         });
         const responseText = await response.text();
         let result;

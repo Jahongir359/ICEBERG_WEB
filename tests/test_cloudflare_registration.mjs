@@ -37,7 +37,7 @@ function mockNetwork({ turnstileSuccess = true, backendSuccess = true } = {}) {
     const leads = [];
     globalThis.fetch = async (url, options) => {
         if (String(url).includes('turnstile')) {
-            return new Response(JSON.stringify({ success: turnstileSuccess, action: 'register' }), {
+            return new Response(JSON.stringify({ success: turnstileSuccess, action: 'register', hostname: 'iceberglc.com' }), {
                 headers: { 'Content-Type': 'application/json' }
             });
         }
@@ -150,7 +150,7 @@ function mockNetworkWithErp({ duplicate = false, erpStatus = 201, erpThrows = fa
     const calls = { sheets: [], erp: [] };
     globalThis.fetch = async (url, options) => {
         if (String(url).includes('turnstile')) {
-            return new Response(JSON.stringify({ success: true, action: 'register' }));
+            return new Response(JSON.stringify({ success: true, action: 'register', hostname: 'iceberglc.com' }));
         }
         if (String(url) === ERP_URL) {
             calls.erp.push({ headers: options.headers, body: JSON.parse(options.body) });
@@ -338,7 +338,7 @@ function mockNetworkWithTelegram({ duplicate = false, telegramStatus = 200, tele
     const calls = { sheets: [], telegram: [] };
     globalThis.fetch = async (url, options) => {
         if (String(url).includes('turnstile')) {
-            return new Response(JSON.stringify({ success: true, action: 'register' }));
+            return new Response(JSON.stringify({ success: true, action: 'register', hostname: 'iceberglc.com' }));
         }
         if (String(url).startsWith('https://api.telegram.org/')) {
             calls.telegram.push({ url: String(url), body: JSON.parse(options.body) });
@@ -408,5 +408,55 @@ test('a Telegram failure never fails the stored application', async () => {
         mockNetworkWithTelegram(failure);
         const response = await onRequestPost({ request: request(), env: telegramEnvironment() });
         assert.equal(response.status, 201);
+    }
+});
+
+function mockTurnstile(result) {
+    const calls = { sheets: 0 };
+    globalThis.fetch = async (url) => {
+        if (String(url).includes('turnstile')) {
+            return new Response(JSON.stringify(result));
+        }
+        calls.sheets += 1;
+        return new Response(JSON.stringify({ ok: true }));
+    };
+    return calls;
+}
+
+test('rejects Turnstile tokens with a missing or wrong action or another hostname', async () => {
+    for (const result of [
+        { success: true, hostname: 'iceberglc.com' },
+        { success: true, action: 'login', hostname: 'iceberglc.com' },
+        { success: true, action: 'register', hostname: 'evil.example' },
+        { success: true, action: 'register' }
+    ]) {
+        const calls = mockTurnstile(result);
+        const response = await onRequestPost({ request: request(), env: environment() });
+        assert.equal(response.status, 403, JSON.stringify(result));
+        assert.equal(calls.sheets, 0);
+    }
+});
+
+test('measures the real body size, not the Content-Length header', async () => {
+    mockTurnstile({ success: true, action: 'register', hostname: 'iceberglc.com' });
+    const big = new Request('https://iceberglc.com/api/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Content-Length': '10' },
+        body: JSON.stringify({ student_name: 'x'.repeat(20000) })
+    });
+    const response = await onRequestPost({ request: big, env: environment() });
+    assert.equal(response.status, 413);
+});
+
+test('accepts only a JSON object as the body', async () => {
+    mockTurnstile({ success: true, action: 'register', hostname: 'iceberglc.com' });
+    for (const body of ['[]', 'null', '"text"', '42', 'not json']) {
+        const response = await onRequestPost({
+            request: new Request('https://iceberglc.com/api/register', {
+                method: 'POST', headers: { 'Content-Type': 'application/json' }, body
+            }),
+            env: environment()
+        });
+        assert.equal(response.status, 400, body);
     }
 });
