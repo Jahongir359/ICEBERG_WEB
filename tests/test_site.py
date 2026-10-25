@@ -31,7 +31,7 @@ class SitePageTests(unittest.TestCase):
                 self.assertIn('<html lang="uz" data-brand="school">', html)
                 self.assertEqual(len(re.findall(r'<h1[\s>]', html)), 1)
                 self.assertIn(f'<link rel="canonical" href="https://iceberglc.com{path}">', html)
-                self.assertIn('/static/school/img/logo-h-maroon.png', html)
+                self.assertIn('/static/school/img/logo-h-maroon-360.png', html)
                 self.assertNotIn('cdn.tailwindcss.com', html)
 
     def test_titles_are_unique(self):

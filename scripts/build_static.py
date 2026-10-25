@@ -32,7 +32,7 @@ NOT_FOUND_PAGE = """<!doctype html>
     color:#4C0909;text-decoration:none;font-weight:800}nav a{background:none;color:#F2D9D6;padding:.4rem .6rem;font-weight:600}
   </style>
 </head>
-<body><main><img src="/static/school/img/crest-white.png" alt="Iceberg School"><h1>404</h1>
+<body><main><img src="/static/school/img/crest-white-168.png" alt="Iceberg School"><h1>404</h1>
 <p>Siz izlagan sahifa ko'chirilgan yoki mavjud emas.</p>
 <a href="/">Bosh sahifaga qaytish</a>
 <nav><a href="/ru/" lang="ru">На главную</a> · <a href="/en/" lang="en">Home page</a></nav></main></body>
