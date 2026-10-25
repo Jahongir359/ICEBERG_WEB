@@ -81,11 +81,13 @@ class SitePageTests(unittest.TestCase):
                 yield value
         self.assertFalse([text for text in strings(data) if '[' in text])
 
-    def test_unconfirmed_facts_show_placeholders(self):
-        html = self.client.get('/admissions').get_data(as_text=True)
-        self.assertIn('<span class="ph">[NARX]</span>', html)
-        self.assertNotIn('[TELEFON]', html)
-        self.assertIn(f'href="tel:{app_module.SCHOOL_CONFIG["phone"]}"', html)
+    def test_no_page_shows_placeholders(self):
+        # Owner decision 2026-10-25: missing facts are hidden or reworded, never shown as [PLACEHOLDER].
+        for path in PUBLIC_PAGES + ['/hamkorlik', '/partners']:
+            with self.subTest(path=path):
+                self.assertNotIn('class="ph"', self.client.get(path).get_data(as_text=True))
+        admissions = self.client.get('/admissions').get_data(as_text=True)
+        self.assertIn(f'href="tel:{app_module.SCHOOL_CONFIG["phone"]}"', admissions)
 
     def test_language_switcher_is_not_machine_translated(self):
         html = self.client.get('/').get_data(as_text=True)
@@ -157,6 +159,8 @@ class SitePageTests(unittest.TestCase):
             self.assertIn(f'href="{school["map_url"]}"', html.replace('&amp;', '&'))
             self.assertIn('Yandex Maps', html)
         self.assertNotIn('[MANZIL]', contact)
+        self.assertIn('href="mailto:support@iceberglc.com"', contact)
+        self.assertNotIn('gmail.com', contact)
         self.assertNotIn('[ISH VAQTI]', contact)
         self.assertIn(school['hours'], contact)
         data = json.loads(re.search(r'<script type="application/ld\+json">(.*?)</script>', contact, re.S).group(1))
@@ -164,6 +168,7 @@ class SitePageTests(unittest.TestCase):
         self.assertEqual(data['address']['addressLocality'], 'Uychi')
         self.assertEqual(data['address']['streetAddress'], school['address'])
         self.assertEqual(data['telephone'], school['phone'])
+        self.assertEqual(data['email'], 'support@iceberglc.com')
 
     def test_partnership_pages_in_uzbek_and_english(self):
         for path, lang, heading in (('/hamkorlik', 'uz', 'Keling, birga quramiz'), ('/partners', 'en', 'build something together')):

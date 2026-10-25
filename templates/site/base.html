@@ -54,6 +54,7 @@
         }
     } -%}
     {%- if school.phone %}{% set _ = school_ld.update({'telephone': school.phone}) %}{% endif -%}
+    {%- if school.email %}{% set _ = school_ld.update({'email': school.email}) %}{% endif -%}
     {%- if school.city %}{% set _ = school_ld.update({'address': {'@type': 'PostalAddress', 'addressLocality': school.city, 'addressRegion': 'Namangan', 'addressCountry': 'UZ'}}) %}{% endif -%}
     {%- if school.latitude and school.longitude %}{% set _ = school_ld.update({'geo': {'@type': 'GeoCoordinates', 'latitude': school.latitude | float, 'longitude': school.longitude | float}, 'hasMap': school.map_url}) %}{% endif -%}
     {%- if school.address %}{% set _ = school_ld.update({'address': {'@type': 'PostalAddress', 'streetAddress': school.address, 'addressLocality': school.city, 'addressRegion': 'Namangan', 'addressCountry': 'UZ'}}) %}{% endif -%}
@@ -158,7 +159,7 @@
                 <h3>Aloqa</h3>
                 <ul>
                     <li><a href="tel:{{ registration.contact.call_center_phone }}">{{ registration.contact.call_center_display }}</a></li>
-                    <li><a href="mailto:{{ content('contact_email', 'iceberg.edu.center@gmail.com') }}">{{ content('contact_email', 'iceberg.edu.center@gmail.com') }}</a></li>
+                    <li><a href="mailto:{{ content('contact_email', 'support@iceberglc.com') }}">{{ content('contact_email', 'support@iceberglc.com') }}</a></li>
                     <li><a href="{{ url_for('contact') }}">Manzil va filiallar</a></li>
                 </ul>
                 <div class="socials" style="margin-top:16px">
