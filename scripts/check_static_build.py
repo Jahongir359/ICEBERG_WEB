@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Fail fast on broken links or unsafe output in the Firebase static build."""
+"""Fail fast on broken links or unsafe output in the static build (public/)."""
 
 from __future__ import annotations
 
@@ -106,7 +106,7 @@ def resolve_local_reference(reference: str) -> Path | None:
 def check() -> None:
     errors: list[str] = []
     if not PUBLIC.is_dir():
-        raise SystemExit("public/ is missing; run scripts/build_firebase.py first")
+        raise SystemExit("public/ is missing; run scripts/build_static.py first")
 
     expected_files = {PUBLIC / name for name in EXPECTED_PAGES.values()} | {
         PUBLIC / "404.html"
@@ -134,7 +134,7 @@ def check() -> None:
                 errors.append(f"{relative_page}: contains private marker {marker}")
         if "cdn.tailwindcss.com" in text:
             errors.append(f"{relative_page}: uses the Tailwind CDN script")
-        if page.name != "404.html" and not re.search(r'<html[^>]+data-brand="(center|school)"', text):
+        if page.name != "404.html" and not re.search(r'<html[^>]+data-brand="school"', text):
             errors.append(f"{relative_page}: missing html data-brand attribute")
 
         for attribute, reference in parser.references:
@@ -154,7 +154,7 @@ def check() -> None:
                     f"{relative_page}: form action must be an absolute HTTPS URL: {action!r}"
                 )
 
-        if page.name in ("register.html", "admissions.html") and page.parent == PUBLIC:
+        if page.name in ("register.html", "admissions.html"):
             if 'action="/api/register"' not in text:
                 errors.append(f"{relative_page}: registration form must submit same-origin")
             if not re.search(r'data-turnstile-sitekey="[^\"]+"', text):
@@ -241,7 +241,7 @@ def check() -> None:
         raise SystemExit(1)
 
     print(
-        f"Firebase build check passed: {len(HTML_FILES)} HTML files, "
+        f"Static build check passed: {len(HTML_FILES)} HTML files, "
         f"{sum(1 for path in PUBLIC.rglob('*') if path.is_file())} total files"
     )
 

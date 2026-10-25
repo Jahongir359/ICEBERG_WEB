@@ -1,0 +1,11 @@
+# Secrets for the /api/register Pages Function. Live values belong only in
+# Cloudflare Pages → Settings → Variables and Secrets. For a local test with
+# `npx wrangler pages dev public`, copy this file to .dev.vars and fill it in.
+TURNSTILE_SECRET_KEY=
+GOOGLE_SCRIPT_URL=
+GOOGLE_SCRIPT_SECRET=
+REGISTRATION_LEADS_API_URL=
+REGISTRATION_LEADS_API_TOKEN=
+TELEGRAM_BOT_TOKEN=
+TELEGRAM_CHAT_ID=
+SCHOOL_BRANCH_NAME=

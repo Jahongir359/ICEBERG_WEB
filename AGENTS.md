@@ -3,8 +3,7 @@
 Read this first, then [`docs/plans/ICEBERG_SCHOOL_WEBSITE_PLAN.md`](docs/plans/ICEBERG_SCHOOL_WEBSITE_PLAN.md).
 This repo owns the website: its plan, design tokens, logos copies, pages and lead handler. The ERP
 (`College-ERP`) only receives leads and hosts the portal.
-Before a security or backend change, also read [`PROJECT_REVIEW.md`](PROJECT_REVIEW.md) (open findings
-after the PR #22 rollback).
+Before a security or form-handler change, also read [`PROJECT_REVIEW.md`](PROJECT_REVIEW.md) (open findings).
 
 ## What this site is
 
@@ -25,9 +24,10 @@ The whole site uses `<html data-brand="school">`.
 | Old URLs still in search results (`/our_programs`, `/questions`, `/programs/sat`, `/faq`, `/contacts`, `/news/…`, `/en/our_programs`, `/partners`) | Redirect to today's page — one list, `LEGACY_REDIRECTS` in `app.py`, feeds the Flask routes and the generated `_redirects` |
 
 Shared pieces: `site/base.html` (header, mobile menu, dock, footer, JSON-LD), `site/_macros.html`
-(`icon()`, `fact()`), `_stages.html`, `_cta.html`, `_news_card.html`. Styles: `static/css/site.css`;
-script: `static/js/site.js`; forms: `static/js/firebase-forms.js`. The Flask admin login also uses
-`site/base.html`; the other admin pages use `admin_base.html` (Tailwind from its CDN, admin only).
+(`icon()`, `curve()`, `map_links()`), `_stages.html`, `_cta.html`, `_news_card.html`, `_leader.html`,
+`_hero_art.html`. Styles: `static/css/site.css`; script: `static/js/site.js`; forms: `static/js/forms.js`.
+There is no admin panel or database (removed 2026-10-26, owner decision): content lives in `config/`
+and `translations/`, leads in Google Sheets.
 
 The staff/student portal is a separate app — the ERP at `app.iceberglc.com` (repo `College-ERP`).
 This site only links to it (`https://app.iceberglc.com/login/?brand=school`) and sends enquiries to
@@ -48,7 +48,7 @@ Every public page exists in Uzbek (`/about`), Russian (`/ru/about`) and English 
 - Pages are registered once per language from `LOCALIZED_ROUTES` in `app.py`; `url_for()` keeps the
   current language, `lang_url(code)` gives the same page in another language (switcher, hreflang).
 - `test_every_page_in_russian_and_english` fails if any rendered text has no translation;
-  form messages shown by the browser live in the `MESSAGES` table at the top of `static/js/firebase-forms.js`.
+  form messages shown by the browser live in the `MESSAGES` table at the top of `static/js/forms.js`.
 - Russian headings use Literata (Fraunces has no Cyrillic); Inter covers body text in all three.
 
 ## Active initiative
@@ -60,23 +60,23 @@ checks (section 9) and deploy. Tick the checklist there and add a dated line to 
 
 | Item | Value |
 |---|---|
-| Framework / language | Flask (`app.py`, one file) + Jinja templates, SQLite; Python 3.13 |
-| Hosting / deploy | **Live site: Cloudflare Pages** (project `iceberg-web`, `wrangler.toml`). The build (`scripts/build_cloudflare.sh`) runs `scripts/build_firebase.py`, which renders the Flask templates to static HTML in `public/` (git-ignored), then `scripts/check_firebase_build.py` validates it. `firebase.json`, `railway.json`, `render.yaml`, `Procfile` are older/alternative hosts for the Flask app — which one (if any) is live must be confirmed with the owner (`PROJECT_REVIEW.md`). |
-| Templates | `templates/site/` (public site, see the table above); `templates/admin_*.html`, `students.html`, `contacts_list.html` (Flask admin) |
-| Static files | `static/` → `/static/`: `css/site.css`, `js/site.js`, `js/firebase-forms.js`, `brand/` (tokens), `school/img/` (logos, poster, OG image), `img/team/` |
-| Lead handler (`POST /api/register`) | `functions/api/register.js` (Cloudflare Pages Function): Turnstile check → Google Sheets via Apps Script (`google-apps-script/Code.gs`) → best-effort copy to the ERP and a detailed message to the support Telegram chat (bot `sendMessage`, server side — the visitor never opens Telegram), each only when its secrets are set. The Flask `/register` route in `app.py` is the server-rendered equivalent (SQLite + Telegram + ERP). |
+| Framework / language | Flask (`app.py`, one file) + Jinja templates as a static-site renderer; Python 3.12 (`.python-version`) |
+| Hosting / deploy | **Cloudflare Pages only** (project `iceberg-web`, `wrangler.toml`). The build (`scripts/build_cloudflare.sh`) runs `scripts/build_static.py`, which renders every page (all three languages) to static HTML in `public/` (git-ignored), then `scripts/check_static_build.py` validates it. Every pull request gets a Cloudflare preview build — check it passes before merging. |
+| Templates | `templates/site/` (see the table above) |
+| Static files | `static/` → `/static/`: `css/site.css`, `js/site.js`, `js/forms.js`, `brand/` (tokens), `school/img/` (logos, photos, poster, OG image, `news/`), `img/team/` |
+| Lead handler (`POST /api/register`) | `functions/api/register.js` (Cloudflare Pages Function): Turnstile check → Google Sheets via Apps Script (`google-apps-script/Code.gs`) → best-effort copy to the ERP and a detailed message to the support Telegram chat (bot `sendMessage`, server side — the visitor never opens Telegram), each only when its secrets are set. The forms post to it directly (`action="/api/register"`). |
 | Programs / branches | `config/registration.json` (published as `/registration-options.json`; each branch's `erp_branch_name` must equal the ERP branch name) |
-| School facts | `config/school.json` — phone, address, hours, year, tuition, links. Empty = that part is hidden or reworded (no visible placeholders, owner decision 2026-10-25) and left out of JSON-LD |
-| Secrets live in | Cloudflare Pages → Settings → Variables and Secrets (encrypted): `TURNSTILE_SECRET_KEY`, `GOOGLE_SCRIPT_URL`, `GOOGLE_SCRIPT_SECRET`, `REGISTRATION_LEADS_API_URL`, `REGISTRATION_LEADS_API_TOKEN`, `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`; optional variable `SCHOOL_BRANCH_NAME`. Public values are `[vars]` in `wrangler.toml`. Flask hosts use env vars (`.env.example`). Never in the repo. |
+| Content | `config/school.json` (school facts; empty = that part is hidden or reworded, no visible placeholders — owner 2026-10-25), `config/news.json`, `config/faq.json` (course FAQ) |
+| Secrets live in | Cloudflare Pages → Settings → Variables and Secrets (encrypted): `TURNSTILE_SECRET_KEY`, `GOOGLE_SCRIPT_URL`, `GOOGLE_SCRIPT_SECRET`, `REGISTRATION_LEADS_API_URL`, `REGISTRATION_LEADS_API_TOKEN`, `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`; optional variable `SCHOOL_BRANCH_NAME`. Public values are `[vars]` in `wrangler.toml`; local testing uses `.dev.vars` (template `.dev.vars.example`). Never in the repo. |
 
 ## Commands
 
 ```bash
-pip install -r requirements.txt                  # Flask, gunicorn, requests
-python app.py                                    # local Flask site on http://127.0.0.1:8080
-python -m unittest discover -s tests -v          # Flask tests
+pip install -r requirements.txt                  # Flask
+python app.py                                    # local preview on http://127.0.0.1:8080
+python -m unittest discover -s tests -v          # page, form and translation tests
 npm run test:registration                        # Pages Function + Apps Script tests (Node 22)
-python scripts/build_firebase.py && python scripts/check_firebase_build.py   # static build + checks
+python scripts/build_static.py && python scripts/check_static_build.py       # static build + checks
 node --check functions/api/register.js
 python scripts/build_brand_tokens.py             # after editing static/brand/tokens.json
 ```

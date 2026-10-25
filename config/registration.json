@@ -5,7 +5,9 @@
     "telegram_username": "iceberg_qabulxona",
     "telegram_url": "https://t.me/iceberg_qabulxona",
     "instagram_username": "Iceberg_Study_Center",
-    "instagram_url": "https://www.instagram.com/Iceberg_Study_Center"
+    "instagram_url": "https://www.instagram.com/Iceberg_Study_Center",
+    "address": "Uychi, Namangan viloyati",
+    "map_url": "https://www.google.com/maps/place/Uychi,+Uzbekistan/"
   },
   "programs": [
     {"id": "ielts", "name": "IELTS", "active": true},

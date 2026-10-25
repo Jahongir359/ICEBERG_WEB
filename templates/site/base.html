@@ -78,7 +78,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT@9..144,500..700,50..100&family=Inter:wght@400;500;600;700;800{% if lang == 'ru' %}&family=Literata:opsz,wght@7..72,500..700{% endif %}&display=swap">
     <link rel="stylesheet" href="{{ url_for('static', filename='brand/tokens.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/site.css', v='20261025-5') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/site.css', v='20261026-1') }}">
     {% block head %}{% endblock %}
 </head>
 <body class="{% block body_class %}has-dock{% endblock %}">
@@ -168,7 +168,7 @@
                 <h3>{{ _('Aloqa') }}</h3>
                 <ul>
                     <li><a href="tel:{{ school.phone or registration.contact.call_center_phone }}">{{ school.phone_display or registration.contact.call_center_display }}</a></li>
-                    <li><a href="mailto:{{ content('contact_email', 'support@iceberglc.com') }}">{{ content('contact_email', 'support@iceberglc.com') }}</a></li>
+                    <li><a href="mailto:{{ school.email }}">{{ school.email }}</a></li>
                     <li><a href="{{ url_for('contact') }}">{{ _('Manzil va filiallar') }}</a></li>
                 </ul>
                 <div class="socials" style="margin-top:16px">

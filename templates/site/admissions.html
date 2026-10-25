@@ -1,5 +1,5 @@
 {% extends "site/base.html" %}
-{% from "site/_macros.html" import icon, fact, curve %}
+{% from "site/_macros.html" import icon, curve %}
 
 {% block title %}{{ _("Qabul — Iceberg School | 1–11-sinflarga ariza") }}{% endblock %}
 {% block description %}{{ _("Iceberg School'ga qabul: to'rt oddiy qadam, ariza formasi, o'qish narxi va ko'p beriladigan savollar. 1–11-sinflar uchun xususiy maktab.") }}{% endblock %}
@@ -45,58 +45,55 @@
                 <span class="kicker">{{ _("Ariza") }}</span>
                 <h2 class="h2" style="font-size:clamp(1.7rem,5vw,2.3rem);margin-top:8px">{{ _("Qabul uchun ariza") }}</h2>
             </div>
-            <form action="{{ url_for('admissions') }}" method="post" data-school-form data-thanks-url="{{ url_for('admissions_thanks') }}" novalidate>
+            <form action="/api/register" method="post" data-static-lead-form="school-enquiry" data-turnstile-sitekey="{{ turnstile_site_key }}" data-thanks-url="{{ url_for('admissions_thanks') }}" novalidate>
                 <div class="fields two">
                     <div class="field">
                         <label for="parent_name">{{ _("Ota-ona ismi va familiyasi") }}</label>
-                        <input class="control" id="parent_name" name="parent_name" type="text" autocomplete="name" minlength="2" maxlength="100" required placeholder="{{ _('Masalan: Dilnoza Karimova') }}" value="{{ form_data.get('parent_name', '') }}" aria-describedby="parent_name_error"{% if errors.get('parent_name') %} aria-invalid="true"{% endif %}>
-                        <p class="err" id="parent_name_error" data-error-for="parent_name">{{ _(errors.get('parent_name', '')) }}</p>
+                        <input class="control" id="parent_name" name="parent_name" type="text" autocomplete="name" minlength="2" maxlength="100" required placeholder="{{ _('Masalan: Dilnoza Karimova') }}" aria-describedby="parent_name_error">
+                        <p class="err" id="parent_name_error" data-error-for="parent_name"></p>
                     </div>
                     <div class="field">
                         <label for="parent_phone">{{ _("Telefon raqami") }}</label>
                         <div class="phone-input">
                             <span class="prefix" aria-hidden="true">+998</span>
-                            <input class="control" id="parent_phone" name="parent_phone" type="tel" inputmode="tel" autocomplete="tel-national" maxlength="16" required placeholder="90 123 45 67" value="{{ form_data.get('parent_phone', '') }}" aria-describedby="parent_phone_error"{% if errors.get('parent_phone') %} aria-invalid="true"{% endif %}>
+                            <input class="control" id="parent_phone" name="parent_phone" type="tel" inputmode="tel" autocomplete="tel-national" maxlength="16" required placeholder="90 123 45 67" aria-describedby="parent_phone_error">
                         </div>
-                        <p class="err" id="parent_phone_error" data-error-for="parent_phone">{{ _(errors.get('parent_phone', '')) }}</p>
+                        <p class="err" id="parent_phone_error" data-error-for="parent_phone"></p>
                     </div>
                     <div class="field">
                         <label for="child_name">{{ _("Farzandingiz ismi") }} <span class="hint">{{ _("(ixtiyoriy)") }}</span></label>
-                        <input class="control" id="child_name" name="child_name" type="text" maxlength="100" value="{{ form_data.get('child_name', '') }}">
+                        <input class="control" id="child_name" name="child_name" type="text" maxlength="100">
                     </div>
                     <div class="field">
                         <label for="child_birth_date">{{ _("Tug'ilgan sanasi") }} <span class="hint">{{ _("(ixtiyoriy)") }}</span></label>
-                        <input class="control" id="child_birth_date" name="child_birth_date" type="date" value="{{ form_data.get('child_birth_date', '') }}" aria-describedby="child_birth_date_error"{% if errors.get('child_birth_date') %} aria-invalid="true"{% endif %}>
-                        <p class="err" id="child_birth_date_error" data-error-for="child_birth_date">{{ _(errors.get('child_birth_date', '')) }}</p>
+                        <input class="control" id="child_birth_date" name="child_birth_date" type="date" aria-describedby="child_birth_date_error">
+                        <p class="err" id="child_birth_date_error" data-error-for="child_birth_date"></p>
                     </div>
                     <div class="field">
                         <label for="grade">{{ _("Qaysi sinfga") }}</label>
-                        <select class="control" id="grade" name="grade" required aria-describedby="grade_error"{% if errors.get('grade') %} aria-invalid="true"{% endif %}>
+                        <select class="control" id="grade" name="grade" required aria-describedby="grade_error">
                             <option value="">{{ _("Sinfni tanlang") }}</option>
-                            {% for grade in grades %}<option value="{{ grade }}"{% if form_data.get('grade') == grade %} selected{% endif %}>{{ _('{grade}-sinf', grade=grade) }}</option>{% endfor %}
+                            {% for grade in grades %}<option value="{{ grade }}">{{ _('{grade}-sinf', grade=grade) }}</option>{% endfor %}
                         </select>
-                        <p class="err" id="grade_error" data-error-for="grade">{{ _(errors.get('grade', '')) }}</p>
+                        <p class="err" id="grade_error" data-error-for="grade"></p>
                     </div>
                     <div class="field">
                         <label for="language">{{ _("Muloqot tili") }}</label>
                         <select class="control" id="language" name="language">
-                            {% for code, name in languages.items() %}<option value="{{ code }}"{% if form_data.get('language', lang) == code %} selected{% endif %}>{{ _(name) }}</option>{% endfor %}
+                            {% for code, name in school_languages.items() %}<option value="{{ code }}"{% if code == lang %} selected{% endif %}>{{ _(name) }}</option>{% endfor %}
                         </select>
                     </div>
                 </div>
                 <div class="field" style="margin-top:16px">
                     <label for="message">{{ _("Biz bilishimiz kerak bo'lgan narsa bormi?") }} <span class="hint">{{ _("(ixtiyoriy)") }}</span></label>
-                    <textarea class="control" id="message" name="message" rows="4" maxlength="1000">{{ form_data.get('message', '') }}</textarea>
+                    <textarea class="control" id="message" name="message" rows="4" maxlength="1000"></textarea>
                 </div>
                 <div class="field" style="margin-top:16px">
-                    <label class="consent"><input type="checkbox" name="consent" value="1" required{% if form_data.get('consent') %} checked{% endif %} aria-describedby="consent_error"> {{ _("Iceberg School ushbu ariza bo'yicha men bilan bog'lanishiga roziman.") }}</label>
-                    <p class="err" id="consent_error" data-error-for="consent">{{ _(errors.get('consent', '')) }}</p>
+                    <label class="consent"><input type="checkbox" name="consent" value="1" required aria-describedby="consent_error"> {{ _("Iceberg School ushbu ariza bo'yicha men bilan bog'lanishiga roziman.") }}</label>
+                    <p class="err" id="consent_error" data-error-for="consent"></p>
                 </div>
                 <div class="hp" aria-hidden="true"><label>{{ _("Veb-sayt") }} <input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
                 <input type="hidden" name="form_type" value="school-enquiry">
-                <input type="hidden" name="utm_source" value="{{ request.args.get('utm_source', '') }}">
-                <input type="hidden" name="utm_medium" value="{{ request.args.get('utm_medium', '') }}">
-                <input type="hidden" name="utm_campaign" value="{{ request.args.get('utm_campaign', '') }}">
                 <div style="display:grid;gap:12px;margin-top:20px">
                     <button class="btn btn-primary btn-block" type="submit">{{ _('Arizani yuborish') }} {{ icon('arrow') }}</button>
                     <p class="form-status" data-form-status role="status" aria-live="polite"></p>
@@ -126,8 +123,7 @@
             <div class="panel-tint rv d1">
                 <h2 class="h3">{{ _("Qabul bo'limi bilan gaplashing") }}</h2>
                 <div class="contact-list">
-                    {% if school.phone %}<a href="tel:{{ school.phone }}"><span class="icon-tile">{{ icon('phone') }}</span><span>{{ school.phone_display or school.phone }}<small>{{ _("Qo'ng'iroq qilish") }}</small></span></a>
-                    {% else %}<div><span class="icon-tile">{{ icon('phone') }}</span><span>{{ fact('', 'TELEFON') }}<small>{{ _("Qo'ng'iroq qilish") }}</small></span></div>{% endif %}
+                    {% if school.phone %}<a href="tel:{{ school.phone }}"><span class="icon-tile">{{ icon('phone') }}</span><span>{{ school.phone_display or school.phone }}<small>{{ _("Qo'ng'iroq qilish") }}</small></span></a>{% endif %}
                     {% if school.hours %}<div><span class="icon-tile">{{ icon('clock') }}</span><span>{{ _(school.hours) }}<small>{{ _("Ish vaqti") }}</small></span></div>{% endif %}
                     {% if school.telegram_url %}<a href="{{ school.telegram_url }}" rel="noopener"><span class="icon-tile">{{ icon('telegram') }}</span><span>{{ _("Telegram kanalimiz") }}<small>{{ _("Yangiliklar va e'lonlar") }}</small></span></a>{% endif %}
                 </div>
@@ -176,5 +172,5 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="{{ url_for('static', filename='js/firebase-forms.js', v='20261025-1') }}" defer></script>
+<script src="{{ url_for('static', filename='js/forms.js', v='20261026-1') }}" defer></script>
 {% endblock %}

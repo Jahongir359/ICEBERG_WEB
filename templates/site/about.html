@@ -1,5 +1,5 @@
 {% extends "site/base.html" %}
-{% from "site/_macros.html" import icon, fact, curve %}
+{% from "site/_macros.html" import icon, curve %}
 {% block title %}{{ _("Maktab haqida — Iceberg School va Iceberg oilasi") }}{% endblock %}
 {% block description %}{{ _("Iceberg School haqida: gerbimiz ma'nosi, qadriyatlarimiz va Iceberg oilasi — xususiy maktab hamda ICEBERG o'quv markazi (Iceberg Courses).") }}{% endblock %}
 {% block content %}
@@ -127,7 +127,7 @@
                 ('about_team_3', 'img/team/islomjon.jpg', 'Islomjon Ergashboyev', 'Hammuassis · asosiy tizim boshqaruvchisi')
             ] %}
             <article class="card person rv{% if loop.index0 %} d{{ loop.index0 }}{% endif %}">
-                <img src="{{ asset_url(person[0], person[1]) }}" alt="{{ person[2] }}" width="104" height="104" loading="lazy">
+                <img src="{{ url_for('static', filename=person[1]) }}" alt="{{ person[2] }}" width="104" height="104" loading="lazy">
                 <h3 class="h3">{{ person[2] }}</h3>
                 <p class="role">{{ _(person[3]) }}</p>
             </article>
