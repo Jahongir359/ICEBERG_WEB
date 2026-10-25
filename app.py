@@ -92,7 +92,7 @@ EDITOR_BACKUP_DIR = os.path.join(app.root_path, 'backups', 'site_editor')
 EDITOR_MAX_BACKUPS_PER_FILE = max(int(os.environ.get('EDITOR_MAX_BACKUPS_PER_FILE', '20')), 1)
 
 CONTENT_FIELDS = [
-    {'key': 'contact_email', 'label': 'Aloqa email', 'group': 'Contact', 'default': 'iceberg.edu.center@gmail.com', 'field_type': 'text'},
+    {'key': 'contact_email', 'label': 'Aloqa email', 'group': 'Contact', 'default': 'support@iceberglc.com', 'field_type': 'text'},
     {'key': 'contact_address', 'label': 'Iceberg Courses manzili', 'group': 'Contact', 'default': 'Uychi, Namangan viloyati', 'field_type': 'text'},
     {'key': 'contact_address_url', 'label': 'Manzil xarita havolasi', 'group': 'Contact', 'default': 'https://www.google.com/maps/place/Uychi,+Uzbekistan/', 'field_type': 'text'},
 ]

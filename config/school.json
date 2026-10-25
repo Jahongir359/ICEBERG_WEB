@@ -1,5 +1,5 @@
 {
-  "$comment": "Iceberg School facts shown on the public site. Leave a value empty until it is confirmed: the page then shows a visible [placeholder] and leaves it out of search data. Never guess. Stage grades follow the standard Uzbek school structure (1–4, 5–9, 10–11); change them if the school differs.",
+  "$comment": "Iceberg School facts shown on the public site. Leave a value empty until it is confirmed: the page then hides or rewords that part (owner decision 2026-10-25: no visible [placeholders]) and leaves it out of search data. Never guess. Stage grades follow the standard Uzbek school structure (1–4, 5–9, 10–11); change them if the school differs.",
   "name": "Iceberg School",
   "leader": {
     "name": "",
@@ -37,7 +37,7 @@
   "response_time": "",
   "teaching_languages": "",
   "transport_and_meals": "",
-  "email": "",
+  "email": "support@iceberglc.com",
   "partners_email": "international@iceberglc.com",
   "telegram_url": "",
   "instagram_url": "",

@@ -18,7 +18,8 @@ The whole site uses `<html data-brand="school">`.
 | `/about`, `/programs` | `about.html`, `programs.html` |
 | `/admissions`, `/admissions/thanks` | `admissions.html` (School enquiry form), `thanks.html` |
 | `/courses`, `/register` | `courses.html` (ICEBERG o'quv markazi), `register.html` (course registration) |
-| `/news`, `/contact` | `news.html`, `contact.html` |
+| `/news`, `/contact` | `news.html` (posts from `config/news.json`), `contact.html` |
+| `/hamkorlik`, `/partners` | `partnerships.html` — one template, Uzbek and English (`/partners` sits outside `/en/`, which still redirects) |
 | `/ilova` | `coming_soon.html` (temporary target of the Portal/app links; noindex, not in the sitemap) |
 | Old URLs still in search results (`/our_programs`, `/questions`, `/programs/sat`, `/faq`, `/contacts`, `/news/…`, `/en/…`) | Redirect to today's page — one list, `LEGACY_REDIRECTS` in `app.py`, feeds the Flask routes and the generated `_redirects`. `/en/…` uses 302 until real English pages exist under `/en/` (then remove those rules) |
 
@@ -50,7 +51,7 @@ checks (section 9) and deploy. Tick the checklist there and add a dated line to 
 | Static files | `static/` → `/static/`: `css/site.css`, `js/site.js`, `js/firebase-forms.js`, `brand/` (tokens), `school/img/` (logos, poster, OG image), `img/team/` |
 | Lead handler (`POST /api/register`) | `functions/api/register.js` (Cloudflare Pages Function): Turnstile check → Google Sheets via Apps Script (`google-apps-script/Code.gs`) → best-effort copy to the ERP and a detailed message to the support Telegram chat (bot `sendMessage`, server side — the visitor never opens Telegram), each only when its secrets are set. The Flask `/register` route in `app.py` is the server-rendered equivalent (SQLite + Telegram + ERP). |
 | Programs / branches | `config/registration.json` (published as `/registration-options.json`; each branch's `erp_branch_name` must equal the ERP branch name) |
-| School facts | `config/school.json` — phone, address, hours, year, tuition, links. Empty = visible `[placeholder]`, left out of JSON-LD |
+| School facts | `config/school.json` — phone, address, hours, year, tuition, links. Empty = that part is hidden or reworded (no visible placeholders, owner decision 2026-10-25) and left out of JSON-LD |
 | Secrets live in | Cloudflare Pages → Settings → Variables and Secrets (encrypted): `TURNSTILE_SECRET_KEY`, `GOOGLE_SCRIPT_URL`, `GOOGLE_SCRIPT_SECRET`, `REGISTRATION_LEADS_API_URL`, `REGISTRATION_LEADS_API_TOKEN`, `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`; optional variable `SCHOOL_BRANCH_NAME`. Public values are `[vars]` in `wrangler.toml`. Flask hosts use env vars (`.env.example`). Never in the repo. |
 
 ## Commands
@@ -92,8 +93,8 @@ All of them must pass before a commit. There is no CI workflow in this repo yet.
 
 - Uzbek first; Russian and English as real pages with `hreflang` (plan 4.0 step 4). No new string
   ships without its Uzbek text.
-- **Never invent facts** — grades, prices, numbers, results, addresses, phones. Use a visible
-  `[PLACEHOLDER]` until the owner supplies them.
+- **Never invent facts** — grades, prices, numbers, results, addresses, phones. Until the owner
+  supplies one, hide or reword that part of the page; don't show `[PLACEHOLDER]` text (owner, 2026-10-25).
 - Every page: unique `<title>` and description, one `<h1>`, canonical on `https://iceberglc.com/…`,
   OG/Twitter tags, the right JSON-LD (School pages: `School`, plan section 5). Public URLs go in
   `sitemap.xml`; don't loosen `robots.txt`.
