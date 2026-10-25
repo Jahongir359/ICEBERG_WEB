@@ -179,6 +179,10 @@ class SitePageTests(unittest.TestCase):
                 self.assertIn('hreflang="en" href="https://iceberglc.com/partners"', html)
                 self.assertIn(f'href="tel:{app_module.SCHOOL_CONFIG["phone"]}"', html)
         partners = self.client.get('/partners').get_data(as_text=True)
+        self.assertNotIn('class="ph"', partners)
+        self.assertNotIn('class="ph"', self.client.get('/hamkorlik').get_data(as_text=True))
+        self.assertIn('>1500+</strong>', partners)
+        self.assertIn('>65+</strong>', partners)
         self.assertIn('href="mailto:international@iceberglc.com"', partners)
         for item in ('Korean', 'Chinese', 'Physics', 'Uzbek language and literature'):
             self.assertIn(f'<li>{item}</li>', partners)

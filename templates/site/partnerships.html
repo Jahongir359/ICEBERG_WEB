@@ -36,13 +36,11 @@
             <span class="kicker">{{ tr('Biz haqimizda', 'At a glance') }}</span>
             <h2 class="h2">{{ tr('Iceberg oilasi raqamlarda', 'The Iceberg family in numbers') }}</h2>
         </div>
-        <div class="grid grid-3 stats">
+        <div class="grid grid-4 stats">
             <article class="card stat rv"><strong class="stat-num">{{ school.grades }}</strong><span>{{ tr('Sinflar · xususiy maktab', 'Grades · private school') }}</span></article>
             <article class="card stat rv d1"><strong class="stat-num">{{ school.founded }}</strong><span>{{ tr('Iceberg tashkil topgan yil', 'Year Iceberg began') }}</span></article>
-            <article class="card stat rv d2"><strong class="stat-num">{{ fact(school.stats.school_students, tr("O'QUVCHILAR", 'STUDENTS')) }}</strong><span>{{ tr("Maktab o'quvchilari", 'School students') }}</span></article>
-            <article class="card stat rv d3"><strong class="stat-num">{{ fact(school.stats.school_teachers, tr("O'QITUVCHILAR", 'TEACHERS')) }}</strong><span>{{ tr("Maktab o'qituvchilari", 'School teachers') }}</span></article>
-            <article class="card stat rv"><strong class="stat-num">{{ fact(school.stats.courses_students, tr("O'QUVCHILAR", 'STUDENTS')) }}</strong><span>{{ tr("Iceberg Courses o'quvchilari", 'Iceberg Courses students') }}</span></article>
-            <article class="card stat rv d1"><strong class="stat-num">{{ fact(school.stats.courses_teachers, tr("O'QITUVCHILAR", 'TEACHERS')) }}</strong><span>{{ tr("Iceberg Courses o'qituvchilari", 'Iceberg Courses teachers') }}</span></article>
+            <article class="card stat rv d2"><strong class="stat-num">{{ school.stats.students }}</strong><span>{{ tr("O'quvchilar · maktab va kurslar", 'Students · school and courses') }}</span></article>
+            <article class="card stat rv d3"><strong class="stat-num">{{ school.stats.teachers }}</strong><span>{{ tr("O'qituvchilar · maktab va kurslar", 'Teachers · school and courses') }}</span></article>
         </div>
     </div>
 </section>

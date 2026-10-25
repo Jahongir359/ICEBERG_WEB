@@ -46,11 +46,9 @@
   "map_apple_url": "https://maps.apple/p/uxFeLK7xZcNYsK",
   "max_class_size": "",
   "stats": {
-    "$comment": "Owner gave 1500+ students and 65+ teachers for Iceberg overall (2026-10-25) and asked to split them; fill each when confirmed.",
-    "school_students": "",
-    "school_teachers": "",
-    "courses_students": "",
-    "courses_teachers": ""
+    "$comment": "Owner figures for Iceberg overall, School and Courses together (2026-10-25).",
+    "students": "1500+",
+    "teachers": "65+"
   },
   "subjects": [
     {
