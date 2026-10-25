@@ -1,5 +1,5 @@
 {
-  "$comment": "News and events shown on /news and the home page of the static site (the live site has no database, so admin-panel posts do not reach it). Newest first by date. Only confirmed facts. image is a path under static/; body is an optional list of paragraphs. image_poster: true shows the whole image uncropped (posters, invitations with text) and links it full size.",
+  "$comment": "News and events shown on /news and the home page, in all three languages (add each new text's Russian and English to translations/*.json). Newest first by date. Only confirmed facts. image is a path under static/; body is an optional list of paragraphs. image_poster: true shows the whole image uncropped (posters, invitations with text) and links it full size.",
   "posts": [
     {
       "id": "ochiq-eshiklar-kuni-2026-10-25",

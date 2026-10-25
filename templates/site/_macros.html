@@ -1,10 +1,5 @@
 {# Shared macros for the Iceberg School site. #}
 
-{# A fact the owner has not confirmed yet: shows the value when set, else a visible placeholder. #}
-{% macro fact(value, placeholder) -%}
-{%- if value %}{{ value }}{% else %}<span class="ph">[{{ placeholder }}]</span>{% endif -%}
-{%- endmacro %}
-
 {% macro icon(name) -%}
 {%- if name == 'mountain' -%}
 <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M3 26 12.5 9l4 6 3-4.5L29 26Z"/><path d="m12.5 9 2 8.5 2-2.5m3-4.5L18 20l-5.5-3"/><path d="M8 26l4.5-9M22 26l-4-6"/></svg>

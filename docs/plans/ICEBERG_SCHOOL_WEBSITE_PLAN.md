@@ -83,9 +83,9 @@ These are observations from outside. **Verify each against the real code before 
 ### 2.1 Confirmed from the code (`Jahongir359/ICEBERG_WEB`, 2026-10-23)
 
 - **Framework:** Flask (`app.py`) + Jinja templates. The live site is **static HTML** rendered from those
-  templates by `scripts/build_firebase.py` and served by **Cloudflare Pages** (`wrangler.toml`, build
-  `scripts/build_cloudflare.sh`). Flask itself (SQLite admin, Telegram) runs only on an alternative host,
-  if at all — Railway/Render/DigitalOcean/Firebase recipes all exist; the owner must confirm.
+  templates by `scripts/build_static.py` and served by **Cloudflare Pages** (`wrangler.toml`, build
+  `scripts/build_cloudflare.sh`). Cloudflare is the only host; the old Flask admin and the other
+  hosting recipes were removed on 2026-10-26 (owner decision).
 - **`/api/register` is a Cloudflare Pages Function** (`functions/api/register.js`): Turnstile → **Google
   Sheets via Apps Script** (`google-apps-script/Code.gs`). It did **not** call the ERP at all — the
   earlier guess was wrong. Only the Flask `/register` route posts to the ERP (`REGISTRATION_LEADS_API_URL`).

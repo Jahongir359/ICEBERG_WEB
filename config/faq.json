@@ -1,0 +1,25 @@
+{
+  "$comment": "Questions and answers on /courses (Iceberg Courses), Uzbek; their Russian and English are in translations/*.json. Legacy Learning Center text: the owner should confirm it.",
+  "faqs": [
+    {
+      "question": "Qaysi fanlardan repetitorlik xizmatlarini taklif qilasiz?",
+      "answer": "Biz keng ko'lamli fanlardan, jumladan, Matematika, Fan, Ingliz tili va standartlashtirilgan testlarga tayyorgarlik (SAT, ACT) bo'yicha repetitorlik xizmatlarini taklif etamiz."
+    },
+    {
+      "question": "Sizning ish vaqtingiz qanday?",
+      "answer": "Markazimiz ish kunlari soat 9:00 dan 20:00 gacha, dam olish kunlari esa 10:00 dan 18:00 gacha ishlaydi."
+    },
+    {
+      "question": "O'quvchilarni repetitorlar bilan qanday bog'laysiz?",
+      "answer": "Biz o'quvchilarni ularning akademik ehtiyojlari, o'rganish uslubi va shaxsiyatiga qarab repetitorlar bilan bog'laymiz, bu esa eng yaxshi moslikni ta'minlaydi."
+    },
+    {
+      "question": "Darslar qayerda o'tkaziladi?",
+      "answer": "Darslar bizning zamonaviy o'quv markazimizda yoki o'quvchining xohishiga ko'ra onlayn tarzda o'tkazilishi mumkin."
+    },
+    {
+      "question": "Narxlar qanday?",
+      "answer": "Narxlar dastur turiga va darslar soniga qarab o'zgaradi. Batafsil ma'lumot olish va bepul maslahat uchun biz bilan bog'laning."
+    }
+  ]
+}

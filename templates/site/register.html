@@ -16,43 +16,41 @@
 <section class="sec-tight">
     <div class="wrap split">
         <div class="form-card rv" aria-label="{{ _("Ro'yxatdan o'tish formasi") }}">
-            <form action="{{ url_for('register') }}" method="post" class="registration-form" data-registration-form data-telegram-url="{{ registration.contact.telegram_url }}" {% if success %}hidden{% endif %}>
+            <form action="/api/register" method="post" class="registration-form" data-static-lead-form="register" data-turnstile-sitekey="{{ turnstile_site_key }}" novalidate>
                 <div class="fields">
                     <div class="field">
                         <label for="student_name">{{ _("Ism va familiya") }}</label>
-                        <input class="control" type="text" id="student_name" name="student_name" value="{{ form_data.get('student_name', '') }}" autocomplete="name" minlength="2" maxlength="100" required aria-describedby="student_name_error"{% if errors.get('student_name') %} aria-invalid="true"{% endif %}>
-                        <p class="err" id="student_name_error" data-error-for="student_name">{{ _(errors.get('student_name', '')) }}</p>
+                        <input class="control" type="text" id="student_name" name="student_name" autocomplete="name" minlength="2" maxlength="100" required aria-describedby="student_name_error">
+                        <p class="err" id="student_name_error" data-error-for="student_name"></p>
                     </div>
                     <div class="field">
                         <label for="student_phone">{{ _("Telefon raqami") }}</label>
                         <div class="phone-input">
                             <span class="prefix" aria-hidden="true">+998</span>
-                            <input class="control" type="tel" id="student_phone" name="student_phone" value="{{ form_data.get('student_phone', '') }}" placeholder="90 123 45 67" inputmode="tel" autocomplete="tel-national" maxlength="16" required aria-describedby="student_phone_error"{% if errors.get('student_phone') %} aria-invalid="true"{% endif %}>
+                            <input class="control" type="tel" id="student_phone" name="student_phone" placeholder="90 123 45 67" inputmode="tel" autocomplete="tel-national" maxlength="16" required aria-describedby="student_phone_error">
                         </div>
-                        <p class="err" id="student_phone_error" data-error-for="student_phone">{{ _(errors.get('student_phone', '')) }}</p>
+                        <p class="err" id="student_phone_error" data-error-for="student_phone"></p>
                     </div>
                     <div class="fields two">
                         <div class="field">
                             <label for="course">{{ _("Dastur") }}</label>
-                            <select class="control" id="course" name="course" required aria-describedby="course_error"{% if errors.get('course') %} aria-invalid="true"{% endif %}>
+                            <select class="control" id="course" name="course" required aria-describedby="course_error">
                                 <option value="">{{ _("Dastur tanlang") }}</option>
-                                {% for program in registration.programs %}<option value="{{ program.id }}"{% if form_data.get('course') == program.id %} selected{% endif %}>{{ _(program.name) }}</option>{% endfor %}
+                                {% for program in registration.programs %}<option value="{{ program.id }}">{{ _(program.name) }}</option>{% endfor %}
                             </select>
-                            <p class="err" id="course_error" data-error-for="course">{{ _(errors.get('course', '')) }}</p>
+                            <p class="err" id="course_error" data-error-for="course"></p>
                         </div>
                         <div class="field">
                             <label for="preferred_branch">{{ _("Filial") }}</label>
-                            <select class="control" id="preferred_branch" name="preferred_branch" required aria-describedby="preferred_branch_error"{% if errors.get('preferred_branch') %} aria-invalid="true"{% endif %}>
+                            <select class="control" id="preferred_branch" name="preferred_branch" required aria-describedby="preferred_branch_error">
                                 <option value="">{{ _("Filial tanlang") }}</option>
-                                {% for branch in registration.branches %}<option value="{{ branch.id }}"{% if form_data.get('preferred_branch') == branch.id %} selected{% endif %}>{{ _(branch.name) }}</option>{% endfor %}
+                                {% for branch in registration.branches %}<option value="{{ branch.id }}">{{ _(branch.name) }}</option>{% endfor %}
                             </select>
-                            <p class="err" id="preferred_branch_error" data-error-for="preferred_branch">{{ _(errors.get('preferred_branch', '')) }}</p>
+                            <p class="err" id="preferred_branch_error" data-error-for="preferred_branch"></p>
                         </div>
                     </div>
                 </div>
-                <input type="hidden" name="utm_source" value="{{ request.args.get('utm_source', '') }}">
-                <input type="hidden" name="utm_medium" value="{{ request.args.get('utm_medium', '') }}">
-                <input type="hidden" name="utm_campaign" value="{{ request.args.get('utm_campaign', '') }}">
+                <div class="hp" aria-hidden="true"><label>{{ _("Veb-sayt") }} <input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
                 <div style="display:grid;gap:12px;margin-top:20px">
                     <button type="submit" class="btn btn-primary btn-block">{{ _("Ro'yxatdan o'tish") }} {{ icon('arrow') }}</button>
                     <p class="form-status" data-form-status role="status" aria-live="polite"></p>
@@ -60,7 +58,7 @@
                 </div>
             </form>
 
-            <div class="success" data-registration-success {% if not success %}hidden{% endif %} tabindex="-1">
+            <div class="success" data-registration-success hidden tabindex="-1">
                 <span class="success-mark">{{ icon('check') }}</span>
                 <h2 class="h2" style="font-size:1.8rem">{{ _("Arizangiz qabul qilindi!") }}</h2>
                 <p class="lead">{{ _("Rahmat! ICEBERG jamoasi tez orada siz bilan bog'lanadi.") }}</p>
@@ -91,5 +89,5 @@
 {% block dock %}{% endblock %}
 {% block body_class %}{% endblock %}
 {% block scripts %}
-<script src="{{ url_for('static', filename='js/firebase-forms.js', v='20261025-1') }}" defer></script>
+<script src="{{ url_for('static', filename='js/forms.js', v='20261026-1') }}" defer></script>
 {% endblock %}

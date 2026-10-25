@@ -1,7 +1,7 @@
 """Generate static/brand/tokens.css from static/brand/tokens.json.
 
 tokens.json is a copy of College-ERP/docs/brand/iceberg-school/tokens.json (the
-source of truth). Run this after copying a new version; check_firebase_build.py
+source of truth). Run this after copying a new version; check_static_build.py
 fails when the CSS is out of date.
 """
 import json

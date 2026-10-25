@@ -1,49 +1,26 @@
-import importlib
 import json
-import os
 import re
-import sqlite3
-import tempfile
 import unittest
-from unittest.mock import patch
+
+import app as app_module
 
 
-TEST_DATABASE = tempfile.NamedTemporaryFile(suffix='.db', delete=False)
-TEST_DATABASE.close()
-os.environ.setdefault('DATABASE_PATH', TEST_DATABASE.name)
-app_module = importlib.import_module('app')
-
-
-def setUpModule():
-    # Other test modules may delete the database they created, so use a fresh one.
-    app_module.DATABASE_PATH = TEST_DATABASE.name
-    app_module.init_db()
-
-
-def tearDownModule():
-    os.unlink(TEST_DATABASE.name)
+def read(path):
+    with open(path, encoding='utf-8') as file:
+        return file.read()
 
 PUBLIC_PAGES = ['/', '/about', '/programs', '/admissions', '/courses', '/news', '/contact', '/register']
 
-
-def valid_enquiry(**overrides):
-    data = {
-        'parent_name': 'Dilnoza Karimova',
-        'parent_phone': '90 123 45 67',
-        'child_name': 'Aziz',
-        'child_birth_date': '2019-04-02',
-        'grade': '1',
-        'language': 'uz',
-        'message': 'Salom',
-        'consent': '1',
-    }
-    data.update(overrides)
-    return data
 
 
 class SitePageTests(unittest.TestCase):
     def setUp(self):
         self.client = app_module.app.test_client()
+
+    def static_status(self, path):
+        response = self.client.get(path)
+        response.close()
+        return response.status_code
 
     def test_public_pages_use_the_school_brand(self):
         for path in PUBLIC_PAGES:
@@ -95,7 +72,7 @@ class SitePageTests(unittest.TestCase):
         self.assertIn('<option value="/ru/" lang="ru">RU</option>', html)
         self.assertIn('<option value="/en/" lang="en">EN</option>', html)
         self.assertNotIn('translate.google.com', html)
-        self.assertNotIn('translate.google.com', open('static/js/site.js', encoding='utf-8').read())
+        self.assertNotIn('translate.google.com', read('static/js/site.js'))
 
     def test_light_page_heroes_use_dark_buttons(self):
         # btn-light and btn-ghost are white; on the cream page hero they would be unreadable.
@@ -133,7 +110,7 @@ class SitePageTests(unittest.TestCase):
         html = self.client.get('/').get_data(as_text=True)
         for href in ('/static/favicon-48x48.png', '/static/android-chrome-192x192.png'):
             self.assertIn(f'href="{href}"', html)
-            self.assertEqual(self.client.get(href).status_code, 200)
+            self.assertEqual(self.static_status(href), 200)
         blocks = [json.loads(block) for block in re.findall(r'<script type="application/ld\+json">(.*?)</script>', html, re.S)]
         website = [block for block in blocks if block['@type'] == 'WebSite']
         self.assertEqual(website[0]['name'], 'Iceberg School')
@@ -142,17 +119,14 @@ class SitePageTests(unittest.TestCase):
         self.assertNotIn('"WebSite"', about)
 
     def test_news_from_config_reaches_the_static_site(self):
-        post = json.load(open('config/news.json', encoding='utf-8'))['posts'][0]
+        post = json.loads(read('config/news.json'))['posts'][0]
         news = self.client.get('/news').get_data(as_text=True)
         self.assertIn('news-card lift rv featured', news)
         self.assertIn(post['title'], news)
         self.assertIn(f'<a class="media poster" href="/static/{post["image"]}"', news)
         self.assertIn('Kattalashtirish', news)
-        self.assertEqual(self.client.get(f'/static/{post["image"]}').status_code, 200)
+        self.assertEqual(self.static_status(f'/static/{post["image"]}'), 200)
         self.assertIn(post['excerpt'], self.client.get('/').get_data(as_text=True))
-        with patch.object(app_module, 'STATIC_BUILD_MODE', True):
-            self.assertIn(post['title'], self.client.get('/news').get_data(as_text=True))
-        self.assertTrue(all(isinstance(item['id'], int) for item in app_module.fetch_news_posts(include_unpublished=True)))
 
     def test_school_location_from_the_owner_pin(self):
         school = app_module.SCHOOL_CONFIG
@@ -235,7 +209,7 @@ class SitePageTests(unittest.TestCase):
 
     def test_every_page_in_russian_and_english(self):
         app_module.MISSING_TRANSLATIONS.clear()
-        for endpoint, (uz_path, other_path, _methods) in app_module.LOCALIZED_ROUTES.items():
+        for endpoint, (uz_path, other_path) in app_module.LOCALIZED_ROUTES.items():
             for lang in ('ru', 'en'):
                 path = f'/{lang}{other_path}' if other_path != '/' else f'/{lang}/'
                 with self.subTest(path=path):
@@ -306,11 +280,11 @@ class SitePageTests(unittest.TestCase):
                 landing = self.client.get(target.split('#')[0])
                 self.assertEqual(landing.status_code, 200)
 
-    def test_legacy_redirects_never_cover_private_admin_paths(self):
-        private = ('/admin', '/portal', '/students', '/contacts_list')
-        for source, _target, _code in app_module.LEGACY_REDIRECTS:
-            with self.subTest(source=source):
-                self.assertFalse(source.startswith(private))
+    def test_old_admin_panel_is_gone(self):
+        for path in ('/admin', '/admin/login', '/portal', '/students', '/contacts_list', '/admin/news'):
+            with self.subTest(path=path):
+                self.assertEqual(self.client.get(path).status_code, 404)
+        self.assertEqual(self.client.post('/register').status_code, 405)
 
     def test_former_learning_center_urls_redirect_permanently(self):
         for old, new in (('/our_programs', '/courses'), ('/questions', '/courses#savollar')):
@@ -323,52 +297,6 @@ class SitePageTests(unittest.TestCase):
         html = self.client.get('/contact').get_data(as_text=True)
         self.assertNotIn('admin_password', html)
         self.assertEqual(self.client.post('/contact').status_code, 405)
-
-
-class AdmissionsFormTests(unittest.TestCase):
-    def setUp(self):
-        self.client = app_module.app.test_client()
-
-    @patch.object(app_module, 'send_telegram_notification')
-    @patch.object(app_module, 'send_registration_lead_to_management', return_value=True)
-    def test_valid_enquiry_is_stored_and_forwarded_as_school_lead(self, forward, telegram):
-        response = self.client.post('/admissions', data=valid_enquiry(grade='7'))
-        self.assertEqual(response.status_code, 302)
-        self.assertTrue(response.location.endswith('/admissions/thanks'))
-        payload = forward.call_args.args[0]
-        self.assertEqual(payload['source'], 'school-website')
-        self.assertEqual(payload['program'], 'Grade 7')
-        self.assertEqual(payload['branch'], app_module.SCHOOL_BRANCH_NAME)
-        self.assertEqual(payload['phone'], '+998901234567')
-        self.assertIn('Farzand: Aziz', payload['message'])
-        telegram.assert_called_once()
-        with sqlite3.connect(TEST_DATABASE.name) as connection:
-            row = connection.execute(
-                'SELECT student_name, course, preferred_branch, forwarded_to_management FROM students ORDER BY id DESC LIMIT 1'
-            ).fetchone()
-        self.assertEqual(row, ('Dilnoza Karimova', 'school-grade-7', 'school', 1))
-
-    @patch.object(app_module, 'send_telegram_notification')
-    @patch.object(app_module, 'send_registration_lead_to_management', return_value=True)
-    def test_invalid_enquiries_are_rejected(self, forward, _telegram):
-        for field, override in (
-            ('parent_name', {'parent_name': 'A'}),
-            ('parent_phone', {'parent_phone': '123'}),
-            ('grade', {'grade': '12'}),
-            ('child_birth_date', {'child_birth_date': '2999-01-01'}),
-            ('consent', {'consent': ''}),
-        ):
-            with self.subTest(field=field):
-                response = self.client.post('/admissions', data=valid_enquiry(**override))
-                self.assertEqual(response.status_code, 422)
-                self.assertIn(f'id="{field}_error"', response.get_data(as_text=True))
-        forward.assert_not_called()
-
-    @patch.object(app_module, 'send_registration_lead_to_management')
-    def test_honeypot_stores_nothing(self, forward):
-        response = self.client.post('/admissions', data=valid_enquiry(website='spam'))
-        self.assertEqual(response.status_code, 302)
-        forward.assert_not_called()
 
 
 if __name__ == '__main__':

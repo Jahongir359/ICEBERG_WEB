@@ -87,6 +87,10 @@
         }
     }
 
+    function utm(name) {
+        return (new URLSearchParams(window.location.search).get(name) || "").slice(0, 150);
+    }
+
     function statusElement(form) {
         var status = form.querySelector("[data-form-status]");
         if (!status) {
@@ -176,9 +180,9 @@
             student_phone: normalizeUzPhone(fieldValue(form, "student_phone")),
             program: fieldValue(form, "course"),
             branch: fieldValue(form, "preferred_branch"),
-            utm_source: fieldValue(form, "utm_source"),
-            utm_medium: fieldValue(form, "utm_medium"),
-            utm_campaign: fieldValue(form, "utm_campaign"),
+            utm_source: utm("utm_source"),
+            utm_medium: utm("utm_medium"),
+            utm_campaign: utm("utm_campaign"),
             turnstile_token: fieldValue(form, "cf-turnstile-response"),
             website: fieldValue(form, "website"),
             page_url: window.location.href,
@@ -261,9 +265,9 @@
             language: fieldValue(form, "language"),
             message: fieldValue(form, "message"),
             consent: true,
-            utm_source: fieldValue(form, "utm_source"),
-            utm_medium: fieldValue(form, "utm_medium"),
-            utm_campaign: fieldValue(form, "utm_campaign"),
+            utm_source: utm("utm_source"),
+            utm_medium: utm("utm_medium"),
+            utm_campaign: utm("utm_campaign"),
             turnstile_token: fieldValue(form, "cf-turnstile-response"),
             website: fieldValue(form, "website"),
             page_url: window.location.href,
@@ -303,111 +307,60 @@
         form.dataset.submitting = "false";
     }
 
-    function configureSchoolForm(form) {
-        var phone = form.elements.namedItem("parent_phone");
+    // Phone fields format as "90 123 45 67" while typing; errors clear as soon as a field changes.
+    function configureFields(form, phoneName, fieldNames) {
+        var phone = form.elements.namedItem(phoneName);
         if (phone) {
             phone.value = formatUzPhoneInput(phone.value);
             phone.addEventListener("input", function () {
                 phone.value = formatUzPhoneInput(phone.value);
-                setFieldError(form, "parent_phone", "");
+                setFieldError(form, phoneName, "");
             });
         }
-        ["parent_name", "grade", "consent"].forEach(function (name) {
+        fieldNames.forEach(function (name) {
             var field = form.elements.namedItem(name);
-            if (field) field.addEventListener("change", function () { setFieldError(form, name, ""); });
-        });
-        if (!form.hasAttribute("data-static-lead-form")) {
-            form.addEventListener("submit", function (event) {
-                if (!validateSchoolEnquiry(form)) {
-                    event.preventDefault();
-                    var firstInvalid = form.querySelector('[aria-invalid="true"]');
-                    if (firstInvalid) firstInvalid.focus();
-                }
+            if (!field) return;
+            ["input", "change"].forEach(function (type) {
+                field.addEventListener(type, function () { setFieldError(form, name, ""); });
             });
-        }
+        });
     }
 
-    function configureRegistration(form) {
+    // Course links (/register?program=ielts&branch=main) preselect the programme and branch.
+    function preselectFromUrl(form) {
         var params = new URLSearchParams(window.location.search);
-        var program = params.get("program");
-        var branch = params.get("branch");
-        var programSelect = form.elements.namedItem("course");
-        var branchSelect = form.elements.namedItem("preferred_branch");
-        var phone = form.elements.namedItem("student_phone");
-        if (programSelect && program && programSelect.querySelector('option[value="' + CSS.escape(program) + '"]')) {
-            programSelect.value = program;
-        }
-        if (branchSelect && branch && branchSelect.querySelector('option[value="' + CSS.escape(branch) + '"]')) {
-            branchSelect.value = branch;
-        }
-        if (phone) {
-            phone.value = formatUzPhoneInput(phone.value);
-            phone.addEventListener("input", function () {
-                phone.value = formatUzPhoneInput(phone.value);
-                setFieldError(form, "student_phone", "");
-            });
-        }
-        ["student_name", "course", "preferred_branch"].forEach(function (name) {
-            var field = form.elements.namedItem(name);
-            if (field) field.addEventListener("input", function () { setFieldError(form, name, ""); });
+        [["course", params.get("program")], ["preferred_branch", params.get("branch")]].forEach(function (pair) {
+            var select = form.elements.namedItem(pair[0]);
+            if (select && pair[1] && select.querySelector('option[value="' + CSS.escape(pair[1]) + '"]')) {
+                select.value = pair[1];
+            }
         });
-        if (!form.hasAttribute("data-static-lead-form")) {
-            form.addEventListener("submit", function (event) {
-                if (!validateRegistration(form)) {
-                    event.preventDefault();
-                    var firstInvalid = form.querySelector('[aria-invalid="true"]');
-                    if (firstInvalid) firstInvalid.focus();
-                    return;
-                }
-                var button = form.querySelector('button[type="submit"]');
-                if (button) {
-                    button.disabled = true;
-                    button.textContent = t("Yuborilmoqda...");
-                }
-            });
-        }
+    }
+
+    function focusFirstError(form) {
+        var firstInvalid = form.querySelector('[aria-invalid="true"]');
+        if (firstInvalid) firstInvalid.focus();
     }
 
     document.addEventListener("DOMContentLoaded", function () {
-        document.querySelectorAll("form[data-registration-form]").forEach(configureRegistration);
-        document.querySelectorAll("form[data-school-form]").forEach(configureSchoolForm);
         document.querySelectorAll("form[data-static-lead-form]").forEach(function (form) {
-            var leadKind = form.getAttribute("data-static-lead-form");
-            if (leadKind === "register") {
-                loadTurnstile(form);
-
-                var honeypot = document.createElement("input");
-                honeypot.type = "text";
-                honeypot.name = "website";
-                honeypot.tabIndex = -1;
-                honeypot.autocomplete = "off";
-                honeypot.setAttribute("aria-hidden", "true");
-                honeypot.style.cssText = "position:absolute;left:-10000px;width:1px;height:1px;overflow:hidden";
-                form.appendChild(honeypot);
-            } else if (leadKind === "school-enquiry") {
-                loadTurnstile(form);
+            var isSchool = form.getAttribute("data-static-lead-form") === "school-enquiry";
+            if (isSchool) {
+                configureFields(form, "parent_phone", ["parent_name", "grade", "consent"]);
+            } else {
+                preselectFromUrl(form);
+                configureFields(form, "student_phone", ["student_name", "course", "preferred_branch"]);
             }
-
+            loadTurnstile(form);
             form.addEventListener("submit", function (event) {
                 event.preventDefault();
-                if (leadKind === "register" && !form.reportValidity()) {
+                if (!(isSchool ? validateSchoolEnquiry(form) : validateRegistration(form))) {
+                    focusFirstError(form);
                     return;
                 }
-                if (leadKind === "school-enquiry") {
-                    if (!validateSchoolEnquiry(form)) {
-                        var firstSchoolInvalid = form.querySelector('[aria-invalid="true"]');
-                        if (firstSchoolInvalid) firstSchoolInvalid.focus();
-                        return;
-                    }
+                if (isSchool) {
                     submitSchoolEnquiry(form);
-                    return;
-                }
-                if (leadKind === "register") {
-                    if (!validateRegistration(form)) {
-                        var firstInvalid = form.querySelector('[aria-invalid="true"]');
-                        if (firstInvalid) firstInvalid.focus();
-                        return;
-                    }
+                } else {
                     submitRegistration(form);
                 }
             });
