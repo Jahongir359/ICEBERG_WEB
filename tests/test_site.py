@@ -157,6 +157,8 @@ class SitePageTests(unittest.TestCase):
             self.assertIn(f'href="{school["map_url"]}"', html.replace('&amp;', '&'))
             self.assertIn('Yandex Maps', html)
         self.assertNotIn('[MANZIL]', contact)
+        self.assertNotIn('[ISH VAQTI]', contact)
+        self.assertIn(school['hours'], contact)
         data = json.loads(re.search(r'<script type="application/ld\+json">(.*?)</script>', contact, re.S).group(1))
         self.assertEqual(data['geo']['latitude'], float(school['latitude']))
         self.assertEqual(data['address']['addressLocality'], 'Uychi')
