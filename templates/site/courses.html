@@ -1,8 +1,8 @@
 {% extends "site/base.html" %}
 {% from "site/_macros.html" import icon, curve %}
 
-{% block title %}Iceberg Courses — IELTS, CEFR, SAT va fan kurslari | ICEBERG o'quv markazi{% endblock %}
-{% block description %}ICEBERG o'quv markazi (Iceberg Courses): IELTS, CEFR ingliz tili, SAT, matematika, kimyo va biologiya kurslari. Namangan viloyati. Kursga onlayn yoziling.{% endblock %}
+{% block title %}{{ _("Iceberg Courses — IELTS, SAT, koreys va xitoy tillari | ICEBERG o'quv markazi") }}{% endblock %}
+{% block description %}{{ _("ICEBERG o'quv markazi (Iceberg Courses): IELTS, CEFR ingliz tili, SAT, koreys va xitoy tillari, matematika, kimyo va biologiya kurslari — 7 yoshdan boshlab. Namangan viloyati. Kursga onlayn yoziling.") }}{% endblock %}
 
 {%- set course_copy = {
     'ielts': ('IE', "IELTS imtihoniga strategik tayyorgarlik: reading, writing, listening va speaking bo'yicha tizimli o'sish va mock testlar."),
@@ -10,18 +10,20 @@
     'sat': ('SAT', "SAT imtihon strukturasini chuqur o'rganish, mock testlar va shaxsiy feedback asosida intensiv kurs."),
     'mathematics': ('Mt', "Matematik fikrlash va imtihonlarga tayyorgarlik: mustahkam asosdan murakkab masalalargacha."),
     'chemistry': ('Ch', "Kimyo fanidan fundamental bilim, amaliy masalalar va imtihonlarga tayyorgarlik."),
-    'biology': ('Bi', "Biologiya fanidan chuqur nazariya, testlar va imtihonlarga tizimli tayyorgarlik.")
+    'biology': ('Bi', "Biologiya fanidan chuqur nazariya, testlar va imtihonlarga tizimli tayyorgarlik."),
+    'korean': ('KR', "Koreys tili darslari 7 yoshdan boshlab — har qanday yoshdagi o'quvchilar uchun."),
+    'chinese': ('CN', "Xitoy tili darslari 7 yoshdan boshlab — har qanday yoshdagi o'quvchilar uchun.")
 } -%}
 
 {% block content %}
 <section class="page-hero">
     <div class="wrap">
-        <nav class="crumbs" aria-label="Sahifa yo'li"><a href="{{ url_for('index') }}">Bosh sahifa</a><span aria-hidden="true">/</span><span>Kurslar</span></nav>
+        <nav class="crumbs" aria-label="{{ _("Sahifa yo'li") }}"><a href="{{ url_for('index') }}">{{ _("Bosh sahifa") }}</a><span aria-hidden="true">/</span><span>{{ _("Kurslar") }}</span></nav>
         <span class="kicker">Iceberg Courses</span>
-        <h1>IELTS, CEFR, SAT va fan kurslari</h1>
-        <p class="lead">Fundamental bilim — har qanday akademik cho'qqini zabt etishning kaliti. Maktab o'quvchilari va kattalar uchun til, imtihon va fan kurslari.</p>
+        <h1>{{ _("Til, imtihon va fan kurslari") }}</h1>
+        <p class="lead">{{ _("Fundamental bilim — har qanday akademik cho'qqini zabt etishning kaliti. IELTS, SAT, koreys va xitoy tillari hamda fan kurslari — 7 yoshdan boshlab, bolalar va kattalar uchun.") }}</p>
         <div class="hero-cta" style="margin-top:8px">
-            <a class="btn btn-primary" href="{{ url_for('register') }}">Kursga yozilish {{ icon('arrow') }}</a>
+            <a class="btn btn-primary" href="{{ url_for('register') }}">{{ _('Kursga yozilish') }} {{ icon('arrow') }}</a>
             <a class="btn btn-outline" href="tel:{{ registration.contact.call_center_phone }}">{{ icon('phone') }} {{ registration.contact.call_center_display }}</a>
         </div>
     </div>
@@ -31,9 +33,9 @@
 <section class="sec">
     <div class="wrap">
         <div class="sec-head rv">
-            <span class="kicker">Kurslar</span>
-            <h2 class="h2">O'zingizga mos yo'nalishni tanlang</h2>
-            <p class="lead">Narx, jadval va guruhlar haqida qabul bo'limi batafsil aytib beradi.</p>
+            <span class="kicker">{{ _("Kurslar") }}</span>
+            <h2 class="h2">{{ _("O'zingizga mos yo'nalishni tanlang") }}</h2>
+            <p class="lead">{{ _("Narx, jadval va guruhlar haqida qabul bo'limi batafsil aytib beradi.") }}</p>
         </div>
         <div class="grid grid-3">
             {% for program in registration.programs %}{% set copy = course_copy.get(program.id, (program.name[:2], '')) %}
@@ -41,9 +43,9 @@
                 <div class="top">
                     <span class="code" aria-hidden="true">{{ copy[0] }}</span>
                 </div>
-                <h3 class="h3">{{ program.name }}</h3>
-                {% if copy[1] %}<p>{{ copy[1] }}</p>{% endif %}
-                <a class="link-arrow" href="{{ url_for('register', program=program.id) }}" style="margin-top:auto">Yozilish</a>
+                <h3 class="h3">{{ _(program.name) }}</h3>
+                {% if copy[1] %}<p>{{ _(copy[1]) }}</p>{% endif %}
+                <a class="link-arrow" href="{{ url_for('register', program=program.id) }}" style="margin-top:auto">{{ _("Yozilish") }}</a>
             </article>
             {% endfor %}
         </div>
@@ -53,15 +55,15 @@
 <section class="sec sec-white">
     <div class="wrap">
         <div class="sec-head center rv">
-            <span class="kicker">ICEBERG metodi</span>
-            <h2 class="h2">Natija emas — uni olib keladigan poydevor</h2>
-            <p class="lead">Muvaffaqiyat faqat natija emas. Biz natijani olib keladigan poydevorni quramiz.</p>
+            <span class="kicker">{{ _("ICEBERG metodi") }}</span>
+            <h2 class="h2">{{ _("Natija emas — uni olib keladigan poydevor") }}</h2>
+            <p class="lead">{{ _("Muvaffaqiyat faqat natija emas. Biz natijani olib keladigan poydevorni quramiz.") }}</p>
         </div>
         <div class="grid grid-4">
-            <article class="card rv"><span class="icon-tile">{{ icon('mountain') }}</span><h3 class="h3">Ko'rinadigan natijalar</h3><p>Yuqori test ballari, universitetga kirish va xalqaro tanlovlar — metodning ko'rinadigan qismi.</p></article>
-            <article class="card rv d1"><span class="icon-tile">{{ icon('book') }}</span><h3 class="h3">Asosiy e'tibor</h3><p>Fundamental bilim, tanqidiy fikrlash va barqaror o'qish odatlari natijani tizimga aylantiradi.</p></article>
-            <article class="card rv d2"><span class="icon-tile">{{ icon('chart') }}</span><h3 class="h3">Shaxsiy yo'l xaritasi</h3><p>Har bir o'quvchi uchun maqsad, daraja va muddat bo'yicha individual strategiya.</p></article>
-            <article class="card rv d3"><span class="icon-tile">{{ icon('calendar') }}</span><h3 class="h3">Doimiy tahlil</h3><p>Haftalik monitoring, mock testlar va mentor feedback orqali progress aniq boshqariladi.</p></article>
+            <article class="card rv"><span class="icon-tile">{{ icon('mountain') }}</span><h3 class="h3">{{ _("Ko'rinadigan natijalar") }}</h3><p>{{ _("Yuqori test ballari, universitetga kirish va xalqaro tanlovlar — metodning ko'rinadigan qismi.") }}</p></article>
+            <article class="card rv d1"><span class="icon-tile">{{ icon('book') }}</span><h3 class="h3">{{ _("Asosiy e'tibor") }}</h3><p>{{ _("Fundamental bilim, tanqidiy fikrlash va barqaror o'qish odatlari natijani tizimga aylantiradi.") }}</p></article>
+            <article class="card rv d2"><span class="icon-tile">{{ icon('chart') }}</span><h3 class="h3">{{ _("Shaxsiy yo'l xaritasi") }}</h3><p>{{ _("Har bir o'quvchi uchun maqsad, daraja va muddat bo'yicha individual strategiya.") }}</p></article>
+            <article class="card rv d3"><span class="icon-tile">{{ icon('calendar') }}</span><h3 class="h3">{{ _("Doimiy tahlil") }}</h3><p>{{ _("Haftalik monitoring, mock testlar va mentor feedback orqali progress aniq boshqariladi.") }}</p></article>
         </div>
     </div>
 </section>
@@ -69,21 +71,21 @@
 <section class="sec" id="filiallar">
     <div class="wrap">
         <div class="sec-head rv">
-            <span class="kicker">Filiallar</span>
-            <h2 class="h2">Qayerda o'qiysiz</h2>
+            <span class="kicker">{{ _("Filiallar") }}</span>
+            <h2 class="h2">{{ _("Qayerda o'qiysiz") }}</h2>
         </div>
         <div class="grid grid-2">
             {% for branch in registration.branches if branch.id != 'unknown' %}
             <article class="card rv{% if loop.index0 %} d1{% endif %}">
                 <span class="icon-tile soft">{{ icon('pin') }}</span>
-                <h3 class="h3">{{ branch.name }}</h3>
-                {% if branch.location %}<p>{{ branch.location }}</p>{% endif %}
+                <h3 class="h3">{{ _(branch.name) }}</h3>
+                {% if branch.location %}<p>{{ _(branch.location) }}</p>{% endif %}
                 <div class="contact-list" style="margin-top:4px">
-                    <a href="tel:{{ branch.phone or registration.contact.call_center_phone }}"><span class="icon-tile">{{ icon('phone') }}</span><span>{{ branch.phone or registration.contact.call_center_display }}<small>Qo'ng'iroq</small></span></a>
+                    <a href="tel:{{ branch.phone or registration.contact.call_center_phone }}"><span class="icon-tile">{{ icon('phone') }}</span><span>{{ branch.phone or registration.contact.call_center_display }}<small>{{ _("Qo'ng'iroq") }}</small></span></a>
                     {% set tg = branch.telegram_username or registration.contact.telegram_username %}
                     <a href="https://t.me/{{ tg }}" rel="noopener"><span class="icon-tile">{{ icon('telegram') }}</span><span>@{{ tg }}<small>Telegram</small></span></a>
                 </div>
-                <a class="link-arrow" href="{{ url_for('register', branch=branch.id) }}">Shu filialga yozilish</a>
+                <a class="link-arrow" href="{{ url_for('register', branch=branch.id) }}">{{ _("Shu filialga yozilish") }}</a>
             </article>
             {% endfor %}
         </div>
@@ -93,14 +95,14 @@
 <section class="sec sec-tint" id="savollar">
     <div class="wrap">
         <div class="sec-head center rv">
-            <span class="kicker">Savollar</span>
-            <h2 class="h2">Kurslar bo'yicha savollar</h2>
+            <span class="kicker">{{ _("Savollar") }}</span>
+            <h2 class="h2">{{ _("Kurslar bo'yicha savollar") }}</h2>
         </div>
         <div class="faq rv">
             {% for faq in faqs %}
             <details{% if loop.first %} open{% endif %}>
-                <summary>{{ faq.question }}</summary>
-                <p>{{ faq.answer }}</p>
+                <summary>{{ _(faq.question) }}</summary>
+                <p>{{ _(faq.answer) }}</p>
             </details>
             {% endfor %}
         </div>
@@ -109,10 +111,10 @@
 
 <section class="cta">
     <div class="wrap">
-        <h2 class="rv">O'z poydevoringizni bugun boshlang</h2>
-        <p class="rv d1">Arizangizni yuboring — 30 soniyadan kam vaqt oladi. Jamoamiz siz bilan bog'lanib, mos guruhni tanlashga yordam beradi.</p>
+        <h2 class="rv">{{ _("O'z poydevoringizni bugun boshlang") }}</h2>
+        <p class="rv d1">{{ _("Arizangizni yuboring — 30 soniyadan kam vaqt oladi. Jamoamiz siz bilan bog'lanib, mos guruhni tanlashga yordam beradi.") }}</p>
         <div class="hero-cta rv d2">
-            <a class="btn btn-light" href="{{ url_for('register') }}">Kursga yozilish {{ icon('arrow') }}</a>
+            <a class="btn btn-light" href="{{ url_for('register') }}">{{ _('Kursga yozilish') }} {{ icon('arrow') }}</a>
             <a class="btn btn-ghost" href="{{ registration.contact.telegram_url }}" rel="noopener">{{ icon('telegram') }} Telegram</a>
             <a class="btn btn-ghost" href="{{ registration.contact.instagram_url }}" rel="noopener">{{ icon('instagram') }} Instagram</a>
         </div>
@@ -122,7 +124,7 @@
 
 {% block dock %}
 <div class="dock" data-dock>
-    <a class="btn btn-primary" href="{{ url_for('register') }}">Kursga yozilish</a>
-    <a class="btn btn-outline" href="tel:{{ registration.contact.call_center_phone }}">Qo'ng'iroq</a>
+    <a class="btn btn-primary" href="{{ url_for('register') }}">{{ _("Kursga yozilish") }}</a>
+    <a class="btn btn-outline" href="tel:{{ registration.contact.call_center_phone }}">{{ _("Qo'ng'iroq") }}</a>
 </div>
 {% endblock %}

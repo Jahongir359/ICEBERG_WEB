@@ -99,7 +99,16 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 .hdr-logo { display: flex; align-items: center; min-height: 44px; }
 .hdr-logo img { height: 38px; width: auto; }
 .nav { display: none; }
-.nav a { display: inline-flex; align-items: center; min-height: 44px; color: var(--ink); font-weight: 600; font-size: .95rem; text-decoration: none; padding: .45rem .7rem; border-radius: var(--brand-radius-chip); }
+.nav a { display: inline-flex; white-space: nowrap; align-items: center; min-height: 44px; color: var(--ink); font-weight: 600; font-size: .95rem; text-decoration: none; padding: .45rem .7rem; border-radius: var(--brand-radius-chip); }
+/* Russian and English labels are longer: tighten the menu and drop the Portal button (it stays in the
+   menu sheet and footer) until there is room. */
+.hdr-actions .btn { white-space: nowrap; }
+@media (min-width: 1024px) and (max-width: 1279px) {
+    html:not([lang="uz"]) .nav a { padding: .45rem .5rem; font-size: .9rem; }
+    html:not([lang="uz"]) .hdr-portal.btn-outline { display: none; }
+}
+/* Fraunces has no Cyrillic, so Russian headings use Literata, a warm serif with Cyrillic. */
+html[lang="ru"] { --brand-font-display: 'Literata', 'Fraunces', Georgia, serif; }
 .nav a:hover { background: var(--brand-paper); color: var(--brand-primary); }
 .nav a[aria-current="page"] { color: var(--brand-primary); background: var(--brand-paper); }
 .hdr-actions { display: flex; align-items: center; gap: 8px; }

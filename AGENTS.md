@@ -19,9 +19,10 @@ The whole site uses `<html data-brand="school">`.
 | `/admissions`, `/admissions/thanks` | `admissions.html` (School enquiry form), `thanks.html` |
 | `/courses`, `/register` | `courses.html` (ICEBERG o'quv markazi), `register.html` (course registration) |
 | `/news`, `/contact` | `news.html` (posts from `config/news.json`), `contact.html` |
-| `/hamkorlik`, `/partners` | `partnerships.html` — one template, Uzbek and English (`/partners` sits outside `/en/`, which still redirects) |
+| `/hamkorlik` | `partnerships.html` (Russian/English at `/ru/partners`, `/en/partners`) |
+| `/ru/…`, `/en/…` | The same templates in Russian and English — every page above except `/ilova` (see **Languages** below) |
 | `/ilova` | `coming_soon.html` (temporary target of the Portal/app links; noindex, not in the sitemap) |
-| Old URLs still in search results (`/our_programs`, `/questions`, `/programs/sat`, `/faq`, `/contacts`, `/news/…`, `/en/…`) | Redirect to today's page — one list, `LEGACY_REDIRECTS` in `app.py`, feeds the Flask routes and the generated `_redirects`. `/en/…` uses 302 until real English pages exist under `/en/` (then remove those rules) |
+| Old URLs still in search results (`/our_programs`, `/questions`, `/programs/sat`, `/faq`, `/contacts`, `/news/…`, `/en/our_programs`, `/partners`) | Redirect to today's page — one list, `LEGACY_REDIRECTS` in `app.py`, feeds the Flask routes and the generated `_redirects` |
 
 Shared pieces: `site/base.html` (header, mobile menu, dock, footer, JSON-LD), `site/_macros.html`
 (`icon()`, `fact()`), `_stages.html`, `_cta.html`, `_news_card.html`. Styles: `static/css/site.css`;
@@ -35,6 +36,20 @@ it from the server.
 Portal and "Ilovani yuklab olish" links point to `/ilova`, a noindex "coming soon" page in Uzbek and
 English (`templates/site/coming_soon.html`). When the ERP is back, set `portal_url` and `app_url` in
 `config/school.json` to the ERP again (`https://app.iceberglc.com/login/?brand=school`, `/download/`).
+
+## Languages
+
+Every public page exists in Uzbek (`/about`), Russian (`/ru/about`) and English (`/en/about`).
+- Uzbek is the source. Templates wrap their Uzbek text in `{{ _("…") }}` (or `_h()` for our own text
+  with markup); `translations/ru.json` and `translations/en.json` map that exact Uzbek text to Russian
+  and English. Placeholders use `{name}`: `_("{grade}-sinf", grade=grade)`.
+- Uzbek values in `config/school.json`, `config/news.json` and `config/registration.json` are passed
+  through `_()` too, so a new or changed value needs its two translations.
+- Pages are registered once per language from `LOCALIZED_ROUTES` in `app.py`; `url_for()` keeps the
+  current language, `lang_url(code)` gives the same page in another language (switcher, hreflang).
+- `test_every_page_in_russian_and_english` fails if any rendered text has no translation;
+  form messages shown by the browser live in the `MESSAGES` table at the top of `static/js/firebase-forms.js`.
+- Russian headings use Literata (Fraunces has no Cyrillic); Inter covers body text in all three.
 
 ## Active initiative
 
@@ -91,8 +106,7 @@ All of them must pass before a commit. There is no CI workflow in this repo yet.
 
 ## Content rules
 
-- Uzbek first; Russian and English as real pages with `hreflang` (plan 4.0 step 4). No new string
-  ships without its Uzbek text.
+- Uzbek first, then Russian and English (see **Languages**). No new string ships without all three.
 - **Never invent facts** — grades, prices, numbers, results, addresses, phones. Until the owner
   supplies one, hide or reword that part of the page; don't show `[PLACEHOLDER]` text (owner, 2026-10-25).
 - Every page: unique `<title>` and description, one `<h1>`, canonical on `https://iceberglc.com/…`,

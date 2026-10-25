@@ -1,16 +1,16 @@
 {% extends "site/base.html" %}
 {% from "site/_macros.html" import icon, fact, curve %}
 
-{% block title %}Qabul — Iceberg School | 1–11-sinflarga ariza{% endblock %}
-{% block description %}Iceberg School'ga qabul: to'rt oddiy qadam, ariza formasi, o'qish narxi va ko'p beriladigan savollar. 1–11-sinflar uchun xususiy maktab.{% endblock %}
+{% block title %}{{ _("Qabul — Iceberg School | 1–11-sinflarga ariza") }}{% endblock %}
+{% block description %}{{ _("Iceberg School'ga qabul: to'rt oddiy qadam, ariza formasi, o'qish narxi va ko'p beriladigan savollar. 1–11-sinflar uchun xususiy maktab.") }}{% endblock %}
 
 {% block content %}
 <section class="page-hero">
     <div class="wrap">
-        <nav class="crumbs" aria-label="Sahifa yo'li"><a href="{{ url_for('index') }}">Bosh sahifa</a><span aria-hidden="true">/</span><span>Qabul</span></nav>
-        <span class="kicker">Qabul{% if school.academic_year %} · {{ school.academic_year }}{% endif %}</span>
-        <h1>Iceberg'ga qo'shilish — to'rt oddiy qadam</h1>
-        <p class="lead">Joy bo'lsa, oilalarni yil davomida qabul qilamiz. Ko'pchilik yangi o'quvchilar sentabrda boshlaydi — farzandingiz haqida yozing, qolganida biz yo'l ko'rsatamiz.</p>
+        <nav class="crumbs" aria-label="{{ _("Sahifa yo'li") }}"><a href="{{ url_for('index') }}">{{ _("Bosh sahifa") }}</a><span aria-hidden="true">/</span><span>{{ _("Qabul") }}</span></nav>
+        <span class="kicker">{{ _('Qabul') }}{% if school.academic_year %} · {{ _(school.academic_year) }}{% endif %}</span>
+        <h1>{{ _("Iceberg'ga qo'shilish — to'rt oddiy qadam") }}</h1>
+        <p class="lead">{{ _("Joy bo'lsa, oilalarni yil davomida qabul qilamiz. Ko'pchilik yangi o'quvchilar sentabrda boshlaydi — farzandingiz haqida yozing, qolganida biz yo'l ko'rsatamiz.") }}</p>
     </div>
     {{ curve('white') }}
 </section>
@@ -19,20 +19,20 @@
     <div class="wrap">
         <ol class="steps">
             <li class="card step rv">
-                <h2 class="h3">Ariza qoldiring</h2>
-                <p>Quyidagi qisqa formani to'ldiring. Qabul bo'limi {% if school.response_time %}{{ school.response_time }} ichida{% else %}tez orada{% endif %} qo'ng'iroq qiladi.</p>
+                <h2 class="h3">{{ _("Ariza qoldiring") }}</h2>
+                <p>{% if school.response_time %}{{ _("Quyidagi qisqa formani to'ldiring. Qabul bo'limi {time} ichida qo'ng'iroq qiladi.", time=_(school.response_time)) }}{% else %}{{ _("Quyidagi qisqa formani to'ldiring. Qabul bo'limi tez orada qo'ng'iroq qiladi.") }}{% endif %}</p>
             </li>
             <li class="card step rv d1">
-                <h2 class="h3">Maktabga tashrif</h2>
-                <p>Farzandingiz bilan maktabni ko'ring, bosqich rahbari bilan tanishing va jonli darsni kuzating.</p>
+                <h2 class="h3">{{ _("Maktabga tashrif") }}</h2>
+                <p>{{ _("Farzandingiz bilan maktabni ko'ring, bosqich rahbari bilan tanishing va jonli darsni kuzating.") }}</p>
             </li>
             <li class="card step rv d2">
-                <h2 class="h3">Do'stona suhbat</h2>
-                <p>Yoshga mos qisqa topshiriqlar: matematika, o'qish va ingliz tili — bosimsiz, samimiy muhitda.</p>
+                <h2 class="h3">{{ _("Do'stona suhbat") }}</h2>
+                <p>{{ _("Yoshga mos qisqa topshiriqlar: matematika, o'qish va ingliz tili — bosimsiz, samimiy muhitda.") }}</p>
             </li>
             <li class="card step rv d3">
-                <h2 class="h3">Taklif va o'qishga kirish</h2>
-                <p>Taklifni qabul qiling, shartnoma imzolang — birinchi kuniyoq Iceberg ilovasiga kirish beriladi.</p>
+                <h2 class="h3">{{ _("Taklif va o'qishga kirish") }}</h2>
+                <p>{{ _("Taklifni qabul qiling, shartnoma imzolang — birinchi kuniyoq Iceberg ilovasiga kirish beriladi.") }}</p>
             </li>
         </ol>
     </div>
@@ -42,65 +42,65 @@
     <div class="wrap split">
         <div class="form-card rv">
             <div>
-                <span class="kicker">Ariza</span>
-                <h2 class="h2" style="font-size:clamp(1.7rem,5vw,2.3rem);margin-top:8px">Qabul uchun ariza</h2>
+                <span class="kicker">{{ _("Ariza") }}</span>
+                <h2 class="h2" style="font-size:clamp(1.7rem,5vw,2.3rem);margin-top:8px">{{ _("Qabul uchun ariza") }}</h2>
             </div>
-            <form action="{{ url_for('admissions') }}" method="post" data-school-form novalidate>
+            <form action="{{ url_for('admissions') }}" method="post" data-school-form data-thanks-url="{{ url_for('admissions_thanks') }}" novalidate>
                 <div class="fields two">
                     <div class="field">
-                        <label for="parent_name">Ota-ona ismi va familiyasi</label>
-                        <input class="control" id="parent_name" name="parent_name" type="text" autocomplete="name" minlength="2" maxlength="100" required placeholder="Masalan: Dilnoza Karimova" value="{{ form_data.get('parent_name', '') }}" aria-describedby="parent_name_error"{% if errors.get('parent_name') %} aria-invalid="true"{% endif %}>
-                        <p class="err" id="parent_name_error" data-error-for="parent_name">{{ errors.get('parent_name', '') }}</p>
+                        <label for="parent_name">{{ _("Ota-ona ismi va familiyasi") }}</label>
+                        <input class="control" id="parent_name" name="parent_name" type="text" autocomplete="name" minlength="2" maxlength="100" required placeholder="{{ _('Masalan: Dilnoza Karimova') }}" value="{{ form_data.get('parent_name', '') }}" aria-describedby="parent_name_error"{% if errors.get('parent_name') %} aria-invalid="true"{% endif %}>
+                        <p class="err" id="parent_name_error" data-error-for="parent_name">{{ _(errors.get('parent_name', '')) }}</p>
                     </div>
                     <div class="field">
-                        <label for="parent_phone">Telefon raqami</label>
+                        <label for="parent_phone">{{ _("Telefon raqami") }}</label>
                         <div class="phone-input">
                             <span class="prefix" aria-hidden="true">+998</span>
                             <input class="control" id="parent_phone" name="parent_phone" type="tel" inputmode="tel" autocomplete="tel-national" maxlength="16" required placeholder="90 123 45 67" value="{{ form_data.get('parent_phone', '') }}" aria-describedby="parent_phone_error"{% if errors.get('parent_phone') %} aria-invalid="true"{% endif %}>
                         </div>
-                        <p class="err" id="parent_phone_error" data-error-for="parent_phone">{{ errors.get('parent_phone', '') }}</p>
+                        <p class="err" id="parent_phone_error" data-error-for="parent_phone">{{ _(errors.get('parent_phone', '')) }}</p>
                     </div>
                     <div class="field">
-                        <label for="child_name">Farzandingiz ismi <span class="hint">(ixtiyoriy)</span></label>
+                        <label for="child_name">{{ _("Farzandingiz ismi") }} <span class="hint">{{ _("(ixtiyoriy)") }}</span></label>
                         <input class="control" id="child_name" name="child_name" type="text" maxlength="100" value="{{ form_data.get('child_name', '') }}">
                     </div>
                     <div class="field">
-                        <label for="child_birth_date">Tug'ilgan sanasi <span class="hint">(ixtiyoriy)</span></label>
+                        <label for="child_birth_date">{{ _("Tug'ilgan sanasi") }} <span class="hint">{{ _("(ixtiyoriy)") }}</span></label>
                         <input class="control" id="child_birth_date" name="child_birth_date" type="date" value="{{ form_data.get('child_birth_date', '') }}" aria-describedby="child_birth_date_error"{% if errors.get('child_birth_date') %} aria-invalid="true"{% endif %}>
-                        <p class="err" id="child_birth_date_error" data-error-for="child_birth_date">{{ errors.get('child_birth_date', '') }}</p>
+                        <p class="err" id="child_birth_date_error" data-error-for="child_birth_date">{{ _(errors.get('child_birth_date', '')) }}</p>
                     </div>
                     <div class="field">
-                        <label for="grade">Qaysi sinfga</label>
+                        <label for="grade">{{ _("Qaysi sinfga") }}</label>
                         <select class="control" id="grade" name="grade" required aria-describedby="grade_error"{% if errors.get('grade') %} aria-invalid="true"{% endif %}>
-                            <option value="">Sinfni tanlang</option>
-                            {% for grade in grades %}<option value="{{ grade }}"{% if form_data.get('grade') == grade %} selected{% endif %}>{{ grade }}-sinf</option>{% endfor %}
+                            <option value="">{{ _("Sinfni tanlang") }}</option>
+                            {% for grade in grades %}<option value="{{ grade }}"{% if form_data.get('grade') == grade %} selected{% endif %}>{{ _('{grade}-sinf', grade=grade) }}</option>{% endfor %}
                         </select>
-                        <p class="err" id="grade_error" data-error-for="grade">{{ errors.get('grade', '') }}</p>
+                        <p class="err" id="grade_error" data-error-for="grade">{{ _(errors.get('grade', '')) }}</p>
                     </div>
                     <div class="field">
-                        <label for="language">Muloqot tili</label>
+                        <label for="language">{{ _("Muloqot tili") }}</label>
                         <select class="control" id="language" name="language">
-                            {% for code, name in languages.items() %}<option value="{{ code }}"{% if form_data.get('language') == code %} selected{% endif %}>{{ name }}</option>{% endfor %}
+                            {% for code, name in languages.items() %}<option value="{{ code }}"{% if form_data.get('language', lang) == code %} selected{% endif %}>{{ _(name) }}</option>{% endfor %}
                         </select>
                     </div>
                 </div>
                 <div class="field" style="margin-top:16px">
-                    <label for="message">Biz bilishimiz kerak bo'lgan narsa bormi? <span class="hint">(ixtiyoriy)</span></label>
+                    <label for="message">{{ _("Biz bilishimiz kerak bo'lgan narsa bormi?") }} <span class="hint">{{ _("(ixtiyoriy)") }}</span></label>
                     <textarea class="control" id="message" name="message" rows="4" maxlength="1000">{{ form_data.get('message', '') }}</textarea>
                 </div>
                 <div class="field" style="margin-top:16px">
-                    <label class="consent"><input type="checkbox" name="consent" value="1" required{% if form_data.get('consent') %} checked{% endif %} aria-describedby="consent_error"> Iceberg School ushbu ariza bo'yicha men bilan bog'lanishiga roziman.</label>
-                    <p class="err" id="consent_error" data-error-for="consent">{{ errors.get('consent', '') }}</p>
+                    <label class="consent"><input type="checkbox" name="consent" value="1" required{% if form_data.get('consent') %} checked{% endif %} aria-describedby="consent_error"> {{ _("Iceberg School ushbu ariza bo'yicha men bilan bog'lanishiga roziman.") }}</label>
+                    <p class="err" id="consent_error" data-error-for="consent">{{ _(errors.get('consent', '')) }}</p>
                 </div>
-                <div class="hp" aria-hidden="true"><label>Veb-sayt <input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
+                <div class="hp" aria-hidden="true"><label>{{ _("Veb-sayt") }} <input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
                 <input type="hidden" name="form_type" value="school-enquiry">
                 <input type="hidden" name="utm_source" value="{{ request.args.get('utm_source', '') }}">
                 <input type="hidden" name="utm_medium" value="{{ request.args.get('utm_medium', '') }}">
                 <input type="hidden" name="utm_campaign" value="{{ request.args.get('utm_campaign', '') }}">
                 <div style="display:grid;gap:12px;margin-top:20px">
-                    <button class="btn btn-primary btn-block" type="submit">Arizani yuborish {{ icon('arrow') }}</button>
+                    <button class="btn btn-primary btn-block" type="submit">{{ _('Arizani yuborish') }} {{ icon('arrow') }}</button>
                     <p class="form-status" data-form-status role="status" aria-live="polite"></p>
-                    <p class="form-note">Ma'lumotlaringiz faqat ushbu ariza bo'yicha bog'lanish uchun ishlatiladi.</p>
+                    <p class="form-note">{{ _("Ma'lumotlaringiz faqat ushbu ariza bo'yicha bog'lanish uchun ishlatiladi.") }}</p>
                 </div>
             </form>
         </div>
@@ -108,28 +108,28 @@
         <aside class="sticky">
             <div class="panel-maroon rv">
                 <img class="crest" src="{{ url_for('static', filename='school/img/crest-white.png') }}" alt="" width="54" height="64" loading="lazy">
-                <h2 class="h3">O'qish narxi</h2>
+                <h2 class="h3">{{ _("O'qish narxi") }}</h2>
                 {% set stage_names = {'primary': "Boshlang'ich", 'middle': "O'rta", 'high': 'Yuqori'} %}
                 {% if school.tuition | selectattr('price') | list %}
                 <dl>
                     {% for row in school.tuition if row.price %}{% set stage = (school.stages | selectattr('id', 'equalto', row.stage) | first) %}
-                    <div><dt>{{ stage_names[row.stage] }} · {{ stage.grades }}</dt><dd>{{ row.price }} / oy</dd></div>
+                    <div><dt>{{ _(stage_names[row.stage]) }} · {{ stage.grades }}</dt><dd>{{ _('{price} / oy', price=row.price) }}</dd></div>
                     {% endfor %}
                 </dl>
                 {% else %}
                 {#- No published prices yet: invite a call instead of showing empty values. #}
-                <p>Narx sinf va tanlangan dasturga bog'liq. Qabul bo'limi barcha savollaringizga javob beradi.</p>
+                <p>{{ _("Narx sinf va tanlangan dasturga bog'liq. Qabul bo'limi barcha savollaringizga javob beradi.") }}</p>
                 {% if school.phone %}<a class="btn btn-light" href="tel:{{ school.phone }}">{{ icon('phone') }} {{ school.phone_display or school.phone }}</a>{% endif %}
                 {% endif %}
-                {% if school.tuition_note %}<p class="note">{{ school.tuition_note }}</p>{% endif %}
+                {% if school.tuition_note %}<p class="note">{{ _(school.tuition_note) }}</p>{% endif %}
             </div>
             <div class="panel-tint rv d1">
-                <h2 class="h3">Qabul bo'limi bilan gaplashing</h2>
+                <h2 class="h3">{{ _("Qabul bo'limi bilan gaplashing") }}</h2>
                 <div class="contact-list">
-                    {% if school.phone %}<a href="tel:{{ school.phone }}"><span class="icon-tile">{{ icon('phone') }}</span><span>{{ school.phone_display or school.phone }}<small>Qo'ng'iroq qilish</small></span></a>
-                    {% else %}<div><span class="icon-tile">{{ icon('phone') }}</span><span>{{ fact('', 'TELEFON') }}<small>Qo'ng'iroq qilish</small></span></div>{% endif %}
-                    {% if school.hours %}<div><span class="icon-tile">{{ icon('clock') }}</span><span>{{ school.hours }}<small>Ish vaqti</small></span></div>{% endif %}
-                    {% if school.telegram_url %}<a href="{{ school.telegram_url }}" rel="noopener"><span class="icon-tile">{{ icon('telegram') }}</span><span>Telegram kanalimiz<small>Yangiliklar va e'lonlar</small></span></a>{% endif %}
+                    {% if school.phone %}<a href="tel:{{ school.phone }}"><span class="icon-tile">{{ icon('phone') }}</span><span>{{ school.phone_display or school.phone }}<small>{{ _("Qo'ng'iroq qilish") }}</small></span></a>
+                    {% else %}<div><span class="icon-tile">{{ icon('phone') }}</span><span>{{ fact('', 'TELEFON') }}<small>{{ _("Qo'ng'iroq qilish") }}</small></span></div>{% endif %}
+                    {% if school.hours %}<div><span class="icon-tile">{{ icon('clock') }}</span><span>{{ _(school.hours) }}<small>{{ _("Ish vaqti") }}</small></span></div>{% endif %}
+                    {% if school.telegram_url %}<a href="{{ school.telegram_url }}" rel="noopener"><span class="icon-tile">{{ icon('telegram') }}</span><span>{{ _("Telegram kanalimiz") }}<small>{{ _("Yangiliklar va e'lonlar") }}</small></span></a>{% endif %}
                 </div>
             </div>
         </aside>
@@ -139,29 +139,29 @@
 <section class="sec sec-tint" id="savollar">
     <div class="wrap">
         <div class="sec-head center rv">
-            <span class="kicker">Savollar</span>
-            <h2 class="h2">Ko'p beriladigan savollar</h2>
+            <span class="kicker">{{ _("Savollar") }}</span>
+            <h2 class="h2">{{ _("Ko'p beriladigan savollar") }}</h2>
         </div>
         <div class="faq rv">
             <details open>
-                <summary>Farzandim o'quv yili o'rtasida qo'shila oladimi?</summary>
-                <p>Ha, uning sinfida bo'sh joy bo'lsa. Sinf rahbari bilan birga moslashish rejasini tuzamiz.</p>
+                <summary>{{ _("Farzandim o'quv yili o'rtasida qo'shila oladimi?") }}</summary>
+                <p>{{ _("Ha, uning sinfida bo'sh joy bo'lsa. Sinf rahbari bilan birga moslashish rejasini tuzamiz.") }}</p>
             </details>
             {% if school.teaching_languages %}<details>
-                <summary>Darslar qaysi tilda o'tiladi?</summary>
-                <p>{{ school.teaching_languages }}</p>
+                <summary>{{ _("Darslar qaysi tilda o'tiladi?") }}</summary>
+                <p>{{ _(school.teaching_languages) }}</p>
             </details>{% endif %}
             {% if school.transport_and_meals %}<details>
-                <summary>Transport va ovqatlanish bormi?</summary>
-                <p>{{ school.transport_and_meals }}</p>
+                <summary>{{ _("Transport va ovqatlanish bormi?") }}</summary>
+                <p>{{ _(school.transport_and_meals) }}</p>
             </details>{% endif %}
             <details>
-                <summary>Ariza joyni band qiladimi?</summary>
-                <p>Ariza — bu bog'lanish so'rovi. Joy tashrif va suhbatdan so'ng taklif bilan tasdiqlanadi.</p>
+                <summary>{{ _("Ariza joyni band qiladimi?") }}</summary>
+                <p>{{ _("Ariza — bu bog'lanish so'rovi. Joy tashrif va suhbatdan so'ng taklif bilan tasdiqlanadi.") }}</p>
             </details>
             <details>
-                <summary>Iceberg Courses bilan qanday bog'liq?</summary>
-                <p>Iceberg Courses — Iceberg oilasidagi o'quv markazi: IELTS, CEFR, SAT va fan kurslari. Maktab o'quvchilari ham, boshqalar ham qatnasha oladi. <a href="{{ url_for('courses') }}">Kurslar haqida</a>.</p>
+                <summary>{{ _("Iceberg Courses bilan qanday bog'liq?") }}</summary>
+                <p>{{ _("Iceberg Courses — Iceberg oilasidagi o'quv markazi: IELTS, CEFR, SAT va fan kurslari. Maktab o'quvchilari ham, boshqalar ham qatnasha oladi.") }} <a href="{{ url_for('courses') }}">{{ _("Kurslar haqida") }}</a>.</p>
             </details>
         </div>
     </div>
@@ -170,11 +170,11 @@
 
 {% block dock %}
 <div class="dock" data-dock>
-    <a class="btn btn-primary" href="#ariza">Ariza topshirish</a>
-    <a class="btn btn-outline" href="{{ url_for('contact') }}">Bog'lanish</a>
+    <a class="btn btn-primary" href="#ariza">{{ _("Ariza topshirish") }}</a>
+    <a class="btn btn-outline" href="{{ url_for('contact') }}">{{ _("Bog'lanish") }}</a>
 </div>
 {% endblock %}
 
 {% block scripts %}
-<script src="{{ url_for('static', filename='js/firebase-forms.js', v='20261024-1') }}" defer></script>
+<script src="{{ url_for('static', filename='js/firebase-forms.js', v='20261025-1') }}" defer></script>
 {% endblock %}

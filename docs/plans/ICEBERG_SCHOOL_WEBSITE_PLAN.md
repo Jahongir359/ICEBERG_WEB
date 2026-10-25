@@ -325,14 +325,14 @@ When a brand value changes: update `tokens.json` here, then copy it to the websi
       `feat/design-system-foundation`
 - [x] 4.0 foundation, components part: shared `templates/site/base.html` (logos, nav, mobile menu,
       footer, JSON-LD, Portal URL) — ICEBERG_WEB `feat/school-site`
-- [ ] Real `/ru/`, `/en/` pages + `hreflang` (can follow launch; Google Translate select for now)
+- [x] Real `/ru/`, `/en/` pages + `hreflang` (2026-10-25): every public page in Russian and English from one set of templates (`_()` + `translations/*.json`), real language switcher, sitemap alternates; Google Translate widget removed
 - [x] School logos, crest favicons/app icons, OG image (`/static/school/img/`, `/static/*.png`)
 
 **4c — Website: School pages** (section 0 structure; ICEBERG_WEB `feat/school-site`)
 - [x] Home, About, Programs, Admissions (+ thanks), Courses, News, Contact, Register
 - [x] Uzbek copy first; placeholders for unknown facts (`config/school.json`)
 - [x] Courses section links; Portal login → `app.iceberglc.com/login/?brand=school`; 301s from old LC URLs
-- [ ] Owner fills `config/school.json`: phone, address, hours, academic year, tuition, Telegram/Instagram
+- [x] Owner fills `config/school.json`: phone, address, hours, academic year, Telegram/Instagram (2026-10-25; tuition stays "call us" by owner choice)
 
 **4d — Website: enquiry**
 - [x] `school-enquiry` form + handler branch in `/api/register` (section 6) + Flask `/admissions`;

@@ -83,7 +83,7 @@ class SitePageTests(unittest.TestCase):
 
     def test_no_page_shows_placeholders(self):
         # Owner decision 2026-10-25: missing facts are hidden or reworded, never shown as [PLACEHOLDER].
-        for path in PUBLIC_PAGES + ['/hamkorlik', '/partners']:
+        for path in PUBLIC_PAGES + ['/hamkorlik', '/en/partners', '/ru/partners']:
             with self.subTest(path=path):
                 self.assertNotIn('class="ph"', self.client.get(path).get_data(as_text=True))
         admissions = self.client.get('/admissions').get_data(as_text=True)
@@ -91,8 +91,11 @@ class SitePageTests(unittest.TestCase):
 
     def test_language_switcher_is_not_machine_translated(self):
         html = self.client.get('/').get_data(as_text=True)
-        self.assertIn('<label class="lang notranslate" translate="no">', html)
-        self.assertIn('<select class="notranslate" translate="no" data-lang-select', html)
+        # Real translated pages replace the old Google Translate widget.
+        self.assertIn('<option value="/ru/" lang="ru">RU</option>', html)
+        self.assertIn('<option value="/en/" lang="en">EN</option>', html)
+        self.assertNotIn('translate.google.com', html)
+        self.assertNotIn('translate.google.com', open('static/js/site.js', encoding='utf-8').read())
 
     def test_light_page_heroes_use_dark_buttons(self):
         # btn-light and btn-ghost are white; on the cream page hero they would be unreadable.
@@ -173,7 +176,7 @@ class SitePageTests(unittest.TestCase):
         self.assertEqual(data['email'], 'support@iceberglc.com')
 
     def test_partnership_pages_in_uzbek_and_english(self):
-        for path, lang, heading in (('/hamkorlik', 'uz', 'Keling, birga quramiz'), ('/partners', 'en', 'build something together')):
+        for path, lang, heading in (('/hamkorlik', 'uz', 'Keling, birga quramiz'), ('/en/partners', 'en', 'build something together')):
             with self.subTest(path=path):
                 response = self.client.get(path)
                 self.assertEqual(response.status_code, 200)
@@ -183,9 +186,9 @@ class SitePageTests(unittest.TestCase):
                 self.assertIn(heading, html)
                 self.assertIn(f'<link rel="canonical" href="https://iceberglc.com{path}">', html)
                 self.assertIn('hreflang="uz" href="https://iceberglc.com/hamkorlik"', html)
-                self.assertIn('hreflang="en" href="https://iceberglc.com/partners"', html)
+                self.assertIn('hreflang="en" href="https://iceberglc.com/en/partners"', html)
                 self.assertIn(f'href="tel:{app_module.SCHOOL_CONFIG["phone"]}"', html)
-        partners = self.client.get('/partners').get_data(as_text=True)
+        partners = self.client.get('/en/partners').get_data(as_text=True)
         self.assertNotIn('class="ph"', partners)
         self.assertNotIn('class="ph"', self.client.get('/hamkorlik').get_data(as_text=True))
         self.assertIn('>1500+</strong>', partners)
@@ -195,11 +198,11 @@ class SitePageTests(unittest.TestCase):
             self.assertIn(f'<li>{item}</li>', partners)
         programs = self.client.get('/programs').get_data(as_text=True)
         for subject in app_module.SCHOOL_CONFIG['subjects']:
-            self.assertIn(f'<li>{subject["uz"]}</li>'.replace("'", '&#39;'), programs)
+            self.assertIn(f'<li>{subject}</li>'.replace("'", '&#39;'), programs)
         sitemap = self.client.get('/sitemap.xml').get_data(as_text=True)
         self.assertIn('https://iceberglc.com/hamkorlik', sitemap)
-        self.assertIn('https://iceberglc.com/partners', sitemap)
-        self.assertIn('href="/partners"', self.client.get('/').get_data(as_text=True))
+        self.assertIn('https://iceberglc.com/en/partners', sitemap)
+        self.assertIn('href="/hamkorlik"', self.client.get('/').get_data(as_text=True))
 
     def test_owner_facts_round_two(self):
         school = app_module.SCHOOL_CONFIG
@@ -210,12 +213,12 @@ class SitePageTests(unittest.TestCase):
         self.assertNotIn('Markaz direktori', about)
         for text in ('Azizbek Nasriddinov', 'Direktor', 'Jahongir Karimov', 'Islomjon Ergashboyev', 'Hammuassis'):
             self.assertIn(text, about)
-        partners = self.client.get('/partners').get_data(as_text=True)
+        partners = self.client.get('/en/partners').get_data(as_text=True)
         for text in ('Azizbek Nasriddinov', 'Director · Iceberg School and Iceberg Courses', 'Jahongir Karimov', 'Islomjon Ergashboyev', 'Co-founder', 'Uzbek and Russian',
                      'href="https://t.me/iceberg_school"', 'href="https://www.instagram.com/iceberg_maktab"'):
             self.assertIn(text, partners)
         home = self.client.get('/').get_data(as_text=True)
-        self.assertIn("2026–2027 va 2027–2028 o'quv yillari uchun qabul ochiq", home)
+        self.assertIn("2026–2027 va 2027–2028 o&#39;quv yillari uchun qabul ochiq", home)
         self.assertIn(f'<li><a href="tel:{school["phone"]}">{school["phone_display"]}</a></li>', home)
         self.assertIn('href="https://www.instagram.com/iceberg_maktab" aria-label="Instagram"', home)
         data = json.loads(re.search(r'<script type="application/ld\+json">(.*?)</script>', home, re.S).group(1))
@@ -229,6 +232,62 @@ class SitePageTests(unittest.TestCase):
         courses = self.client.get('/courses').get_data(as_text=True)
         self.assertIn('href="https://www.instagram.com/Iceberg_Study_Center"', courses)
         self.assertIn('href="https://t.me/iceberg_qabulxona"', courses)
+
+    def test_every_page_in_russian_and_english(self):
+        app_module.MISSING_TRANSLATIONS.clear()
+        for endpoint, (uz_path, other_path, _methods) in app_module.LOCALIZED_ROUTES.items():
+            for lang in ('ru', 'en'):
+                path = f'/{lang}{other_path}' if other_path != '/' else f'/{lang}/'
+                with self.subTest(path=path):
+                    response = self.client.get(path)
+                    self.assertEqual(response.status_code, 200)
+                    html = response.get_data(as_text=True)
+                    self.assertIn(f'<html lang="{lang}" data-brand="school">', html)
+                    self.assertEqual(len(re.findall(r'<h1[\s>]', html)), 1)
+                    self.assertIn(f'<link rel="canonical" href="https://iceberglc.com{path}">', html)
+                    self.assertIn(f'hreflang="uz" href="https://iceberglc.com{uz_path}"', html)
+                    # links stay in the page's language (the language switcher is the one exception)
+                    self.assertIn(f'href="/{lang}/courses"', html)
+                    links = re.sub(r'<a href="[^"]*" hreflang="\w+"|<option value="[^"]*"', '', html)
+                    self.assertNotIn('href="/courses"', links)
+        self.assertEqual(app_module.MISSING_TRANSLATIONS, set())
+
+    def test_translations_keep_placeholders_and_markup(self):
+        for lang, table in app_module.TRANSLATIONS.items():
+            for source, text in table.items():
+                with self.subTest(lang=lang, source=source):
+                    self.assertTrue(text.strip())
+                    self.assertEqual(set(re.findall(r'\{\w+\}', source)), set(re.findall(r'\{\w+\}', text)))
+                    self.assertEqual(source.count('<span'), text.count('<span'))
+
+    def test_translated_pages_read_in_their_language(self):
+        ru = self.client.get('/ru/').get_data(as_text=True)
+        en = self.client.get('/en/').get_data(as_text=True)
+        self.assertIn('Прочный фундамент', ru)
+        self.assertIn('strong foundation', en)
+        for html in (ru, en):
+            self.assertNotIn('Ariza topshirish', html)
+            self.assertNotIn('Maktab haqida', html)
+        self.assertIn('Ваша заявка принята', self.client.get('/ru/register').get_data(as_text=True))
+        admissions = self.client.get('/en/admissions').get_data(as_text=True)
+        self.assertIn('data-thanks-url="/en/admissions/thanks"', admissions)
+        self.assertIn('<option value="en" selected>English</option>', admissions)
+
+    def test_old_english_urls_reach_the_english_pages(self):
+        for old, new in (('/partners', '/en/partners'), ('/en/our_programs', '/en/courses')):
+            with self.subTest(old=old):
+                response = self.client.get(old)
+                self.assertEqual(response.status_code, 301)
+                self.assertTrue(response.location.endswith(new))
+        self.assertFalse([source for source, _t, _c in app_module.LEGACY_REDIRECTS if source in ('/en', '/en/*')])
+
+    def test_korean_and_chinese_courses(self):
+        courses = self.client.get('/courses').get_data(as_text=True)
+        for program in ('korean', 'chinese'):
+            self.assertIn(f'id="{program}"', courses)
+            self.assertIn(f'value="{program}"', self.client.get('/register').get_data(as_text=True))
+        self.assertIn('7 yoshdan boshlab', courses)
+        self.assertIn('Korean', self.client.get('/en/courses').get_data(as_text=True))
 
     def test_courses_page_lists_registration_programs(self):
         html = self.client.get('/courses').get_data(as_text=True)

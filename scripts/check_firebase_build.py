@@ -25,6 +25,19 @@ EXPECTED_PAGES = {
     "/news": "news.html",
     "/contact": "contact.html",
     "/register": "register.html",
+    "/hamkorlik": "hamkorlik.html",
+    "/ru/": "ru/index.html",
+    "/ru/about": "ru/about.html",
+    "/ru/admissions": "ru/admissions.html",
+    "/ru/courses": "ru/courses.html",
+    "/ru/register": "ru/register.html",
+    "/ru/partners": "ru/partners.html",
+    "/en/": "en/index.html",
+    "/en/about": "en/about.html",
+    "/en/admissions": "en/admissions.html",
+    "/en/courses": "en/courses.html",
+    "/en/register": "en/register.html",
+    "/en/partners": "en/partners.html",
 }
 EXPECTED_REDIRECTS = (
     "/our_programs /courses 301",
@@ -33,7 +46,8 @@ EXPECTED_REDIRECTS = (
     "/faq /courses#savollar 301",
     "/contacts /contact 301",
     "/news/* /news 301",
-    "/en/* / 302",
+    "/en/our_programs /en/courses 301",
+    "/partners /en/partners 301",
 )
 IGNORED_SCHEMES = {"data", "mailto", "tel", "javascript"}
 PRIVATE_MARKERS = (

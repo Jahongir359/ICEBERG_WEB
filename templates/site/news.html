@@ -1,14 +1,14 @@
 {% extends "site/base.html" %}
 {% from "site/_macros.html" import icon, curve %}
-{% block title %}Yangiliklar va tadbirlar — Iceberg School{% endblock %}
-{% block description %}Iceberg School va Iceberg Courses yangiliklari, tadbirlar va ochiq eshiklar kunlari.{% endblock %}
+{% block title %}{{ _("Yangiliklar va tadbirlar — Iceberg School") }}{% endblock %}
+{% block description %}{{ _("Iceberg School va Iceberg Courses yangiliklari, tadbirlar va ochiq eshiklar kunlari.") }}{% endblock %}
 {% block content %}
 <section class="page-hero">
     <div class="wrap">
-        <nav class="crumbs" aria-label="Sahifa yo'li"><a href="{{ url_for('index') }}">Bosh sahifa</a><span aria-hidden="true">/</span><span>Yangiliklar</span></nav>
-        <span class="kicker">Yangiliklar</span>
-        <h1>Maktab hayotidan</h1>
-        <p class="lead">Tadbirlar, ochiq eshiklar kunlari va o'quvchilarimiz yutuqlari.</p>
+        <nav class="crumbs" aria-label="{{ _("Sahifa yo'li") }}"><a href="{{ url_for('index') }}">{{ _("Bosh sahifa") }}</a><span aria-hidden="true">/</span><span>{{ _("Yangiliklar") }}</span></nav>
+        <span class="kicker">{{ _("Yangiliklar") }}</span>
+        <h1>{{ _("Maktab hayotidan") }}</h1>
+        <p class="lead">{{ _("Tadbirlar, ochiq eshiklar kunlari va o'quvchilarimiz yutuqlari.") }}</p>
     </div>
     {{ curve('cream') }}
 </section>
@@ -24,8 +24,8 @@
         {% else %}
         <div class="empty rv">
             <img src="{{ url_for('static', filename='school/img/crest-maroon.png') }}" alt="" width="64" height="76" loading="lazy">
-            <h2 class="h3">Tez orada birinchi yangiliklar</h2>
-            <p class="lead">Ochiq eshiklar kuni va boshqa tadbirlar haqida birinchilardan bo'lib bilish uchun Telegram kanalimizga obuna bo'ling.</p>
+            <h2 class="h3">{{ _("Tez orada birinchi yangiliklar") }}</h2>
+            <p class="lead">{{ _("Ochiq eshiklar kuni va boshqa tadbirlar haqida birinchilardan bo'lib bilish uchun Telegram kanalimizga obuna bo'ling.") }}</p>
             <a class="btn btn-primary" href="{{ school.telegram_url or registration.contact.telegram_url }}" rel="noopener">{{ icon('telegram') }} Telegram</a>
         </div>
         {% endif %}

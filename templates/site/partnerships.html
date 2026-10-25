@@ -1,30 +1,18 @@
 {% extends "site/base.html" %}
 {% from "site/_macros.html" import icon, fact, curve, map_links %}
-{#- One page in two languages: /hamkorlik (lang='uz') and /partners (lang='en'). #}
-{%- set en = lang == 'en' -%}
-{% macro tr(uz, en_text) %}{{ en_text if en else uz }}{% endmacro %}
-{% block lang %}{{ lang }}{% endblock %}
-{% block og_locale %}{{ 'en_US' if en else 'uz_UZ' }}{% endblock %}
-{% block title %}{{ tr("Hamkorlik — Iceberg School bilan birga ishlang", "Partner with Iceberg School — Uychi, Uzbekistan") }}{% endblock %}
-{% block description %}{{ tr("Iceberg School va Iceberg Courses har qanday hamkorlikka ochiq: o'quvchi va o'qituvchilar almashinuvi, til dasturlari, lagerlar, qo'shma loyihalar.", "Iceberg School, a private school for grades 1–11 in Uychi, Uzbekistan, and Iceberg Courses welcome partnerships of every kind: exchanges, teacher training, language programmes, camps and joint projects.") }}{% endblock %}
-{% block head %}
-    <link rel="alternate" hreflang="uz" href="https://iceberglc.com/hamkorlik">
-    <link rel="alternate" hreflang="en" href="https://iceberglc.com/partners">
-    <link rel="alternate" hreflang="x-default" href="https://iceberglc.com/partners">
-{% endblock %}
+{#- /hamkorlik in Uzbek, /ru/partners and /en/partners in Russian and English. #}
+{% block title %}{{ _('Hamkorlik — Iceberg School bilan birga ishlang') }}{% endblock %}
+{% block description %}{{ _("Iceberg School va Iceberg Courses har qanday hamkorlikka ochiq: o'quvchi va o'qituvchilar almashinuvi, til dasturlari, lagerlar, qo'shma loyihalar.") }}{% endblock %}
 {% block content %}
 <section class="page-hero">
     <div class="wrap">
-        <nav class="crumbs" aria-label="{{ tr("Sahifa yo'li", 'Breadcrumb') }}"><a href="{{ url_for('index') }}">{{ tr('Bosh sahifa', 'Home') }}</a><span aria-hidden="true">/</span><span>{{ tr('Hamkorlik', 'Partnerships') }}</span></nav>
-        <span class="kicker">{{ tr('Hamkorlik', 'Partnerships') }}</span>
-        <h1>{{ tr("Keling, birga quramiz", "Let's build something together") }}</h1>
-        <p class="lead">{{ tr(
-            "Iceberg School — Uychi (Namangan viloyati)dagi 1–11-sinflar uchun xususiy maktab. Iceberg Courses esa " ~ school.founded ~ "-yildan beri faoliyat yuritayotgan o'quv markazimiz. Biz maktablar, universitetlar, tashkilotlar va kompaniyalar bilan har qanday hamkorlikka ochiqmiz.",
-            "Iceberg School is a private school for grades 1–11 in Uychi, Namangan region, Uzbekistan. Iceberg Courses, our learning centre, has been teaching since " ~ school.founded ~ ". We welcome partnerships of every kind with schools, universities, organisations and companies.") }}</p>
+        <nav class="crumbs" aria-label="{{ _("Sahifa yo'li") }}"><a href="{{ url_for('index') }}">{{ _('Bosh sahifa') }}</a><span aria-hidden="true">/</span><span>{{ _('Hamkorlik') }}</span></nav>
+        <span class="kicker">{{ _('Hamkorlik') }}</span>
+        <h1>{{ _('Keling, birga quramiz') }}</h1>
+        <p class="lead">{{ _("Iceberg School — Uychi (Namangan viloyati)dagi 1–11-sinflar uchun xususiy maktab. Iceberg Courses esa {year}-yildan beri faoliyat yuritayotgan o'quv markazimiz. Biz maktablar, universitetlar, tashkilotlar va kompaniyalar bilan har qanday hamkorlikka ochiqmiz.", year=school.founded) }}</p>
         <div class="hero-cta">
-            <a class="btn btn-primary" href="mailto:{{ school.partners_email }}">{{ icon('mail') }} {{ tr("Bog'lanish", 'Get in touch') }}</a>
-            {% if en %}<a class="btn btn-outline" href="{{ url_for('partnerships') }}" hreflang="uz" lang="uz">O'zbekcha</a>
-            {% else %}<a class="btn btn-outline" href="{{ url_for('partners_en') }}" hreflang="en" lang="en">{{ icon('globe') }} English</a>{% endif %}
+            <a class="btn btn-primary" href="mailto:{{ school.partners_email }}">{{ icon('mail') }} {{ _("Bog'lanish") }}</a>
+            {% if lang != 'en' %}<a class="btn btn-outline" href="{{ lang_url('en') }}" hreflang="en" lang="en">{{ icon('globe') }} English</a>{% endif %}
         </div>
     </div>
     {{ curve('white') }}
@@ -33,14 +21,14 @@
 <section class="sec sec-white">
     <div class="wrap">
         <div class="sec-head rv">
-            <span class="kicker">{{ tr('Biz haqimizda', 'At a glance') }}</span>
-            <h2 class="h2">{{ tr('Iceberg oilasi raqamlarda', 'The Iceberg family in numbers') }}</h2>
+            <span class="kicker">{{ _('Biz haqimizda') }}</span>
+            <h2 class="h2">{{ _('Iceberg oilasi raqamlarda') }}</h2>
         </div>
         <div class="grid grid-4 stats">
-            <article class="card stat rv"><strong class="stat-num">{{ school.grades }}</strong><span>{{ tr('Sinflar · xususiy maktab', 'Grades · private school') }}</span></article>
-            <article class="card stat rv d1"><strong class="stat-num">{{ school.founded }}</strong><span>{{ tr('Iceberg tashkil topgan yil', 'Year Iceberg began') }}</span></article>
-            <article class="card stat rv d2"><strong class="stat-num">{{ school.stats.students }}</strong><span>{{ tr("O'quvchilar · maktab va kurslar", 'Students · school and courses') }}</span></article>
-            <article class="card stat rv d3"><strong class="stat-num">{{ school.stats.teachers }}</strong><span>{{ tr("O'qituvchilar · maktab va kurslar", 'Teachers · school and courses') }}</span></article>
+            <article class="card stat rv"><strong class="stat-num">{{ school.grades }}</strong><span>{{ _('Sinflar · xususiy maktab') }}</span></article>
+            <article class="card stat rv d1"><strong class="stat-num">{{ school.founded }}</strong><span>{{ _('Iceberg tashkil topgan yil') }}</span></article>
+            <article class="card stat rv d2"><strong class="stat-num">{{ school.stats.students }}</strong><span>{{ _("O'quvchilar · maktab va kurslar") }}</span></article>
+            <article class="card stat rv d3"><strong class="stat-num">{{ school.stats.teachers }}</strong><span>{{ _("O'qituvchilar · maktab va kurslar") }}</span></article>
         </div>
     </div>
 </section>
@@ -48,21 +36,21 @@
 <section class="sec">
     <div class="wrap">
         <div class="sec-head rv">
-            <span class="kicker">{{ tr("Nimalarni o'qitamiz", 'What we teach') }}</span>
-            <h2 class="h2">{{ tr('Maktab fanlari va alohida kurslar', 'School subjects and separate courses') }}</h2>
+            <span class="kicker">{{ _("Nimalarni o'qitamiz") }}</span>
+            <h2 class="h2">{{ _('Maktab fanlari va alohida kurslar') }}</h2>
         </div>
         <div class="grid grid-2">
             <article class="card rv">
                 <img src="{{ url_for('static', filename='school/img/logo-h-maroon.png') }}" alt="Iceberg School" width="170" height="50" style="width:150px;height:auto" loading="lazy">
-                <h3 class="h3">{{ tr("Maktab fanlari · {}-sinflar", 'School subjects · grades {}').format(school.grades) }}</h3>
-                <p>{{ tr("Davlat o'quv dasturi bo'yicha. Ta'lim tillari:", 'Following the Uzbek national curriculum. Teaching languages:') }} <strong>{{ school.teaching_languages_list.en if en else school.teaching_languages_list.uz }}</strong>.</p>
-                <ul class="tag-list">{% for subject in school.subjects %}<li>{{ subject.en if en else subject.uz }}</li>{% endfor %}</ul>
+                <h3 class="h3">{{ _('Maktab fanlari · {grades}-sinflar', grades=school.grades) }}</h3>
+                <p>{{ _("Davlat o'quv dasturi bo'yicha. Ta'lim tillari:") }} <strong>{{ _(school.teaching_languages_list) }}</strong>.</p>
+                <ul class="tag-list">{% for subject in school.subjects %}<li>{{ _(subject) }}</li>{% endfor %}</ul>
             </article>
             <article class="card rv d1">
                 <span class="icon-tile">{{ icon('cap') }}</span>
-                <h3 class="h3">{{ tr('Iceberg Courses · alohida kurslar', 'Iceberg Courses · separate courses') }}</h3>
-                <p>{{ tr("Maktab o'quvchilari va kattalar uchun til va imtihon kurslari:", 'Language and exam courses for school students and adults:') }}</p>
-                <ul class="tag-list">{% for course in school.courses_offered %}<li>{{ course.en if en else course.uz }}</li>{% endfor %}</ul>
+                <h3 class="h3">{{ _('Iceberg Courses · alohida kurslar') }}</h3>
+                <p>{{ _("Maktab o'quvchilari va kattalar uchun til va imtihon kurslari:") }}</p>
+                <ul class="tag-list">{% for course in school.courses_offered %}<li>{{ _(course) }}</li>{% endfor %}</ul>
             </article>
         </div>
     </div>
@@ -71,23 +59,23 @@
 <section class="sec sec-white">
     <div class="wrap">
         <div class="sec-head center rv">
-            <span class="kicker">{{ tr("Hamkorlik yo'nalishlari", 'Ways to work together') }}</span>
-            <h2 class="h2">{{ tr("Har qanday hamkorlikka ochiqmiz", 'Open to every kind of partnership') }}</h2>
-            <p class="lead">{{ tr("Masalan:", 'For example:') }}</p>
+            <span class="kicker">{{ _("Hamkorlik yo'nalishlari") }}</span>
+            <h2 class="h2">{{ _('Har qanday hamkorlikka ochiqmiz') }}</h2>
+            <p class="lead">{{ _('Masalan:') }}</p>
         </div>
         <div class="grid grid-3">
-            {% for ic, uz_title, en_title, uz_text, en_text in [
-                ('globe', "O'quvchilar almashinuvi", 'Student exchanges', "Tashriflar, almashinuv dasturlari va madaniy sayohatlar.", 'Visits, exchange programmes and cultural trips.'),
-                ('users', "O'qituvchilar almashinuvi", 'Teacher exchange and training', "Malaka oshirish, tajriba almashish va mehmon o'qituvchilar.", 'Professional development, shared practice and visiting teachers.'),
-                ('chat', 'Qardosh maktab', 'Sister-school links', "Qo'shma onlayn darslar va o'quvchilar loyihalari.", 'Joint online lessons and student projects across borders.'),
-                ('book', 'Til dasturlari', 'Language programmes', "Yapon tili va boshqa tillar bo'yicha darslar va sertifikatlar.", 'Japanese and other languages: classes, teachers and certificates.'),
-                ('calendar', 'Lager va tadbirlar', 'Camps and events', "Yozgi va qishki lagerlar, olimpiadalar, festivallar.", 'Summer and winter camps, competitions and festivals.'),
-                ('cap', "Universitetga yo'l", 'University pathways', "Xorijiy universitetlarga tayyorgarlik va stipendiyalar.", 'Preparation for universities abroad and scholarships.')
+            {% for ic, title, text in [
+                ('globe', "O'quvchilar almashinuvi", "Tashriflar, almashinuv dasturlari va madaniy sayohatlar."),
+                ('users', "O'qituvchilar almashinuvi", "Malaka oshirish, tajriba almashish va mehmon o'qituvchilar."),
+                ('chat', 'Qardosh maktab', "Qo'shma onlayn darslar va o'quvchilar loyihalari."),
+                ('book', 'Til dasturlari', "Yapon tili va boshqa tillar bo'yicha darslar va sertifikatlar."),
+                ('calendar', 'Lager va tadbirlar', "Yozgi va qishki lagerlar, olimpiadalar, festivallar."),
+                ('cap', "Universitetga yo'l", "Xorijiy universitetlarga tayyorgarlik va stipendiyalar.")
             ] %}
-            <article class="card rv{% if loop.index0 % 3 %} d{{ loop.index0 % 3 }}{% endif %}"><span class="icon-tile soft">{{ icon(ic) }}</span><h3 class="h3">{{ en_title if en else uz_title }}</h3><p>{{ en_text if en else uz_text }}</p></article>
+            <article class="card rv{% if loop.index0 % 3 %} d{{ loop.index0 % 3 }}{% endif %}"><span class="icon-tile soft">{{ icon(ic) }}</span><h3 class="h3">{{ _(title) }}</h3><p>{{ _(text) }}</p></article>
             {% endfor %}
         </div>
-        <p class="lead rv" style="text-align:center;margin-top:24px">{{ tr("Va boshqa har qanday g'oya — homiylik, o'quv materiallari, ko'ngillilar, qo'shma tadbirlar. Taklifingizni yozing.", 'And any other idea: sponsorship, learning materials, volunteers or joint events. Tell us yours.') }}</p>
+        <p class="lead rv" style="text-align:center;margin-top:24px">{{ _("Va boshqa har qanday g'oya — homiylik, o'quv materiallari, ko'ngillilar, qo'shma tadbirlar. Taklifingizni yozing.") }}</p>
     </div>
 </section>
 
@@ -95,24 +83,24 @@
     <div class="wrap">
         <div class="campus-head">
             <div class="sec-head rv">
-                <span class="kicker">{{ tr('Maktabimiz', 'Our campus') }}</span>
-                <h2 class="h2">{{ tr("O'quvchilarimiz o'qiydigan joy", 'Where our students learn') }}</h2>
+                <span class="kicker">{{ _('Maktabimiz') }}</span>
+                <h2 class="h2">{{ _("O'quvchilarimiz o'qiydigan joy") }}</h2>
             </div>
             <div class="campus-nav" aria-hidden="true">
                 <button class="campus-btn" type="button" data-scroll-prev="campus" tabindex="-1">{{ icon('arrow') }}</button>
                 <button class="campus-btn" type="button" data-scroll-next="campus" tabindex="-1">{{ icon('arrow') }}</button>
             </div>
         </div>
-        <div class="campus" id="campus" role="region" aria-label="{{ tr('Maktab rasmlari', 'Campus photos') }}" tabindex="0" data-autoscroll>
-            {% for file, uz_caption, en_caption, w, h in [
-                ('building', 'Maktab binosi', 'School building', 947, 1184),
-                ('courtyard', 'Maktab hovlisi', 'Courtyard', 1000, 750),
-                ('football', 'Futbol maydoni', 'Football pitch', 1000, 750),
-                ('playground', "O'yin maydonchasi", 'Playground', 1000, 750),
-                ('dining-hall', 'Ovqatlanish zali', 'Dining hall', 1000, 1250),
-                ('rest-room', 'Kichiklar uchun dam olish xonasi', 'Rest room for younger pupils', 1000, 750)
+        <div class="campus" id="campus" role="region" aria-label="{{ _('Maktab rasmlari') }}" tabindex="0" data-autoscroll>
+            {% for file, caption_uz, w, h in [
+                ('building', 'Maktab binosi', 947, 1184),
+                ('courtyard', 'Maktab hovlisi', 1000, 750),
+                ('football', 'Futbol maydoni', 1000, 750),
+                ('playground', "O'yin maydonchasi", 1000, 750),
+                ('dining-hall', 'Ovqatlanish zali', 1000, 1250),
+                ('rest-room', 'Kichiklar uchun dam olish xonasi', 1000, 750)
             ] %}
-            {%- set caption = en_caption if en else uz_caption %}
+            {%- set caption = _(caption_uz) %}
             <figure class="campus-photo rv{% if file == 'building' %} campus-main{% endif %}">
                 <img src="{{ url_for('static', filename='school/img/' ~ file ~ '.jpg') }}"
                      srcset="{{ url_for('static', filename='school/img/' ~ file ~ '-640.jpg') }} 640w, {{ url_for('static', filename='school/img/' ~ file ~ '.jpg') }} {{ w }}w"
@@ -128,18 +116,18 @@
     <div class="wrap">
         <article class="card rv partner-contact">
             <div class="sec-head" style="margin-bottom:8px">
-                <span class="kicker">{{ tr("Bog'lanish", 'Contact') }}</span>
-                <h2 class="h2">{{ tr("Hamkorlik bo'yicha yozing", 'Talk to us about a partnership') }}</h2>
-                <p class="lead">{{ tr("Qisqacha o'zingiz va g'oyangiz haqida yozing — siz bilan bog'lanamiz.", "Send a short note about your organisation and your idea, and we'll get back to you.") }}</p>
+                <span class="kicker">{{ _("Bog'lanish") }}</span>
+                <h2 class="h2">{{ _("Hamkorlik bo'yicha yozing") }}</h2>
+                <p class="lead">{{ _("Qisqacha o'zingiz va g'oyangiz haqida yozing — siz bilan bog'lanamiz.") }}</p>
             </div>
             <div class="contact-list">
-                <div><span class="icon-tile">{{ icon('users') }}</span><span>{{ school.leader.name }}<small>{{ school.leader.role_en if en else school.leader.role }} · {{ school.leader.org_en if en else school.leader.org }}</small></span></div>
-                {% for person in school.co_founders if person.name %}<div><span class="icon-tile">{{ icon('users') }}</span><span>{{ person.name }}<small>{{ person.role_en if en else person.role }} · Iceberg</small></span></div>{% endfor %}
-                <a href="mailto:{{ school.partners_email }}"><span class="icon-tile">{{ icon('mail') }}</span><span>{{ school.partners_email }}<small>{{ tr('Xalqaro hamkorlik', 'International partnerships') }}</small></span></a>
-                <a href="tel:{{ school.phone }}"><span class="icon-tile">{{ icon('phone') }}</span><span>{{ school.phone_display }}<small>{{ tr('Telefon', 'Phone') }}</small></span></a>
-                <a href="{{ school.telegram_url }}" rel="noopener"><span class="icon-tile">{{ icon('telegram') }}</span><span>@{{ school.telegram_url.rsplit('/', 1)[-1] }}<small>{{ tr('Telegram kanal', 'Telegram channel') }}</small></span></a>
+                <div><span class="icon-tile">{{ icon('users') }}</span><span>{{ school.leader.name }}<small>{{ _(school.leader.role) }} · {{ _(school.leader.org) }}</small></span></div>
+                {% for person in school.co_founders if person.name %}<div><span class="icon-tile">{{ icon('users') }}</span><span>{{ person.name }}<small>{{ _(person.role) }} · Iceberg</small></span></div>{% endfor %}
+                <a href="mailto:{{ school.partners_email }}"><span class="icon-tile">{{ icon('mail') }}</span><span>{{ school.partners_email }}<small>{{ _('Xalqaro hamkorlik') }}</small></span></a>
+                <a href="tel:{{ school.phone }}"><span class="icon-tile">{{ icon('phone') }}</span><span>{{ school.phone_display }}<small>{{ _('Telefon') }}</small></span></a>
+                <a href="{{ school.telegram_url }}" rel="noopener"><span class="icon-tile">{{ icon('telegram') }}</span><span>@{{ school.telegram_url.rsplit('/', 1)[-1] }}<small>{{ _('Telegram kanal') }}</small></span></a>
                 <a href="{{ school.instagram_url }}" rel="noopener"><span class="icon-tile">{{ icon('instagram') }}</span><span>@{{ school.instagram_url.rstrip('/').rsplit('/', 1)[-1] }}<small>Instagram</small></span></a>
-                <a href="{{ school.map_url }}" target="_blank" rel="noopener"><span class="icon-tile">{{ icon('pin') }}</span><span>{{ tr("Uychi, Namangan viloyati, O'zbekiston", 'Uychi, Namangan region, Uzbekistan') }}<small>{{ school.address }}</small></span></a>
+                <a href="{{ school.map_url }}" target="_blank" rel="noopener"><span class="icon-tile">{{ icon('pin') }}</span><span>{{ _("Uychi, Namangan viloyati, O'zbekiston") }}<small>{{ _(school.address) }}</small></span></a>
             </div>
             {{ map_links(school) }}
         </article>

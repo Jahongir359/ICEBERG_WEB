@@ -4,24 +4,24 @@
     {% if media and post.image_poster and featured %}
     {#- Posters carry their own text: show them whole, never cropped, and link the full-size file. #}
     <a class="media poster" href="{{ url_for('static', filename=media.file_path) }}" target="_blank" rel="noopener">
-        <img src="{{ url_for('static', filename=media.file_path) }}"{% if post.image_small %} srcset="{{ url_for('static', filename=post.image_small) }} 720w, {{ url_for('static', filename=media.file_path) }} {{ post.image_width }}w" sizes="(min-width: 900px) 560px, 100vw"{% endif %} width="{{ post.image_width }}" height="{{ post.image_height }}" alt="{{ media.caption or post.title }}">
-        <span class="poster-zoom">{{ icon('arrow') }} Kattalashtirish</span>
+        <img src="{{ url_for('static', filename=media.file_path) }}"{% if post.image_small %} srcset="{{ url_for('static', filename=post.image_small) }} 720w, {{ url_for('static', filename=media.file_path) }} {{ post.image_width }}w" sizes="(min-width: 900px) 560px, 100vw"{% endif %} width="{{ post.image_width }}" height="{{ post.image_height }}" alt="{{ _(media.caption or post.title) }}">
+        <span class="poster-zoom">{{ icon('arrow') }} {{ _('Kattalashtirish') }}</span>
     </a>
     {% elif media %}
     <div class="media{% if post.image_poster %} poster-teaser{% endif %}">
         {% if media.media_type == 'image' %}
-        <img src="{{ url_for('static', filename=post.image_small or media.file_path) }}" alt="{{ media.caption or post.title }}" loading="lazy">
+        <img src="{{ url_for('static', filename=post.image_small or media.file_path) }}" alt="{{ _(media.caption or post.title) }}" loading="lazy">
         {% else %}
         <video controls preload="metadata"><source src="{{ url_for('static', filename=media.file_path) }}"></video>
         {% endif %}
     </div>
     {% endif %}
     <div class="body">
-        <span class="type">{{ 'Tadbir' if post.post_type == 'event' else 'Yangilik' }}{% if post.event_date %} · <time datetime="{{ post.event_date }}{% if post.event_time %}T{{ post.event_time }}{% endif %}">{{ post.event_label or post.event_date }}</time>{% endif %}</span>
-        {% if featured %}<h2 class="h2">{{ post.title }}</h2>{% else %}<h3 class="h3">{{ post.title }}</h3>{% endif %}
-        {% if featured and post.body %}{% for paragraph in post.body %}<p>{{ paragraph }}</p>{% endfor %}
-        {% elif post.excerpt %}<p>{{ post.excerpt }}</p>{% endif %}
-        {% if featured and post.location %}<p class="news-where">{{ icon('pin') }} {{ post.location }}</p>{% endif %}
+        <span class="type">{{ _('Tadbir') if post.post_type == 'event' else _('Yangilik') }}{% if post.event_date %} · <time datetime="{{ post.event_date }}{% if post.event_time %}T{{ post.event_time }}{% endif %}">{{ _(post.event_label) if post.event_label else post.event_date }}</time>{% endif %}</span>
+        {% if featured %}<h2 class="h2">{{ _(post.title) }}</h2>{% else %}<h3 class="h3">{{ _(post.title) }}</h3>{% endif %}
+        {% if featured and post.body %}{% for paragraph in post.body %}<p>{{ _(paragraph) }}</p>{% endfor %}
+        {% elif post.excerpt %}<p>{{ _(post.excerpt) }}</p>{% endif %}
+        {% if featured and post.location %}<p class="news-where">{{ icon('pin') }} {{ _(post.location) }}</p>{% endif %}
         {% if featured and post.show_map %}{{ map_links(school) }}{% endif %}
     </div>
 </article>
