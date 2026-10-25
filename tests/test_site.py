@@ -84,7 +84,8 @@ class SitePageTests(unittest.TestCase):
     def test_unconfirmed_facts_show_placeholders(self):
         html = self.client.get('/admissions').get_data(as_text=True)
         self.assertIn('<span class="ph">[NARX]</span>', html)
-        self.assertIn('<span class="ph">[TELEFON]</span>', html)
+        self.assertNotIn('[TELEFON]', html)
+        self.assertIn(f'href="tel:{app_module.SCHOOL_CONFIG["phone"]}"', html)
 
     def test_language_switcher_is_not_machine_translated(self):
         html = self.client.get('/').get_data(as_text=True)
@@ -159,6 +160,8 @@ class SitePageTests(unittest.TestCase):
         data = json.loads(re.search(r'<script type="application/ld\+json">(.*?)</script>', contact, re.S).group(1))
         self.assertEqual(data['geo']['latitude'], float(school['latitude']))
         self.assertEqual(data['address']['addressLocality'], 'Uychi')
+        self.assertEqual(data['address']['streetAddress'], school['address'])
+        self.assertEqual(data['telephone'], school['phone'])
 
     def test_courses_page_lists_registration_programs(self):
         html = self.client.get('/courses').get_data(as_text=True)

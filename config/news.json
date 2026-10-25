@@ -15,8 +15,13 @@
       "image_width": 1055,
       "image_height": 1349,
       "image_poster": true,
-      "location": "Iceberg School, Uychi",
-      "show_map": true
+      "location": "Umid nihollari bolalar lageri, 23-maktab ro'parasida (Uychi)",
+      "show_map": true,
+      "body": [
+        "Maktabimiz bilan yaqindan tanishing, ta'lim tizimimiz haqida to'liq ma'lumot oling va farzandingiz kelajagi uchun muhim qaror qabul qilishda kerakli javoblarga ega bo'ling.",
+        "Sizni samimiy muhit, ko'tarinki kayfiyat, maktabimiz bo'ylab qiziqarli ekskursiya va, albatta, issiq tushlik kutmoqda!",
+        "Murojaat uchun: +998 50 112 08 88"
+      ]
     }
   ]
 }
