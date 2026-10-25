@@ -1,7 +1,8 @@
 {% extends "site/base.html" %}
 {% from "site/_macros.html" import icon, curve %}
 
-{% block title %}{{ _('Iceberg School — xususiy maktab, 1–11-sinflar | Iceberg Courses') }}{% endblock %}
+{% block title %}{{ _("Iceberg School | Xususiy maktab va ICEBERG o'quv markazi") }}{% endblock %}
+{% block description %}{{ _("Iceberg School — Uychidagi xususiy maktab (1–11-sinflar) va ICEBERG o'quv markazi: IELTS, CEFR, SAT, koreys va xitoy tillari. Qabul ochiq.") }}{% endblock %}
 
 {% block schema %}
     {#- Google's site name in search results (home page only). #}
@@ -9,7 +10,7 @@
         '@context': 'https://schema.org',
         '@type': 'WebSite',
         'name': 'Iceberg School',
-        'alternateName': ['Iceberg', 'iceberglc.com'],
+        'alternateName': ['Iceberg', 'Iceberg Maktabi', "ICEBERG o'quv markazi"],
         'url': site_url + url_for('index'),
         'inLanguage': lang
     } | tojson }}</script>

@@ -155,7 +155,6 @@
   "Iceberg School — Uychi (Namangan viloyati)dagi 1–11-sinflar uchun xususiy maktab. Iceberg Courses esa {year}-yildan beri faoliyat yuritayotgan o'quv markazimiz. Biz maktablar, universitetlar, tashkilotlar va kompaniyalar bilan har qanday hamkorlikka ochiqmiz.": "Iceberg School — частная школа для 1–11 классов в Уйчи (Наманганская область). Iceberg Courses — наш учебный центр, работающий с {year} года. Мы открыты к любому сотрудничеству со школами, университетами, организациями и компаниями.",
   "Iceberg School — bosh sahifa": "Iceberg School — главная страница",
   "Iceberg School — xususiy maktab, 1–11-sinflar": "Iceberg School — частная школа, 1–11 классы",
-  "Iceberg School — xususiy maktab, 1–11-sinflar | Iceberg Courses": "Iceberg School — частная школа, 1–11 классы | Iceberg Courses",
   "Iceberg School'da har bir bolani ismi bilan taniymiz va uning kuchli tomonlarini birga kashf etamiz. Ko'rinib turgan natijalar — baholar va sertifikatlar — chuqur bilim, yaxshi odatlar va mustahkam xarakterdan o'sib chiqadi. Maktabimizga xush kelibsiz: farzandingiz kelajagining poydevorini birga quramiz.": "В Iceberg School мы знаем каждого ребёнка по имени и вместе открываем его сильные стороны. Видимые результаты — оценки и сертификаты — вырастают из глубоких знаний, хороших привычек и твёрдого характера. Добро пожаловать в нашу школу: давайте вместе строить фундамент будущего вашего ребёнка.",
   "Iceberg School'ga qabul ochiq": "Открыт приём в Iceberg School",
   "Iceberg School'ga qabul: to'rt oddiy qadam, ariza formasi, o'qish narxi va ko'p beriladigan savollar. 1–11-sinflar uchun xususiy maktab.": "Приём в Iceberg School: четыре простых шага, форма заявки, стоимость обучения и частые вопросы. Частная школа для 1–11 классов.",
@@ -419,5 +418,7 @@
   "{price} / oy": "{price} / месяц",
   "{years} o'quv yili uchun qabul ochiq": "Открыт приём на {years} учебный год",
   "{years} o'quv yillari uchun qabul ochiq": "Открыт приём на {years} учебные годы",
-  "{year}-yildan beri": "с {year} года"
+  "{year}-yildan beri": "с {year} года",
+  "Iceberg School | Xususiy maktab va ICEBERG o'quv markazi": "Iceberg School | Частная школа и учебный центр ICEBERG",
+  "Iceberg School — Uychidagi xususiy maktab (1–11-sinflar) va ICEBERG o'quv markazi: IELTS, CEFR, SAT, koreys va xitoy tillari. Qabul ochiq.": "Iceberg School — частная школа в Уйчи (1–11 классы) и учебный центр ICEBERG: IELTS, CEFR, SAT, корейский и китайский языки. Приём открыт."
 }
