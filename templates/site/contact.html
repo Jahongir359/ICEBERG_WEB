@@ -15,7 +15,7 @@
 <section class="sec">
     <div class="wrap grid grid-2">
         <article class="card rv">
-            <img src="{{ url_for('static', filename='school/img/logo-h-maroon.png') }}" alt="Iceberg School" width="170" height="50" style="width:170px;height:auto" loading="lazy">
+            <img src="{{ url_for('static', filename='school/img/logo-h-maroon-360.png') }}" alt="Iceberg School" width="170" height="50" style="width:170px;height:auto" loading="lazy">
             <h2 class="h3">{{ _("Iceberg School qabul bo'limi") }}</h2>
             <div class="contact-list">
                 {% if school.phone %}<a href="tel:{{ school.phone }}"><span class="icon-tile">{{ icon('phone') }}</span><span>{{ school.phone_display or school.phone }}<small>{{ _("Telefon") }}</small></span></a>{% endif %}

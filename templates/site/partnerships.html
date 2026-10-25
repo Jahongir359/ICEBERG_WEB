@@ -41,7 +41,7 @@
         </div>
         <div class="grid grid-2">
             <article class="card rv">
-                <img src="{{ url_for('static', filename='school/img/logo-h-maroon.png') }}" alt="Iceberg School" width="170" height="50" style="width:150px;height:auto" loading="lazy">
+                <img src="{{ url_for('static', filename='school/img/logo-h-maroon-360.png') }}" alt="Iceberg School" width="170" height="50" style="width:150px;height:auto" loading="lazy">
                 <h3 class="h3">{{ _('Maktab fanlari · {grades}-sinflar', grades=school.grades) }}</h3>
                 <p>{{ _("Davlat o'quv dasturi bo'yicha. Ta'lim tillari:") }} <strong>{{ _(school.teaching_languages_list) }}</strong>.</p>
                 <ul class="tag-list">{% for subject in school.subjects %}<li>{{ _(subject) }}</li>{% endfor %}</ul>

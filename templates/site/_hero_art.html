@@ -1,9 +1,9 @@
-{% from "site/_macros.html" import icon %}
+{% from "site/_macros.html" import icon, poster %}
 {# The school's key visual, shown whole (never cropped), with the crest's three symbols floating at its edges. #}
 <div class="hero-poster">
     <span class="hero-poster-glow" aria-hidden="true"></span>
     <figure class="hero-poster-frame">
-        <img src="{{ url_for('static', filename='school/img/poster.jpg') }}" alt="{{ _('Iceberg Maktabi') }} — {{ school.leader.name or _('maktab rahbari') }}" width="1095" height="1437" fetchpriority="high">
+        {{ poster(_('Iceberg Maktabi') ~ ' — ' ~ (school.leader.name or _('maktab rahbari')), '(min-width: 960px) 432px, min(372px, 92vw)', eager=true) }}
     </figure>
     <span class="orb o1" aria-hidden="true"><span class="icon-tile">{{ icon('mountain') }}</span>{{ _('Yuqoriga intil') }}</span>
     <span class="orb o2" aria-hidden="true"><span class="icon-tile">{{ icon('child') }}</span>{{ _("Har tomonlama o's") }}</span>

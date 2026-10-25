@@ -23,7 +23,7 @@
         {% endif %}
         {% else %}
         <div class="empty rv">
-            <img src="{{ url_for('static', filename='school/img/crest-maroon.png') }}" alt="" width="64" height="76" loading="lazy">
+            <img src="{{ url_for('static', filename='school/img/crest-maroon-128.png') }}" alt="" width="64" height="76" loading="lazy">
             <h2 class="h3">{{ _("Tez orada birinchi yangiliklar") }}</h2>
             <p class="lead">{{ _("Ochiq eshiklar kuni va boshqa tadbirlar haqida birinchilardan bo'lib bilish uchun Telegram kanalimizga obuna bo'ling.") }}</p>
             <a class="btn btn-primary" href="{{ school.telegram_url or registration.contact.telegram_url }}" rel="noopener">{{ icon('telegram') }} Telegram</a>

@@ -46,6 +46,15 @@ REGISTRATION_CONFIG = load_registration_config()
 SCHOOL_CONFIG = load_json('config', 'school.json')
 COURSE_FAQS = load_json('config', 'faq.json')['faqs']
 TURNSTILE_SITE_KEY = load_turnstile_site_key()
+
+
+def read_static(path):
+    with open(os.path.join(app.root_path, 'static', *path.split('/')), 'r', encoding='utf-8') as file:
+        return file.read().strip()
+
+
+# Small stylesheets inlined in <head> (brand tokens, @font-face) so the first paint waits on one CSS file.
+INLINE_CSS = Markup('\n'.join(read_static(path) for path in ('brand/tokens.css', 'fonts/fonts.css')))
 SCHOOL_GRADES = [str(number) for number in range(1, 12)]
 SCHOOL_LANGUAGES = {'uz': "O'zbek", 'ru': 'Rus', 'en': 'Ingliz'}
 
@@ -152,6 +161,7 @@ def inject_site_context():
         'registration': REGISTRATION_CONFIG,
         'site_nav': SITE_NAV,
         'turnstile_site_key': TURNSTILE_SITE_KEY,
+        'inline_css': INLINE_CSS,
         'current_year': datetime.now(UTC).year,
     }
 

@@ -74,11 +74,12 @@
     <script type="application/ld+json">{{ school_ld | tojson }}</script>
     {% block schema %}{% endblock %}
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT@9..144,500..700,50..100&family=Inter:wght@400;500;600;700;800{% if lang == 'ru' %}&family=Literata:opsz,wght@7..72,500..700{% endif %}&display=swap">
-    <link rel="stylesheet" href="{{ url_for('static', filename='brand/tokens.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/site.css', v='20261026-1') }}">
+    {#- Fonts are self-hosted (static/fonts); preload the files the first screen needs in this language. #}
+    {%- for font in (('literata-cyrillic', 'inter-cyrillic') if lang == 'ru' else ('fraunces-latin', 'inter-latin')) %}
+    <link rel="preload" href="{{ url_for('static', filename='fonts/' ~ font ~ '.woff2') }}" as="font" type="font/woff2" crossorigin>
+    {%- endfor %}
+    <style>{{ inline_css }}</style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/site.css', v='20261026-3') }}">
     {% block head %}{% endblock %}
 </head>
 <body class="{% block body_class %}has-dock{% endblock %}">
@@ -87,7 +88,7 @@
     <header class="hdr" data-header>
         <div class="wrap hdr-row">
             <a class="hdr-logo" href="{{ url_for('index') }}" aria-label="{{ _('Iceberg School — bosh sahifa') }}">
-                <img src="{{ url_for('static', filename='school/img/logo-h-maroon.png') }}" alt="Iceberg School" width="128" height="38">
+                <img src="{{ url_for('static', filename='school/img/logo-h-maroon-360.png') }}" alt="Iceberg School" width="128" height="38">
             </a>
             <nav class="nav" aria-label="{{ _('Asosiy menyu') }}">
                 {% for endpoint, label in site_nav %}
@@ -139,7 +140,7 @@
     <footer class="ftr">
         <div class="wrap ftr-grid">
             <div class="ftr-brand">
-                <img src="{{ url_for('static', filename='school/img/logo-h-white.png') }}" alt="Iceberg School" width="168" height="51" loading="lazy">
+                <img src="{{ url_for('static', filename='school/img/logo-h-white-336.png') }}" alt="Iceberg School" width="168" height="51" loading="lazy">
                 <p>{{ _("Ko'rinib turgani — faqat cho'qqi. Biz uning ostidagi poydevorni quramiz.") }}</p>
                 <span class="ftr-family">{{ _('Iceberg oilasi') }} · <a href="{{ url_for('courses') }}">Iceberg Courses</a></span>
             </div>

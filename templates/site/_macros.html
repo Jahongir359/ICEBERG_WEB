@@ -58,6 +58,14 @@
 {%- endif %}
 {%- endmacro %}
 
+{# The school poster as WebP (480/920 px) with a JPEG fallback; `eager` for the first screen. #}
+{% macro poster(alt, sizes, eager=false) -%}
+<picture>
+    <source type="image/webp" srcset="{{ url_for('static', filename='school/img/poster-480.webp') }} 480w, {{ url_for('static', filename='school/img/poster-920.webp') }} 920w" sizes="{{ sizes }}">
+    <img src="{{ url_for('static', filename='school/img/poster-920.jpg') }}" alt="{{ alt }}" width="920" height="1207"{% if eager %} fetchpriority="high"{% else %} loading="lazy"{% endif %}>
+</picture>
+{%- endmacro %}
+
 {% macro curve(to='white') -%}
 <svg class="curve to-{{ to }}" viewBox="0 0 1440 64" preserveAspectRatio="none" aria-hidden="true"><path d="M0 64h1440V20C1210 60 960 66 720 44S240 2 0 30Z" fill="currentColor"/></svg>
 {%- endmacro %}

@@ -1,8 +1,11 @@
+{% from "site/_macros.html" import poster %}
 {# The school's leadership: director (with photo and welcome) and co-founders, from config/school.json. #}
 <section class="sec {{ leader_bg | default('sec-white') }}">
     <div class="wrap leader">
         <figure class="leader-photo rv">
-            <img src="{{ url_for('static', filename=school.leader.photo) }}" alt="{{ school.leader.name or _('Iceberg School rahbari') }}" width="1095" height="1437" loading="lazy">
+            {%- set leader_alt = school.leader.name or _('Iceberg School rahbari') %}
+            {% if school.leader.photo == 'school/img/poster.jpg' %}{{ poster(leader_alt, '(min-width: 900px) 420px, 90vw') }}
+            {%- else %}<img src="{{ url_for('static', filename=school.leader.photo) }}" alt="{{ leader_alt }}" loading="lazy">{% endif %}
         </figure>
         <div class="leader-text rv d1">
             <span class="kicker">{{ _('Maktab rahbaridan') if school.leader.message else _('Rahbariyat') }}</span>
