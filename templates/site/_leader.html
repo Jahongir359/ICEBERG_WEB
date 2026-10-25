@@ -11,7 +11,7 @@
             </blockquote>{% else %}<h2 class="h2">Maktabni boshqaradigan jamoa</h2>{% endif %}
             <div class="leader-sign">
                 <strong>{{ school.leader.name }}</strong>
-                <span>{{ school.leader.role }} · Iceberg School</span>
+                <span>{{ school.leader.role }} · {{ school.leader.org or 'Iceberg School' }}</span>
             </div>
             {% for person in school.co_founders if person.name %}<div class="leader-sign">
                 <strong>{{ person.name }}</strong>
