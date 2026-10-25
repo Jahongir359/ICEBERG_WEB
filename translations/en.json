@@ -155,7 +155,6 @@
   "Iceberg School — Uychi (Namangan viloyati)dagi 1–11-sinflar uchun xususiy maktab. Iceberg Courses esa {year}-yildan beri faoliyat yuritayotgan o'quv markazimiz. Biz maktablar, universitetlar, tashkilotlar va kompaniyalar bilan har qanday hamkorlikka ochiqmiz.": "Iceberg School is a private school for grades 1–11 in Uychi, Namangan region, Uzbekistan. Iceberg Courses, our learning centre, has been teaching since {year}. We welcome partnerships of every kind with schools, universities, organisations and companies.",
   "Iceberg School — bosh sahifa": "Iceberg School — home page",
   "Iceberg School — xususiy maktab, 1–11-sinflar": "Iceberg School — private school, grades 1–11",
-  "Iceberg School — xususiy maktab, 1–11-sinflar | Iceberg Courses": "Iceberg School — private school, grades 1–11 | Iceberg Courses",
   "Iceberg School'da har bir bolani ismi bilan taniymiz va uning kuchli tomonlarini birga kashf etamiz. Ko'rinib turgan natijalar — baholar va sertifikatlar — chuqur bilim, yaxshi odatlar va mustahkam xarakterdan o'sib chiqadi. Maktabimizga xush kelibsiz: farzandingiz kelajagining poydevorini birga quramiz.": "At Iceberg School we know every child by name and discover their strengths together. The results you can see — grades and certificates — grow from deep knowledge, good habits and strong character. Welcome to our school: let's build the foundation of your child's future together.",
   "Iceberg School'ga qabul ochiq": "Admissions to Iceberg School are open",
   "Iceberg School'ga qabul: to'rt oddiy qadam, ariza formasi, o'qish narxi va ko'p beriladigan savollar. 1–11-sinflar uchun xususiy maktab.": "Admissions to Iceberg School: four simple steps, the application form, fees and frequently asked questions. A private school for grades 1–11.",
@@ -419,5 +418,7 @@
   "{price} / oy": "{price} / month",
   "{years} o'quv yili uchun qabul ochiq": "Admissions open for {years}",
   "{years} o'quv yillari uchun qabul ochiq": "Admissions open for {years}",
-  "{year}-yildan beri": "since {year}"
+  "{year}-yildan beri": "since {year}",
+  "Iceberg School | Xususiy maktab va ICEBERG o'quv markazi": "Iceberg School | Private school and ICEBERG learning centre",
+  "Iceberg School — Uychidagi xususiy maktab (1–11-sinflar) va ICEBERG o'quv markazi: IELTS, CEFR, SAT, koreys va xitoy tillari. Qabul ochiq.": "Iceberg School — a private school in Uychi (grades 1–11) and the ICEBERG learning centre: IELTS, CEFR, SAT, Korean and Chinese. Admissions open."
 }
