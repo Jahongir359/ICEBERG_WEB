@@ -55,6 +55,9 @@
     } -%}
     {%- if school.phone %}{% set _ = school_ld.update({'telephone': school.phone}) %}{% endif -%}
     {%- if school.email %}{% set _ = school_ld.update({'email': school.email}) %}{% endif -%}
+    {%- if school.opening_hours_ld %}{% set _ = school_ld.update({'openingHours': school.opening_hours_ld}) %}{% endif -%}
+    {%- if school.co_founder and school.co_founder.name %}{% set _ = school_ld.update({'founder': {'@type': 'Person', 'name': school.co_founder.name}}) %}{% endif -%}
+    {%- if school.leader.name %}{% set _ = school_ld.update({'employee': {'@type': 'Person', 'name': school.leader.name, 'jobTitle': school.leader.role_en or school.leader.role}}) %}{% endif -%}
     {%- if school.city %}{% set _ = school_ld.update({'address': {'@type': 'PostalAddress', 'addressLocality': school.city, 'addressRegion': 'Namangan', 'addressCountry': 'UZ'}}) %}{% endif -%}
     {%- if school.latitude and school.longitude %}{% set _ = school_ld.update({'geo': {'@type': 'GeoCoordinates', 'latitude': school.latitude | float, 'longitude': school.longitude | float}, 'hasMap': school.map_url}) %}{% endif -%}
     {%- if school.address %}{% set _ = school_ld.update({'address': {'@type': 'PostalAddress', 'streetAddress': school.address, 'addressLocality': school.city, 'addressRegion': 'Namangan', 'addressCountry': 'UZ'}}) %}{% endif -%}
@@ -68,7 +71,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT@9..144,500..700,50..100&family=Inter:wght@400;500;600;700;800&display=swap">
     <link rel="stylesheet" href="{{ url_for('static', filename='brand/tokens.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/site.css', v='20261025-2') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/site.css', v='20261025-3') }}">
     {% block head %}{% endblock %}
 </head>
 <body class="{% block body_class %}has-dock{% endblock %}">
@@ -158,13 +161,13 @@
             <div>
                 <h3>Aloqa</h3>
                 <ul>
-                    <li><a href="tel:{{ registration.contact.call_center_phone }}">{{ registration.contact.call_center_display }}</a></li>
+                    <li><a href="tel:{{ school.phone or registration.contact.call_center_phone }}">{{ school.phone_display or registration.contact.call_center_display }}</a></li>
                     <li><a href="mailto:{{ content('contact_email', 'support@iceberglc.com') }}">{{ content('contact_email', 'support@iceberglc.com') }}</a></li>
                     <li><a href="{{ url_for('contact') }}">Manzil va filiallar</a></li>
                 </ul>
                 <div class="socials" style="margin-top:16px">
                     <a href="{{ school.telegram_url or registration.contact.telegram_url }}" aria-label="Telegram" rel="noopener">{{ icon('telegram') }}</a>
-                    <a href="{{ school.instagram_url or 'https://www.instagram.com/Iceberg_Study_Center' }}" aria-label="Instagram" rel="noopener">{{ icon('instagram') }}</a>
+                    <a href="{{ school.instagram_url or registration.contact.instagram_url }}" aria-label="Instagram" rel="noopener">{{ icon('instagram') }}</a>
                     <a href="https://www.youtube.com/@ice_podcast" aria-label="YouTube" rel="noopener">{{ icon('youtube') }}</a>
                 </div>
             </div>

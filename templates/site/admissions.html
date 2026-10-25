@@ -108,7 +108,7 @@
         <aside class="sticky">
             <div class="panel-maroon rv">
                 <img class="crest" src="{{ url_for('static', filename='school/img/crest-white.png') }}" alt="" width="54" height="64" loading="lazy">
-                <h2 class="h3">O'qish narxi{% if school.academic_year %} · {{ school.academic_year }}{% endif %}</h2>
+                <h2 class="h3">O'qish narxi</h2>
                 {% set stage_names = {'primary': "Boshlang'ich", 'middle': "O'rta", 'high': 'Yuqori'} %}
                 {% if school.tuition | selectattr('price') | list %}
                 <dl>
@@ -129,7 +129,7 @@
                     {% if school.phone %}<a href="tel:{{ school.phone }}"><span class="icon-tile">{{ icon('phone') }}</span><span>{{ school.phone_display or school.phone }}<small>Qo'ng'iroq qilish</small></span></a>
                     {% else %}<div><span class="icon-tile">{{ icon('phone') }}</span><span>{{ fact('', 'TELEFON') }}<small>Qo'ng'iroq qilish</small></span></div>{% endif %}
                     {% if school.hours %}<div><span class="icon-tile">{{ icon('clock') }}</span><span>{{ school.hours }}<small>Ish vaqti</small></span></div>{% endif %}
-                    {% if school.telegram_url %}<a href="{{ school.telegram_url }}" rel="noopener"><span class="icon-tile">{{ icon('telegram') }}</span><span>Telegram orqali yozish<small>Tezkor javob</small></span></a>{% endif %}
+                    {% if school.telegram_url %}<a href="{{ school.telegram_url }}" rel="noopener"><span class="icon-tile">{{ icon('telegram') }}</span><span>Telegram kanalimiz<small>Yangiliklar va e'lonlar</small></span></a>{% endif %}
                 </div>
             </div>
         </aside>

@@ -2,14 +2,20 @@
   "$comment": "Iceberg School facts shown on the public site. Leave a value empty until it is confirmed: the page then hides or rewords that part (owner decision 2026-10-25: no visible [placeholders]) and leaves it out of search data. Never guess. Stage grades follow the standard Uzbek school structure (1–4, 5–9, 10–11); change them if the school differs.",
   "name": "Iceberg School",
   "leader": {
-    "name": "",
-    "role": "",
+    "name": "Azizbek Nasriddinov",
+    "role": "Direktor",
     "message": "",
-    "photo": "school/img/poster.jpg"
+    "photo": "school/img/poster.jpg",
+    "role_en": "Director"
+  },
+  "co_founder": {
+    "name": "Jahongir Karimov",
+    "role": "Hammuassis",
+    "role_en": "Co-founder"
   },
   "founded": "2023",
   "founded_note": "Year Iceberg (the study center, now Iceberg Courses) started — not the School's opening year. Shown as \"Iceberg — 2023-yildan beri\" and as foundingDate of the Iceberg Courses organization in JSON-LD.",
-  "academic_year": "",
+  "academic_year": "2026–2027 va 2027–2028",
   "grades": "1–11",
   "stages": [
     {
@@ -33,14 +39,14 @@
   "latitude": "41.030491",
   "longitude": "71.864775",
   "location_note": "Pin from the owner's Apple Maps link, confirmed as the school (2026-10-24). Address and phone from the school's Telegram channel post (2026-10-24).",
-  "hours": "7:00–19:00",
+  "hours": "Du–Sha, 7:00–19:00",
   "response_time": "",
-  "teaching_languages": "",
-  "transport_and_meals": "",
+  "teaching_languages": "Darslar o'zbek va rus tillarida o'tiladi.",
+  "transport_and_meals": "Ha. Maktab avtobusi bor va o'quvchilar ovqat bilan ta'minlanadi.",
   "email": "support@iceberglc.com",
   "partners_email": "international@iceberglc.com",
-  "telegram_url": "",
-  "instagram_url": "",
+  "telegram_url": "https://t.me/iceberg_school",
+  "instagram_url": "https://www.instagram.com/iceberg_maktab",
   "map_url": "https://www.google.com/maps/search/?api=1&query=41.030491,71.864775",
   "map_yandex_url": "https://yandex.uz/maps/?pt=71.864775,41.030491&z=17&l=map",
   "map_apple_url": "https://maps.apple/p/uxFeLK7xZcNYsK",
@@ -160,5 +166,10 @@
   ],
   "tuition_note": "",
   "portal_url": "/ilova",
-  "app_url": "/ilova"
+  "app_url": "/ilova",
+  "opening_hours_ld": "Mo-Sa 07:00-19:00",
+  "teaching_languages_list": {
+    "uz": "O'zbek va rus tillari",
+    "en": "Uzbek and Russian"
+  }
 }

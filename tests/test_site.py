@@ -163,6 +163,8 @@ class SitePageTests(unittest.TestCase):
         self.assertNotIn('gmail.com', contact)
         self.assertNotIn('[ISH VAQTI]', contact)
         self.assertIn(school['hours'], contact)
+        self.assertIn('@iceberg_school', contact)
+        self.assertIn('@Iceberg_Study_Center', contact)
         data = json.loads(re.search(r'<script type="application/ld\+json">(.*?)</script>', contact, re.S).group(1))
         self.assertEqual(data['geo']['latitude'], float(school['latitude']))
         self.assertEqual(data['address']['addressLocality'], 'Uychi')
@@ -198,6 +200,31 @@ class SitePageTests(unittest.TestCase):
         self.assertIn('https://iceberglc.com/hamkorlik', sitemap)
         self.assertIn('https://iceberglc.com/partners', sitemap)
         self.assertIn('href="/partners"', self.client.get('/').get_data(as_text=True))
+
+    def test_owner_facts_round_two(self):
+        school = app_module.SCHOOL_CONFIG
+        about = self.client.get('/about').get_data(as_text=True)
+        for text in ('Azizbek Nasriddinov', 'Direktor', 'Jahongir Karimov', 'Hammuassis'):
+            self.assertIn(text, about)
+        partners = self.client.get('/partners').get_data(as_text=True)
+        for text in ('Azizbek Nasriddinov', 'Director', 'Jahongir Karimov', 'Co-founder', 'Uzbek and Russian',
+                     'href="https://t.me/iceberg_school"', 'href="https://www.instagram.com/iceberg_maktab"'):
+            self.assertIn(text, partners)
+        home = self.client.get('/').get_data(as_text=True)
+        self.assertIn("2026–2027 va 2027–2028 o'quv yillari uchun qabul ochiq", home)
+        self.assertIn(f'<li><a href="tel:{school["phone"]}">{school["phone_display"]}</a></li>', home)
+        self.assertIn('href="https://www.instagram.com/iceberg_maktab" aria-label="Instagram"', home)
+        data = json.loads(re.search(r'<script type="application/ld\+json">(.*?)</script>', home, re.S).group(1))
+        self.assertEqual(data['openingHours'], 'Mo-Sa 07:00-19:00')
+        self.assertEqual(data['founder']['name'], 'Jahongir Karimov')
+        self.assertEqual(set(data['sameAs']), {school['instagram_url'], school['telegram_url']})
+        admissions = self.client.get('/admissions').get_data(as_text=True)
+        self.assertIn("o&#39;zbek va rus tillarida", admissions)
+        self.assertIn('Maktab avtobusi bor', admissions)
+        self.assertIn('Du–Sha, 7:00–19:00', admissions)
+        courses = self.client.get('/courses').get_data(as_text=True)
+        self.assertIn('href="https://www.instagram.com/Iceberg_Study_Center"', courses)
+        self.assertIn('href="https://t.me/iceberg_qabulxona"', courses)
 
     def test_courses_page_lists_registration_programs(self):
         html = self.client.get('/courses').get_data(as_text=True)

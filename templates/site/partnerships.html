@@ -55,7 +55,7 @@
             <article class="card rv">
                 <img src="{{ url_for('static', filename='school/img/logo-h-maroon.png') }}" alt="Iceberg School" width="170" height="50" style="width:150px;height:auto" loading="lazy">
                 <h3 class="h3">{{ tr("Maktab fanlari · {}-sinflar", 'School subjects · grades {}').format(school.grades) }}</h3>
-                <p>{{ tr("Davlat o'quv dasturi bo'yicha:", 'Following the Uzbek national curriculum:') }}</p>
+                <p>{{ tr("Davlat o'quv dasturi bo'yicha. Ta'lim tillari:", 'Following the Uzbek national curriculum. Teaching languages:') }} <strong>{{ school.teaching_languages_list.en if en else school.teaching_languages_list.uz }}</strong>.</p>
                 <ul class="tag-list">{% for subject in school.subjects %}<li>{{ subject.en if en else subject.uz }}</li>{% endfor %}</ul>
             </article>
             <article class="card rv d1">
@@ -133,9 +133,12 @@
                 <p class="lead">{{ tr("Qisqacha o'zingiz va g'oyangiz haqida yozing — siz bilan bog'lanamiz.", "Send a short note about your organisation and your idea, and we'll get back to you.") }}</p>
             </div>
             <div class="contact-list">
+                <div><span class="icon-tile">{{ icon('users') }}</span><span>{{ school.leader.name }}<small>{{ school.leader.role_en if en else school.leader.role }} · Iceberg School</small></span></div>
+                <div><span class="icon-tile">{{ icon('users') }}</span><span>{{ school.co_founder.name }}<small>{{ school.co_founder.role_en if en else school.co_founder.role }} · Iceberg</small></span></div>
                 <a href="mailto:{{ school.partners_email }}"><span class="icon-tile">{{ icon('mail') }}</span><span>{{ school.partners_email }}<small>{{ tr('Xalqaro hamkorlik', 'International partnerships') }}</small></span></a>
                 <a href="tel:{{ school.phone }}"><span class="icon-tile">{{ icon('phone') }}</span><span>{{ school.phone_display }}<small>{{ tr('Telefon', 'Phone') }}</small></span></a>
-                <a href="{{ registration.contact.telegram_url }}" rel="noopener"><span class="icon-tile">{{ icon('telegram') }}</span><span>@{{ registration.contact.telegram_username }}<small>Telegram</small></span></a>
+                <a href="{{ school.telegram_url }}" rel="noopener"><span class="icon-tile">{{ icon('telegram') }}</span><span>@{{ school.telegram_url.rsplit('/', 1)[-1] }}<small>{{ tr('Telegram kanal', 'Telegram channel') }}</small></span></a>
+                <a href="{{ school.instagram_url }}" rel="noopener"><span class="icon-tile">{{ icon('instagram') }}</span><span>@{{ school.instagram_url.rstrip('/').rsplit('/', 1)[-1] }}<small>Instagram</small></span></a>
                 <a href="{{ school.map_url }}" target="_blank" rel="noopener"><span class="icon-tile">{{ icon('pin') }}</span><span>{{ tr("Uychi, Namangan viloyati, O'zbekiston", 'Uychi, Namangan region, Uzbekistan') }}<small>{{ school.address }}</small></span></a>
             </div>
             {{ map_links(school) }}
