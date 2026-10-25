@@ -24,7 +24,8 @@
                 {% else %}<div><span class="icon-tile">{{ icon('pin') }}</span><span>{{ fact(school.address, 'MANZIL') }}<small>{{ school.city or 'Manzil' }}</small></span></div>{% endif %}
                 <div><span class="icon-tile">{{ icon('clock') }}</span><span>{{ fact(school.hours, 'ISH VAQTI') }}<small>Ish vaqti</small></span></div>
                 {% if school.email %}<a href="mailto:{{ school.email }}"><span class="icon-tile">{{ icon('mail') }}</span><span>{{ school.email }}<small>Email</small></span></a>{% endif %}
-                {% if school.telegram_url %}<a href="{{ school.telegram_url }}" rel="noopener"><span class="icon-tile">{{ icon('telegram') }}</span><span>Telegram<small>Yozish</small></span></a>{% endif %}
+                {% if school.telegram_url %}<a href="{{ school.telegram_url }}" rel="noopener"><span class="icon-tile">{{ icon('telegram') }}</span><span>@{{ school.telegram_url.rsplit('/', 1)[-1] }}<small>Telegram kanal</small></span></a>{% endif %}
+                {% if school.instagram_url %}<a href="{{ school.instagram_url }}" rel="noopener"><span class="icon-tile">{{ icon('instagram') }}</span><span>@{{ school.instagram_url.rstrip('/').rsplit('/', 1)[-1] }}<small>Instagram</small></span></a>{% endif %}
             </div>
             {{ map_links(school) }}
             <div class="hero-cta" style="margin-top:8px">
@@ -37,6 +38,7 @@
             <div class="contact-list">
                 <a href="tel:{{ registration.contact.call_center_phone }}"><span class="icon-tile">{{ icon('phone') }}</span><span>{{ registration.contact.call_center_display }}<small>Qabul bo'limi</small></span></a>
                 <a href="{{ registration.contact.telegram_url }}" rel="noopener"><span class="icon-tile">{{ icon('telegram') }}</span><span>@{{ registration.contact.telegram_username }}<small>Telegram</small></span></a>
+                <a href="{{ registration.contact.instagram_url }}" rel="noopener"><span class="icon-tile">{{ icon('instagram') }}</span><span>@{{ registration.contact.instagram_username }}<small>Instagram</small></span></a>
                 <a href="mailto:{{ content('contact_email', 'support@iceberglc.com') }}"><span class="icon-tile">{{ icon('mail') }}</span><span>{{ content('contact_email', 'support@iceberglc.com') }}<small>Email</small></span></a>
                 <a href="{{ content('contact_address_url', 'https://www.google.com/maps/place/Uychi,+Uzbekistan/') }}" rel="noopener"><span class="icon-tile">{{ icon('pin') }}</span><span>{{ content('contact_address', 'Uychi, Namangan viloyati') }}<small>Asosiy filial</small></span></a>
             </div>
