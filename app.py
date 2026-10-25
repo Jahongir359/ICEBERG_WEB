@@ -1,4 +1,5 @@
-from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify, Response, abort
+from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify, Response, abort, g
+from markupsafe import Markup
 import requests
 import os
 import re
@@ -585,6 +586,103 @@ SCHOOL_CONFIG_PATH = os.path.join(app.root_path, 'config', 'school.json')
 with open(SCHOOL_CONFIG_PATH, 'r', encoding='utf-8') as school_config_file:
     SCHOOL_CONFIG = json.load(school_config_file)
 
+
+# ---- Languages ---------------------------------------------------------------------------------
+# Uzbek is the source language: templates wrap their Uzbek text in _() and translations/<lang>.json
+# maps that exact text to Russian and English. Public pages are also served under /ru/ and /en/.
+LANGUAGES = ('uz', 'ru', 'en')
+TRANSLATIONS = {}
+for _lang in ('ru', 'en'):
+    with open(os.path.join(app.root_path, 'translations', f'{_lang}.json'), 'r', encoding='utf-8') as _file:
+        TRANSLATIONS[_lang] = json.load(_file)
+MISSING_TRANSLATIONS = set()
+
+# endpoint -> (Uzbek path, path under /ru/ and /en/, methods). Each page is registered once per
+# language with a "lang" default, so url_for(endpoint) follows the current page's language.
+LOCALIZED_ROUTES = {
+    'index': ('/', '/', ('GET',)),
+    'about': ('/about', '/about', ('GET',)),
+    'programs': ('/programs', '/programs', ('GET',)),
+    'admissions': ('/admissions', '/admissions', ('GET', 'POST')),
+    'admissions_thanks': ('/admissions/thanks', '/admissions/thanks', ('GET',)),
+    'courses': ('/courses', '/courses', ('GET',)),
+    'register': ('/register', '/register', ('GET', 'POST')),
+    'news': ('/news', '/news', ('GET',)),
+    'contact': ('/contact', '/contact', ('GET',)),
+    'partnerships': ('/hamkorlik', '/partners', ('GET',)),
+}
+LOCALIZED_PATHS = {endpoint: other for endpoint, (_uz, other, _methods) in LOCALIZED_ROUTES.items()}
+OG_LOCALES = {'uz': 'uz_UZ', 'ru': 'ru_RU', 'en': 'en_US'}
+
+
+def current_lang():
+    return getattr(g, 'lang', 'uz')
+
+
+def translate(text, **values):
+    """Translate Uzbek source text into the page language; falls back to Uzbek if missing."""
+    lang = current_lang()
+    if lang != 'uz' and text:
+        translated = TRANSLATIONS[lang].get(text)
+        if translated is None:
+            MISSING_TRANSLATIONS.add((lang, text))
+            translated = text
+        text = translated
+    return text.format(**values) if values else text
+
+
+def translate_html(text, **values):
+    """Same as translate() for our own strings that contain markup."""
+    return Markup(translate(text, **values))
+
+
+def lang_url(lang, endpoint=None, **values):
+    """URL of the current (or given) page in another language, or None if it has no translation."""
+    endpoint = endpoint or request.endpoint
+    if endpoint not in LOCALIZED_PATHS:
+        return None
+    if endpoint == request.endpoint and not values:
+        values = dict(request.view_args or {})
+    return url_for(endpoint, lang=lang, **values)
+
+
+@app.url_value_preprocessor
+def pull_lang(endpoint, values):
+    g.lang = (values or {}).pop('lang', 'uz')
+
+
+@app.url_defaults
+def add_lang(endpoint, values):
+    if endpoint in LOCALIZED_ROUTES:
+        values.setdefault('lang', current_lang())
+    else:
+        values.pop('lang', None)
+
+
+@app.context_processor
+def inject_i18n():
+    return {
+        'lang': current_lang(),
+        'languages': LANGUAGES,
+        'og_locale': OG_LOCALES[current_lang()],
+        '_': translate,
+        '_h': translate_html,
+        'lang_url': lang_url,
+    }
+
+
+def register_localized_routes():
+    """Serve every public page in Uzbek, Russian and English (called after the views exist)."""
+    for endpoint, (uz_path, other_path, methods) in LOCALIZED_ROUTES.items():
+        view = globals()[endpoint]
+        for lang in LANGUAGES:
+            if lang == 'uz':
+                rule = uz_path
+            else:
+                rule = f'/{lang}{other_path}' if other_path != '/' else f'/{lang}/'
+            app.add_url_rule(rule, endpoint=endpoint, view_func=view, defaults={'lang': lang}, methods=methods)
+
+
 SITE_NAV = [
     ('about', "Maktab haqida"),
     ('programs', "Ta'lim dasturlari"),
@@ -944,67 +1042,62 @@ def sitemap_xml():
         except OSError:
             return today
 
-    # (loc, priority, changefreq, source template)
+    # (endpoint, priority, changefreq, source template); every page is listed in all three
+    # languages with hreflang alternates so search engines connect the versions.
     static_pages = [
-        ('https://iceberglc.com/', '1.0', 'weekly', 'site/home.html'),
-        ('https://iceberglc.com/admissions', '0.9', 'weekly', 'site/admissions.html'),
-        ('https://iceberglc.com/programs', '0.8', 'monthly', 'site/programs.html'),
-        ('https://iceberglc.com/about', '0.8', 'monthly', 'site/about.html'),
-        ('https://iceberglc.com/courses', '0.9', 'weekly', 'site/courses.html'),
-        ('https://iceberglc.com/register', '0.8', 'monthly', 'site/register.html'),
-        ('https://iceberglc.com/news', '0.7', 'weekly', 'site/news.html'),
-        ('https://iceberglc.com/contact', '0.7', 'monthly', 'site/contact.html'),
-        ('https://iceberglc.com/hamkorlik', '0.6', 'monthly', 'site/partnerships.html'),
-        ('https://iceberglc.com/partners', '0.6', 'monthly', 'site/partnerships.html'),
+        ('index', '1.0', 'weekly', 'site/home.html'),
+        ('admissions', '0.9', 'weekly', 'site/admissions.html'),
+        ('programs', '0.8', 'monthly', 'site/programs.html'),
+        ('about', '0.8', 'monthly', 'site/about.html'),
+        ('courses', '0.9', 'weekly', 'site/courses.html'),
+        ('register', '0.8', 'monthly', 'site/register.html'),
+        ('news', '0.7', 'weekly', 'site/news.html'),
+        ('contact', '0.7', 'monthly', 'site/contact.html'),
+        ('partnerships', '0.6', 'monthly', 'site/partnerships.html'),
     ]
+    site = 'https://iceberglc.com'
     lines = ['<?xml version="1.0" encoding="UTF-8"?>',
-             '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
-    for loc, priority, changefreq, template_name in static_pages:
+             '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">']
+    for endpoint, priority, changefreq, template_name in static_pages:
         lastmod = _template_mtime(template_name)
-        lines.append('  <url>')
-        lines.append(f'    <loc>{loc}</loc>')
-        lines.append(f'    <lastmod>{lastmod}</lastmod>')
-        lines.append(f'    <changefreq>{changefreq}</changefreq>')
-        lines.append(f'    <priority>{priority}</priority>')
-        lines.append('  </url>')
+        urls = {lang: site + url_for(endpoint, lang=lang) for lang in LANGUAGES}
+        for lang in LANGUAGES:
+            lines.append('  <url>')
+            lines.append(f'    <loc>{urls[lang]}</loc>')
+            for alt in LANGUAGES:
+                lines.append(f'    <xhtml:link rel="alternate" hreflang="{alt}" href="{urls[alt]}"/>')
+            lines.append(f'    <xhtml:link rel="alternate" hreflang="x-default" href="{urls["uz"]}"/>')
+            lines.append(f'    <lastmod>{lastmod}</lastmod>')
+            lines.append(f'    <changefreq>{changefreq}</changefreq>')
+            lines.append(f'    <priority>{priority}</priority>')
+            lines.append('  </url>')
     lines.append('</urlset>')
     return Response('\n'.join(lines), mimetype='application/xml')
 
 
-@app.route('/')
+# Served at /, /ru/ and /en/ (register_localized_routes).
 def index():
     posts = fetch_news_posts(include_unpublished=False)
     return render_template('site/home.html', posts=posts)
 
 
-@app.route('/about')
 def about():
     return render_template('site/about.html')
 
 
-@app.route('/programs')
 def programs():
     return render_template('site/programs.html')
 
 
-@app.route('/courses')
 def courses():
     faqs = fetch_faq_items()
     return render_template('site/courses.html', faqs=faqs)
 
 
-@app.route('/hamkorlik')
 def partnerships():
-    return render_template('site/partnerships.html', lang='uz')
+    return render_template('site/partnerships.html')
 
 
-# English partner page outside /en/, which still redirects to the Uzbek site (LEGACY_REDIRECTS).
-@app.route('/partners')
-def partners_en():
-    return render_template('site/partnerships.html', lang='en')
-
-
-@app.route('/news')
 def news():
     posts = fetch_news_posts(include_unpublished=False)
     return render_template('site/news.html', posts=posts)
@@ -1036,12 +1129,9 @@ LEGACY_REDIRECTS = (
     ('/faq', '/courses#savollar', 301),
     ('/contacts', '/contact', 301),
     ('/news/*', '/news', 301),
-    ('/en/register', '/register', 302),
-    ('/en/our_programs', '/courses', 302),
-    ('/en/news', '/news', 302),
-    ('/en/contact', '/contact', 302),
-    ('/en', '/', 302),
-    ('/en/*', '/', 302),
+    # Old English URLs now land on the real English pages.
+    ('/en/our_programs', '/en/courses', 301),
+    ('/partners', '/en/partners', 301),
 )
 
 
@@ -1104,7 +1194,6 @@ def school_enquiry_message(data):
     return message
 
 
-@app.route('/admissions', methods=['GET', 'POST'])
 def admissions():
     form_data, errors = {}, {}
     if request.method == 'POST':
@@ -1172,7 +1261,6 @@ def admissions():
     ), (422 if errors else 200)
 
 
-@app.route('/admissions/thanks')
 def admissions_thanks():
     return render_template('site/thanks.html')
 
@@ -1798,11 +1886,9 @@ def contacts_list():
         contacts = cursor.fetchall()
     return render_template('contacts_list.html', contacts=contacts)
 
-@app.route('/contact')
 def contact():
     return render_template('site/contact.html')
 
-@app.route('/register', methods=['GET', 'POST'])
 def register():
     form_data = {}
     errors = {}
@@ -2268,6 +2354,9 @@ def admin_db_maintenance():
     log_admin_action('db_maintenance', 'database', 'VACUUM and ANALYZE executed')
     flash('Database maintenance muvaffaqiyatli bajarildi.', 'success')
     return redirect(url_for('admin_tools'))
+
+register_localized_routes()
+
 
 if __name__ == '__main__':
     debug_mode = os.environ.get('FLASK_ENV') == 'development'

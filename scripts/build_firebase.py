@@ -24,7 +24,6 @@ PUBLIC_ROUTES = {
     "/contact": "contact.html",
     "/register": "register.html",
     "/hamkorlik": "hamkorlik.html",
-    "/partners": "partners.html",
 }
 ROOT_ASSETS = ("/favicon.ico", "/manifest.json", "/robots.txt", "/sitemap.xml")
 
@@ -40,8 +39,7 @@ def load_wrangler_vars() -> dict[str, str]:
 
 
 def make_form_static(html: str, route: str, turnstile_site_key: str) -> str:
-    """Point a Flask form at the Cloudflare /api/register function."""
-    local_action = f'action="{route}" method="post"'
+    """Point a Flask form (in any language, e.g. /ru/register) at the Cloudflare /api/register function."""
     turnstile_attribute = (
         f' data-turnstile-sitekey="{turnstile_site_key}"' if turnstile_site_key else ""
     )
@@ -50,7 +48,19 @@ def make_form_static(html: str, route: str, turnstile_site_key: str) -> str:
         'action="/api/register" method="post" '
         f'data-static-lead-form="{form_kind}"{turnstile_attribute}'
     )
-    return html.replace(local_action, static_action)
+    for prefix in ("", "/ru", "/en"):
+        html = html.replace(f'action="{prefix}{route}" method="post"', static_action)
+    return html
+
+
+def localized_routes(localized_paths: dict[str, str]) -> dict[str, str]:
+    """/ru/... and /en/... copies of every public page, written under public/ru/ and public/en/."""
+    routes = {}
+    for lang in ("ru", "en"):
+        for path in localized_paths.values():
+            route = f"/{lang}{path}" if path != "/" else f"/{lang}/"
+            routes[route] = f"{lang}/index.html" if path == "/" else f"{lang}{path}.html"
+    return routes
 
 
 def build() -> None:
@@ -83,8 +93,10 @@ def build() -> None:
         OUTPUT / "registration-options.json",
     )
 
+    from app import LOCALIZED_PATHS  # pylint: disable=import-outside-toplevel
+
     client = app.test_client()
-    for route, filename in PUBLIC_ROUTES.items():
+    for route, filename in {**PUBLIC_ROUTES, **localized_routes(LOCALIZED_PATHS)}.items():
         response = client.get(route, base_url=site_url)
         if response.status_code != 200:
             raise RuntimeError(f"GET {route} returned HTTP {response.status_code}")
@@ -140,7 +152,7 @@ def build() -> None:
         encoding="utf-8",
     )
 
-    print(f"Built {len(PUBLIC_ROUTES)} pages and static assets in {OUTPUT}")
+    print(f"Built {len(PUBLIC_ROUTES) + len(localized_routes(LOCALIZED_PATHS))} pages and static assets in {OUTPUT}")
     print("Static registration and admissions forms submit to /api/register")
     if not turnstile_site_key:
         print(

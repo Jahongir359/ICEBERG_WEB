@@ -4,47 +4,21 @@
     var root = document.documentElement;
     root.classList.add("js");
 
-    // Language: Uzbek pages are the real content; RU/EN use the Google Translate widget for now.
-    var LANG_COOKIE = "googtrans";
-
-    function currentLanguage() {
-        var match = document.cookie.match(/(?:^|;\s*)googtrans=\/uz\/(ru|en)/);
-        return match ? match[1] : "uz";
-    }
-
-    function setLanguage(lang) {
+    // Language: every page exists in Uzbek, Russian and English; the switcher opens the same page in
+    // the chosen language. The old Google Translate cookie is cleared so it never translates a page twice.
+    (function clearOldTranslateCookie() {
         var host = window.location.hostname;
-        var domains = ["", ";domain=" + host, ";domain=." + host];
-        domains.forEach(function (domain) {
-            if (lang === "uz") {
-                document.cookie = LANG_COOKIE + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/" + domain;
-            } else {
-                document.cookie = LANG_COOKIE + "=/uz/" + lang + ";path=/" + domain;
-            }
+        ["", ";domain=" + host, ";domain=." + host].forEach(function (domain) {
+            document.cookie = "googtrans=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/" + domain;
         });
-        window.location.reload();
-    }
-
-    function loadTranslate() {
-        window.googleTranslateElementInit = function () {
-            new window.google.translate.TranslateElement(
-                { pageLanguage: "uz", includedLanguages: "uz,ru,en", autoDisplay: false },
-                "google_translate_element"
-            );
-        };
-        var script = document.createElement("script");
-        script.src = "https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit";
-        script.async = true;
-        document.body.appendChild(script);
-    }
+    }());
 
     document.addEventListener("DOMContentLoaded", function () {
-        var lang = currentLanguage();
         document.querySelectorAll("[data-lang-select]").forEach(function (select) {
-            select.value = lang;
-            select.addEventListener("change", function () { setLanguage(select.value); });
+            select.addEventListener("change", function () {
+                if (select.value) window.location.assign(select.value);
+            });
         });
-        if (lang !== "uz") loadTranslate();
 
         // Header: shadow once the page scrolls; on phones it slides away while reading down and
         // comes back on the first scroll up.
@@ -103,8 +77,7 @@
         }
 
         var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-        // Machine translation needs whole sentences, so text is only cut into words on the Uzbek page.
-        var splitText = !reduceMotion && lang === "uz";
+        var splitText = !reduceMotion;
 
         function eachWord(node, make) {
             Array.prototype.slice.call(node.childNodes).forEach(function (child) {

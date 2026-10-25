@@ -1,14 +1,14 @@
 {% extends "site/base.html" %}
 {% from "site/_macros.html" import icon, fact, curve, map_links %}
-{% block title %}Aloqa — Iceberg School va Iceberg Courses{% endblock %}
-{% block description %}Iceberg School qabul bo'limi va Iceberg Courses (ICEBERG o'quv markazi) bilan bog'lanish: telefon, Telegram, manzil va filiallar.{% endblock %}
+{% block title %}{{ _("Aloqa — Iceberg School va Iceberg Courses") }}{% endblock %}
+{% block description %}{{ _("Iceberg School qabul bo'limi va Iceberg Courses (ICEBERG o'quv markazi) bilan bog'lanish: telefon, Telegram, manzil va filiallar.") }}{% endblock %}
 {% block content %}
 <section class="page-hero">
     <div class="wrap">
-        <nav class="crumbs" aria-label="Sahifa yo'li"><a href="{{ url_for('index') }}">Bosh sahifa</a><span aria-hidden="true">/</span><span>Aloqa</span></nav>
-        <span class="kicker">Aloqa</span>
-        <h1>Biz bilan bog'laning</h1>
-        <p class="lead">Savollaringizga javob berish va farzandingiz uchun to'g'ri yo'lni tanlashga yordam berish uchun shu yerdamiz.</p>
+        <nav class="crumbs" aria-label="{{ _("Sahifa yo'li") }}"><a href="{{ url_for('index') }}">{{ _("Bosh sahifa") }}</a><span aria-hidden="true">/</span><span>{{ _("Aloqa") }}</span></nav>
+        <span class="kicker">{{ _("Aloqa") }}</span>
+        <h1>{{ _("Biz bilan bog'laning") }}</h1>
+        <p class="lead">{{ _("Savollaringizga javob berish va farzandingiz uchun to'g'ri yo'lni tanlashga yordam berish uchun shu yerdamiz.") }}</p>
     </div>
     {{ curve('cream') }}
 </section>
@@ -16,35 +16,35 @@
     <div class="wrap grid grid-2">
         <article class="card rv">
             <img src="{{ url_for('static', filename='school/img/logo-h-maroon.png') }}" alt="Iceberg School" width="170" height="50" style="width:170px;height:auto" loading="lazy">
-            <h2 class="h3">Iceberg School qabul bo'limi</h2>
+            <h2 class="h3">{{ _("Iceberg School qabul bo'limi") }}</h2>
             <div class="contact-list">
-                {% if school.phone %}<a href="tel:{{ school.phone }}"><span class="icon-tile">{{ icon('phone') }}</span><span>{{ school.phone_display or school.phone }}<small>Telefon</small></span></a>
-                {% else %}<div><span class="icon-tile">{{ icon('phone') }}</span><span>{{ fact('', 'TELEFON') }}<small>Telefon</small></span></div>{% endif %}
-                {% if school.map_url %}<a href="{{ school.map_url }}" target="_blank" rel="noopener"><span class="icon-tile">{{ icon('pin') }}</span><span>{{ school.address or school.city ~ ', ' ~ school.region }}<small>{% if school.address %}{{ school.city }}, {{ school.region }} · {% endif %}xaritada ochish</small></span></a>
+                {% if school.phone %}<a href="tel:{{ school.phone }}"><span class="icon-tile">{{ icon('phone') }}</span><span>{{ school.phone_display or school.phone }}<small>{{ _("Telefon") }}</small></span></a>
+                {% else %}<div><span class="icon-tile">{{ icon('phone') }}</span><span>{{ fact('', 'TELEFON') }}<small>{{ _("Telefon") }}</small></span></div>{% endif %}
+                {% if school.map_url %}<a href="{{ school.map_url }}" target="_blank" rel="noopener"><span class="icon-tile">{{ icon('pin') }}</span><span>{{ _(school.address) if school.address else school.city ~ ', ' ~ _(school.region) }}<small>{% if school.address %}{{ school.city }}, {{ _(school.region) }} · {% endif %}{{ _('xaritada ochish') }}</small></span></a>
                 {% else %}<div><span class="icon-tile">{{ icon('pin') }}</span><span>{{ fact(school.address, 'MANZIL') }}<small>{{ school.city or 'Manzil' }}</small></span></div>{% endif %}
-                <div><span class="icon-tile">{{ icon('clock') }}</span><span>{{ fact(school.hours, 'ISH VAQTI') }}<small>Ish vaqti</small></span></div>
+                {% if school.hours %}<div><span class="icon-tile">{{ icon('clock') }}</span><span>{{ _(school.hours) }}<small>{{ _("Ish vaqti") }}</small></span></div>{% endif %}
                 {% if school.email %}<a href="mailto:{{ school.email }}"><span class="icon-tile">{{ icon('mail') }}</span><span>{{ school.email }}<small>Email</small></span></a>{% endif %}
-                {% if school.telegram_url %}<a href="{{ school.telegram_url }}" rel="noopener"><span class="icon-tile">{{ icon('telegram') }}</span><span>@{{ school.telegram_url.rsplit('/', 1)[-1] }}<small>Telegram kanal</small></span></a>{% endif %}
+                {% if school.telegram_url %}<a href="{{ school.telegram_url }}" rel="noopener"><span class="icon-tile">{{ icon('telegram') }}</span><span>@{{ school.telegram_url.rsplit('/', 1)[-1] }}<small>{{ _("Telegram kanal") }}</small></span></a>{% endif %}
                 {% if school.instagram_url %}<a href="{{ school.instagram_url }}" rel="noopener"><span class="icon-tile">{{ icon('instagram') }}</span><span>@{{ school.instagram_url.rstrip('/').rsplit('/', 1)[-1] }}<small>Instagram</small></span></a>{% endif %}
             </div>
             {{ map_links(school) }}
             <div class="hero-cta" style="margin-top:8px">
-                <a class="btn btn-primary" href="{{ url_for('admissions') }}#ariza">Ariza topshirish</a>
+                <a class="btn btn-primary" href="{{ url_for('admissions') }}#ariza">{{ _("Ariza topshirish") }}</a>
             </div>
         </article>
         <article class="card rv d1">
             <span class="icon-tile">{{ icon('cap') }}</span>
-            <h2 class="h3">Iceberg Courses · ICEBERG o'quv markazi</h2>
+            <h2 class="h3">{{ _("Iceberg Courses · ICEBERG o'quv markazi") }}</h2>
             <div class="contact-list">
-                <a href="tel:{{ registration.contact.call_center_phone }}"><span class="icon-tile">{{ icon('phone') }}</span><span>{{ registration.contact.call_center_display }}<small>Qabul bo'limi</small></span></a>
+                <a href="tel:{{ registration.contact.call_center_phone }}"><span class="icon-tile">{{ icon('phone') }}</span><span>{{ registration.contact.call_center_display }}<small>{{ _("Qabul bo'limi") }}</small></span></a>
                 <a href="{{ registration.contact.telegram_url }}" rel="noopener"><span class="icon-tile">{{ icon('telegram') }}</span><span>@{{ registration.contact.telegram_username }}<small>Telegram</small></span></a>
                 <a href="{{ registration.contact.instagram_url }}" rel="noopener"><span class="icon-tile">{{ icon('instagram') }}</span><span>@{{ registration.contact.instagram_username }}<small>Instagram</small></span></a>
                 <a href="mailto:{{ content('contact_email', 'support@iceberglc.com') }}"><span class="icon-tile">{{ icon('mail') }}</span><span>{{ content('contact_email', 'support@iceberglc.com') }}<small>Email</small></span></a>
-                <a href="{{ content('contact_address_url', 'https://www.google.com/maps/place/Uychi,+Uzbekistan/') }}" rel="noopener"><span class="icon-tile">{{ icon('pin') }}</span><span>{{ content('contact_address', 'Uychi, Namangan viloyati') }}<small>Asosiy filial</small></span></a>
+                <a href="{{ content('contact_address_url', 'https://www.google.com/maps/place/Uychi,+Uzbekistan/') }}" rel="noopener"><span class="icon-tile">{{ icon('pin') }}</span><span>{{ _(content('contact_address', 'Uychi, Namangan viloyati')) }}<small>{{ _("Asosiy filial") }}</small></span></a>
             </div>
             <div class="hero-cta" style="margin-top:8px">
-                <a class="btn btn-primary" href="{{ url_for('register') }}">Kursga yozilish</a>
-                <a class="btn btn-outline" href="{{ url_for('courses') }}#filiallar">Filiallar</a>
+                <a class="btn btn-primary" href="{{ url_for('register') }}">{{ _("Kursga yozilish") }}</a>
+                <a class="btn btn-outline" href="{{ url_for('courses') }}#filiallar">{{ _("Filiallar") }}</a>
             </div>
         </article>
     </div>

@@ -1,6 +1,61 @@
 (function () {
     "use strict";
 
+    // Messages follow the page language (<html lang>); Uzbek is the source text, including the
+    // messages the /api/register function returns.
+    var LANG = (document.documentElement.getAttribute("lang") || "uz").slice(0, 2);
+    var MESSAGES = {
+        ru: {
+            "Ism va familiyangizni kiriting.": "Введите имя и фамилию.",
+            "Telefon raqamingizni tekshiring.": "Проверьте номер телефона.",
+            "Dastur tanlang.": "Выберите программу.",
+            "Filial tanlang.": "Выберите филиал.",
+            "Sinfni tanlang.": "Выберите класс.",
+            "Bog'lanishimizga rozilik bering.": "Дайте согласие на связь с вами.",
+            "Yuborilmoqda...": "Отправляем...",
+            "Arizani yuborib bo'lmadi.": "Не удалось отправить заявку.",
+            "Internet aloqasini tekshiring va qayta urinib ko'ring.": "Проверьте подключение к интернету и попробуйте ещё раз.",
+            "Xatolik yuz berdi. Qayta urinib ko'ring.": "Произошла ошибка. Попробуйте ещё раз.",
+            "Ism va telefon raqamingizni tekshiring.": "Проверьте имя и номер телефона.",
+            "Tilni qayta tanlang.": "Выберите язык ещё раз.",
+            "Tug'ilgan sanani tekshiring.": "Проверьте дату рождения.",
+            "Dastur va filialni qayta tanlang.": "Выберите программу и филиал ещё раз.",
+            "Xavfsizlik tekshiruvidan qayta o'ting.": "Пройдите проверку безопасности ещё раз.",
+            "Xato kodi": "Код ошибки"
+        },
+        en: {
+            "Ism va familiyangizni kiriting.": "Please enter your full name.",
+            "Telefon raqamingizni tekshiring.": "Please check your phone number.",
+            "Dastur tanlang.": "Please choose a programme.",
+            "Filial tanlang.": "Please choose a branch.",
+            "Sinfni tanlang.": "Please choose a grade.",
+            "Bog'lanishimizga rozilik bering.": "Please agree that we may contact you.",
+            "Yuborilmoqda...": "Sending...",
+            "Arizani yuborib bo'lmadi.": "We couldn't send your application.",
+            "Internet aloqasini tekshiring va qayta urinib ko'ring.": "Check your internet connection and try again.",
+            "Xatolik yuz berdi. Qayta urinib ko'ring.": "Something went wrong. Please try again.",
+            "Ism va telefon raqamingizni tekshiring.": "Please check your name and phone number.",
+            "Tilni qayta tanlang.": "Please choose the language again.",
+            "Tug'ilgan sanani tekshiring.": "Please check the date of birth.",
+            "Dastur va filialni qayta tanlang.": "Please choose the programme and branch again.",
+            "Xavfsizlik tekshiruvidan qayta o'ting.": "Please complete the security check again.",
+            "Xato kodi": "Error code"
+        }
+    };
+
+    function t(text) {
+        var table = MESSAGES[LANG];
+        return (table && table[text]) || text;
+    }
+
+    // Server messages: known ones are translated; others become a generic message plus the error code.
+    function serverMessage(result) {
+        var message = (result && result.message) || "";
+        if (LANG === "uz" || !message) return message || t("Arizani yuborib bo'lmadi.");
+        if (MESSAGES[LANG][message]) return MESSAGES[LANG][message];
+        return t("Xatolik yuz berdi. Qayta urinib ko'ring.") + (result.reference ? " " + t("Xato kodi") + ": " + result.reference : "");
+    }
+
     function fieldValue(form, name) {
         var field = form.elements.namedItem(name);
         return field && typeof field.value === "string" ? field.value.trim() : "";
@@ -100,10 +155,10 @@
         var phone = normalizeUzPhone(fieldValue(form, "student_phone"));
         var program = fieldValue(form, "course");
         var branch = fieldValue(form, "preferred_branch");
-        setFieldError(form, "student_name", name.length >= 2 ? "" : "Ism va familiyangizni kiriting.");
-        setFieldError(form, "student_phone", /^\d{9}$/.test(phone) ? "" : "Telefon raqamingizni tekshiring.");
-        setFieldError(form, "course", program ? "" : "Dastur tanlang.");
-        setFieldError(form, "preferred_branch", branch ? "" : "Filial tanlang.");
+        setFieldError(form, "student_name", name.length >= 2 ? "" : t("Ism va familiyangizni kiriting."));
+        setFieldError(form, "student_phone", /^\d{9}$/.test(phone) ? "" : t("Telefon raqamingizni tekshiring."));
+        setFieldError(form, "course", program ? "" : t("Dastur tanlang."));
+        setFieldError(form, "preferred_branch", branch ? "" : t("Filial tanlang."));
         valid = name.length >= 2 && /^\d{9}$/.test(phone) && Boolean(program) && Boolean(branch);
         return valid;
     }
@@ -134,7 +189,7 @@
         form.dataset.submitting = "true";
         if (button) {
             button.disabled = true;
-            button.textContent = "Yuborilmoqda...";
+            button.textContent = t("Yuborilmoqda...");
         }
 
         try {
@@ -145,7 +200,7 @@
             });
             var result = await response.json().catch(function () { return {}; });
             if (!response.ok || !result.ok) {
-                throw new Error(result.message || "Arizani yuborib bo'lmadi.");
+                throw new Error(serverMessage(result));
             }
 
             showRegistrationSuccess(form);
@@ -153,8 +208,8 @@
             status.className = "form-status";
             var rawMessage = error && error.message ? error.message : "";
             status.textContent = /failed to fetch|networkerror|load failed/i.test(rawMessage)
-                ? "Internet aloqasini tekshiring va qayta urinib ko'ring."
-                : (rawMessage || "Xatolik yuz berdi. Qayta urinib ko'ring.");
+                ? t("Internet aloqasini tekshiring va qayta urinib ko'ring.")
+                : (rawMessage || t("Xatolik yuz berdi. Qayta urinib ko'ring."));
         } finally {
             if (window.turnstile) {
                 window.turnstile.reset();
@@ -175,10 +230,10 @@
         var grade = fieldValue(form, "grade");
         var consent = form.elements.namedItem("consent");
         var checks = {
-            parent_name: name.length >= 2 ? "" : "Ism va familiyangizni kiriting.",
-            parent_phone: /^\d{9}$/.test(phone) ? "" : "Telefon raqamingizni tekshiring.",
-            grade: SCHOOL_GRADES.indexOf(grade) !== -1 ? "" : "Sinfni tanlang.",
-            consent: consent && consent.checked ? "" : "Bog'lanishimizga rozilik bering."
+            parent_name: name.length >= 2 ? "" : t("Ism va familiyangizni kiriting."),
+            parent_phone: /^\d{9}$/.test(phone) ? "" : t("Telefon raqamingizni tekshiring."),
+            grade: SCHOOL_GRADES.indexOf(grade) !== -1 ? "" : t("Sinfni tanlang."),
+            consent: consent && consent.checked ? "" : t("Bog'lanishimizga rozilik bering.")
         };
         var valid = true;
         Object.keys(checks).forEach(function (key) {
@@ -218,7 +273,7 @@
         form.dataset.submitting = "true";
         if (button) {
             button.disabled = true;
-            button.textContent = "Yuborilmoqda...";
+            button.textContent = t("Yuborilmoqda...");
         }
         try {
             var response = await fetch(form.action, {
@@ -228,15 +283,15 @@
             });
             var result = await response.json().catch(function () { return {}; });
             if (!response.ok || !result.ok) {
-                throw new Error(result.message || "Arizani yuborib bo'lmadi.");
+                throw new Error(serverMessage(result));
             }
-            window.location.assign("/admissions/thanks");
+            window.location.assign(form.getAttribute("data-thanks-url") || "/admissions/thanks");
             return;
         } catch (error) {
             var rawMessage = error && error.message ? error.message : "";
             status.textContent = /failed to fetch|networkerror|load failed/i.test(rawMessage)
-                ? "Internet aloqasini tekshiring va qayta urinib ko'ring."
-                : (rawMessage || "Xatolik yuz berdi. Qayta urinib ko'ring.");
+                ? t("Internet aloqasini tekshiring va qayta urinib ko'ring.")
+                : (rawMessage || t("Xatolik yuz berdi. Qayta urinib ko'ring."));
         }
         if (window.turnstile) {
             window.turnstile.reset();
@@ -307,7 +362,7 @@
                 var button = form.querySelector('button[type="submit"]');
                 if (button) {
                     button.disabled = true;
-                    button.textContent = "Yuborilmoqda...";
+                    button.textContent = t("Yuborilmoqda...");
                 }
             });
         }

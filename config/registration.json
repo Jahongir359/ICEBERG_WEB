@@ -13,7 +13,9 @@
     {"id": "sat", "name": "SAT", "active": true},
     {"id": "mathematics", "name": "Matematika", "active": true},
     {"id": "chemistry", "name": "Kimyo", "active": true},
-    {"id": "biology", "name": "Biologiya", "active": true}
+    {"id": "biology", "name": "Biologiya", "active": true},
+    {"id": "korean", "name": "Koreys tili", "active": true},
+    {"id": "chinese", "name": "Xitoy tili", "active": true}
   ],
   "branches": [
     {"id": "main", "name": "Asosiy filial", "active": true, "erp_branch_name": ""},

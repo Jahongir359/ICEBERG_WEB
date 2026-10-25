@@ -1,12 +1,12 @@
-{% from "site/_macros.html" import icon, fact %}
+{% from "site/_macros.html" import icon %}
 <section class="cta">
     <div class="wrap">
         <img class="crest rv" src="{{ url_for('static', filename='school/img/crest-white.png') }}" alt="" width="74" height="87" loading="lazy">
-        <h2 class="rv d1">{% if school.academic_year %}{{ school.academic_year }} o'quv {{ 'yillari' if ' va ' in school.academic_year else 'yili' }} uchun qabul ochiq{% else %}Iceberg School'ga qabul ochiq{% endif %}</h2>
-        <p class="rv d2">Har bir sinfda o'rinlar cheklangan. Ariza qoldiring — qabul bo'limi siz bilan bog'lanib, maktabni ko'rishga taklif qiladi.</p>
+        <h2 class="rv d1">{% if school.academic_year %}{{ _("{years} o'quv yillari uchun qabul ochiq" if ' va ' in school.academic_year else "{years} o'quv yili uchun qabul ochiq", years=_(school.academic_year)) }}{% else %}{{ _("Iceberg School'ga qabul ochiq") }}{% endif %}</h2>
+        <p class="rv d2">{{ _("Har bir sinfda o'rinlar cheklangan. Ariza qoldiring — qabul bo'limi siz bilan bog'lanib, maktabni ko'rishga taklif qiladi.") }}</p>
         <div class="hero-cta rv d3">
-            <a class="btn btn-light" href="{{ url_for('admissions') }}#ariza">Ariza topshirish {{ icon('arrow') }}</a>
-            {% if school.phone %}<a class="btn btn-ghost" href="tel:{{ school.phone }}">{{ icon('phone') }} {{ school.phone_display or school.phone }}</a>{% else %}<a class="btn btn-ghost" href="{{ url_for('contact') }}">Bog'lanish</a>{% endif %}
+            <a class="btn btn-light" href="{{ url_for('admissions') }}#ariza">{{ _('Ariza topshirish') }} {{ icon('arrow') }}</a>
+            {% if school.phone %}<a class="btn btn-ghost" href="tel:{{ school.phone }}">{{ icon('phone') }} {{ school.phone_display or school.phone }}</a>{% else %}<a class="btn btn-ghost" href="{{ url_for('contact') }}">{{ _("Bog'lanish") }}</a>{% endif %}
         </div>
     </div>
 </section>

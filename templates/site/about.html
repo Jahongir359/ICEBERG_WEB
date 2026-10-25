@@ -1,14 +1,14 @@
 {% extends "site/base.html" %}
 {% from "site/_macros.html" import icon, fact, curve %}
-{% block title %}Maktab haqida — Iceberg School va Iceberg oilasi{% endblock %}
-{% block description %}Iceberg School haqida: gerbimiz ma'nosi, qadriyatlarimiz va Iceberg oilasi — xususiy maktab hamda ICEBERG o'quv markazi (Iceberg Courses).{% endblock %}
+{% block title %}{{ _("Maktab haqida — Iceberg School va Iceberg oilasi") }}{% endblock %}
+{% block description %}{{ _("Iceberg School haqida: gerbimiz ma'nosi, qadriyatlarimiz va Iceberg oilasi — xususiy maktab hamda ICEBERG o'quv markazi (Iceberg Courses).") }}{% endblock %}
 {% block content %}
 <section class="page-hero">
     <div class="wrap">
-        <nav class="crumbs" aria-label="Sahifa yo'li"><a href="{{ url_for('index') }}">Bosh sahifa</a><span aria-hidden="true">/</span><span>Maktab haqida</span></nav>
-        <span class="kicker">Maktab haqida</span>
-        <h1>Aysberg kabi: eng muhimi — ko'rinmas qismida</h1>
-        <p class="lead">Baholar, sertifikatlar va g'alabalar — bu cho'qqi. Ularni ushlab turadigan narsa esa suv ostida: odatlar, xarakter va chuqur bilim. Iceberg School shu poydevorni quradi.</p>
+        <nav class="crumbs" aria-label="{{ _("Sahifa yo'li") }}"><a href="{{ url_for('index') }}">{{ _("Bosh sahifa") }}</a><span aria-hidden="true">/</span><span>{{ _("Maktab haqida") }}</span></nav>
+        <span class="kicker">{{ _("Maktab haqida") }}</span>
+        <h1>{{ _("Aysberg kabi: eng muhimi — ko'rinmas qismida") }}</h1>
+        <p class="lead">{{ _("Baholar, sertifikatlar va g'alabalar — bu cho'qqi. Ularni ushlab turadigan narsa esa suv ostida: odatlar, xarakter va chuqur bilim. Iceberg School shu poydevorni quradi.") }}</p>
     </div>
     {{ curve('white') }}
 </section>
@@ -16,18 +16,18 @@
 <section class="sec sec-white">
     <div class="wrap app-grid">
         <div class="rv" style="display:grid;place-items:center">
-            <img src="{{ url_for('static', filename='school/img/logo-v-maroon.png') }}" alt="Iceberg School gerbi" width="300" height="350" style="width:min(300px,70vw);height:auto" loading="lazy">
+            <img src="{{ url_for('static', filename='school/img/logo-v-maroon.png') }}" alt="{{ _('Iceberg School gerbi') }}" width="300" height="350" style="width:min(300px,70vw);height:auto" loading="lazy">
         </div>
         <div class="rv d1">
             <div class="sec-head" style="margin-bottom:20px">
-                <span class="kicker">Gerbimiz</span>
-                <h2 class="h2">Bir qalqon — uch ma'no</h2>
-                <p class="lead">Gerbning yuqori qismida — aysberg cho'qqisi, pastida — o'sayotgan bola va ochiq kitob.</p>
+                <span class="kicker">{{ _("Gerbimiz") }}</span>
+                <h2 class="h2">{{ _("Bir qalqon — uch ma'no") }}</h2>
+                <p class="lead">{{ _("Gerbning yuqori qismida — aysberg cho'qqisi, pastida — o'sayotgan bola va ochiq kitob.") }}</p>
             </div>
             <ul class="feature-list">
-                <li><span class="icon-tile">{{ icon('mountain') }}</span><div><strong>Cho'qqi — yuqoriga intilish</strong><span>Yuqori maqsad va chuqur akademik bilim.</span></div></li>
-                <li><span class="icon-tile">{{ icon('child') }}</span><div><strong>Bola — har tomonlama o'sish</strong><span>Sog'lom, mehribon va o'ziga ishongan inson.</span></div></li>
-                <li><span class="icon-tile">{{ icon('book') }}</span><div><strong>Kitob — chuqur o'qish</strong><span>Barcha bilimning asosi bo'lgan kitobxonlik.</span></div></li>
+                <li><span class="icon-tile">{{ icon('mountain') }}</span><div><strong>{{ _("Cho'qqi — yuqoriga intilish") }}</strong><span>{{ _("Yuqori maqsad va chuqur akademik bilim.") }}</span></div></li>
+                <li><span class="icon-tile">{{ icon('child') }}</span><div><strong>{{ _("Bola — har tomonlama o'sish") }}</strong><span>{{ _("Sog'lom, mehribon va o'ziga ishongan inson.") }}</span></div></li>
+                <li><span class="icon-tile">{{ icon('book') }}</span><div><strong>{{ _("Kitob — chuqur o'qish") }}</strong><span>{{ _("Barcha bilimning asosi bo'lgan kitobxonlik.") }}</span></div></li>
             </ul>
         </div>
     </div>
@@ -40,16 +40,16 @@
     <div class="wrap">
         <div class="campus-head">
             <div class="sec-head rv">
-                <span class="kicker">Maktabimiz</span>
-                <h2 class="h2">Farzandingiz o'qiydigan joy</h2>
-                <p class="lead">Maktab binosi, hovli, futbol maydoni, dam olish xonasi va oshxona — tashrif chog'ida hammasini o'z ko'zingiz bilan ko'rishingiz mumkin.</p>
+                <span class="kicker">{{ _("Maktabimiz") }}</span>
+                <h2 class="h2">{{ _("Farzandingiz o'qiydigan joy") }}</h2>
+                <p class="lead">{{ _("Maktab binosi, hovli, futbol maydoni, dam olish xonasi va oshxona — tashrif chog'ida hammasini o'z ko'zingiz bilan ko'rishingiz mumkin.") }}</p>
             </div>
             <div class="campus-nav" aria-hidden="true">
                 <button class="campus-btn" type="button" data-scroll-prev="campus" tabindex="-1">{{ icon('arrow') }}</button>
                 <button class="campus-btn" type="button" data-scroll-next="campus" tabindex="-1">{{ icon('arrow') }}</button>
             </div>
         </div>
-        <div class="campus" id="campus" role="region" aria-label="Maktab rasmlari" tabindex="0" data-autoscroll>
+        <div class="campus" id="campus" role="region" aria-label="{{ _('Maktab rasmlari') }}" tabindex="0" data-autoscroll>
             {% for file, caption, w, h in [
                 ('playground', "O'yin maydonchasi", 1000, 750),
                 ('building', 'Maktab binosi', 947, 1184),
@@ -62,25 +62,25 @@
             <figure class="campus-photo rv{% if 0 < loop.index0 < 3 %} d{{ loop.index0 }}{% endif %}{% if file == 'building' %} campus-main{% endif %}">
                 <img src="{{ url_for('static', filename='school/img/' ~ file ~ '.jpg') }}"
                      srcset="{{ url_for('static', filename='school/img/' ~ file ~ '-640.jpg') }} 640w, {{ url_for('static', filename='school/img/' ~ file ~ '.jpg') }} {{ w }}w"
-                     sizes="(min-width: 900px) 380px, 80vw" alt="Iceberg School — {{ caption }}" width="{{ w }}" height="{{ h }}" loading="lazy">
-                <figcaption>{{ caption }}</figcaption>
+                     sizes="(min-width: 900px) 380px, 80vw" alt="Iceberg School — {{ _(caption) }}" width="{{ w }}" height="{{ h }}" loading="lazy">
+                <figcaption>{{ _(caption) }}</figcaption>
             </figure>
             {% endfor %}
         </div>
-        <p class="rv" style="margin-top:22px"><a class="link-arrow" href="{{ url_for('admissions') }}#ariza">Maktabga tashrifga yoziling</a></p>
+        <p class="rv" style="margin-top:22px"><a class="link-arrow" href="{{ url_for('admissions') }}#ariza">{{ _("Maktabga tashrifga yoziling") }}</a></p>
     </div>
 </section>
 
 <section class="sec">
     <div class="wrap">
         <div class="sec-head center rv">
-            <span class="kicker">Qadriyatlarimiz</span>
-            <h2 class="h2">Har kuni amal qiladigan tamoyillar</h2>
+            <span class="kicker">{{ _("Qadriyatlarimiz") }}</span>
+            <h2 class="h2">{{ _("Har kuni amal qiladigan tamoyillar") }}</h2>
         </div>
         <div class="grid grid-3">
-            <article class="card rv"><span class="icon-tile soft">{{ icon('users') }}</span><h3 class="h3">O'quvchiga e'tibor</h3><p>Har bir qarorimiz bolaning rivoji va ishonchiga xizmat qiladi.</p></article>
-            <article class="card rv d1"><span class="icon-tile soft">{{ icon('chart') }}</span><h3 class="h3">Innovatsiya</h3><p>Ta'limdagi yangi texnologiya va yondashuvlarni amaliy natijaga aylantiramiz.</p></article>
-            <article class="card rv d2"><span class="icon-tile soft">{{ icon('chat') }}</span><h3 class="h3">Hamjamiyat</h3><p>O'zaro qo'llab-quvvatlash va ilhomga asoslangan sog'lom muhit — o'quvchi, ustoz va oila birga.</p></article>
+            <article class="card rv"><span class="icon-tile soft">{{ icon('users') }}</span><h3 class="h3">{{ _("O'quvchiga e'tibor") }}</h3><p>{{ _("Har bir qarorimiz bolaning rivoji va ishonchiga xizmat qiladi.") }}</p></article>
+            <article class="card rv d1"><span class="icon-tile soft">{{ icon('chart') }}</span><h3 class="h3">{{ _("Innovatsiya") }}</h3><p>{{ _("Ta'limdagi yangi texnologiya va yondashuvlarni amaliy natijaga aylantiramiz.") }}</p></article>
+            <article class="card rv d2"><span class="icon-tile soft">{{ icon('chat') }}</span><h3 class="h3">{{ _("Hamjamiyat") }}</h3><p>{{ _("O'zaro qo'llab-quvvatlash va ilhomga asoslangan sog'lom muhit — o'quvchi, ustoz va oila birga.") }}</p></article>
         </div>
     </div>
 </section>
@@ -88,22 +88,22 @@
 <section class="sec sec-white">
     <div class="wrap">
         <div class="sec-head rv">
-            <span class="kicker">Iceberg oilasi{% if school.founded %} · {{ school.founded }}-yildan beri{% endif %}</span>
-            <h2 class="h2">Bitta oila — ikki yo'nalish</h2>
-            <p class="lead">Iceberg School va ICEBERG o'quv markazi — bir oila: kunlik maktab va kurslar bir brend ostida.</p>
+            <span class="kicker">{{ _('Iceberg oilasi') }}{% if school.founded %} · {{ _('{year}-yildan beri', year=school.founded) }}{% endif %}</span>
+            <h2 class="h2">{{ _("Bitta oila — ikki yo'nalish") }}</h2>
+            <p class="lead">{{ _("Iceberg School va ICEBERG o'quv markazi — bir oila: kunlik maktab va kurslar bir brend ostida.") }}</p>
         </div>
         <div class="grid grid-2">
             <a class="card rv" href="{{ url_for('programs') }}">
                 <img src="{{ url_for('static', filename='school/img/logo-h-maroon.png') }}" alt="Iceberg School" width="180" height="53" style="width:180px;height:auto" loading="lazy">
-                <h3 class="h3">Xususiy maktab · {{ school.grades }}-sinflar</h3>
-                <p>To'liq kunlik ta'lim, tarbiya va universitetga tayyorgarlik.</p>
-                <span class="link-arrow">Ta'lim dasturlari</span>
+                <h3 class="h3">{{ _('Xususiy maktab · {grades}-sinflar', grades=school.grades) }}</h3>
+                <p>{{ _("To'liq kunlik ta'lim, tarbiya va universitetga tayyorgarlik.") }}</p>
+                <span class="link-arrow">{{ _("Ta'lim dasturlari") }}</span>
             </a>
             <a class="card rv d1" href="{{ url_for('courses') }}">
                 <span class="icon-tile">{{ icon('cap') }}</span>
-                <h3 class="h3">Iceberg Courses · o'quv markazi</h3>
-                <p>IELTS, CEFR, SAT va fan kurslari — maktab o'quvchilari va kattalar uchun.</p>
-                <span class="link-arrow">Kurslar</span>
+                <h3 class="h3">{{ _("Iceberg Courses · o'quv markazi") }}</h3>
+                <p>{{ _("IELTS, CEFR, SAT va fan kurslari — maktab o'quvchilari va kattalar uchun.") }}</p>
+                <span class="link-arrow">{{ _("Kurslar") }}</span>
             </a>
         </div>
     </div>
@@ -112,13 +112,13 @@
 <section class="sec">
     <div class="wrap">
         <div class="sec-head center rv">
-            <span class="kicker">Jamoa</span>
-            <h2 class="h2">Iceberg jamoasi bilan tanishing</h2>
+            <span class="kicker">{{ _("Jamoa") }}</span>
+            <h2 class="h2">{{ _("Iceberg jamoasi bilan tanishing") }}</h2>
         </div>
         <figure class="team-photo rv">
             <img src="{{ url_for('static', filename='school/img/team.jpg') }}"
                  srcset="{{ url_for('static', filename='school/img/team-800.jpg') }} 800w, {{ url_for('static', filename='school/img/team.jpg') }} 1254w"
-                 sizes="(min-width: 1000px) 960px, 100vw" alt="Iceberg jamoasi" width="1254" height="1254" loading="lazy">
+                 sizes="(min-width: 1000px) 960px, 100vw" alt="{{ _('Iceberg jamoasi') }}" width="1254" height="1254" loading="lazy">
         </figure>
         <div class="grid grid-3">
             {% for person in [
@@ -129,7 +129,7 @@
             <article class="card person rv{% if loop.index0 %} d{{ loop.index0 }}{% endif %}">
                 <img src="{{ asset_url(person[0], person[1]) }}" alt="{{ person[2] }}" width="104" height="104" loading="lazy">
                 <h3 class="h3">{{ person[2] }}</h3>
-                <p class="role">{{ person[3] }}</p>
+                <p class="role">{{ _(person[3]) }}</p>
             </article>
             {% endfor %}
         </div>

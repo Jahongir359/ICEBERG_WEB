@@ -1,4 +1,3 @@
-{% from "site/_macros.html" import fact %}
 {%- set stage_copy = {
     'primary': {
         'name': "Boshlang'ich maktab", 'fallback': '1–4',
@@ -20,12 +19,12 @@
     {% for stage in school.stages %}{% set copy = stage_copy[stage.id] %}
     <article class="card stage lift rv{% if loop.index0 %} d{{ loop.index0 }}{% endif %}" id="{{ stage.id }}">
         <div class="stage-top">
-            <div class="stage-grades">{{ fact(stage.grades, copy.fallback) }}<small>sinflar</small></div>
+            <div class="stage-grades">{{ stage.grades or copy.fallback }}<small>{{ _('sinflar') }}</small></div>
         </div>
         <div class="stage-body">
-            <h3 class="h3">{{ copy.name }}</h3>
-            <p>{{ copy.text }}</p>
-            <ul>{% for point in copy.points %}<li>{{ point }}</li>{% endfor %}</ul>
+            <h3 class="h3">{{ _(copy.name) }}</h3>
+            <p>{{ _(copy.text) }}</p>
+            <ul>{% for point in copy.points %}<li>{{ _(point) }}</li>{% endfor %}</ul>
         </div>
     </article>
     {% endfor %}

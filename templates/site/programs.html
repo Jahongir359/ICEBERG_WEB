@@ -1,15 +1,15 @@
 {% extends "site/base.html" %}
 {% from "site/_macros.html" import icon, fact, curve %}
-{% block title %}Ta'lim dasturlari — Iceberg School | Boshlang'ich, o'rta va yuqori sinflar{% endblock %}
-{% block description %}Iceberg School ta'lim bosqichlari: boshlang'ich (1–4), o'rta (5–9) va yuqori sinflar (10–11). Akademik poydevor, tarbiya va universitetga tayyorgarlik.{% endblock %}
+{% block title %}{{ _("Ta'lim dasturlari — Iceberg School | Boshlang'ich, o'rta va yuqori sinflar") }}{% endblock %}
+{% block description %}{{ _("Iceberg School ta'lim bosqichlari: boshlang'ich (1–4), o'rta (5–9) va yuqori sinflar (10–11). Akademik poydevor, tarbiya va universitetga tayyorgarlik.") }}{% endblock %}
 {% block content %}
 <section class="page-hero no-watermark">
     <div class="wrap page-hero-split">
         <div class="page-hero-text">
-            <nav class="crumbs" aria-label="Sahifa yo'li"><a href="{{ url_for('index') }}">Bosh sahifa</a><span aria-hidden="true">/</span><span>Ta'lim dasturlari</span></nav>
-            <span class="kicker">Ta'lim dasturlari</span>
-            <h1>Birinchi harflardan universitetgacha</h1>
-            <p class="lead">Uch bosqich — bir maqsad: har bir bola o'z cho'qqisiga chiqishi uchun mustahkam poydevor.</p>
+            <nav class="crumbs" aria-label="{{ _("Sahifa yo'li") }}"><a href="{{ url_for('index') }}">{{ _("Bosh sahifa") }}</a><span aria-hidden="true">/</span><span>{{ _("Ta'lim dasturlari") }}</span></nav>
+            <span class="kicker">{{ _("Ta'lim dasturlari") }}</span>
+            <h1>{{ _("Birinchi harflardan universitetgacha") }}</h1>
+            <p class="lead">{{ _("Uch bosqich — bir maqsad: har bir bola o'z cho'qqisiga chiqishi uchun mustahkam poydevor.") }}</p>
         </div>
         {# The crest's mountain draws itself; the three school stages are the way up. #}
         <div class="art-climb" aria-hidden="true">
@@ -39,7 +39,7 @@
                 <g class="stop" style="animation-delay:2.5s">
                     <path d="M195 80V34" stroke="var(--brand-primary)" stroke-width="2.6"/>
                     <path d="M195 34h36l-8 10 8 10h-36Z" fill="var(--brand-gold)"/>
-                    <text x="240" y="50">Universitet</text>
+                    <text x="240" y="50">{{ _("Universitet") }}</text>
                 </g>
             </svg>
         </div>
@@ -56,25 +56,26 @@
 <section class="sec sec-white">
     <div class="wrap">
         <div class="sec-head rv">
-            <span class="kicker">Fanlar</span>
-            <h2 class="h2">Maktabda o'qitiladigan fanlar</h2>
-            <p class="lead">Davlat o'quv dasturi bo'yicha. Til va imtihon kurslari (IELTS, SAT, koreys va xitoy tillari) — alohida, <a href="{{ url_for('courses') }}">Iceberg Courses</a>da.</p>
+            <span class="kicker">{{ _("Fanlar") }}</span>
+            <h2 class="h2">{{ _("Maktabda o'qitiladigan fanlar") }}</h2>
+            {% set courses_link %}<a href="{{ url_for('courses') }}">Iceberg Courses</a>{% endset %}
+            <p class="lead">{{ _h("Davlat o'quv dasturi bo'yicha. Til va imtihon kurslari (IELTS, SAT, koreys va xitoy tillari) — alohida, {link}da.", link=courses_link) }}</p>
         </div>
-        <ul class="tag-list rv">{% for subject in school.subjects %}<li>{{ subject.uz }}</li>{% endfor %}</ul>
+        <ul class="tag-list rv">{% for subject in school.subjects %}<li>{{ _(subject) }}</li>{% endfor %}</ul>
     </div>
 </section>
 
 <section class="sec">
     <div class="wrap">
         <div class="sec-head center rv">
-            <span class="kicker">Har bir bosqichda</span>
-            <h2 class="h2">Darsdan tashqari ham o'sish</h2>
+            <span class="kicker">{{ _("Har bir bosqichda") }}</span>
+            <h2 class="h2">{{ _("Darsdan tashqari ham o'sish") }}</h2>
         </div>
         <div class="grid grid-4">
-            <article class="card rv"><span class="icon-tile soft">{{ icon('book') }}</span><h3 class="h3">Kitobxonlik</h3><p>Har kuni o'qish — fikrlash, nutq va yozuvning asosi.</p></article>
-            <article class="card rv d1"><span class="icon-tile soft">{{ icon('globe') }}</span><h3 class="h3">Ingliz tili</h3><p>Boshlang'ich sinfdan boshlab muntazam ingliz tili.</p></article>
-            <article class="card rv d2"><span class="icon-tile soft">{{ icon('child') }}</span><h3 class="h3">Sport va san'at</h3><p>To'garaklar bolaning qiziqishi va xarakterini rivojlantiradi.</p></article>
-            <article class="card rv d3"><span class="icon-tile soft">{{ icon('chart') }}</span><h3 class="h3">Shaffof natija</h3><p>Ota-onalar ilovada baho, davomat va vazifalarni ko'radi.</p></article>
+            <article class="card rv"><span class="icon-tile soft">{{ icon('book') }}</span><h3 class="h3">{{ _("Kitobxonlik") }}</h3><p>{{ _("Har kuni o'qish — fikrlash, nutq va yozuvning asosi.") }}</p></article>
+            <article class="card rv d1"><span class="icon-tile soft">{{ icon('globe') }}</span><h3 class="h3">{{ _("Ingliz tili") }}</h3><p>{{ _("Boshlang'ich sinfdan boshlab muntazam ingliz tili.") }}</p></article>
+            <article class="card rv d2"><span class="icon-tile soft">{{ icon('child') }}</span><h3 class="h3">{{ _("Sport va san'at") }}</h3><p>{{ _("To'garaklar bolaning qiziqishi va xarakterini rivojlantiradi.") }}</p></article>
+            <article class="card rv d3"><span class="icon-tile soft">{{ icon('chart') }}</span><h3 class="h3">{{ _("Shaffof natija") }}</h3><p>{{ _("Ota-onalar ilovada baho, davomat va vazifalarni ko'radi.") }}</p></article>
         </div>
     </div>
 </section>
@@ -83,11 +84,11 @@
     <div class="wrap">
         <div class="courses-band rv">
             <div>
-                <span class="kicker">Yuqori sinflar uchun</span>
-                <h2 class="h2" style="margin-top:12px">IELTS va SAT — Iceberg Courses bilan</h2>
-                <p style="margin-top:14px">Xalqaro imtihonlarga tayyorgarlik Iceberg oilasidagi o'quv markazi bilan birga: tajribali o'qituvchilar, mock testlar va shaxsiy reja.</p>
+                <span class="kicker">{{ _("Yuqori sinflar uchun") }}</span>
+                <h2 class="h2" style="margin-top:12px">{{ _("IELTS va SAT — Iceberg Courses bilan") }}</h2>
+                <p style="margin-top:14px">{{ _("Xalqaro imtihonlarga tayyorgarlik Iceberg oilasidagi o'quv markazi bilan birga: tajribali o'qituvchilar, mock testlar va shaxsiy reja.") }}</p>
             </div>
-            <div class="hero-cta"><a class="btn btn-light" href="{{ url_for('courses') }}">Kurslar haqida {{ icon('arrow') }}</a></div>
+            <div class="hero-cta"><a class="btn btn-light" href="{{ url_for('courses') }}">{{ _('Kurslar haqida') }} {{ icon('arrow') }}</a></div>
         </div>
     </div>
 </section>

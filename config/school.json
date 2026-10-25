@@ -1,26 +1,22 @@
 {
-  "$comment": "Iceberg School facts shown on the public site. Leave a value empty until it is confirmed: the page then hides or rewords that part (owner decision 2026-10-25: no visible [placeholders]) and leaves it out of search data. Never guess. Stage grades follow the standard Uzbek school structure (1–4, 5–9, 10–11); change them if the school differs.",
+  "$comment": "Iceberg School facts shown on the public site. Leave a value empty until it is confirmed: the page then hides or rewords that part (owner decision 2026-10-25: no visible [placeholders]) and leaves it out of search data. Never guess. Stage grades follow the standard Uzbek school structure (1–4, 5–9, 10–11); change them if the school differs. Text values are Uzbek; their Russian and English live in translations/ru.json and translations/en.json (keyed by the Uzbek text).",
   "name": "Iceberg School",
   "leader": {
     "name": "Azizbek Nasriddinov",
     "role": "Direktor",
     "message": "Iceberg School'da har bir bolani ismi bilan taniymiz va uning kuchli tomonlarini birga kashf etamiz. Ko'rinib turgan natijalar — baholar va sertifikatlar — chuqur bilim, yaxshi odatlar va mustahkam xarakterdan o'sib chiqadi. Maktabimizga xush kelibsiz: farzandingiz kelajagining poydevorini birga quramiz.",
     "photo": "school/img/poster.jpg",
-    "role_en": "Director",
     "message_note": "Drafted for the owner on request (2026-10-25); Azizbek to approve the wording.",
-    "org": "Iceberg School va Iceberg Courses",
-    "org_en": "Iceberg School and Iceberg Courses"
+    "org": "Iceberg School va Iceberg Courses"
   },
   "co_founders": [
     {
       "name": "Jahongir Karimov",
-      "role": "Hammuassis",
-      "role_en": "Co-founder"
+      "role": "Hammuassis"
     },
     {
       "name": "Islomjon Ergashboyev",
-      "role": "Hammuassis",
-      "role_en": "Co-founder"
+      "role": "Hammuassis"
     }
   ],
   "founded": "2023",
@@ -67,97 +63,31 @@
     "teachers": "65+"
   },
   "subjects": [
-    {
-      "uz": "Ona tili va adabiyot",
-      "en": "Uzbek language and literature"
-    },
-    {
-      "uz": "Matematika (algebra, geometriya)",
-      "en": "Mathematics (algebra, geometry)"
-    },
-    {
-      "uz": "Ingliz tili",
-      "en": "English"
-    },
-    {
-      "uz": "Rus tili",
-      "en": "Russian"
-    },
-    {
-      "uz": "Tarix",
-      "en": "History"
-    },
-    {
-      "uz": "Geografiya",
-      "en": "Geography"
-    },
-    {
-      "uz": "Biologiya",
-      "en": "Biology"
-    },
-    {
-      "uz": "Kimyo",
-      "en": "Chemistry"
-    },
-    {
-      "uz": "Fizika",
-      "en": "Physics"
-    },
-    {
-      "uz": "Informatika",
-      "en": "Computer science"
-    },
-    {
-      "uz": "Tarbiya",
-      "en": "Character education"
-    },
-    {
-      "uz": "Jismoniy tarbiya",
-      "en": "Physical education"
-    },
-    {
-      "uz": "Musiqa",
-      "en": "Music"
-    },
-    {
-      "uz": "Tasviriy san'at",
-      "en": "Art"
-    },
-    {
-      "uz": "Texnologiya",
-      "en": "Technology"
-    }
+    "Ona tili va adabiyot",
+    "Matematika (algebra, geometriya)",
+    "Ingliz tili",
+    "Rus tili",
+    "Tarix",
+    "Geografiya",
+    "Biologiya",
+    "Kimyo",
+    "Fizika",
+    "Informatika",
+    "Tarbiya",
+    "Jismoniy tarbiya",
+    "Musiqa",
+    "Tasviriy san'at",
+    "Texnologiya"
   ],
   "subjects_note": "Owner chose the standard Uzbek state curriculum list (2026-10-25).",
   "courses_offered": [
-    {
-      "uz": "Ingliz tili (IELTS, CEFR)",
-      "en": "English (IELTS, CEFR)"
-    },
-    {
-      "uz": "Koreys tili",
-      "en": "Korean"
-    },
-    {
-      "uz": "Xitoy tili",
-      "en": "Chinese"
-    },
-    {
-      "uz": "SAT",
-      "en": "SAT"
-    },
-    {
-      "uz": "Matematika",
-      "en": "Mathematics"
-    },
-    {
-      "uz": "Kimyo",
-      "en": "Chemistry"
-    },
-    {
-      "uz": "Biologiya",
-      "en": "Biology"
-    }
+    "Ingliz tili (IELTS, CEFR)",
+    "Koreys tili",
+    "Xitoy tili",
+    "SAT",
+    "Matematika",
+    "Kimyo",
+    "Biologiya"
   ],
   "courses_offered_note": "Programs from config/registration.json plus Korean and Chinese (owner, 2026-10-25).",
   "tuition": [
@@ -178,8 +108,5 @@
   "portal_url": "/ilova",
   "app_url": "/ilova",
   "opening_hours_ld": "Mo-Sa 07:00-19:00",
-  "teaching_languages_list": {
-    "uz": "O'zbek va rus tillari",
-    "en": "Uzbek and Russian"
-  }
+  "teaching_languages_list": "O'zbek va rus tillari"
 }

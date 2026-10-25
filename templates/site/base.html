@@ -2,14 +2,18 @@
 {%- set site_url = 'https://iceberglc.com' -%}
 {%- set active = request.endpoint or '' -%}
 <!DOCTYPE html>
-<html lang="{% block lang %}uz{% endblock %}" data-brand="school">
+<html lang="{{ lang }}" data-brand="school">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-    <title>{% block title %}Iceberg School — xususiy maktab, 1–11-sinflar{% endblock %}</title>
-    <meta name="description" content="{% block description %}Iceberg School — 1–11-sinflar uchun xususiy maktab. Kuchli akademik bilim, tarbiya va kitobxonlik madaniyati. Iceberg Courses: IELTS, CEFR, SAT va fan kurslari.{% endblock %}">
+    <title>{% block title %}{{ _("Iceberg School — xususiy maktab, 1–11-sinflar") }}{% endblock %}</title>
+    <meta name="description" content="{% block description %}{{ _("Iceberg School — 1–11-sinflar uchun xususiy maktab. Kuchli akademik bilim, tarbiya va kitobxonlik madaniyati. Iceberg Courses: IELTS, CEFR, SAT va fan kurslari.") }}{% endblock %}">
     <meta name="robots" content="index, follow, max-image-preview:large">
     <link rel="canonical" href="{{ site_url }}{{ request.path }}">
+    {%- if lang_url('uz') %}
+    {% for code in languages %}<link rel="alternate" hreflang="{{ code }}" href="{{ site_url }}{{ lang_url(code) }}">
+    {% endfor %}<link rel="alternate" hreflang="x-default" href="{{ site_url }}{{ lang_url('uz') }}">
+    {%- endif %}
 
     <link rel="icon" href="/favicon.ico" sizes="any">
     <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='favicon-32x32.png') }}">
@@ -29,79 +33,79 @@
     <meta property="og:image" content="{{ site_url }}/static/school/img/og-image.png">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
-    <meta property="og:locale" content="{% block og_locale %}uz_UZ{% endblock %}">
+    <meta property="og:locale" content="{{ og_locale }}">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="{{ self.title() }}">
     <meta name="twitter:description" content="{{ self.description() }}">
     <meta name="twitter:image" content="{{ site_url }}/static/school/img/og-image.png">
 
+    {#- "ld_" collects JSON-LD updates; "_" itself is the translation helper. #}
     {%- set school_ld = {
         '@context': 'https://schema.org',
         '@type': 'School',
         'name': 'Iceberg School',
-        'url': site_url + '/',
+        'url': site_url + url_for('index'),
         'logo': site_url + '/static/school/img/logo-v-maroon.png',
         'image': site_url + '/static/school/img/og-image.png',
-        'description': 'Iceberg School — 1–11-sinflar uchun xususiy maktab.',
+        'description': _('Iceberg School — 1–11-sinflar uchun xususiy maktab.'),
         'subOrganization': {
             '@type': 'EducationalOrganization',
-            'name': "Iceberg Courses — ICEBERG o'quv markazi",
+            'name': _("Iceberg Courses — ICEBERG o'quv markazi"),
             'alternateName': ["ICEBERG O'quv Markazi", 'ICEBERG Study Center'],
-            'url': site_url + '/courses',
+            'url': site_url + url_for('courses'),
             'foundingDate': school.founded,
             'telephone': registration.contact.call_center_phone,
             'address': {'@type': 'PostalAddress', 'addressLocality': 'Uychi', 'addressRegion': 'Namangan', 'addressCountry': 'UZ'}
         }
     } -%}
-    {%- if school.phone %}{% set _ = school_ld.update({'telephone': school.phone}) %}{% endif -%}
-    {%- if school.email %}{% set _ = school_ld.update({'email': school.email}) %}{% endif -%}
-    {%- if school.opening_hours_ld %}{% set _ = school_ld.update({'openingHours': school.opening_hours_ld}) %}{% endif -%}
+    {%- if school.phone %}{% set ld_ = school_ld.update({'telephone': school.phone}) %}{% endif -%}
+    {%- if school.email %}{% set ld_ = school_ld.update({'email': school.email}) %}{% endif -%}
+    {%- if school.opening_hours_ld %}{% set ld_ = school_ld.update({'openingHours': school.opening_hours_ld}) %}{% endif -%}
     {%- set founders = [] -%}
-    {%- for person in school.co_founders if person.name %}{% set _ = founders.append({'@type': 'Person', 'name': person.name}) %}{% endfor -%}
-    {%- if founders %}{% set _ = school_ld.update({'founder': founders}) %}{% endif -%}
-    {%- if school.leader.name %}{% set _ = school_ld.update({'employee': {'@type': 'Person', 'name': school.leader.name, 'jobTitle': school.leader.role_en or school.leader.role}}) %}{% endif -%}
-    {%- if school.city %}{% set _ = school_ld.update({'address': {'@type': 'PostalAddress', 'addressLocality': school.city, 'addressRegion': 'Namangan', 'addressCountry': 'UZ'}}) %}{% endif -%}
-    {%- if school.latitude and school.longitude %}{% set _ = school_ld.update({'geo': {'@type': 'GeoCoordinates', 'latitude': school.latitude | float, 'longitude': school.longitude | float}, 'hasMap': school.map_url}) %}{% endif -%}
-    {%- if school.address %}{% set _ = school_ld.update({'address': {'@type': 'PostalAddress', 'streetAddress': school.address, 'addressLocality': school.city, 'addressRegion': 'Namangan', 'addressCountry': 'UZ'}}) %}{% endif -%}
+    {%- for person in school.co_founders if person.name %}{% set ld_ = founders.append({'@type': 'Person', 'name': person.name}) %}{% endfor -%}
+    {%- if founders %}{% set ld_ = school_ld.update({'founder': founders}) %}{% endif -%}
+    {%- if school.leader.name %}{% set ld_ = school_ld.update({'employee': {'@type': 'Person', 'name': school.leader.name, 'jobTitle': _(school.leader.role)}}) %}{% endif -%}
+    {%- if school.city %}{% set ld_ = school_ld.update({'address': {'@type': 'PostalAddress', 'addressLocality': school.city, 'addressRegion': 'Namangan', 'addressCountry': 'UZ'}}) %}{% endif -%}
+    {%- if school.latitude and school.longitude %}{% set ld_ = school_ld.update({'geo': {'@type': 'GeoCoordinates', 'latitude': school.latitude | float, 'longitude': school.longitude | float}, 'hasMap': school.map_url}) %}{% endif -%}
+    {%- if school.address %}{% set ld_ = school_ld.update({'address': {'@type': 'PostalAddress', 'streetAddress': _(school.address), 'addressLocality': school.city, 'addressRegion': 'Namangan', 'addressCountry': 'UZ'}}) %}{% endif -%}
     {%- set same_as = [] -%}
-    {%- for link in (school.instagram_url, school.telegram_url) if link %}{% set _ = same_as.append(link) %}{% endfor -%}
-    {%- if same_as %}{% set _ = school_ld.update({'sameAs': same_as}) %}{% endif %}
+    {%- for link in (school.instagram_url, school.telegram_url) if link %}{% set ld_ = same_as.append(link) %}{% endfor -%}
+    {%- if same_as %}{% set ld_ = school_ld.update({'sameAs': same_as}) %}{% endif %}
     <script type="application/ld+json">{{ school_ld | tojson }}</script>
     {% block schema %}{% endblock %}
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT@9..144,500..700,50..100&family=Inter:wght@400;500;600;700;800&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT@9..144,500..700,50..100&family=Inter:wght@400;500;600;700;800{% if lang == 'ru' %}&family=Literata:opsz,wght@7..72,500..700{% endif %}&display=swap">
     <link rel="stylesheet" href="{{ url_for('static', filename='brand/tokens.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/site.css', v='20261025-3') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/site.css', v='20261025-5') }}">
     {% block head %}{% endblock %}
 </head>
 <body class="{% block body_class %}has-dock{% endblock %}">
-    <a class="skip-link" href="#main">Asosiy qismga o'tish</a>
-    <div id="google_translate_element"></div>
+    <a class="skip-link" href="#main">{{ _("Asosiy qismga o'tish") }}</a>
 
     <header class="hdr" data-header>
         <div class="wrap hdr-row">
-            <a class="hdr-logo" href="{{ url_for('index') }}" aria-label="Iceberg School — bosh sahifa">
+            <a class="hdr-logo" href="{{ url_for('index') }}" aria-label="{{ _('Iceberg School — bosh sahifa') }}">
                 <img src="{{ url_for('static', filename='school/img/logo-h-maroon.png') }}" alt="Iceberg School" width="128" height="38">
             </a>
-            <nav class="nav" aria-label="Asosiy menyu">
+            <nav class="nav" aria-label="{{ _('Asosiy menyu') }}">
                 {% for endpoint, label in site_nav %}
-                <a href="{{ url_for(endpoint) }}"{% if active == endpoint or (endpoint == 'courses' and active == 'register') %} aria-current="page"{% endif %}>{{ label }}</a>
+                <a href="{{ url_for(endpoint) }}"{% if active == endpoint or (endpoint == 'courses' and active == 'register') %} aria-current="page"{% endif %}>{{ _(label) }}</a>
                 {% endfor %}
             </nav>
             <div class="hdr-actions">
-                <label class="lang notranslate" translate="no">
-                    <span class="sr-only">Til</span>
-                    <select class="notranslate" translate="no" data-lang-select aria-label="Tilni tanlash">
-                        <option value="uz">UZ</option>
-                        <option value="ru">RU</option>
-                        <option value="en">EN</option>
+                {%- if lang_url('uz') %}
+                <label class="lang">
+                    <span class="sr-only">{{ _('Til') }}</span>
+                    <select data-lang-select aria-label="{{ _('Tilni tanlash') }}">
+                        {% for code in languages %}<option value="{{ lang_url(code) }}" lang="{{ code }}"{% if code == lang %} selected{% endif %}>{{ code | upper }}</option>{% endfor %}
                     </select>
                 </label>
-                <a class="btn btn-outline hdr-portal" href="{{ school.portal_url }}">Portal</a>
-                <a class="btn btn-primary hdr-portal" href="{{ url_for('admissions') }}#ariza">Ariza topshirish</a>
-                <button class="menu-btn" type="button" data-menu-button aria-controls="site-menu" aria-expanded="false" aria-label="Menyuni ochish" data-label-open="Menyuni ochish" data-label-close="Menyuni yopish">
+                {%- endif %}
+                <a class="btn btn-outline hdr-portal" href="{{ school.portal_url }}">{{ _('Portal') }}</a>
+                <a class="btn btn-primary hdr-portal" href="{{ url_for('admissions') }}#ariza">{{ _('Ariza topshirish') }}</a>
+                <button class="menu-btn" type="button" data-menu-button aria-controls="site-menu" aria-expanded="false" aria-label="{{ _('Menyuni ochish') }}" data-label-open="{{ _('Menyuni ochish') }}" data-label-close="{{ _('Menyuni yopish') }}">
                     {{ icon('menu') }}{{ icon('close') }}
                 </button>
             </div>
@@ -109,15 +113,15 @@
     </header>
 
     <div class="sheet" id="site-menu">
-        <nav aria-label="Mobil menyu">
-            <a href="{{ url_for('index') }}"{% if active == 'index' %} aria-current="page"{% endif %}>Bosh sahifa</a>
+        <nav aria-label="{{ _('Mobil menyu') }}">
+            <a href="{{ url_for('index') }}"{% if active == 'index' %} aria-current="page"{% endif %}>{{ _('Bosh sahifa') }}</a>
             {% for endpoint, label in site_nav %}
-            <a href="{{ url_for(endpoint) }}"{% if active == endpoint %} aria-current="page"{% endif %}>{{ label }}</a>
+            <a href="{{ url_for(endpoint) }}"{% if active == endpoint %} aria-current="page"{% endif %}>{{ _(label) }}</a>
             {% endfor %}
         </nav>
         <div class="sheet-actions">
-            <a class="btn btn-light" href="{{ url_for('admissions') }}#ariza">Maktabga ariza topshirish</a>
-            <a class="btn btn-ghost" href="{{ school.portal_url }}">Portalga kirish</a>
+            <a class="btn btn-light" href="{{ url_for('admissions') }}#ariza">{{ _('Maktabga ariza topshirish') }}</a>
+            <a class="btn btn-ghost" href="{{ school.portal_url }}">{{ _('Portalga kirish') }}</a>
         </div>
     </div>
 
@@ -127,8 +131,8 @@
 
     {% block dock %}
     <div class="dock" data-dock>
-        <a class="btn btn-primary" href="{{ url_for('admissions') }}#ariza">Maktabga ariza</a>
-        <a class="btn btn-outline" href="{{ url_for('register') }}">Kursga yozilish</a>
+        <a class="btn btn-primary" href="{{ url_for('admissions') }}#ariza">{{ _('Maktabga ariza') }}</a>
+        <a class="btn btn-outline" href="{{ url_for('register') }}">{{ _('Kursga yozilish') }}</a>
     </div>
     {% endblock %}
 
@@ -136,36 +140,36 @@
         <div class="wrap ftr-grid">
             <div class="ftr-brand">
                 <img src="{{ url_for('static', filename='school/img/logo-h-white.png') }}" alt="Iceberg School" width="168" height="51" loading="lazy">
-                <p>Ko'rinib turgani — faqat cho'qqi. Biz uning ostidagi poydevorni quramiz.</p>
-                <span class="ftr-family">Iceberg oilasi · <a href="{{ url_for('courses') }}" translate="no">Iceberg Courses</a></span>
+                <p>{{ _("Ko'rinib turgani — faqat cho'qqi. Biz uning ostidagi poydevorni quramiz.") }}</p>
+                <span class="ftr-family">{{ _('Iceberg oilasi') }} · <a href="{{ url_for('courses') }}">Iceberg Courses</a></span>
             </div>
             <div>
-                <h3>Maktab</h3>
+                <h3>{{ _('Maktab') }}</h3>
                 <ul>
-                    <li><a href="{{ url_for('about') }}">Maktab haqida</a></li>
-                    <li><a href="{{ url_for('programs') }}">Ta'lim dasturlari</a></li>
-                    <li><a href="{{ url_for('admissions') }}">Qabul</a></li>
-                    <li><a href="{{ url_for('news') }}">Yangiliklar</a></li>
-                    <li><a href="{{ url_for('partnerships') }}">Hamkorlik</a> · <a href="{{ url_for('partners_en') }}" lang="en">Partners</a></li>
-                    <li><a href="{{ school.portal_url }}">Portalga kirish</a></li>
+                    <li><a href="{{ url_for('about') }}">{{ _('Maktab haqida') }}</a></li>
+                    <li><a href="{{ url_for('programs') }}">{{ _("Ta'lim dasturlari") }}</a></li>
+                    <li><a href="{{ url_for('admissions') }}">{{ _('Qabul') }}</a></li>
+                    <li><a href="{{ url_for('news') }}">{{ _('Yangiliklar') }}</a></li>
+                    <li><a href="{{ url_for('partnerships') }}">{{ _('Hamkorlik') }}</a></li>
+                    <li><a href="{{ school.portal_url }}">{{ _('Portalga kirish') }}</a></li>
                 </ul>
             </div>
             <div>
                 <h3>Iceberg Courses</h3>
                 <ul>
-                    <li><a href="{{ url_for('courses') }}">Barcha kurslar</a></li>
-                    <li><a href="{{ url_for('courses') }}#ielts">IELTS va CEFR</a></li>
+                    <li><a href="{{ url_for('courses') }}">{{ _('Barcha kurslar') }}</a></li>
+                    <li><a href="{{ url_for('courses') }}#ielts">{{ _('IELTS va CEFR') }}</a></li>
                     <li><a href="{{ url_for('courses') }}#sat">SAT</a></li>
-                    <li><a href="{{ url_for('register') }}">Kursga yozilish</a></li>
-                    <li><a href="{{ url_for('courses') }}#savollar">Savollar</a></li>
+                    <li><a href="{{ url_for('register') }}">{{ _('Kursga yozilish') }}</a></li>
+                    <li><a href="{{ url_for('courses') }}#savollar">{{ _('Savollar') }}</a></li>
                 </ul>
             </div>
             <div>
-                <h3>Aloqa</h3>
+                <h3>{{ _('Aloqa') }}</h3>
                 <ul>
                     <li><a href="tel:{{ school.phone or registration.contact.call_center_phone }}">{{ school.phone_display or registration.contact.call_center_display }}</a></li>
                     <li><a href="mailto:{{ content('contact_email', 'support@iceberglc.com') }}">{{ content('contact_email', 'support@iceberglc.com') }}</a></li>
-                    <li><a href="{{ url_for('contact') }}">Manzil va filiallar</a></li>
+                    <li><a href="{{ url_for('contact') }}">{{ _('Manzil va filiallar') }}</a></li>
                 </ul>
                 <div class="socials" style="margin-top:16px">
                     <a href="{{ school.telegram_url or registration.contact.telegram_url }}" aria-label="Telegram" rel="noopener">{{ icon('telegram') }}</a>
@@ -175,12 +179,16 @@
             </div>
         </div>
         <div class="wrap ftr-bottom">
-            <span>© {{ current_year }} Iceberg School · Iceberg Courses{% if school.founded %} · Iceberg — {{ school.founded }}-yildan beri{% endif %}</span>
-            <span>O'zbekiston</span>
+            <span>© {{ current_year }} Iceberg School · Iceberg Courses{% if school.founded %} · {{ _('Iceberg — {year}-yildan beri', year=school.founded) }}{% endif %}</span>
+            {%- if lang_url('uz') %}
+            <span class="ftr-langs">{% for code, name in (('uz', "O'zbekcha"), ('ru', 'Русский'), ('en', 'English')) %}{% if not loop.first %} · {% endif %}<a href="{{ lang_url(code) }}" hreflang="{{ code }}" lang="{{ code }}"{% if code == lang %} aria-current="true"{% endif %}>{{ name }}</a>{% endfor %}</span>
+            {%- else %}
+            <span>{{ _("O'zbekiston") }}</span>
+            {%- endif %}
         </div>
     </footer>
 
-    <script src="{{ url_for('static', filename='js/site.js', v='20261024-3') }}" defer></script>
+    <script src="{{ url_for('static', filename='js/site.js', v='20261025-1') }}" defer></script>
     {% block scripts %}{% endblock %}
 </body>
 </html>

@@ -1,23 +1,23 @@
-{# A personal welcome from the school's leader: name, role and message come from config/school.json. #}
+{# The school's leadership: director (with photo and welcome) and co-founders, from config/school.json. #}
 <section class="sec {{ leader_bg | default('sec-white') }}">
     <div class="wrap leader">
         <figure class="leader-photo rv">
-            <img src="{{ url_for('static', filename=school.leader.photo) }}" alt="{{ school.leader.name or 'Iceberg School rahbari' }}" width="1095" height="1437" loading="lazy">
+            <img src="{{ url_for('static', filename=school.leader.photo) }}" alt="{{ school.leader.name or _('Iceberg School rahbari') }}" width="1095" height="1437" loading="lazy">
         </figure>
         <div class="leader-text rv d1">
-            <span class="kicker">{{ 'Maktab rahbaridan' if school.leader.message else 'Rahbariyat' }}</span>
+            <span class="kicker">{{ _('Maktab rahbaridan') if school.leader.message else _('Rahbariyat') }}</span>
             {% if school.leader.message %}<blockquote>
-                <p>{{ school.leader.message }}</p>
-            </blockquote>{% else %}<h2 class="h2">Maktabni boshqaradigan jamoa</h2>{% endif %}
+                <p>{{ _(school.leader.message) }}</p>
+            </blockquote>{% else %}<h2 class="h2">{{ _('Maktabni boshqaradigan jamoa') }}</h2>{% endif %}
             <div class="leader-sign">
                 <strong>{{ school.leader.name }}</strong>
-                <span>{{ school.leader.role }} · {{ school.leader.org or 'Iceberg School' }}</span>
+                <span>{{ _(school.leader.role) }} · {{ _(school.leader.org) if school.leader.org else 'Iceberg School' }}</span>
             </div>
             {% for person in school.co_founders if person.name %}<div class="leader-sign">
                 <strong>{{ person.name }}</strong>
-                <span>{{ person.role }} · Iceberg</span>
+                <span>{{ _(person.role) }} · Iceberg</span>
             </div>{% endfor %}
-            <a class="btn btn-primary" href="{{ url_for('admissions') }}#ariza" style="justify-self:start">Tanishuvga yoziling</a>
+            <a class="btn btn-primary" href="{{ url_for('admissions') }}#ariza" style="justify-self:start">{{ _('Tanishuvga yoziling') }}</a>
         </div>
     </div>
 </section>
