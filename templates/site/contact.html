@@ -20,8 +20,8 @@
             <div class="contact-list">
                 {% if school.phone %}<a href="tel:{{ school.phone }}"><span class="icon-tile">{{ icon('phone') }}</span><span>{{ school.phone_display or school.phone }}<small>Telefon</small></span></a>
                 {% else %}<div><span class="icon-tile">{{ icon('phone') }}</span><span>{{ fact('', 'TELEFON') }}<small>Telefon</small></span></div>{% endif %}
-                {% if school.address or not school.map_url %}<div><span class="icon-tile">{{ icon('pin') }}</span><span>{{ fact(school.address, 'MANZIL') }}<small>{{ school.city or 'Manzil' }}</small></span></div>
-                {% else %}<a href="{{ school.map_url }}" target="_blank" rel="noopener"><span class="icon-tile">{{ icon('pin') }}</span><span>{{ school.city }}, {{ school.region }}<small>Manzil · xaritada ochish</small></span></a>{% endif %}
+                {% if school.map_url %}<a href="{{ school.map_url }}" target="_blank" rel="noopener"><span class="icon-tile">{{ icon('pin') }}</span><span>{{ school.address or school.city ~ ', ' ~ school.region }}<small>{% if school.address %}{{ school.city }}, {{ school.region }} · {% endif %}xaritada ochish</small></span></a>
+                {% else %}<div><span class="icon-tile">{{ icon('pin') }}</span><span>{{ fact(school.address, 'MANZIL') }}<small>{{ school.city or 'Manzil' }}</small></span></div>{% endif %}
                 <div><span class="icon-tile">{{ icon('clock') }}</span><span>{{ fact(school.hours, 'ISH VAQTI') }}<small>Ish vaqti</small></span></div>
                 {% if school.email %}<a href="mailto:{{ school.email }}"><span class="icon-tile">{{ icon('mail') }}</span><span>{{ school.email }}<small>Email</small></span></a>{% endif %}
                 {% if school.telegram_url %}<a href="{{ school.telegram_url }}" rel="noopener"><span class="icon-tile">{{ icon('telegram') }}</span><span>Telegram<small>Yozish</small></span></a>{% endif %}
