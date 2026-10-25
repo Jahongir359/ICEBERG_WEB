@@ -23,6 +23,8 @@ PUBLIC_ROUTES = {
     "/news": "news.html",
     "/contact": "contact.html",
     "/register": "register.html",
+    "/hamkorlik": "hamkorlik.html",
+    "/partners": "partners.html",
 }
 ROOT_ASSETS = ("/favicon.ico", "/manifest.json", "/robots.txt", "/sitemap.xml")
 

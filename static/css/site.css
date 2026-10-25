@@ -598,6 +598,13 @@ select.control { appearance: none; -webkit-appearance: none; padding-right: 2.4r
 .news-card.featured p { color: var(--muted); }
 .news-card.featured:not(.has-poster) p:last-child { color: var(--brand-primary); font-weight: 700; }
 .news-more { margin-top: 24px; }
+.stat { display: grid; gap: 6px; align-content: start; }
+.stat-num { font-family: var(--brand-font-display); font-size: clamp(2rem, 5vw, 2.6rem); line-height: 1.05; color: var(--brand-primary); }
+.stat-num .ph { font-family: var(--brand-font); font-size: .9rem; }
+.stat-wide { grid-template-columns: auto 1fr; align-items: center; gap: 14px; }
+@media (max-width: 559px) { .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; } .stats .card { padding: 18px 16px; } }
+.stats .stat-wide { grid-column: 1 / -1; }
+@media (min-width: 1024px) { .stats .stat-wide { grid-column: span 2; } }
 .map-links { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
 .map-links .btn { min-height: 44px; padding: .55rem 1rem; font-size: .9rem; }
 .news-card.featured p.news-where { display: inline-flex; align-items: center; gap: 8px; color: var(--brand-primary); font-weight: 700; }

@@ -44,6 +44,15 @@
   "map_yandex_url": "https://yandex.uz/maps/?pt=71.864775,41.030491&z=17&l=map",
   "map_apple_url": "https://maps.apple/p/uxFeLK7xZcNYsK",
   "max_class_size": "",
+  "stats": {
+    "$comment": "Owner gave 1500+ students and 65+ teachers for Iceberg overall (2026-10-25) and asked to split them; fill each when confirmed.",
+    "school_students": "",
+    "school_teachers": "",
+    "courses_students": "",
+    "courses_teachers": ""
+  },
+  "course_languages": "Ingliz tili (IELTS, CEFR), koreys tili, xitoy tili",
+  "course_languages_en": "English (IELTS, CEFR), Korean, Chinese",
   "tuition": [
     {
       "stage": "primary",
