@@ -2,6 +2,18 @@
     "use strict";
 
     var root = document.documentElement;
+    // If the page was already painted before this script ran (a first visit on a slow connection),
+    // what is on screen stays as it is instead of hiding and animating in a second time.
+    var painted = !!(window.performance && performance.getEntriesByType && performance.getEntriesByType("paint").length);
+    function onScreen(el) {
+        var rect = el.getBoundingClientRect();
+        return rect.top < window.innerHeight && rect.bottom > 0;
+    }
+    if (painted) {
+        document.querySelectorAll(".rv").forEach(function (el) {
+            if (onScreen(el)) el.classList.remove("rv", "d1", "d2", "d3");
+        });
+    }
     root.classList.add("js");
 
     // Language: every page exists in Uzbek, Russian and English; the switcher opens the same page in
@@ -98,7 +110,7 @@
         // Headlines: words rise in one after another.
         document.querySelectorAll("[data-split], .page-hero h1").forEach(function (heading) {
             heading.classList.add("words");
-            if (!splitText) {
+            if (!splitText || (painted && onScreen(heading))) {
                 heading.classList.add("in");
                 return;
             }
