@@ -1,0 +1,55 @@
+# Runs the same checks a contributor runs locally (AGENTS.md → Commands) on every pull request and
+# on pushes to main. Cloudflare Pages builds the site separately; this catches broken tests early.
+name: Checks
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: checks-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  site:
+    name: Pages, translations and static build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          # Same minor version as Cloudflare Pages (.python-version pins 3.12.1, which the runner
+          # images no longer ship).
+          python-version: '3.12'
+          cache: pip
+      - run: python -m pip install -r requirements.txt
+      - name: Page, form and translation tests
+        run: python -W error::ResourceWarning -m unittest discover -s tests -v
+      - name: Static build and checks
+        run: |
+          python scripts/build_static.py
+          python scripts/check_static_build.py
+      - name: Brand tokens are up to date
+        run: python scripts/build_brand_tokens.py --check
+
+  lead-handler:
+    name: Form handler and Apps Script
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+      - name: Syntax
+        run: |
+          node --check functions/api/register.js
+          node --check static/js/site.js
+          node --check static/js/forms.js
+      - name: Tests
+        run: npm run test:registration

@@ -84,7 +84,8 @@ python scripts/build_brand_tokens.py             # after editing static/brand/to
 `static/brand/tokens.css` is generated but committed, because the Cloudflare build runs Python only.
 Regenerate and commit it with any `tokens.json` change.
 
-All of them must pass before a commit. There is no CI workflow in this repo yet.
+All of them must pass before a commit. GitHub Actions (`.github/workflows/checks.yml`) runs the same
+checks on every pull request and push to `main`; merge only when they and the Cloudflare Pages preview are green.
 
 ## Brand rules
 

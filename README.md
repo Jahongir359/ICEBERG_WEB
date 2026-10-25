@@ -72,7 +72,7 @@ python app.py                     # preview on http://127.0.0.1:8080
 The forms need the Pages Function: `python scripts/build_static.py`, copy `.dev.vars.example` to
 `.dev.vars` and fill it in, then `npx wrangler pages dev public`.
 
-Checks (all must pass before a commit):
+Checks (all must pass before a commit; GitHub Actions runs them on every pull request too):
 
 ```bash
 python -m unittest discover -s tests -v
