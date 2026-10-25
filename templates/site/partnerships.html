@@ -22,7 +22,7 @@
             "Iceberg School — Uychi (Namangan viloyati)dagi 1–11-sinflar uchun xususiy maktab. Iceberg Courses esa " ~ school.founded ~ "-yildan beri faoliyat yuritayotgan o'quv markazimiz. Biz maktablar, universitetlar, tashkilotlar va kompaniyalar bilan har qanday hamkorlikka ochiqmiz.",
             "Iceberg School is a private school for grades 1–11 in Uychi, Namangan region, Uzbekistan. Iceberg Courses, our learning centre, has been teaching since " ~ school.founded ~ ". We welcome partnerships of every kind with schools, universities, organisations and companies.") }}</p>
         <div class="hero-cta">
-            <a class="btn btn-primary" href="#contact">{{ icon('mail') }} {{ tr("Bog'lanish", 'Get in touch') }}</a>
+            <a class="btn btn-primary" href="mailto:{{ school.partners_email }}">{{ icon('mail') }} {{ tr("Bog'lanish", 'Get in touch') }}</a>
             {% if en %}<a class="btn btn-outline" href="{{ url_for('partnerships') }}" hreflang="uz" lang="uz">O'zbekcha</a>
             {% else %}<a class="btn btn-outline" href="{{ url_for('partners_en') }}" hreflang="en" lang="en">{{ icon('globe') }} English</a>{% endif %}
         </div>
@@ -36,19 +36,41 @@
             <span class="kicker">{{ tr('Biz haqimizda', 'At a glance') }}</span>
             <h2 class="h2">{{ tr('Iceberg oilasi raqamlarda', 'The Iceberg family in numbers') }}</h2>
         </div>
-        <div class="grid grid-4 stats">
+        <div class="grid grid-3 stats">
             <article class="card stat rv"><strong class="stat-num">{{ school.grades }}</strong><span>{{ tr('Sinflar · xususiy maktab', 'Grades · private school') }}</span></article>
             <article class="card stat rv d1"><strong class="stat-num">{{ school.founded }}</strong><span>{{ tr('Iceberg tashkil topgan yil', 'Year Iceberg began') }}</span></article>
             <article class="card stat rv d2"><strong class="stat-num">{{ fact(school.stats.school_students, tr("O'QUVCHILAR", 'STUDENTS')) }}</strong><span>{{ tr("Maktab o'quvchilari", 'School students') }}</span></article>
             <article class="card stat rv d3"><strong class="stat-num">{{ fact(school.stats.school_teachers, tr("O'QITUVCHILAR", 'TEACHERS')) }}</strong><span>{{ tr("Maktab o'qituvchilari", 'School teachers') }}</span></article>
             <article class="card stat rv"><strong class="stat-num">{{ fact(school.stats.courses_students, tr("O'QUVCHILAR", 'STUDENTS')) }}</strong><span>{{ tr("Iceberg Courses o'quvchilari", 'Iceberg Courses students') }}</span></article>
             <article class="card stat rv d1"><strong class="stat-num">{{ fact(school.stats.courses_teachers, tr("O'QITUVCHILAR", 'TEACHERS')) }}</strong><span>{{ tr("Iceberg Courses o'qituvchilari", 'Iceberg Courses teachers') }}</span></article>
-            <article class="card stat stat-wide rv d2"><span class="icon-tile soft">{{ icon('globe') }}</span><span><strong>{{ tr('Iceberg Courses tillari', 'Languages at Iceberg Courses') }}</strong><br>{{ school.course_languages_en if en else school.course_languages }}</span></article>
         </div>
     </div>
 </section>
 
 <section class="sec">
+    <div class="wrap">
+        <div class="sec-head rv">
+            <span class="kicker">{{ tr("Nimalarni o'qitamiz", 'What we teach') }}</span>
+            <h2 class="h2">{{ tr('Maktab fanlari va alohida kurslar', 'School subjects and separate courses') }}</h2>
+        </div>
+        <div class="grid grid-2">
+            <article class="card rv">
+                <img src="{{ url_for('static', filename='school/img/logo-h-maroon.png') }}" alt="Iceberg School" width="170" height="50" style="width:150px;height:auto" loading="lazy">
+                <h3 class="h3">{{ tr("Maktab fanlari · {}-sinflar", 'School subjects · grades {}').format(school.grades) }}</h3>
+                <p>{{ tr("Davlat o'quv dasturi bo'yicha:", 'Following the Uzbek national curriculum:') }}</p>
+                <ul class="tag-list">{% for subject in school.subjects %}<li>{{ subject.en if en else subject.uz }}</li>{% endfor %}</ul>
+            </article>
+            <article class="card rv d1">
+                <span class="icon-tile">{{ icon('cap') }}</span>
+                <h3 class="h3">{{ tr('Iceberg Courses · alohida kurslar', 'Iceberg Courses · separate courses') }}</h3>
+                <p>{{ tr("Maktab o'quvchilari va kattalar uchun til va imtihon kurslari:", 'Language and exam courses for school students and adults:') }}</p>
+                <ul class="tag-list">{% for course in school.courses_offered %}<li>{{ course.en if en else course.uz }}</li>{% endfor %}</ul>
+            </article>
+        </div>
+    </div>
+</section>
+
+<section class="sec sec-white">
     <div class="wrap">
         <div class="sec-head center rv">
             <span class="kicker">{{ tr("Hamkorlik yo'nalishlari", 'Ways to work together') }}</span>
@@ -71,7 +93,7 @@
     </div>
 </section>
 
-<section class="sec sec-white">
+<section class="sec">
     <div class="wrap">
         <div class="campus-head">
             <div class="sec-head rv">
@@ -104,7 +126,7 @@
     </div>
 </section>
 
-<section class="sec" id="contact">
+<section class="sec sec-white" id="contact">
     <div class="wrap">
         <article class="card rv partner-contact">
             <div class="sec-head" style="margin-bottom:8px">
@@ -113,7 +135,7 @@
                 <p class="lead">{{ tr("Qisqacha o'zingiz va g'oyangiz haqida yozing — siz bilan bog'lanamiz.", "Send a short note about your organisation and your idea, and we'll get back to you.") }}</p>
             </div>
             <div class="contact-list">
-                <a href="mailto:{{ content('contact_email', 'iceberg.edu.center@gmail.com') }}"><span class="icon-tile">{{ icon('mail') }}</span><span>{{ content('contact_email', 'iceberg.edu.center@gmail.com') }}<small>Email</small></span></a>
+                <a href="mailto:{{ school.partners_email }}"><span class="icon-tile">{{ icon('mail') }}</span><span>{{ school.partners_email }}<small>{{ tr('Xalqaro hamkorlik', 'International partnerships') }}</small></span></a>
                 <a href="tel:{{ school.phone }}"><span class="icon-tile">{{ icon('phone') }}</span><span>{{ school.phone_display }}<small>{{ tr('Telefon', 'Phone') }}</small></span></a>
                 <a href="{{ registration.contact.telegram_url }}" rel="noopener"><span class="icon-tile">{{ icon('telegram') }}</span><span>@{{ registration.contact.telegram_username }}<small>Telegram</small></span></a>
                 <a href="{{ school.map_url }}" target="_blank" rel="noopener"><span class="icon-tile">{{ icon('pin') }}</span><span>{{ tr("Uychi, Namangan viloyati, O'zbekiston", 'Uychi, Namangan region, Uzbekistan') }}<small>{{ school.address }}</small></span></a>

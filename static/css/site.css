@@ -605,6 +605,8 @@ select.control { appearance: none; -webkit-appearance: none; padding-right: 2.4r
 @media (max-width: 559px) { .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; } .stats .card { padding: 18px 16px; } }
 .stats .stat-wide { grid-column: 1 / -1; }
 @media (min-width: 1024px) { .stats .stat-wide { grid-column: span 2; } }
+.tag-list { display: flex; flex-wrap: wrap; gap: 8px; margin: 4px 0 0; padding: 0; list-style: none; }
+.tag-list li { padding: .45rem .8rem; border-radius: 999px; background: var(--brand-paper); border: 1px solid var(--line); color: var(--ink); font-size: .9rem; font-weight: 600; }
 .map-links { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
 .map-links .btn { min-height: 44px; padding: .55rem 1rem; font-size: .9rem; }
 .news-card.featured p.news-where { display: inline-flex; align-items: center; gap: 8px; color: var(--brand-primary); font-weight: 700; }
