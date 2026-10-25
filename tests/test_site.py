@@ -204,6 +204,8 @@ class SitePageTests(unittest.TestCase):
     def test_owner_facts_round_two(self):
         school = app_module.SCHOOL_CONFIG
         about = self.client.get('/about').get_data(as_text=True)
+        self.assertIn('<blockquote>', about)
+        self.assertIn('Maktabimizga xush kelibsiz', about)
         for text in ('Azizbek Nasriddinov', 'Direktor', 'Jahongir Karimov', 'Islomjon Ergashboyev', 'Hammuassis'):
             self.assertIn(text, about)
         partners = self.client.get('/partners').get_data(as_text=True)
