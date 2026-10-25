@@ -87,6 +87,11 @@
         }
     }
 
+    // Give up after 30 s so the button never stays stuck on "Sending..." (older browsers: no limit).
+    function requestTimeout() {
+        return window.AbortSignal && AbortSignal.timeout ? AbortSignal.timeout(30000) : undefined;
+    }
+
     function utm(name) {
         return (new URLSearchParams(window.location.search).get(name) || "").slice(0, 150);
     }
@@ -200,7 +205,8 @@
             var response = await fetch(form.action, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(payload)
+                body: JSON.stringify(payload),
+                signal: requestTimeout()
             });
             var result = await response.json().catch(function () { return {}; });
             if (!response.ok || !result.ok) {
@@ -211,7 +217,7 @@
         } catch (error) {
             status.className = "form-status";
             var rawMessage = error && error.message ? error.message : "";
-            status.textContent = /failed to fetch|networkerror|load failed/i.test(rawMessage)
+            status.textContent = /failed to fetch|networkerror|load failed|timeout|abort/i.test(rawMessage)
                 ? t("Internet aloqasini tekshiring va qayta urinib ko'ring.")
                 : (rawMessage || t("Xatolik yuz berdi. Qayta urinib ko'ring."));
         } finally {
@@ -283,7 +289,8 @@
             var response = await fetch(form.action, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(payload)
+                body: JSON.stringify(payload),
+                signal: requestTimeout()
             });
             var result = await response.json().catch(function () { return {}; });
             if (!response.ok || !result.ok) {
@@ -293,7 +300,7 @@
             return;
         } catch (error) {
             var rawMessage = error && error.message ? error.message : "";
-            status.textContent = /failed to fetch|networkerror|load failed/i.test(rawMessage)
+            status.textContent = /failed to fetch|networkerror|load failed|timeout|abort/i.test(rawMessage)
                 ? t("Internet aloqasini tekshiring va qayta urinib ko'ring.")
                 : (rawMessage || t("Xatolik yuz berdi. Qayta urinib ko'ring."));
         }
