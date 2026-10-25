@@ -13,12 +13,12 @@ rollback) is in Git history; this page keeps only what still applies.
 | Duplicate Flask registration path (SQLite, idempotency gaps, `?success=1` confirmation) | Both forms post only to the Pages Function `/api/register`; Apps Script deduplicates by submission ID. |
 | Contact defaults disagreed; numerical claims without evidence; English via Google Translate | One set of facts in `config/`; only owner-confirmed figures are shown; real Russian and English pages replace Google Translate. |
 | Campaign (UTM) fields were always empty on the static site | `static/js/forms.js` reads them from the page address. |
+| No CI workflow | `.github/workflows/checks.yml` runs the Python and Node tests, the static build check and the brand-token check on every pull request and push to `main`. |
 | `/api/register` trusted `Content-Length`, accepted any JSON value, a missing Turnstile action and any hostname; upstream calls had no timeout | Real body size is measured, the body must be an object, Turnstile must report action `register` and this request's hostname, Turnstile/Sheets calls time out (8 s / 20 s), and the browser stops waiting after 30 s. |
 
 ## Open
 
 | Priority | Finding | Next step |
 | --- | --- | --- |
-| Medium | No CI workflow: checks run only locally and in the Cloudflare build. | Add a small GitHub Actions job running the Python and Node tests and the static build check. |
 | Operational | Not verified end to end in production: Sheets receipt, Telegram message (needs `TELEGRAM_BOT_TOKEN`/`TELEGRAM_CHAT_ID`), ERP copy (ERP offline). | Send one test enquiry after each is configured; plan section 9. |
 | Content | The course FAQ (`config/faq.json`) is old Learning Center text (mentions ACT, online lessons, hours). | Owner to confirm or correct. |
