@@ -134,7 +134,7 @@
             </div>
             <div class="contact-list">
                 <div><span class="icon-tile">{{ icon('users') }}</span><span>{{ school.leader.name }}<small>{{ school.leader.role_en if en else school.leader.role }} · Iceberg School</small></span></div>
-                <div><span class="icon-tile">{{ icon('users') }}</span><span>{{ school.co_founder.name }}<small>{{ school.co_founder.role_en if en else school.co_founder.role }} · Iceberg</small></span></div>
+                {% for person in school.co_founders if person.name %}<div><span class="icon-tile">{{ icon('users') }}</span><span>{{ person.name }}<small>{{ person.role_en if en else person.role }} · Iceberg</small></span></div>{% endfor %}
                 <a href="mailto:{{ school.partners_email }}"><span class="icon-tile">{{ icon('mail') }}</span><span>{{ school.partners_email }}<small>{{ tr('Xalqaro hamkorlik', 'International partnerships') }}</small></span></a>
                 <a href="tel:{{ school.phone }}"><span class="icon-tile">{{ icon('phone') }}</span><span>{{ school.phone_display }}<small>{{ tr('Telefon', 'Phone') }}</small></span></a>
                 <a href="{{ school.telegram_url }}" rel="noopener"><span class="icon-tile">{{ icon('telegram') }}</span><span>@{{ school.telegram_url.rsplit('/', 1)[-1] }}<small>{{ tr('Telegram kanal', 'Telegram channel') }}</small></span></a>

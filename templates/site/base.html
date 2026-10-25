@@ -56,7 +56,9 @@
     {%- if school.phone %}{% set _ = school_ld.update({'telephone': school.phone}) %}{% endif -%}
     {%- if school.email %}{% set _ = school_ld.update({'email': school.email}) %}{% endif -%}
     {%- if school.opening_hours_ld %}{% set _ = school_ld.update({'openingHours': school.opening_hours_ld}) %}{% endif -%}
-    {%- if school.co_founder and school.co_founder.name %}{% set _ = school_ld.update({'founder': {'@type': 'Person', 'name': school.co_founder.name}}) %}{% endif -%}
+    {%- set founders = [] -%}
+    {%- for person in school.co_founders if person.name %}{% set _ = founders.append({'@type': 'Person', 'name': person.name}) %}{% endfor -%}
+    {%- if founders %}{% set _ = school_ld.update({'founder': founders}) %}{% endif -%}
     {%- if school.leader.name %}{% set _ = school_ld.update({'employee': {'@type': 'Person', 'name': school.leader.name, 'jobTitle': school.leader.role_en or school.leader.role}}) %}{% endif -%}
     {%- if school.city %}{% set _ = school_ld.update({'address': {'@type': 'PostalAddress', 'addressLocality': school.city, 'addressRegion': 'Namangan', 'addressCountry': 'UZ'}}) %}{% endif -%}
     {%- if school.latitude and school.longitude %}{% set _ = school_ld.update({'geo': {'@type': 'GeoCoordinates', 'latitude': school.latitude | float, 'longitude': school.longitude | float}, 'hasMap': school.map_url}) %}{% endif -%}

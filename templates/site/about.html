@@ -124,7 +124,7 @@
             {% for person in [
                 ('about_team_1', 'img/team/azizbek.jpg', 'Azizbek Nasriddinov', 'Markaz direktori'),
                 ('about_team_2', 'img/team/maqsudbek.jpg', 'Maqsudbek Mirzayev', "Ingliz tili bo'yicha mutaxassis"),
-                ('about_team_3', 'img/team/islomjon.jpg', 'Islomjon Ergashboyev', 'Asosiy tizim boshqaruvchisi')
+                ('about_team_3', 'img/team/islomjon.jpg', 'Islomjon Ergashboyev', 'Hammuassis · asosiy tizim boshqaruvchisi')
             ] %}
             <article class="card person rv{% if loop.index0 %} d{{ loop.index0 }}{% endif %}">
                 <img src="{{ asset_url(person[0], person[1]) }}" alt="{{ person[2] }}" width="104" height="104" loading="lazy">
