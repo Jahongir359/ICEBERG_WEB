@@ -38,12 +38,112 @@
   "teaching_languages": "",
   "transport_and_meals": "",
   "email": "",
+  "partners_email": "international@iceberglc.com",
   "telegram_url": "",
   "instagram_url": "",
   "map_url": "https://www.google.com/maps/search/?api=1&query=41.030491,71.864775",
   "map_yandex_url": "https://yandex.uz/maps/?pt=71.864775,41.030491&z=17&l=map",
   "map_apple_url": "https://maps.apple/p/uxFeLK7xZcNYsK",
   "max_class_size": "",
+  "stats": {
+    "$comment": "Owner figures for Iceberg overall, School and Courses together (2026-10-25).",
+    "students": "1500+",
+    "teachers": "65+"
+  },
+  "subjects": [
+    {
+      "uz": "Ona tili va adabiyot",
+      "en": "Uzbek language and literature"
+    },
+    {
+      "uz": "Matematika (algebra, geometriya)",
+      "en": "Mathematics (algebra, geometry)"
+    },
+    {
+      "uz": "Ingliz tili",
+      "en": "English"
+    },
+    {
+      "uz": "Rus tili",
+      "en": "Russian"
+    },
+    {
+      "uz": "Tarix",
+      "en": "History"
+    },
+    {
+      "uz": "Geografiya",
+      "en": "Geography"
+    },
+    {
+      "uz": "Biologiya",
+      "en": "Biology"
+    },
+    {
+      "uz": "Kimyo",
+      "en": "Chemistry"
+    },
+    {
+      "uz": "Fizika",
+      "en": "Physics"
+    },
+    {
+      "uz": "Informatika",
+      "en": "Computer science"
+    },
+    {
+      "uz": "Tarbiya",
+      "en": "Character education"
+    },
+    {
+      "uz": "Jismoniy tarbiya",
+      "en": "Physical education"
+    },
+    {
+      "uz": "Musiqa",
+      "en": "Music"
+    },
+    {
+      "uz": "Tasviriy san'at",
+      "en": "Art"
+    },
+    {
+      "uz": "Texnologiya",
+      "en": "Technology"
+    }
+  ],
+  "subjects_note": "Owner chose the standard Uzbek state curriculum list (2026-10-25).",
+  "courses_offered": [
+    {
+      "uz": "Ingliz tili (IELTS, CEFR)",
+      "en": "English (IELTS, CEFR)"
+    },
+    {
+      "uz": "Koreys tili",
+      "en": "Korean"
+    },
+    {
+      "uz": "Xitoy tili",
+      "en": "Chinese"
+    },
+    {
+      "uz": "SAT",
+      "en": "SAT"
+    },
+    {
+      "uz": "Matematika",
+      "en": "Mathematics"
+    },
+    {
+      "uz": "Kimyo",
+      "en": "Chemistry"
+    },
+    {
+      "uz": "Biologiya",
+      "en": "Biology"
+    }
+  ],
+  "courses_offered_note": "Programs from config/registration.json plus Korean and Chinese (owner, 2026-10-25).",
   "tuition": [
     {
       "stage": "primary",

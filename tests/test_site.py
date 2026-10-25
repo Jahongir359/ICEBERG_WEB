@@ -165,6 +165,35 @@ class SitePageTests(unittest.TestCase):
         self.assertEqual(data['address']['streetAddress'], school['address'])
         self.assertEqual(data['telephone'], school['phone'])
 
+    def test_partnership_pages_in_uzbek_and_english(self):
+        for path, lang, heading in (('/hamkorlik', 'uz', 'Keling, birga quramiz'), ('/partners', 'en', 'build something together')):
+            with self.subTest(path=path):
+                response = self.client.get(path)
+                self.assertEqual(response.status_code, 200)
+                html = response.get_data(as_text=True)
+                self.assertIn(f'<html lang="{lang}" data-brand="school">', html)
+                self.assertEqual(len(re.findall(r'<h1[\s>]', html)), 1)
+                self.assertIn(heading, html)
+                self.assertIn(f'<link rel="canonical" href="https://iceberglc.com{path}">', html)
+                self.assertIn('hreflang="uz" href="https://iceberglc.com/hamkorlik"', html)
+                self.assertIn('hreflang="en" href="https://iceberglc.com/partners"', html)
+                self.assertIn(f'href="tel:{app_module.SCHOOL_CONFIG["phone"]}"', html)
+        partners = self.client.get('/partners').get_data(as_text=True)
+        self.assertNotIn('class="ph"', partners)
+        self.assertNotIn('class="ph"', self.client.get('/hamkorlik').get_data(as_text=True))
+        self.assertIn('>1500+</strong>', partners)
+        self.assertIn('>65+</strong>', partners)
+        self.assertIn('href="mailto:international@iceberglc.com"', partners)
+        for item in ('Korean', 'Chinese', 'Physics', 'Uzbek language and literature'):
+            self.assertIn(f'<li>{item}</li>', partners)
+        programs = self.client.get('/programs').get_data(as_text=True)
+        for subject in app_module.SCHOOL_CONFIG['subjects']:
+            self.assertIn(f'<li>{subject["uz"]}</li>'.replace("'", '&#39;'), programs)
+        sitemap = self.client.get('/sitemap.xml').get_data(as_text=True)
+        self.assertIn('https://iceberglc.com/hamkorlik', sitemap)
+        self.assertIn('https://iceberglc.com/partners', sitemap)
+        self.assertIn('href="/partners"', self.client.get('/').get_data(as_text=True))
+
     def test_courses_page_lists_registration_programs(self):
         html = self.client.get('/courses').get_data(as_text=True)
         for program in app_module.REGISTRATION_CONFIG['programs']:

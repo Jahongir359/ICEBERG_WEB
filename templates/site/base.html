@@ -2,7 +2,7 @@
 {%- set site_url = 'https://iceberglc.com' -%}
 {%- set active = request.endpoint or '' -%}
 <!DOCTYPE html>
-<html lang="uz" data-brand="school">
+<html lang="{% block lang %}uz{% endblock %}" data-brand="school">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -29,7 +29,7 @@
     <meta property="og:image" content="{{ site_url }}/static/school/img/og-image.png">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
-    <meta property="og:locale" content="uz_UZ">
+    <meta property="og:locale" content="{% block og_locale %}uz_UZ{% endblock %}">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="{{ self.title() }}">
     <meta name="twitter:description" content="{{ self.description() }}">
@@ -67,7 +67,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT@9..144,500..700,50..100&family=Inter:wght@400;500;600;700;800&display=swap">
     <link rel="stylesheet" href="{{ url_for('static', filename='brand/tokens.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/site.css', v='20261024-10') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/site.css', v='20261025-2') }}">
     {% block head %}{% endblock %}
 </head>
 <body class="{% block body_class %}has-dock{% endblock %}">
@@ -140,6 +140,7 @@
                     <li><a href="{{ url_for('programs') }}">Ta'lim dasturlari</a></li>
                     <li><a href="{{ url_for('admissions') }}">Qabul</a></li>
                     <li><a href="{{ url_for('news') }}">Yangiliklar</a></li>
+                    <li><a href="{{ url_for('partnerships') }}">Hamkorlik</a> · <a href="{{ url_for('partners_en') }}" lang="en">Partners</a></li>
                     <li><a href="{{ school.portal_url }}">Portalga kirish</a></li>
                 </ul>
             </div>

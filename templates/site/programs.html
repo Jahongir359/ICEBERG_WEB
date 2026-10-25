@@ -55,6 +55,17 @@
 
 <section class="sec sec-white">
     <div class="wrap">
+        <div class="sec-head rv">
+            <span class="kicker">Fanlar</span>
+            <h2 class="h2">Maktabda o'qitiladigan fanlar</h2>
+            <p class="lead">Davlat o'quv dasturi bo'yicha. Til va imtihon kurslari (IELTS, SAT, koreys va xitoy tillari) — alohida, <a href="{{ url_for('courses') }}">Iceberg Courses</a>da.</p>
+        </div>
+        <ul class="tag-list rv">{% for subject in school.subjects %}<li>{{ subject.uz }}</li>{% endfor %}</ul>
+    </div>
+</section>
+
+<section class="sec">
+    <div class="wrap">
         <div class="sec-head center rv">
             <span class="kicker">Har bir bosqichda</span>
             <h2 class="h2">Darsdan tashqari ham o'sish</h2>
@@ -68,7 +79,7 @@
     </div>
 </section>
 
-<section class="sec">
+<section class="sec sec-white">
     <div class="wrap">
         <div class="courses-band rv">
             <div>

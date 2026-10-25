@@ -954,6 +954,8 @@ def sitemap_xml():
         ('https://iceberglc.com/register', '0.8', 'monthly', 'site/register.html'),
         ('https://iceberglc.com/news', '0.7', 'weekly', 'site/news.html'),
         ('https://iceberglc.com/contact', '0.7', 'monthly', 'site/contact.html'),
+        ('https://iceberglc.com/hamkorlik', '0.6', 'monthly', 'site/partnerships.html'),
+        ('https://iceberglc.com/partners', '0.6', 'monthly', 'site/partnerships.html'),
     ]
     lines = ['<?xml version="1.0" encoding="UTF-8"?>',
              '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
@@ -989,6 +991,17 @@ def programs():
 def courses():
     faqs = fetch_faq_items()
     return render_template('site/courses.html', faqs=faqs)
+
+
+@app.route('/hamkorlik')
+def partnerships():
+    return render_template('site/partnerships.html', lang='uz')
+
+
+# English partner page outside /en/, which still redirects to the Uzbek site (LEGACY_REDIRECTS).
+@app.route('/partners')
+def partners_en():
+    return render_template('site/partnerships.html', lang='en')
 
 
 @app.route('/news')
