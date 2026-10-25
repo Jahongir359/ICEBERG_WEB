@@ -13,10 +13,10 @@
                 <strong>{{ school.leader.name }}</strong>
                 <span>{{ school.leader.role }} · Iceberg School</span>
             </div>
-            {% if school.co_founder and school.co_founder.name %}<div class="leader-sign">
-                <strong>{{ school.co_founder.name }}</strong>
-                <span>{{ school.co_founder.role }} · Iceberg</span>
-            </div>{% endif %}
+            {% for person in school.co_founders if person.name %}<div class="leader-sign">
+                <strong>{{ person.name }}</strong>
+                <span>{{ person.role }} · Iceberg</span>
+            </div>{% endfor %}
             <a class="btn btn-primary" href="{{ url_for('admissions') }}#ariza" style="justify-self:start">Tanishuvga yoziling</a>
         </div>
     </div>

@@ -204,10 +204,10 @@ class SitePageTests(unittest.TestCase):
     def test_owner_facts_round_two(self):
         school = app_module.SCHOOL_CONFIG
         about = self.client.get('/about').get_data(as_text=True)
-        for text in ('Azizbek Nasriddinov', 'Direktor', 'Jahongir Karimov', 'Hammuassis'):
+        for text in ('Azizbek Nasriddinov', 'Direktor', 'Jahongir Karimov', 'Islomjon Ergashboyev', 'Hammuassis'):
             self.assertIn(text, about)
         partners = self.client.get('/partners').get_data(as_text=True)
-        for text in ('Azizbek Nasriddinov', 'Director', 'Jahongir Karimov', 'Co-founder', 'Uzbek and Russian',
+        for text in ('Azizbek Nasriddinov', 'Director', 'Jahongir Karimov', 'Islomjon Ergashboyev', 'Co-founder', 'Uzbek and Russian',
                      'href="https://t.me/iceberg_school"', 'href="https://www.instagram.com/iceberg_maktab"'):
             self.assertIn(text, partners)
         home = self.client.get('/').get_data(as_text=True)
@@ -216,7 +216,7 @@ class SitePageTests(unittest.TestCase):
         self.assertIn('href="https://www.instagram.com/iceberg_maktab" aria-label="Instagram"', home)
         data = json.loads(re.search(r'<script type="application/ld\+json">(.*?)</script>', home, re.S).group(1))
         self.assertEqual(data['openingHours'], 'Mo-Sa 07:00-19:00')
-        self.assertEqual(data['founder']['name'], 'Jahongir Karimov')
+        self.assertEqual([person['name'] for person in data['founder']], ['Jahongir Karimov', 'Islomjon Ergashboyev'])
         self.assertEqual(set(data['sameAs']), {school['instagram_url'], school['telegram_url']})
         admissions = self.client.get('/admissions').get_data(as_text=True)
         self.assertIn("o&#39;zbek va rus tillarida", admissions)

@@ -8,11 +8,18 @@
     "photo": "school/img/poster.jpg",
     "role_en": "Director"
   },
-  "co_founder": {
-    "name": "Jahongir Karimov",
-    "role": "Hammuassis",
-    "role_en": "Co-founder"
-  },
+  "co_founders": [
+    {
+      "name": "Jahongir Karimov",
+      "role": "Hammuassis",
+      "role_en": "Co-founder"
+    },
+    {
+      "name": "Islomjon Ergashboyev",
+      "role": "Hammuassis",
+      "role_en": "Co-founder"
+    }
+  ],
   "founded": "2023",
   "founded_note": "Year Iceberg (the study center, now Iceberg Courses) started — not the School's opening year. Shown as \"Iceberg — 2023-yildan beri\" and as foundingDate of the Iceberg Courses organization in JSON-LD.",
   "academic_year": "2026–2027 va 2027–2028",
