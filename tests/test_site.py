@@ -206,10 +206,12 @@ class SitePageTests(unittest.TestCase):
         about = self.client.get('/about').get_data(as_text=True)
         self.assertIn('<blockquote>', about)
         self.assertIn('Maktabimizga xush kelibsiz', about)
+        self.assertIn('Direktor · Iceberg School va Iceberg Courses', about)
+        self.assertNotIn('Markaz direktori', about)
         for text in ('Azizbek Nasriddinov', 'Direktor', 'Jahongir Karimov', 'Islomjon Ergashboyev', 'Hammuassis'):
             self.assertIn(text, about)
         partners = self.client.get('/partners').get_data(as_text=True)
-        for text in ('Azizbek Nasriddinov', 'Director', 'Jahongir Karimov', 'Islomjon Ergashboyev', 'Co-founder', 'Uzbek and Russian',
+        for text in ('Azizbek Nasriddinov', 'Director · Iceberg School and Iceberg Courses', 'Jahongir Karimov', 'Islomjon Ergashboyev', 'Co-founder', 'Uzbek and Russian',
                      'href="https://t.me/iceberg_school"', 'href="https://www.instagram.com/iceberg_maktab"'):
             self.assertIn(text, partners)
         home = self.client.get('/').get_data(as_text=True)

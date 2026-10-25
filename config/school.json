@@ -7,7 +7,9 @@
     "message": "Iceberg School'da har bir bolani ismi bilan taniymiz va uning kuchli tomonlarini birga kashf etamiz. Ko'rinib turgan natijalar — baholar va sertifikatlar — chuqur bilim, yaxshi odatlar va mustahkam xarakterdan o'sib chiqadi. Maktabimizga xush kelibsiz: farzandingiz kelajagining poydevorini birga quramiz.",
     "photo": "school/img/poster.jpg",
     "role_en": "Director",
-    "message_note": "Drafted for the owner on request (2026-10-25); Azizbek to approve the wording."
+    "message_note": "Drafted for the owner on request (2026-10-25); Azizbek to approve the wording.",
+    "org": "Iceberg School va Iceberg Courses",
+    "org_en": "Iceberg School and Iceberg Courses"
   },
   "co_founders": [
     {
