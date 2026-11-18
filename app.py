@@ -190,7 +190,7 @@ CONTENT_FIELDS = [
 
     {'key': 'contact_page_title', 'label': 'Contact sahifa title', 'group': 'Contact', 'default': 'Aloqaga Chiqing', 'field_type': 'text'},
     {'key': 'contact_page_subtitle', 'label': 'Contact sahifa subtitle', 'group': 'Contact', 'default': "Savollaringizga javob berish va muvaffaqiyat sari yo'lingizni boshlashga yordam berish uchun shu yerdamiz.", 'field_type': 'textarea'},
-    {'key': 'contact_email', 'label': 'Aloqa email', 'group': 'Contact', 'default': 'iceberg.edu.center@gmail.com', 'field_type': 'text'},
+    {'key': 'contact_email', 'label': 'Aloqa email', 'group': 'Contact', 'default': 'support@iceberglc.com', 'field_type': 'text'},
     {'key': 'contact_phone', 'label': 'Aloqa telefon (+998...)', 'group': 'Contact', 'default': '+998939461699', 'field_type': 'text'},
     {'key': 'contact_phone_display', 'label': 'Aloqa telefon ko`rinishi', 'group': 'Contact', 'default': '(+998) 939461699', 'field_type': 'text'},
     {'key': 'contact_address', 'label': 'Aloqa manzil matni', 'group': 'Contact', 'default': 'Uyci, Namangan Viloyati, Uzbekistan', 'field_type': 'text'},

@@ -14,7 +14,20 @@ const HEADERS = [
   'Status',
   'Staff Notes'
 ];
-const RECEIVER_VERSION = '2026-08-08.1';
+const CONTACTS_SHEET = 'Contacts';
+const CONTACT_HEADERS = [
+  'ID',
+  'Submitted At',
+  'Name',
+  'Phone',
+  'Message',
+  'Page URL',
+  'Referrer',
+  'Status',
+  'Staff Notes'
+];
+const DEFAULT_SUPPORT_EMAIL = 'support@iceberglc.com';
+const RECEIVER_VERSION = '2026-11-18.1';
 
 function jsonResult_(body) {
   return ContentService
@@ -31,25 +44,26 @@ function receiverProperties_() {
   const properties = PropertiesService.getScriptProperties();
   return {
     spreadsheetId: properties.getProperty('SHEET_ID'),
-    webhookSecret: properties.getProperty('WEBHOOK_SECRET')
+    webhookSecret: properties.getProperty('WEBHOOK_SECRET'),
+    supportEmail: (properties.getProperty('SUPPORT_EMAIL') || DEFAULT_SUPPORT_EMAIL).trim()
   };
 }
 
-function ensureRegistrationSheet_(spreadsheet) {
-  let sheet = spreadsheet.getSheetByName(REGISTRATIONS_SHEET);
+function ensureSheet_(spreadsheet, name, expectedHeaders) {
+  let sheet = spreadsheet.getSheetByName(name);
   if (!sheet) {
-    sheet = spreadsheet.insertSheet(REGISTRATIONS_SHEET);
+    sheet = spreadsheet.insertSheet(name);
   }
 
   if (sheet.getLastRow() === 0) {
-    sheet.getRange(1, 1, 1, HEADERS.length).setValues([HEADERS]);
+    sheet.getRange(1, 1, 1, expectedHeaders.length).setValues([expectedHeaders]);
     sheet.setFrozenRows(1);
   } else {
     const existingHeaders = sheet
       .getRange(1, 1, 1, sheet.getLastColumn())
       .getValues()[0]
       .map(String);
-    const missingHeaders = HEADERS.filter(header => !existingHeaders.includes(header));
+    const missingHeaders = expectedHeaders.filter(header => !existingHeaders.includes(header));
     if (missingHeaders.length) {
       const firstNewColumn = sheet.getLastColumn() + 1;
       sheet.insertColumnsAfter(sheet.getLastColumn(), missingHeaders.length);
@@ -61,6 +75,117 @@ function ensureRegistrationSheet_(spreadsheet) {
   return sheet;
 }
 
+function ensureRegistrationSheet_(spreadsheet) {
+  return ensureSheet_(spreadsheet, REGISTRATIONS_SHEET, HEADERS);
+}
+
+function ensureContactSheet_(spreadsheet) {
+  return ensureSheet_(spreadsheet, CONTACTS_SHEET, CONTACT_HEADERS);
+}
+
+function plainText_(value, maxLength) {
+  return String(value || '').replace(/[\u0000-\u0009\u000b-\u001f\u007f]/g, '').trim().slice(0, maxLength);
+}
+
+// Email delivery must never cause a saved submission to be reported as failed:
+// the row is already in the sheet, so a mail error is logged and ignored.
+function notifySupport_(config, subject, lines) {
+  if (!config.supportEmail) {
+    return false;
+  }
+  try {
+    MailApp.sendEmail({
+      to: config.supportEmail,
+      subject: plainText_(subject, 200).replace(/\n/g, ' '),
+      body: lines.map(line => plainText_(line, 2500)).join('\n'),
+      name: 'ICEBERG Website'
+    });
+    return true;
+  } catch (error) {
+    console.error('Support email failed', error);
+    return false;
+  }
+}
+
+function rowExists_(sheet, headers, id) {
+  const idColumn = headers.indexOf('ID') + 1;
+  if (!idColumn) {
+    throw new Error('ID column is missing');
+  }
+  return Boolean(sheet
+    .getRange(1, idColumn, sheet.getLastRow(), 1)
+    .createTextFinder(String(id))
+    .matchEntireCell(true)
+    .findNext());
+}
+
+function submittedAt_(value) {
+  const parsed = value ? new Date(String(value)) : new Date();
+  return Number.isNaN(parsed.getTime()) ? new Date() : parsed;
+}
+
+function appendByHeader_(sheet, headers, valuesByHeader) {
+  sheet.appendRow(headers.map(header => (
+    Object.prototype.hasOwnProperty.call(valuesByHeader, header)
+      ? valuesByHeader[header]
+      : ''
+  )));
+  sheet
+    .getRange(sheet.getLastRow(), headers.indexOf('Submitted At') + 1)
+    .setNumberFormat('yyyy-mm-dd hh:mm:ss');
+}
+
+function headersOf_(sheet) {
+  return sheet
+    .getRange(1, 1, 1, sheet.getLastColumn())
+    .getValues()[0]
+    .map(String);
+}
+
+function storeContact_(config, data) {
+  if (!data.id || !data.name || !data.phone || !data.message) {
+    return { ok: false, error: 'missing_required_fields' };
+  }
+
+  let isNew = false;
+  const lock = LockService.getScriptLock();
+  lock.waitLock(10000);
+  try {
+    const sheet = ensureContactSheet_(SpreadsheetApp.openById(config.spreadsheetId));
+    const headers = headersOf_(sheet);
+    if (!rowExists_(sheet, headers, data.id)) {
+      appendByHeader_(sheet, headers, {
+        'ID': safeCell_(data.id),
+        'Submitted At': submittedAt_(data.submitted_at),
+        'Name': safeCell_(data.name),
+        'Phone': safeCell_(data.phone),
+        'Message': safeCell_(data.message),
+        'Page URL': safeCell_(data.page_url),
+        'Referrer': safeCell_(data.referrer),
+        'Status': 'New',
+        'Staff Notes': ''
+      });
+      isNew = true;
+    }
+  } finally {
+    lock.releaseLock();
+  }
+
+  const emailed = isNew && notifySupport_(config, 'Saytdan yangi xabar: ' + data.name, [
+    'ICEBERG saytidagi aloqa formasi orqali yangi xabar keldi.',
+    '',
+    'Ism: ' + data.name,
+    'Telefon: ' + data.phone,
+    '',
+    'Xabar:',
+    data.message,
+    '',
+    'Sahifa: ' + (data.page_url || '-'),
+    'ID: ' + data.id
+  ]);
+  return { ok: true, id: String(data.id), emailed: emailed, version: RECEIVER_VERSION };
+}
+
 function setup() {
   const config = receiverProperties_();
   if (!config.spreadsheetId || !config.webhookSecret) {
@@ -68,11 +193,18 @@ function setup() {
   }
   const spreadsheet = SpreadsheetApp.openById(config.spreadsheetId);
   const sheet = ensureRegistrationSheet_(spreadsheet);
+  const contactSheet = ensureContactSheet_(spreadsheet);
+  // Referencing MailApp here makes Apps Script request the email permission
+  // when setup is run, before the first real submission needs it.
+  const remainingEmailQuota = MailApp.getRemainingDailyQuota();
   const result = {
     ok: true,
     version: RECEIVER_VERSION,
     spreadsheet: spreadsheet.getName(),
-    sheet: sheet.getName()
+    sheet: sheet.getName(),
+    contact_sheet: contactSheet.getName(),
+    support_email: config.supportEmail,
+    remaining_email_quota: remainingEmailQuota
   };
   console.log(JSON.stringify(result));
   return result;
@@ -91,11 +223,13 @@ function doGet() {
     }
     const spreadsheet = SpreadsheetApp.openById(config.spreadsheetId);
     const sheet = spreadsheet.getSheetByName(REGISTRATIONS_SHEET);
+    const contactSheet = spreadsheet.getSheetByName(CONTACTS_SHEET);
     return jsonResult_({
-      ok: Boolean(sheet),
+      ok: Boolean(sheet) && Boolean(contactSheet),
       service: 'ICEBERG registration receiver',
       version: RECEIVER_VERSION,
-      sheet_ready: Boolean(sheet)
+      sheet_ready: Boolean(sheet),
+      contact_sheet_ready: Boolean(contactSheet)
     });
   } catch (error) {
     console.error(error);
@@ -119,39 +253,23 @@ function doPost(e) {
     if (!data.secret || data.secret !== config.webhookSecret) {
       return jsonResult_({ ok: false, error: 'unauthorized' });
     }
+    if (data.type === 'contact') {
+      return jsonResult_(storeContact_(config, data));
+    }
     if (!data.id || !data.student_name || !data.student_phone || !data.program || !data.branch) {
       return jsonResult_({ ok: false, error: 'missing_required_fields' });
     }
 
+    let isNew = false;
     const lock = LockService.getScriptLock();
     lock.waitLock(10000);
     try {
-      const spreadsheet = SpreadsheetApp.openById(config.spreadsheetId);
-      const sheet = ensureRegistrationSheet_(spreadsheet);
-      const headers = sheet
-        .getRange(1, 1, 1, sheet.getLastColumn())
-        .getValues()[0]
-        .map(String);
-      const idColumn = headers.indexOf('ID') + 1;
-      if (!idColumn) {
-        throw new Error('ID column is missing');
-      }
-
-      const existing = sheet
-        .getRange(1, idColumn, sheet.getLastRow(), 1)
-        .createTextFinder(String(data.id))
-        .matchEntireCell(true)
-        .findNext();
-      if (!existing) {
-        const parsedSubmittedAt = data.submitted_at
-          ? new Date(String(data.submitted_at))
-          : new Date();
-        const submittedAt = Number.isNaN(parsedSubmittedAt.getTime())
-          ? new Date()
-          : parsedSubmittedAt;
-        const valuesByHeader = {
+      const sheet = ensureRegistrationSheet_(SpreadsheetApp.openById(config.spreadsheetId));
+      const headers = headersOf_(sheet);
+      if (!rowExists_(sheet, headers, data.id)) {
+        appendByHeader_(sheet, headers, {
           'ID': safeCell_(data.id),
-          'Submitted At': submittedAt,
+          'Submitted At': submittedAt_(data.submitted_at),
           'Student Name': safeCell_(data.student_name),
           'Phone': safeCell_(data.student_phone),
           'Program ID': safeCell_(data.program),
@@ -163,21 +281,26 @@ function doPost(e) {
           'Referrer': safeCell_(data.referrer),
           'Status': 'New',
           'Staff Notes': ''
-        };
-        sheet.appendRow(headers.map(header => (
-          Object.prototype.hasOwnProperty.call(valuesByHeader, header)
-            ? valuesByHeader[header]
-            : ''
-        )));
-        sheet
-          .getRange(sheet.getLastRow(), headers.indexOf('Submitted At') + 1)
-          .setNumberFormat('yyyy-mm-dd hh:mm:ss');
+        });
+        isNew = true;
       }
     } finally {
       lock.releaseLock();
     }
 
-    return jsonResult_({ ok: true, id: String(data.id), version: RECEIVER_VERSION });
+    const emailed = isNew && notifySupport_(config, 'Yangi ariza: ' + data.student_name, [
+      'ICEBERG saytida yangi ro\'yxatdan o\'tish arizasi.',
+      '',
+      'Ism: ' + data.student_name,
+      'Telefon: ' + data.student_phone,
+      'Dastur: ' + data.program,
+      'Filial: ' + data.branch,
+      '',
+      'Sahifa: ' + (data.page_url || '-'),
+      'ID: ' + data.id
+    ]);
+
+    return jsonResult_({ ok: true, id: String(data.id), emailed: emailed, version: RECEIVER_VERSION });
   } catch (error) {
     console.error(error);
     return jsonResult_({ ok: false, error: 'internal_error' });

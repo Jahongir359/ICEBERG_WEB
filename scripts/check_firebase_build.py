@@ -114,7 +114,7 @@ def check() -> None:
 
         for action in parser.forms:
             parsed_action = urlsplit(action)
-            if action == "/api/register":
+            if action in ("/api/register", "/api/contact"):
                 continue
             if parsed_action.scheme != "https" or not parsed_action.netloc:
                 errors.append(
@@ -128,6 +128,12 @@ def check() -> None:
                 errors.append(f"{relative_page}: Turnstile site key is missing")
             if re.search(r'action="https?://[^"]+\.pages\.dev/api/register"', text):
                 errors.append(f"{relative_page}: registration form points to a preview host")
+
+        if page.name == "contact.html":
+            if 'action="/api/contact"' not in text:
+                errors.append(f"{relative_page}: contact form must submit same-origin")
+            if not re.search(r'data-turnstile-sitekey="[^\"]+"', text):
+                errors.append(f"{relative_page}: contact form Turnstile site key is missing")
 
     manifest_path = PUBLIC / "manifest.json"
     try:

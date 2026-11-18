@@ -213,10 +213,11 @@ npx firebase-tools emulators:start --only hosting
 npx firebase-tools deploy --only hosting --project YOUR_FIREBASE_PROJECT_ID
 ```
 
-The static contact form opens a pre-filled WhatsApp message. The registration form
-submits to a Cloudflare Pages Function, validates Turnstile server-side, and stores the
-lead in Google Sheets through Apps Script. Override the public domain or contact-form
-WhatsApp number during the build when needed:
+The static contact form (`/api/contact`) and registration form (`/api/register`) both
+submit to Cloudflare Pages Functions, validate Turnstile server-side, and store the
+submission in Google Sheets through Apps Script. Apps Script also emails every new
+contact message and registration to `support@iceberglc.com`. Override the public
+domain during the build when needed:
 
 ```bash
 PUBLIC_SITE_URL=https://www.example.com \
@@ -274,9 +275,10 @@ Function. Follow the complete setup and troubleshooting runbook in
 - Dashboard encrypted Secrets: `TURNSTILE_SECRET_KEY`, `GOOGLE_SCRIPT_URL`, and
   `GOOGLE_SCRIPT_SECRET`
 
-The registration endpoint remains unavailable until all values are deployed. Do not
-put private secret values in `wrangler.toml`.
-The contact form continues to open WhatsApp.
+The registration and contact endpoints remain unavailable until all values are
+deployed. Do not put private secret values in `wrangler.toml`. Both forms share the
+same Turnstile widget, Apps Script URL and webhook secret; no extra Secrets are needed
+for the contact form or for the support email.
 
 ### Registration programs, branches, and reception contact
 

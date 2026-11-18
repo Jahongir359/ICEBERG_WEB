@@ -2,7 +2,18 @@
 
 Production flow:
 
-`/register` → Cloudflare Pages Function → Turnstile → Apps Script web app → Google Sheet
+`/register` or `/contact` → Cloudflare Pages Function (`/api/register`, `/api/contact`)
+→ Turnstile → Apps Script web app → Google Sheet + email to `support@iceberglc.com`
+
+Every new registration and contact message is emailed to the support address once
+(duplicate retries of the same submission are not re-sent). The email is sent from the
+Google account that owns the Apps Script, using `MailApp`. If email sending fails (for
+example the daily Gmail quota is used up), the row is still saved and the visitor still
+sees success; check the sheet and the Apps Script **Executions** log.
+
+To send to a different inbox, add an optional Script property `SUPPORT_EMAIL`. Gmail
+accounts can send about 100 emails/day from Apps Script; Google Workspace accounts
+about 1,500/day.
 
 The browser never receives the Google Sheet ID, Apps Script URL, webhook secret, or
 Turnstile secret. Follow every step below; the form intentionally fails closed if a
@@ -23,6 +34,10 @@ Do not manually create columns. The included receiver creates a tab named
 
 `ID`, `Submitted At`, `Student Name`, `Phone`, `Program ID`, `Branch ID`,
 `UTM Source`, `UTM Medium`, `UTM Campaign`, `Page URL`, `Referrer`, `Status`,
+`Staff Notes`.
+
+It also creates a `Contacts` tab for contact-form messages with:
+`ID`, `Submitted At`, `Name`, `Phone`, `Message`, `Page URL`, `Referrer`, `Status`,
 `Staff Notes`.
 
 ## 2. Create and configure the Apps Script receiver
@@ -46,7 +61,7 @@ Do not manually create columns. The included receiver creates a tab named
    | `WEBHOOK_SECRET` | The 64-character random value generated above |
 
 7. Return to the editor, choose `setup` from the function selector, and click **Run**.
-8. Approve the requested Google Sheets permissions. If Google shows an unverified-app
+8. Approve the requested Google Sheets **and send email as you** permissions. If Google shows an unverified-app
    warning for your own script, review that the script is yours before continuing.
 9. Confirm the execution succeeds. The spreadsheet should now contain a
    `Registrations` tab with a frozen header row.
@@ -73,8 +88,9 @@ similar to:
 {
   "ok": true,
   "service": "ICEBERG registration receiver",
-  "version": "2026-08-08.1",
-  "sheet_ready": true
+  "version": "2026-11-18.1",
+  "sheet_ready": true,
+  "contact_sheet_ready": true
 }
 ```
 
@@ -189,7 +205,7 @@ hostname, refresh the page, then submit once.
 Turnstile succeeded, but Apps Script did not confirm storage. Check in this order:
 
 1. Open `GOOGLE_SCRIPT_URL` directly and require `ok:true` and `sheet_ready:true`.
-2. Confirm it reports receiver version `2026-08-08.1` or newer.
+2. Confirm it reports receiver version `2026-11-18.1` or newer.
 3. Compare Apps Script `WEBHOOK_SECRET` with Cloudflare `GOOGLE_SCRIPT_SECRET`.
 4. In Apps Script, open **Executions** and inspect the newest `doPost` failure.
 5. In Cloudflare, open the Pages deployment's Function logs and search for the
@@ -201,6 +217,14 @@ Turnstile succeeded, but Apps Script did not confirm storage. Check in this orde
 
 Verify that you are viewing the spreadsheet identified by `SHEET_ID` and the tab named
 `Registrations`. Do not point production and preview at the same sheet unintentionally.
+
+### Contact form or registration saved, but no email at support
+
+1. Run `setup` again and accept the email permission prompt (it is new in
+   `2026-11-18.1`), then publish a **New version** of the deployment.
+2. Check the Apps Script **Executions** log for `Support email failed`.
+3. Check the support inbox's spam folder and the daily quota reported by `setup`
+   (`remaining_email_quota`).
 
 ## Secret rotation
 

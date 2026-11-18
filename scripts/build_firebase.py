@@ -43,15 +43,16 @@ def make_form_static(
     turnstile_site_key: str,
 ) -> str:
     local_action = f'action="{route}" method="post"'
-    if route == "/register":
+    if route in ("/register", "/contact"):
+        kind = route.lstrip("/")
         turnstile_attribute = (
             f' data-turnstile-sitekey="{turnstile_site_key}"'
             if turnstile_site_key
             else ""
         )
         static_action = (
-            'action="/api/register" method="post" '
-            f'data-static-lead-form="register"{turnstile_attribute}'
+            f'action="/api/{kind}" method="post" '
+            f'data-static-lead-form="{kind}"{turnstile_attribute}'
         )
     else:
         static_action = (
@@ -163,7 +164,7 @@ def build() -> None:
     )
 
     print(f"Built {len(PUBLIC_ROUTES)} pages and static assets in {OUTPUT}")
-    print(f"Static contact form opens WhatsApp for +{whatsapp_number}")
+    print("Static contact form submits to /api/contact (Sheets + support email)")
     print("Static registration form submits to /api/register")
     if not turnstile_site_key:
         print(

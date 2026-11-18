@@ -6,16 +6,6 @@
         return field && typeof field.value === "string" ? field.value.trim() : "";
     }
 
-    function contactMessage(form) {
-        return [
-            "ICEBERG saytidan yangi xabar",
-            "",
-            "Ism: " + fieldValue(form, "name"),
-            "Telefon: +998" + fieldValue(form, "phone"),
-            "Xabar: " + fieldValue(form, "message")
-        ].join("\n");
-    }
-
     function loadTurnstile(form) {
         var siteKey = form.getAttribute("data-turnstile-sitekey");
         if (!siteKey) {
@@ -26,7 +16,7 @@
         var widget = document.createElement("div");
         widget.className = "cf-turnstile";
         widget.setAttribute("data-sitekey", siteKey);
-        widget.setAttribute("data-action", "register");
+        widget.setAttribute("data-action", form.getAttribute("data-static-lead-form") || "register");
         if (button) {
             button.parentNode.insertBefore(widget, button);
         } else {
@@ -163,6 +153,78 @@
         }
     }
 
+    async function postJson(form, payload, fallbackMessage) {
+        var response = await fetch(form.action, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+        });
+        var result = await response.json().catch(function () { return {}; });
+        if (!response.ok || !result.ok) {
+            throw new Error(result.message || fallbackMessage);
+        }
+        return result;
+    }
+
+    function friendlyError(error) {
+        var rawMessage = error && error.message ? error.message : "";
+        return /failed to fetch|networkerror|load failed/i.test(rawMessage)
+            ? "Internet aloqasini tekshiring va qayta urinib ko'ring."
+            : (rawMessage || "Xatolik yuz berdi. Qayta urinib ko'ring.");
+    }
+
+    async function submitContact(form) {
+        if (form.dataset.submitting === "true") return;
+        var button = form.querySelector('button[type="submit"]');
+        var status = statusElement(form);
+        var originalLabel = button ? button.textContent : "";
+        var phone = normalizeUzPhone(fieldValue(form, "phone"));
+        if (!/^\d{9}$/.test(phone)) {
+            status.className = "mt-3 text-sm font-semibold text-red-700";
+            status.textContent = "Telefon raqamingizni tekshiring (9 ta raqam).";
+            return;
+        }
+        var submissionId = form.dataset.submissionId || crypto.randomUUID();
+        form.dataset.submissionId = submissionId;
+        var payload = {
+            submission_id: submissionId,
+            name: fieldValue(form, "name"),
+            phone: phone,
+            message: fieldValue(form, "message"),
+            turnstile_token: fieldValue(form, "cf-turnstile-response"),
+            website: fieldValue(form, "website"),
+            page_url: window.location.href,
+            referrer: document.referrer
+        };
+
+        status.textContent = "";
+        form.dataset.submitting = "true";
+        if (button) {
+            button.disabled = true;
+            button.textContent = "Yuborilmoqda...";
+        }
+
+        try {
+            await postJson(form, payload, "Xabarni yuborib bo'lmadi.");
+            form.reset();
+            delete form.dataset.submissionId;
+            status.className = "mt-3 text-sm font-semibold text-green-700";
+            status.textContent = "Rahmat! Xabaringiz qabul qilindi, tez orada siz bilan bog'lanamiz.";
+        } catch (error) {
+            status.className = "mt-3 text-sm font-semibold text-red-700";
+            status.textContent = friendlyError(error);
+        } finally {
+            if (window.turnstile) {
+                window.turnstile.reset();
+            }
+            if (button) {
+                button.disabled = false;
+                button.textContent = originalLabel;
+            }
+            form.dataset.submitting = "false";
+        }
+    }
+
     function configureRegistration(form) {
         var params = new URLSearchParams(window.location.search);
         var program = params.get("program");
@@ -207,7 +269,8 @@
     document.addEventListener("DOMContentLoaded", function () {
         document.querySelectorAll("form[data-registration-form]").forEach(configureRegistration);
         document.querySelectorAll("form[data-static-lead-form]").forEach(function (form) {
-            if (form.getAttribute("data-static-lead-form") === "register") {
+            var formKind = form.getAttribute("data-static-lead-form");
+            if (formKind === "register" || formKind === "contact") {
                 loadTurnstile(form);
 
                 var honeypot = document.createElement("input");
@@ -236,11 +299,9 @@
                     submitRegistration(form);
                     return;
                 }
-                var message = contactMessage(form);
-                var number = new URL(form.action).pathname.replace(/\D/g, "");
-                window.location.assign(
-                    "https://wa.me/" + number + "?text=" + encodeURIComponent(message)
-                );
+                if (kind === "contact") {
+                    submitContact(form);
+                }
             });
         });
     });

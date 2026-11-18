@@ -83,7 +83,8 @@ class Spreadsheet {
     }
 }
 
-function loadReceiver({ properties = {}, spreadsheet = new Spreadsheet() } = {}) {
+function loadReceiver({ properties = {}, spreadsheet = new Spreadsheet(), mailFails = false } = {}) {
+    const emails = [];
     const output = content => ({
         content,
         setMimeType() { return this; }
@@ -107,11 +108,18 @@ function loadReceiver({ properties = {}, spreadsheet = new Spreadsheet() } = {})
         },
         LockService: {
             getScriptLock: () => ({ waitLock() {}, releaseLock() {} })
+        },
+        MailApp: {
+            getRemainingDailyQuota: () => 100,
+            sendEmail(message) {
+                if (mailFails) throw new Error('quota exceeded');
+                emails.push(message);
+            }
         }
     };
     vm.createContext(context);
     vm.runInContext(readFileSync('google-apps-script/Code.gs', 'utf8'), context);
-    return { context, spreadsheet };
+    return { context, spreadsheet, emails };
 }
 
 function result(output) {
@@ -199,4 +207,82 @@ test('receiver reports configuration and authorization failures without writing'
     const response = result(configured.context.doPost(validLead({ secret: 'wrong-secret' })));
     assert.equal(response.error, 'unauthorized');
     assert.equal(configured.spreadsheet.getSheetByName('Registrations'), null);
+});
+
+function validContact(overrides = {}) {
+    return {
+        postData: {
+            contents: JSON.stringify({
+                secret: 'shared-secret',
+                type: 'contact',
+                id: 'abcdefab-1234-4234-8234-123456789012',
+                submitted_at: '2026-11-18T10:00:00.000Z',
+                name: 'Ali Valiyev',
+                phone: '+998901234567',
+                message: 'IELTS kursi haqida\nma\'lumot kerak',
+                ...overrides
+            })
+        }
+    };
+}
+
+test('contact messages are stored once and emailed to support once', () => {
+    const { context, spreadsheet, emails } = loadReceiver({
+        properties: { SHEET_ID: 'sheet-id', WEBHOOK_SECRET: 'shared-secret' }
+    });
+    const setup = context.setup();
+    assert.equal(setup.support_email, 'support@iceberglc.com');
+    assert.equal(result(context.doGet()).contact_sheet_ready, true);
+
+    const first = result(context.doPost(validContact()));
+    assert.equal(first.ok, true);
+    assert.equal(first.emailed, true);
+    assert.equal(result(context.doPost(validContact())).emailed, false);
+
+    const sheet = spreadsheet.getSheetByName('Contacts');
+    assert.equal(sheet.rows.length, 2);
+    const stored = Object.fromEntries(sheet.rows[0].map((header, index) => [header, sheet.rows[1][index]]));
+    assert.equal(stored.Name, 'Ali Valiyev');
+    assert.equal(stored.Status, 'New');
+    assert.equal(spreadsheet.getSheetByName('Registrations').rows.length, 1);
+
+    assert.equal(emails.length, 1);
+    assert.equal(emails[0].to, 'support@iceberglc.com');
+    assert.match(emails[0].subject, /Ali Valiyev/);
+    assert.match(emails[0].body, /IELTS kursi haqida\nma'lumot kerak/);
+    assert.match(emails[0].body, /\+998901234567/);
+});
+
+test('registrations are also emailed to support and SUPPORT_EMAIL can override it', () => {
+    const { context, emails } = loadReceiver({
+        properties: {
+            SHEET_ID: 'sheet-id',
+            WEBHOOK_SECRET: 'shared-secret',
+            SUPPORT_EMAIL: 'team@iceberglc.com'
+        }
+    });
+    context.setup();
+    assert.equal(result(context.doPost(validLead())).emailed, true);
+    assert.equal(emails.length, 1);
+    assert.equal(emails[0].to, 'team@iceberglc.com');
+    assert.match(emails[0].body, /ielts/);
+});
+
+test('an email failure does not lose or reject the saved submission', () => {
+    const { context, spreadsheet } = loadReceiver({
+        properties: { SHEET_ID: 'sheet-id', WEBHOOK_SECRET: 'shared-secret' },
+        mailFails: true
+    });
+    context.doPost(validLead());
+    const response = result(context.doPost(validContact()));
+    assert.equal(response.ok, true);
+    assert.equal(response.emailed, false);
+    assert.equal(spreadsheet.getSheetByName('Contacts').rows.length, 2);
+});
+
+test('contact messages missing fields are rejected', () => {
+    const { context } = loadReceiver({
+        properties: { SHEET_ID: 'sheet-id', WEBHOOK_SECRET: 'shared-secret' }
+    });
+    assert.equal(result(context.doPost(validContact({ message: '' }))).error, 'missing_required_fields');
 });
