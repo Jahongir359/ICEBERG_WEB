@@ -243,6 +243,42 @@ async function notifyTelegram(lead, options, env, reference) {
     }
 }
 
+const DEFAULT_SUPPORT_EMAIL = "support@iceberglc.com";
+const DEFAULT_EMAIL_FROM = "Iceberg Website <website@iceberglc.com>";
+
+// Best-effort email of the same details to the support inbox through Resend
+// (https://resend.com; its sending domain iceberglc.com must be verified there).
+// Sheets stays the primary store, so failures are logged, never shown.
+async function notifySupportEmail(lead, options, env, reference) {
+    if (!env.RESEND_API_KEY) {
+        return;
+    }
+    const text = telegramLeadText(lead, options);
+    try {
+        const response = await fetch("https://api.resend.com/emails", {
+            method: "POST",
+            headers: {
+                "Authorization": `Bearer ${env.RESEND_API_KEY}`,
+                "Content-Type": "application/json",
+                // Resend drops a repeat of the same key for 24 hours.
+                "Idempotency-Key": `lead-${lead.id}`
+            },
+            body: JSON.stringify({
+                from: cleanText(env.EMAIL_FROM, 200) || DEFAULT_EMAIL_FROM,
+                to: [cleanText(env.SUPPORT_EMAIL, 200) || DEFAULT_SUPPORT_EMAIL],
+                subject: `${text.split("\n", 1)[0]}: ${lead.student_name}`,
+                text
+            }),
+            signal: AbortSignal.timeout(8000)
+        });
+        if (!response.ok) {
+            console.error("Support email rejected", reference, response.status);
+        }
+    } catch (error) {
+        console.error("Support email failed", reference, error.name);
+    }
+}
+
 async function validateTurnstile(token, request, secret) {
     if (!secret) {
         return { success: false, configurationError: true };
@@ -416,7 +452,8 @@ export async function onRequestPost(context) {
     if (storedResult.duplicate !== true) {
         const forwarding = Promise.all([
             forwardLeadToErp(lead, options, env, reference),
-            notifyTelegram(lead, options, env, reference)
+            notifyTelegram(lead, options, env, reference),
+            notifySupportEmail(lead, options, env, reference)
         ]);
         if (typeof context.waitUntil === "function") {
             context.waitUntil(forwarding);

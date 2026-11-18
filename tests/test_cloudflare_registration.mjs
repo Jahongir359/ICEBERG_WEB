@@ -460,3 +460,82 @@ test('accepts only a JSON object as the body', async () => {
         assert.equal(response.status, 400, body);
     }
 });
+
+function mockNetworkWithEmail({ duplicate = false, emailStatus = 200, emailThrows = false } = {}) {
+    const calls = { sheets: [], email: [] };
+    globalThis.fetch = async (url, options) => {
+        if (String(url).includes('turnstile')) {
+            return new Response(JSON.stringify({ success: true, action: 'register', hostname: 'iceberglc.com' }));
+        }
+        if (String(url) === 'https://api.resend.com/emails') {
+            calls.email.push({ headers: options.headers, body: JSON.parse(options.body) });
+            if (emailThrows) {
+                throw new TypeError('network down');
+            }
+            return new Response('{}', { status: emailStatus });
+        }
+        calls.sheets.push(JSON.parse(options.body));
+        return new Response(JSON.stringify({ ok: true, duplicate }));
+    };
+    return calls;
+}
+
+function emailEnvironment() {
+    return { ...environment(), RESEND_API_KEY: 're_test_key' };
+}
+
+test('emails a course registration to support with all details', async () => {
+    const calls = mockNetworkWithEmail();
+    const response = await onRequestPost({
+        request: request({ branch: 'gayrat', page_url: 'https://iceberglc.com/register' }),
+        env: emailEnvironment()
+    });
+    assert.equal(response.status, 201);
+    assert.equal(calls.email.length, 1);
+    const { headers, body } = calls.email[0];
+    assert.equal(headers.Authorization, 'Bearer re_test_key');
+    assert.equal(headers['Idempotency-Key'], 'lead-12345678-1234-4234-8234-123456789012');
+    assert.deepEqual(body.to, ['support@iceberglc.com']);
+    assert.match(body.from, /<website@iceberglc\.com>$/);
+    assert.match(body.subject, /Iceberg Courses.*Ali Valiyev/);
+    for (const line of ['Telefon: +998901234567', 'Dastur: IELTS', "Filial: G'ayrat filiali",
+        'Sahifa: https://iceberglc.com/register']) {
+        assert.ok(body.text.includes(line), line);
+    }
+    assert.equal(JSON.stringify(calls.sheets[0]).includes('re_test_key'), false);
+});
+
+test('emails a school enquiry, and SUPPORT_EMAIL and EMAIL_FROM override the defaults', async () => {
+    const calls = mockNetworkWithEmail();
+    const env = { ...emailEnvironment(), SUPPORT_EMAIL: 'school@iceberglc.com', EMAIL_FROM: 'School <no-reply@iceberglc.com>' };
+    const response = await onRequestPost({ request: schoolRequest({ grade: '7' }), env });
+    assert.equal(response.status, 201);
+    const { body } = calls.email[0];
+    assert.deepEqual(body.to, ['school@iceberglc.com']);
+    assert.equal(body.from, 'School <no-reply@iceberglc.com>');
+    assert.match(body.subject, /Iceberg School.*Dilnoza Karimova/);
+    assert.ok(body.text.includes('Sinf: 7'));
+});
+
+test('skips the email without a key, for duplicates and for rejected forms', async () => {
+    let calls = mockNetworkWithEmail();
+    await onRequestPost({ request: request(), env: environment() });
+    assert.equal(calls.email.length, 0);
+
+    calls = mockNetworkWithEmail({ duplicate: true });
+    await onRequestPost({ request: request(), env: emailEnvironment() });
+    assert.equal(calls.email.length, 0);
+
+    calls = mockNetworkWithEmail();
+    await onRequestPost({ request: request({ student_phone: '123' }), env: emailEnvironment() });
+    await onRequestPost({ request: request({ website: 'spam' }), env: emailEnvironment() });
+    assert.equal(calls.email.length, 0);
+});
+
+test('an email failure never fails the stored application', async () => {
+    for (const failure of [{ emailStatus: 422 }, { emailStatus: 500 }, { emailThrows: true }]) {
+        mockNetworkWithEmail(failure);
+        const response = await onRequestPost({ request: request(), env: emailEnvironment() });
+        assert.equal(response.status, 201);
+    }
+});
