@@ -36,7 +36,7 @@ translations/*.json ───┘                                                
                        forms (static/js/forms.js) ── POST /api/register (functions/api/register.js)
                                                      ├─ Turnstile check
                                                      ├─ Google Sheets via Apps Script (primary store)
-                                                     └─ best effort: ERP lead + Telegram message
+                                                     └─ best effort: ERP lead + Telegram message + support email
 ```
 
 - **Live site:** Cloudflare Pages (project `iceberg-web`, `wrangler.toml`). Pushing to `main`
@@ -92,6 +92,7 @@ Cloudflare Pages → Settings → Variables and Secrets (never commit real value
 | `GOOGLE_SCRIPT_URL`, `GOOGLE_SCRIPT_SECRET` | secret | Apps Script receiver (see `google-apps-script/README.md`) |
 | `REGISTRATION_LEADS_API_URL`, `REGISTRATION_LEADS_API_TOKEN` | secret | ERP copy: `https://app.iceberglc.com/public/registration-leads/` and the ERP's lead token |
 | `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID` | secret | Detailed message for each request to the support chat |
+| `RESEND_API_KEY` | secret | Email of each request to `support@iceberglc.com` through [Resend](https://resend.com) (domain `iceberglc.com` verified there). Optional plain vars `SUPPORT_EMAIL`, `EMAIL_FROM` override the recipient and the sender `website@iceberglc.com` |
 | `SCHOOL_BRANCH_NAME` | variable (optional) | ERP branch name for School enquiries; default "Iceberg School" |
 
 Each branch in `config/registration.json` has an `erp_branch_name`; set it to the exact ERP branch

@@ -20,5 +20,5 @@ rollback) is in Git history; this page keeps only what still applies.
 
 | Priority | Finding | Next step |
 | --- | --- | --- |
-| Operational | Not verified end to end in production: Sheets receipt, Telegram message (needs `TELEGRAM_BOT_TOKEN`/`TELEGRAM_CHAT_ID`), ERP copy (ERP offline). | Send one test enquiry after each is configured; plan section 9. |
+| Operational | Not verified end to end in production: Sheets receipt, Telegram message (needs `TELEGRAM_BOT_TOKEN`/`TELEGRAM_CHAT_ID`), support email (needs `RESEND_API_KEY`), ERP copy (ERP offline). | Send one test enquiry after each is configured; plan section 9. |
 | Content | The course FAQ (`config/faq.json`) is old Learning Center text (mentions ACT, online lessons, hours). | Owner to confirm or correct. |
