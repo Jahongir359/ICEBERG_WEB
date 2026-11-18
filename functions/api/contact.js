@@ -1,3 +1,5 @@
+import { sendSupportEmail, supportEmailConfigured } from "../../lib/support-email.js";
+
 const JSON_HEADERS = {
     "Content-Type": "application/json; charset=utf-8",
     "Cache-Control": "no-store",
@@ -58,8 +60,10 @@ async function validateTurnstile(token, request, secret) {
 export async function onRequestPost(context) {
     const { request, env } = context;
     const reference = requestReference(request);
-    if (!validGoogleScriptUrl(env.GOOGLE_SCRIPT_URL) || !env.GOOGLE_SCRIPT_SECRET) {
-        console.error("Contact storage is not configured", reference);
+    const storageReady = validGoogleScriptUrl(env.GOOGLE_SCRIPT_URL) && Boolean(env.GOOGLE_SCRIPT_SECRET);
+    const emailReady = supportEmailConfigured(env);
+    if (!storageReady && !emailReady) {
+        console.error("Contact delivery is not configured", reference);
         return jsonResponse(
             { ok: false, message: "Xabar yuborish xizmati hali sozlanmagan.", reference },
             503
@@ -123,7 +127,6 @@ export async function onRequestPost(context) {
 
     const submissionId = cleanText(input.submission_id, 64);
     const contact = {
-        secret: env.GOOGLE_SCRIPT_SECRET,
         type: "contact",
         id: /^[a-f0-9-]{20,64}$/i.test(submissionId) ? submissionId : crypto.randomUUID(),
         submitted_at: new Date().toISOString(),
@@ -134,25 +137,50 @@ export async function onRequestPost(context) {
         referrer: cleanText(input.referrer, 500)
     };
 
-    try {
-        const response = await fetch(env.GOOGLE_SCRIPT_URL, {
-            method: "POST",
-            headers: { "Content-Type": "text/plain;charset=UTF-8" },
-            body: JSON.stringify(contact),
-            redirect: "follow"
-        });
-        const responseText = await response.text();
-        let result;
+    const emailed = await sendSupportEmail(env, {
+        subject: `Saytdan yangi xabar: ${contact.name}`,
+        idempotencyKey: `contact-${contact.id}`,
+        lines: [
+            "ICEBERG saytidagi aloqa formasi orqali yangi xabar keldi.",
+            "",
+            `Ism: ${contact.name}`,
+            `Telefon: ${contact.phone}`,
+            "",
+            "Xabar:",
+            contact.message,
+            "",
+            `Sahifa: ${contact.page_url || "-"}`,
+            `ID: ${contact.id}`
+        ]
+    });
+
+    let stored = false;
+    if (storageReady) {
         try {
-            result = JSON.parse(responseText);
-        } catch (_error) {
-            throw new Error(`non_json_response:${response.status}`);
+            const response = await fetch(env.GOOGLE_SCRIPT_URL, {
+                method: "POST",
+                headers: { "Content-Type": "text/plain;charset=UTF-8" },
+                // email_sent tells the Apps Script not to email support a second time.
+                body: JSON.stringify({ ...contact, secret: env.GOOGLE_SCRIPT_SECRET, email_sent: emailed }),
+                redirect: "follow"
+            });
+            const responseText = await response.text();
+            let result;
+            try {
+                result = JSON.parse(responseText);
+            } catch (_error) {
+                throw new Error(`non_json_response:${response.status}`);
+            }
+            if (!response.ok || !result.ok) {
+                throw new Error(`receiver_rejected:${cleanText(result.error, 80) || response.status}`);
+            }
+            stored = true;
+        } catch (error) {
+            console.error("Contact forwarding failed", reference, error.message);
         }
-        if (!response.ok || !result.ok) {
-            throw new Error(`receiver_rejected:${cleanText(result.error, 80) || response.status}`);
-        }
-    } catch (error) {
-        console.error("Contact forwarding failed", reference, error.message);
+    }
+
+    if (!stored && !emailed) {
         return jsonResponse(
             {
                 ok: false,

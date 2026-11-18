@@ -286,3 +286,15 @@ test('contact messages missing fields are rejected', () => {
     });
     assert.equal(result(context.doPost(validContact({ message: '' }))).error, 'missing_required_fields');
 });
+
+test('the receiver does not email again when the website already emailed support', () => {
+    const { context, emails, spreadsheet } = loadReceiver({
+        properties: { SHEET_ID: 'sheet-id', WEBHOOK_SECRET: 'shared-secret' }
+    });
+    context.setup();
+    assert.equal(result(context.doPost(validContact({ email_sent: true }))).emailed, false);
+    assert.equal(result(context.doPost(validLead({ email_sent: true }))).emailed, false);
+    assert.equal(emails.length, 0);
+    assert.equal(spreadsheet.getSheetByName('Contacts').rows.length, 2);
+    assert.equal(spreadsheet.getSheetByName('Registrations').rows.length, 2);
+});

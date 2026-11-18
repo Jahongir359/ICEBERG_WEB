@@ -88,7 +88,7 @@ similar to:
 {
   "ok": true,
   "service": "ICEBERG registration receiver",
-  "version": "2026-11-18.1",
+  "version": "2026-11-18.2",
   "sheet_ready": true,
   "contact_sheet_ready": true
 }
@@ -205,7 +205,7 @@ hostname, refresh the page, then submit once.
 Turnstile succeeded, but Apps Script did not confirm storage. Check in this order:
 
 1. Open `GOOGLE_SCRIPT_URL` directly and require `ok:true` and `sheet_ready:true`.
-2. Confirm it reports receiver version `2026-11-18.1` or newer.
+2. Confirm it reports receiver version `2026-11-18.2` or newer.
 3. Compare Apps Script `WEBHOOK_SECRET` with Cloudflare `GOOGLE_SCRIPT_SECRET`.
 4. In Apps Script, open **Executions** and inspect the newest `doPost` failure.
 5. In Cloudflare, open the Pages deployment's Function logs and search for the
@@ -221,7 +221,7 @@ Verify that you are viewing the spreadsheet identified by `SHEET_ID` and the tab
 ### Contact form or registration saved, but no email at support
 
 1. Run `setup` again and accept the email permission prompt (it is new in
-   `2026-11-18.1`), then publish a **New version** of the deployment.
+   `2026-11-18.2`), then publish a **New version** of the deployment.
 2. Check the Apps Script **Executions** log for `Support email failed`.
 3. Check the support inbox's spam folder and the daily quota reported by `setup`
    (`remaining_email_quota`).

@@ -1,3 +1,5 @@
+import { sendSupportEmail, supportEmailConfigured } from "../../lib/support-email.js";
+
 const JSON_HEADERS = {
     "Content-Type": "application/json; charset=utf-8",
     "Cache-Control": "no-store",
@@ -67,8 +69,10 @@ async function validateTurnstile(token, request, secret) {
 export async function onRequestPost(context) {
     const { request, env } = context;
     const reference = requestReference(request);
-    if (!validGoogleScriptUrl(env.GOOGLE_SCRIPT_URL) || !env.GOOGLE_SCRIPT_SECRET) {
-        console.error("Registration storage is not configured", reference);
+    const storageReady = validGoogleScriptUrl(env.GOOGLE_SCRIPT_URL) && Boolean(env.GOOGLE_SCRIPT_SECRET);
+    const emailReady = supportEmailConfigured(env);
+    if (!storageReady && !emailReady) {
+        console.error("Registration delivery is not configured", reference);
         return jsonResponse(
             {
                 ok: false,
@@ -147,7 +151,6 @@ export async function onRequestPost(context) {
     }
 
     const lead = {
-        secret: env.GOOGLE_SCRIPT_SECRET,
         id: /^[a-f0-9-]{20,64}$/i.test(cleanText(input.submission_id, 64))
             ? cleanText(input.submission_id, 64)
             : crypto.randomUUID(),
@@ -163,25 +166,49 @@ export async function onRequestPost(context) {
         referrer: cleanText(input.referrer, 500)
     };
 
-    try {
-        const response = await fetch(env.GOOGLE_SCRIPT_URL, {
-            method: "POST",
-            headers: { "Content-Type": "text/plain;charset=UTF-8" },
-            body: JSON.stringify(lead),
-            redirect: "follow"
-        });
-        const responseText = await response.text();
-        let result;
+    const emailed = await sendSupportEmail(env, {
+        subject: `Yangi ariza: ${lead.student_name}`,
+        idempotencyKey: `register-${lead.id}`,
+        lines: [
+            "ICEBERG saytida yangi ro'yxatdan o'tish arizasi.",
+            "",
+            `Ism: ${lead.student_name}`,
+            `Telefon: ${lead.student_phone}`,
+            `Dastur: ${lead.program}`,
+            `Filial: ${lead.branch}`,
+            "",
+            `Sahifa: ${lead.page_url || "-"}`,
+            `ID: ${lead.id}`
+        ]
+    });
+
+    let stored = false;
+    if (storageReady) {
         try {
-            result = JSON.parse(responseText);
-        } catch (_error) {
-            throw new Error(`non_json_response:${response.status}`);
+            const response = await fetch(env.GOOGLE_SCRIPT_URL, {
+                method: "POST",
+                headers: { "Content-Type": "text/plain;charset=UTF-8" },
+                // email_sent tells the Apps Script not to email support a second time.
+                body: JSON.stringify({ ...lead, secret: env.GOOGLE_SCRIPT_SECRET, email_sent: emailed }),
+                redirect: "follow"
+            });
+            const responseText = await response.text();
+            let result;
+            try {
+                result = JSON.parse(responseText);
+            } catch (_error) {
+                throw new Error(`non_json_response:${response.status}`);
+            }
+            if (!response.ok || !result.ok) {
+                throw new Error(`receiver_rejected:${cleanText(result.error, 80) || response.status}`);
+            }
+            stored = true;
+        } catch (error) {
+            console.error("Registration forwarding failed", reference, error.message);
         }
-        if (!response.ok || !result.ok) {
-            throw new Error(`receiver_rejected:${cleanText(result.error, 80) || response.status}`);
-        }
-    } catch (error) {
-        console.error("Registration forwarding failed", reference, error.message);
+    }
+
+    if (!stored && !emailed) {
         return jsonResponse(
             {
                 ok: false,

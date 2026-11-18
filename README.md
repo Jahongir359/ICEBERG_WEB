@@ -215,8 +215,9 @@ npx firebase-tools deploy --only hosting --project YOUR_FIREBASE_PROJECT_ID
 
 The static contact form (`/api/contact`) and registration form (`/api/register`) both
 submit to Cloudflare Pages Functions, validate Turnstile server-side, and store the
-submission in Google Sheets through Apps Script. Apps Script also emails every new
-contact message and registration to `support@iceberglc.com`. Override the public
+submission in Google Sheets through Apps Script. Every new contact message and
+registration is also emailed to `support@iceberglc.com`, either directly by the Pages
+Function through Resend (when `RESEND_API_KEY` is set) or by Apps Script. Override the public
 domain during the build when needed:
 
 ```bash
@@ -275,10 +276,25 @@ Function. Follow the complete setup and troubleshooting runbook in
 - Dashboard encrypted Secrets: `TURNSTILE_SECRET_KEY`, `GOOGLE_SCRIPT_URL`, and
   `GOOGLE_SCRIPT_SECRET`
 
-The registration and contact endpoints remain unavailable until all values are
-deployed. Do not put private secret values in `wrangler.toml`. Both forms share the
-same Turnstile widget, Apps Script URL and webhook secret; no extra Secrets are needed
-for the contact form or for the support email.
+Do not put private secret values in `wrangler.toml`. Both forms share the same
+Turnstile widget, Apps Script URL and webhook secret.
+
+### Direct support email (Resend)
+
+The forms can email `support@iceberglc.com` straight from Cloudflare, without waiting
+for Google Sheets. Add one more encrypted Production Secret, `RESEND_API_KEY`, from a
+[Resend](https://resend.com) account whose sending domain `iceberglc.com` is verified.
+Emails come from `website@iceberglc.com`; optional plain vars `EMAIL_FROM` and
+`SUPPORT_EMAIL` in `wrangler.toml` override the sender and recipient
+(code: `lib/support-email.js`).
+
+- Turnstile is always required.
+- A submission succeeds if the email is accepted **or** the sheet row is saved, and
+  fails only when every configured delivery fails.
+- When both work, the sheet receives `email_sent: true` and Apps Script (receiver
+  `2026-11-18.2`+) does not send a second email. If the Resend email fails, Apps Script
+  sends it instead.
+- Resend's free plan allows 100 emails per day and 3,000 per month.
 
 ### Registration programs, branches, and reception contact
 

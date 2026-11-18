@@ -33,13 +33,18 @@ function request(overrides = {}) {
     });
 }
 
-function mockNetwork({ turnstileSuccess = true, backendSuccess = true } = {}) {
+function mockNetwork({ turnstileSuccess = true, backendSuccess = true, emailSuccess = true } = {}) {
     const leads = [];
+    const emails = [];
     globalThis.fetch = async (url, options) => {
         if (String(url).includes('turnstile')) {
             return new Response(JSON.stringify({ success: turnstileSuccess, action: 'register' }), {
                 headers: { 'Content-Type': 'application/json' }
             });
+        }
+        if (String(url).startsWith('https://api.resend.com/')) {
+            emails.push({ headers: options.headers, body: JSON.parse(options.body) });
+            return new Response('{}', { status: emailSuccess ? 200 : 500 });
         }
         leads.push(JSON.parse(options.body));
         return new Response(JSON.stringify({ ok: backendSuccess }), {
@@ -47,6 +52,7 @@ function mockNetwork({ turnstileSuccess = true, backendSuccess = true } = {}) {
             headers: { 'Content-Type': 'application/json' }
         });
     };
+    leads.emails = emails;
     return leads;
 }
 
@@ -126,4 +132,24 @@ test('repeated client submission ID remains idempotent downstream', async () => 
     await onRequestPost({ request: request(), env: environment() });
     assert.equal(leads.length, 2);
     assert.equal(leads[0].id, leads[1].id);
+});
+
+test('registrations are emailed to support directly, with or without the sheet', async () => {
+    const leads = mockNetwork();
+    const emailOnly = { ...environment(), GOOGLE_SCRIPT_URL: '', GOOGLE_SCRIPT_SECRET: '', RESEND_API_KEY: 're_test' };
+    assert.equal((await onRequestPost({ request: request(), env: emailOnly })).status, 201);
+    assert.equal(leads.length, 0);
+    assert.equal(leads.emails.length, 1);
+    assert.deepEqual(leads.emails[0].body.to, ['support@iceberglc.com']);
+    assert.match(leads.emails[0].body.text, /Dastur: ielts/);
+    assert.equal(leads.emails[0].headers['Idempotency-Key'], 'register-12345678-1234-4234-8234-123456789012');
+
+    const both = mockNetwork();
+    const env = { ...environment(), RESEND_API_KEY: 're_test' };
+    assert.equal((await onRequestPost({ request: request(), env })).status, 201);
+    assert.equal(both[0].email_sent, true);
+    assert.equal(both[0].secret, 'test-secret');
+
+    mockNetwork({ backendSuccess: false, emailSuccess: false });
+    assert.equal((await onRequestPost({ request: request(), env })).status, 502);
 });

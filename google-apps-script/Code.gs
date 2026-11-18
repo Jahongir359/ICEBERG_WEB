@@ -27,7 +27,7 @@ const CONTACT_HEADERS = [
   'Staff Notes'
 ];
 const DEFAULT_SUPPORT_EMAIL = 'support@iceberglc.com';
-const RECEIVER_VERSION = '2026-11-18.1';
+const RECEIVER_VERSION = '2026-11-18.2';
 
 function jsonResult_(body) {
   return ContentService
@@ -171,7 +171,8 @@ function storeContact_(config, data) {
     lock.releaseLock();
   }
 
-  const emailed = isNew && notifySupport_(config, 'Saytdan yangi xabar: ' + data.name, [
+  // email_sent: the website already emailed support directly (Resend).
+  const emailed = isNew && data.email_sent !== true && notifySupport_(config, 'Saytdan yangi xabar: ' + data.name, [
     'ICEBERG saytidagi aloqa formasi orqali yangi xabar keldi.',
     '',
     'Ism: ' + data.name,
@@ -288,7 +289,7 @@ function doPost(e) {
       lock.releaseLock();
     }
 
-    const emailed = isNew && notifySupport_(config, 'Yangi ariza: ' + data.student_name, [
+    const emailed = isNew && data.email_sent !== true && notifySupport_(config, 'Yangi ariza: ' + data.student_name, [
       'ICEBERG saytida yangi ro\'yxatdan o\'tish arizasi.',
       '',
       'Ism: ' + data.student_name,
